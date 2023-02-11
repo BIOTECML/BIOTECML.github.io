@@ -1,34 +1,32 @@
 # <font color="steelblue">Introducción al aprendizaje automático</font>
 
-**Autoría**: 
+**Autoría**:
 
-*   Fernando Borrás (f.borras@umh.es)
-*   Federico Botella (federico@umh.es)
-*   Inés Hernández (ines.hernandezp@umh.es)
-*   Mª Asunción Martínez Mayoral (asun.mayoral@umh.es)
-*   Josep Moltó (j.molto@umh.es)
-*   Javier Morales (j.morales@umh.es) 
+-   Fernando Borrás (f.borras\@umh.es)
+-   Federico Botella (federico\@umh.es)
+-   Inés Hernández (ines.hernandezp\@umh.es)
+-   Mª Asunción Martínez Mayoral (asun.mayoral\@umh.es)
+-   Josep Moltó (j.molto\@umh.es)
+-   Javier Morales (j.morales\@umh.es)
 
-Departamento de Estadística, Matemáticas e Informática. 
+Departamento de Estadística, Matemáticas e Informática.
 
-Universidad Miguel Hernández de Elche. 
-
+Universidad Miguel Hernández de Elche.
 
 **Financiación**: El material que aparece a continuación se ha desarrollado dentro del marco del proyecto UNIDIGITAL- IASAC.
 
-<small><img src=https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/IASAC-UMH.png width="450" height="200"></small>
+<small><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/IASAC-UMH.png" width="450" height="200"/></small>
 
 **Fecha última edición**: Enero 2023
 
-**Licencia**: <small><a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br /></small>
+**Licencia**: <small><a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" alt="Creative Commons License" style="border-width:0"/></a><br /></small>
 
-No olvides hacer una copia si deseas utilizarlo. Al usar estos contenidos, aceptas nuestros términos de uso y nuestra política de privacidad. 
+No olvides hacer una copia si deseas utilizarlo. Al usar estos contenidos, aceptas nuestros términos de uso y nuestra política de privacidad.
 
+# <font color="steelblue">Introducción</font>
 
+**Descripción:** En este cuaderno se hace una introducción al aprendizaje automático. Descubrirás en qué consiste, qué tipo de problemas resuelve, cómo se trabajan y evalúan las soluciones obtenidas, y cuáles son los principales retos que enfrenta la aplicación de este tipo de técnicas.
 
+**Nivel de Formación:** B.
 
-
-
-
-
-
+**Recomendaciones antes de usarlo:** Conocimientos básicos del lenguaje Python, conceptos básicos de probabilidad y análisis exploratorio de datos.

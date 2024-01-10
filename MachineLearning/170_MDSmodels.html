@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MachineLearning - 17&nbsp; Métodos de escalado multidimensional (MDS)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./180_Clustermodels.html" rel="next">
+<link href="./160_PrinCompmodels.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos coincidentes",
+    "search-copy-link-title": "Copiar enlace para buscar",
+    "search-hide-matches-text": "Ocultar coincidencias adicionales",
+    "search-more-match-text": "más coincidencia en este documento",
+    "search-more-matches-text": "más coincidencias en este documento",
+    "search-clear-button-title": "Limpiar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Entregar"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MachineLearning</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Prefacio</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./01_IntroCourse.html" class="sidebar-item-text sidebar-link">Parte 1. Introducción</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_introAD.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_introAA.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./30_RandRstudio.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./40_DataBases.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./02_FirstStepsAA.html" class="sidebar-item-text sidebar-link">Parte 2. Primeros pasos</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./50_AED.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./03_SupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 3. Aprendizaje supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./60_RegressionModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regresión</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./70_LogisticModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelos de Regresión Logística</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./80_SurvivalModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./90_BayesianClassif.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./100_kNNmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./110_SVMmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./120_DTmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./130_Ensemblemodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Modelos de conjunto (Ensemble models)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./140_Boostingmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Modelos Boosting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./04_NonSupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 4. Aprendizaje no supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./150_Discriminantmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análisis discriminante (AD)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./160_PrinCompmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./170_MDSmodels.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./180_Clustermodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Análisis cluster</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">Referencias</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#sec-170.1" id="toc-sec-170.1" class="nav-link active" data-scroll-target="#sec-170.1"><span class="toc-section-number">17.1</span>  Escalado Multidimensional</a>
+  <ul>
+  <li><a href="#sec-170.1.1" id="toc-sec-170.1.1" class="nav-link" data-scroll-target="#sec-170.1.1"><span class="toc-section-number">17.1.1</span>  MDS métrico</a></li>
+  <li><a href="#sec-170.1.2" id="toc-sec-170.1.2" class="nav-link" data-scroll-target="#sec-170.1.2"><span class="toc-section-number">17.1.2</span>  MDS no métrico</a></li>
+  <li><a href="#sec-170.1.3" id="toc-sec-170.1.3" class="nav-link" data-scroll-target="#sec-170.1.3"><span class="toc-section-number">17.1.3</span>  Validación del modelo</a></li>
+  </ul></li>
+  <li><a href="#sec-170.2" id="toc-sec-170.2" class="nav-link" data-scroll-target="#sec-170.2"><span class="toc-section-number">17.2</span>  Ampliaciones del MDS</a>
+  <ul>
+  <li><a href="#sec-170.2.1" id="toc-sec-170.2.1" class="nav-link" data-scroll-target="#sec-170.2.1"><span class="toc-section-number">17.2.1</span>  Isomap</a></li>
+  <li><a href="#sec-170.2.2" id="toc-sec-170.2.2" class="nav-link" data-scroll-target="#sec-170.2.2"><span class="toc-section-number">17.2.2</span>  Linear Local Embedding (LLE)</a></li>
+  <li><a href="#sec-170.2.3" id="toc-sec-170.2.3" class="nav-link" data-scroll-target="#sec-170.2.3"><span class="toc-section-number">17.2.3</span>  Diferencias entre ISOMAP y LLE</a></li>
+  </ul></li>
+  <li><a href="#sec-170.3" id="toc-sec-170.3" class="nav-link" data-scroll-target="#sec-170.3"><span class="toc-section-number">17.3</span>  MDS en R</a>
+  <ul>
+  <li><a href="#sec-170.3.1" id="toc-sec-170.3.1" class="nav-link" data-scroll-target="#sec-170.3.1"><span class="toc-section-number">17.3.1</span>  Bancos de datos</a>
+  <ul class="collapse">
+  <li><a href="#gene-expression-leukemia" id="toc-gene-expression-leukemia" class="nav-link" data-scroll-target="#gene-expression-leukemia"><span class="toc-section-number">17.3.1.1</span>  Gene expression leukemia</a></li>
+  <li><a href="#vehicle-silhouettes" id="toc-vehicle-silhouettes" class="nav-link" data-scroll-target="#vehicle-silhouettes"><span class="toc-section-number">17.3.1.2</span>  Vehicle silhouettes</a></li>
+  <li><a href="#sales" id="toc-sales" class="nav-link" data-scroll-target="#sales"><span class="toc-section-number">17.3.1.3</span>  Sales</a></li>
+  </ul></li>
+  <li><a href="#sec-170.3.2" id="toc-sec-170.3.2" class="nav-link" data-scroll-target="#sec-170.3.2"><span class="toc-section-number">17.3.2</span>  Modelos</a>
+  <ul class="collapse">
+  <li><a href="#gene-expression-leukemia-1" id="toc-gene-expression-leukemia-1" class="nav-link" data-scroll-target="#gene-expression-leukemia-1"><span class="toc-section-number">17.3.2.1</span>  Gene expression leukemia</a></li>
+  <li><a href="#vehicle-silhouettes-1" id="toc-vehicle-silhouettes-1" class="nav-link" data-scroll-target="#vehicle-silhouettes-1"><span class="toc-section-number">17.3.2.2</span>  Vehicle silhouettes</a></li>
+  <li><a href="#sales-1" id="toc-sales-1" class="nav-link" data-scroll-target="#sales-1"><span class="toc-section-number">17.3.2.3</span>  Sales</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#sec-170.4" id="toc-sec-170.4" class="nav-link" data-scroll-target="#sec-170.4"><span class="toc-section-number">17.4</span>  Ejercicios</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-170" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Hemos visto cómo el análisis de componentes principales (PCA) puede utilizarse en la tarea de reducción de la dimensionalidad: reducir el número de características de un conjunto de datos manteniendo las relaciones esenciales entre los puntos. Aunque es flexible, rápido y fácil de interpretar, no funciona tan bien cuando existen relaciones no lineales entre los datos.</p>
+<p>Para subsanar esta deficiencia, podemos recurrir a una clase de métodos conocidos como aprendizaje múltiple, que son una clase de estimadores no supervisados que intentan describir conjuntos de datos como variedades de baja dimensión incrustadas en espacios de alta dimensión.</p>
+<p>En concreto estudiaremos el escalado multidimensional (MDS), la incrustación localmente lineal (LLE) y el mapeado isométrico (IsoMap).</p>
+<section id="sec-170.1" class="level2" data-number="17.1">
+<h2 data-number="17.1" class="anchored" data-anchor-id="sec-170.1"><span class="header-section-number">17.1</span> Escalado Multidimensional</h2>
+<p>El MDS tiene por objetivo representar los puntos que residen en un espacio de gran dimensión a uno de menor dimensión, preservando al máximo las distancias entre esos puntos. De este modo, las distancias o similitudes entre pares de puntos en el espacio de menor dimensión se aproximan mucho a sus distancias reales.</p>
+<p>MDS puede ser utilizado como un método de preprocesamiento de datos en problemas de regresión y clasificación. Normalmente, la medida de distancia utilizada en el MDS es la distancia euclídea, aunque al aplicar el MDS puede utilizarse cualquier otra métrica de disimilitud adecuada.</p>
+<p>Existen dos tipos principales de MDS: métrico (clásico) y no métrico. Aunque ambos tienen como objetivo encontrar la mejor representación en dimensiones inferiores de los datos en dimensiones superiores, sus diferencias radican en el tipo de datos para los que están diseñados.</p>
+<ul>
+<li><p>El <strong>MDS métrico</strong> (clásico) también se conoce como análisis de coordenadas principales (PCoA). No hay que confundirlo con el Análisis de Componentes Principales (PCA). El MDS métrico intenta modelar la similitud/disimilitud de los datos calculando las distancias entre cada par de puntos utilizando sus coordenadas geométricas. La clave aquí es la capacidad de medir una distancia utilizando una escala lineal. Por ejemplo, una distancia de 10 unidades se consideraría el doble de lejos que una distancia de 5 unidades.</p></li>
+<li><p><strong>MDS no métrico</strong>: está diseñado para tratar datos ordinales. Por ejemplo, puede haber pedido a sus clientes que valoren sus productos en una escala de 1 a 5, donde 1 es terrible y 5 es asombroso. En este caso, un producto con una puntuación de 2 no es necesariamente el doble de bueno que un producto con una puntuación de 1. Lo que importa es el orden (1 &lt; 2 &lt; 3 &lt; 4 &lt; 5) y no el valor absoluto. Este es el tipo de situación en la que se utilizaría un MDS no métrico.</p></li>
+</ul>
+<section id="sec-170.1.1" class="level3" data-number="17.1.1">
+<h3 data-number="17.1.1" class="anchored" data-anchor-id="sec-170.1.1"><span class="header-section-number">17.1.1</span> MDS métrico</h3>
+<p>En general, la métrica MDS calcula las distancias entre cada par de puntos en el espacio original de alta dimensión y, a continuación, los representa en un espacio de menor dimensión preservando al máximo esas distancias entre puntos. En concreto el algoritmo MDS métrico puede describirse en dos pasos:</p>
+<ol type="1">
+<li>Calculamos todas las distancias entre pares de puntos.</li>
+<li>Con las distancias originales conocidas, el algoritmo intenta resolver el problema de optimización encontrando un conjunto de coordenadas en un espacio de dimensiones inferiores que minimice el valor de <em>Stress</em> dado por:</li>
+</ol>
+<p><span class="math display">\[Stress(x_1,...,x_n) = \sqrt{\sum_{i\neq j = 1,...,N} (d_{ij} - ||x_i-x_j||)^2}\]</span></p>
+<p>donde <span class="math inline">\(x_1,..x_n\)</span> son los puntos de datos en su nuevo conjunto de coordenadas en un espacio de dimensión inferior, <span class="math inline">\(d_{ij}\)</span> es la distancia original entre dos puntos del espacio el la dimensión original, y <span class="math inline">\(||x_i-x_j||\)</span> es la distancia entre los dos puntos correspondientes en el espacio de dimensiones reducido.</p>
+<p>Se pueden utilizar varios métodos para optimizar la función anterior, como el método de descenso más pronunciado de <em>Kruskal</em> o el método iterativo de mayorización de <em>De Leeuw</em>. Un aspecto importante a tener en cuenta es que los dos métodos antes mencionados son enfoques iterativos, a veces pueden proporcionar resultados diferentes, ya que son sensibles a la posición inicial de partida. Al final, se elige como resultado final la configuración con el valor de <em>Stress</em> más bajo.</p>
+</section>
+<section id="sec-170.1.2" class="level3" data-number="17.1.2">
+<h3 data-number="17.1.2" class="anchored" data-anchor-id="sec-170.1.2"><span class="header-section-number">17.1.2</span> MDS no métrico</h3>
+<p>El MDS no métrico se centra en la ordenación de los datos. En este caso consideramos la matriz <span class="math inline">\(S\)</span> de similitudes, y <span class="math inline">\(X\)</span> la matriz de coordenadas de los puntos en el espacio original. Si <span class="math inline">\(S_{ij} &gt; S_{jk}\)</span> entonces las distancias deben verificar <span class="math inline">\(d_{ij} &lt; d_{jk}\)</span>. Por este motivo, se habla de disimilitudes <span class="math inline">\((\delta_{ij})\)</span> en lugar de similitudes <span class="math inline">\((S_{ij})\)</span>. En este caso las disimilitudes pueden obtenerse fácilmente a partir de las similitudes mediante una simple transformación, por ejemplo <span class="math inline">\(\delta_{ij} = c_1-c_2S_{ij}\)</span> para algunas constantes reales <span class="math inline">\(c_1\)</span> y <span class="math inline">\(c_2\)</span>. Un algoritmo sencillo para obtener una ordenación adecuada consiste en utilizar una regresión monotónica de <span class="math inline">\(d_{ij}\)</span> sobre <span class="math inline">\(\delta_{ij}\)</span> que produce disparidades <span class="math inline">\(\hat{d}_{ij}\)</span> en el mismo orden que <span class="math inline">\(\delta_{ij}\)</span>.</p>
+<p>Una solución trivial a este problema es situar todos los puntos en el origen. Para evitarlo, las disparidades <span class="math inline">\(\hat{d}_{ij}\)</span> se normalizan. Dado que sólo nos preocupamos por el orden relativo, nuestro objetivo debería ser invariable a la simple traslación y escalado; sin embargo, la función de <em>stress</em> utilizada en el MDS métrico es sensible al escalado. Para solucionarlo, el MDS no métrico puede utilizar una tensión normalizada, conocida como <em>stress</em>-1 definida como:</p>
+<p><span class="math display">\[\sqrt{\frac{\sum_{i&lt;j} (d_{ij}-\hat{d}_{ij})^2}{\sum_{i&lt;j} d_{ij}^2}}\]</span></p>
+</section>
+<section id="sec-170.1.3" class="level3" data-number="17.1.3">
+<h3 data-number="17.1.3" class="anchored" data-anchor-id="sec-170.1.3"><span class="header-section-number">17.1.3</span> Validación del modelo</h3>
+<p>Para validar el modelo de escalado multidimensional se suele representar gráficamente el valor de <em>stress</em> versus el número de dimensiones consideradas. Se considera que el número óptimo de dimensiones se alcanza cuando la curva resultante se estabiliza sobre cierto valor de <em>stress</em>. En este caso el <em>grid search</em> puede no resultar útil si especificamos un número de dimensiones muy alto porque el valor de <em>stress</em> tiende a decrecer, y por tanto seleccionaríamos la solución con más dimensiones.</p>
+</section>
+</section>
+<section id="sec-170.2" class="level2" data-number="17.2">
+<h2 data-number="17.2" class="anchored" data-anchor-id="sec-170.2"><span class="header-section-number">17.2</span> Ampliaciones del MDS</h2>
+<p>Los métodos clásicos de reducción de la dimensión (PCA, MDS, Análisis factorial…) son fáciles de implementar, eficientes computacionalmente (ya que suelen ser métodos espectrales, es decir, basados en los valores y vectores propios de cierta matriz) y garantizan encontrar la estructura de nuestros datos si es que estos se encuentran sobre un subespacio lineal.</p>
+<p>En PCA nuestros datos se proyectan en una menor dimensión que preserva la varianza; las componentes principales van en la dirección de máxima varianza de nuestros datos. Por otra parte, el escalado multidimensional clásico (métrico) encuentra una configuración de X que preserva las distancias originales entre individuos. Ambos métodos funcionarán bien siempre y cuando nuestros datos se encuentren sobre un subespacio lineal.</p>
+<p>Para solucionar estas deficiencias debemos definir un concepto fundamental; la geodésica. En geometría, la línea geodésica se define como la línea de mínima longitud que une dos puntos en una superficie dada, y está contenida en esta superficie. En un espacio euclídeo cualquier línea recta es geodésica. Para entender el comportamiento de la distancia geodésica tomamos como ejemplo de subespacio no lineal “<em>Swiss Roll</em>” (rollo suizo) que representamos en la imagen siguiente:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/distgeodesica.png" width="450" height="300" class="figure-img"></p>
+</figure>
+</div>
+<p>En esta situación la línea azul punteada es una recta geodésica en el espacio euclídeo y la línea azul continua es una recta geodésica en el subespacio lineal. Los puntos A y B se encuentran muy alejados en el brazo si tomamos la distancia geodésica; <span class="math inline">\(d′\)</span>, en cambio, parecerá que están muy cerca si consideramos una distancia euclídea; <span class="math inline">\(d″\)</span>. Solo la distancia geodésica puede reflejar la bidimensionalidad del <em>Swiss Roll</em>. En este caso, PCA y MDS “verán” únicamente la estructura euclídea, por tanto, nunca podrán encontrar la bidimensionalidad del subespacio considerado.</p>
+<section id="sec-170.2.1" class="level3" data-number="17.2.1">
+<h3 data-number="17.2.1" class="anchored" data-anchor-id="sec-170.2.1"><span class="header-section-number">17.2.1</span> Isomap</h3>
+<p>Como acabamos de ver, nos gustaría considerar la distancia geodésica del subespacio y no la distancia euclídea. Pero si solo contamos con una nube de puntos y no conocemos la superficie sobre la que se encuentran los datos, ¿cómo podemos calcularla?</p>
+<p>A modo de ejemplo, consideremos una superficie circular sobre la que se encuentran dos observaciones: E y C. Supongamos que queremos llegar del punto C al punto E. La distancia que deberemos recorrer de C a E será la distancia geodésica; d′ ya que recorrer una distancia euclídea; d″ sería hacer trampas porque C no tiene por qué estar en un espacio euclídeo sino en uno no lineal. Pero si solo contamos con las coordenadas en el espacio euclídeo de E y C y desconocemos la superficie sobre la que se encuentran ambos, no podemos calcular d′. Aquí es donde entran en juego los vecinos de E que también se encuentran sobre la superficie no lineal. Una forma de aproximar la distancia geodésica entre E y C es encontrar la observación más cercana a E; r y medir la distancia euclídea entre r y E. Si r está muy cerca de E no hay grandes diferencias entre la distancia euclídea y la distancia geodésica. Una vez calculada <span class="math inline">\(d(E,r)\)</span> podemos encontrar el amigo más cercano a r y medir su distancia euclídea, así hasta llegar a C. Si sumáramos todas estas distancias euclídeas, tendríamos una aproximación de d′:</p>
+<p><span class="math display">\[d′=d(E,r)+d(r,x_i)+...+d(x_j,C)\]</span></p>
+<p>Más formalmente, lo que vamos a querer hacer es construir un grafo de los k-vecinos más cercanos (aunque en el artículo original también se propone considerar como vecinos las observaciones que se encuentren en un radio fijo <span class="math inline">\(\epsilon\)</span>) y calcular la distancia entre E y C como la distancia del camino más corto en el grafo para ir de E a C.</p>
+<p>De momento, tenemos solo las distancias geodésicas entre las observaciones que son vecinas, para las que no lo son la distancia entre estas es infinito. Pero, podemos calcular la distancia entre dos observaciones que no son vecinas; <span class="math inline">\(x_i\)</span> y <span class="math inline">\(x_j\)</span> como la distancia del camino más corto para ir de <span class="math inline">\(x_i\)</span> a <span class="math inline">\(x_j\)</span> (imagen siguiente). La línea azul representa la distancia euclídea y la linea roja representa la distancia usando los vecinos.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/grafo.png" width="450" height="300" class="figure-img"></p>
+</figure>
+</div>
+<p>Los algoritmos que se usan para encontrar este camino más corto entre dos nodos en el grafo son <em>Dijkstra</em> o <em>Floyd</em>. Ambos conocidos son bien conocidos dentro de la teoría de grafos en la búsqueda de caminos más cortos en tres dos localizaciones.</p>
+<p>Uno de los primeros enfoques basados en al distancia geodésica es el algoritmo Isomap, abreviatura de <em>Isometric Mapping</em>. Isomap puede considerarse como una extensión de <em>Multi-dimensional Scaling</em> (MDS) o <em>Kernel PCA</em>. Busca una representación de un espacio multidimensional en otro inferior (generalmente dos dimensiones) que mantenga las distancias geodésicas entre todos los puntos, en lugar de las distancia euclídeas. El algoritmo <em>Isomap</em> se puede representar en los pasos siguientes:</p>
+<ol type="1">
+<li>Fijar k (el número de vecinos más cercanos), p (número de dimensiones a obtener en MDS), y considerar la matriz de datos X, de dimensiones d×m.</li>
+<li>Búsqueda de los k vecinos más próximos para cada punto del banco de datos, y construir el grafo correspondiente utilizando las distancias geodésicas.</li>
+<li>Calcular la matriz de distancias más cortas usando los algoritmos de <em>Floyd</em> o <em>Dijkstra</em>.</li>
+<li>Aplicar MDS a a la matriz de distancias obtenidas en el paso anterior para reducir la dimensión manteniendo las distancias geodésicas.</li>
+</ol>
+</section>
+<section id="sec-170.2.2" class="level3" data-number="17.2.2">
+<h3 data-number="17.2.2" class="anchored" data-anchor-id="sec-170.2.2"><span class="header-section-number">17.2.2</span> Linear Local Embedding (LLE)</h3>
+<p>El algoritmo LLE busca una proyección de los datos en una dimensión inferior que preserve las distancias dentro de los vecindarios locales. Puede considerarse como una serie de análisis de componentes principales locales que se comparan globalmente para encontrar la mejor representación no lineal. El algoritmo LLE trata de reducir un problema de n dimensiones a la vez que intenta preservar las características geométricas de la estructura original de características no lineales.</p>
+<p>LLE encuentra primero los k vecinos más cercanos de los puntos. A continuación, aproxima cada vector de datos como una combinación lineal ponderada de sus k vecinos más cercanos. Por último, calcula los pesos que mejor reconstruyen los vectores a partir de sus vecinos y, posteriormente, produce los vectores de baja dimensión mejor reconstruidos por estos pesos. El algoritmo se puede describir de la forma siguiente:</p>
+<ol type="1">
+<li>Encontrar los K vecinos más próximos. Una de las ventajas del algoritmo LLE es que sólo hay que ajustar un parámetro: el valor de K, es decir, el número de vecinos más próximos que se consideran parte de un conglomerado. Si K se elige demasiado pequeño o demasiado grande, no podrá acomodarse a la geometría de los datos originales. Aquí, para cada punto de datos que tenemos, calculamos los K vecinos más próximos.</li>
+<li>Hacemos una agregación ponderada de los vecinos de cada punto para construir un nuevo punto. Intentamos minimizar la función de coste, donde <span class="math inline">\(X_j\)</span> es el vecino más cercano para el punto <span class="math inline">\(X_i\)</span></li>
+</ol>
+<p><span class="math display">\[E(W) = \sum_i |X_i - \sum_j W_{ij}X_j|^2, \text{ con } \sum_j W_{ij} = 1\]</span></p>
+<ol start="3" type="1">
+<li>Ahora definimos el nuevo espacio vectorial <span class="math inline">\(Y\)</span> tal que minimizamos el coste para <span class="math inline">\(Y\)</span> como los nuevos puntos</li>
+</ol>
+<p><span class="math display">\[C(Y) = \sum_i |Y_i - \sum_j W_{ij}Y_j|^2\]</span></p>
+</section>
+<section id="sec-170.2.3" class="level3" data-number="17.2.3">
+<h3 data-number="17.2.3" class="anchored" data-anchor-id="sec-170.2.3"><span class="header-section-number">17.2.3</span> Diferencias entre ISOMAP y LLE</h3>
+<p>Para ver las diferencias entre ambos algoritmos tomamos como ejemplo el conjunto de datos siguientes donde podremos ver como obtienen las distancias geodésicas y la elección de vecinos. El conjunto de datos son los conocidos datos en espiral:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/MDS01.png" width="450" height="450" class="figure-img"></p>
+</figure>
+</div>
+<p>Fijando el número de vecinos en 10 el algoritmo Isomap proporciona las siguientes relaciones de vecindad:</p>
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/MDS02.png" data-fig-align="center" width="450" height="450"> En este caso las distancias euclidianas nos dan vecinos más cercanos que no necesariamente proporcionan los vecinos más cercanos a lo largo de figura, ya que se establecen conexiones entre diferentes niveles de la espiral.</p>
+<p>Veamos que ocurre con el algoritmo LLE cuando tomamos tres vecinos:</p>
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/MDS03.png" data-fig-align="center" width="450" height="450"> Al reducir el número de vecinos las conexiones establecidas se restringen más al comportamiento de la espiral pero siguen existiendo conexiones entre diferentes niveles.</p>
+<p>En los puntos siguientes veremos las funciones y librearías de <code>R</code> que nos permiten realizar el escaldo multidimensional en sus diferentes versiones, y lo aplicaremos en diferentes ejemplos.</p>
+</section>
+</section>
+<section id="sec-170.3" class="level2" data-number="17.3">
+<h2 data-number="17.3" class="anchored" data-anchor-id="sec-170.3"><span class="header-section-number">17.3</span> MDS en R</h2>
+<p>La librería <code>mlr3</code> no dispone de funciones específicas para llevar a cabo el escalamiento multidimensional por lo que recurrimos directamente a las funciones y librerías existentes para su presentación.</p>
+<p>Las funciones para llevar a cabo los diferentes tipos de escalamiento multidimensional presentado son:</p>
+<ul>
+<li><code>cmdscale</code> de la librería <code>stats</code> para llevar a cabo el escalamiento multidimensional métrico. Los parámetros más relevantes de esta función son <code>d</code>, que contiene la matriz de distancias entre las muestras obtenida mediante la función <code>dist</code>, <code>k</code> que identifica el número máximo de dimensiones que deseamos representar, <code>eig</code> que indica si se deben devolver los valores propios como resultado de la función.</li>
+<li><code>isoMDS</code> de la librería <code>stats</code> para llevar a cabo el escalamiento multidimensional no métrico. Los parámetros más relevantes de esta función son <code>d</code>, que contiene la matriz de distancias entre las muestras obtenida mediante la función <code>dist</code>, y <code>k</code> que identifica el número máximo de dimensiones que deseamos representar. También podemos fijar la tolerancia del proceso de convergencia mediante el parámetro <code>tol</code>.</li>
+<li><code>Isomap</code> de la librería <code>RDRToolbox</code> para llevar a cabo el escalamiento Isomap. Los parámetros más relevantes de esta función son <code>data</code>, que contiene la matriz de datos, <code>dims</code> que identifica el número máximo de dimensiones que deseamos representar, y <code>k</code> que identifica el número de vecinos que vamos a utilizar en el proceso de construcción.</li>
+<li><code>LLE</code> de la librería <code>RDRToolbox</code> para llevar a cabo el escalamiento Isomap. Los parámetros más relevantes de esta función son <code>data</code>, que contiene la matriz de datos, <code>dim</code> que identifica el número máximo de dimensiones que deseamos representar, y <code>k</code> que identifica el número de vecinos que vamos a utilizar en el proceso de construcción.</li>
+</ul>
+<p>Para utilizar estas dos últimas funciones hay que instalar la librería correspondiente mediante el código siguiente:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"BiocManager"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb1-2"><a href="#cb1-2"></a>    <span class="fu">install.packages</span>(<span class="st">"BiocManager"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3"></a>BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"RDRToolbox"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Cargamos el resto de librerías necesarias.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Paquetes anteriores</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="fu">library</span>(knitr) <span class="co"># para formatos de tablas</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="fu">library</span>(DataExplorer)</span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="fu">library</span>(cvms)</span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="fu">library</span>(kknn)</span>
+<span id="cb2-12"><a href="#cb2-12"></a><span class="fu">library</span>(rpart.plot)</span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="fu">library</span>(rda)</span>
+<span id="cb2-14"><a href="#cb2-14"></a><span class="fu">library</span>(klaR)</span>
+<span id="cb2-15"><a href="#cb2-15"></a><span class="fu">library</span>(ggord)</span>
+<span id="cb2-16"><a href="#cb2-16"></a><span class="fu">theme_set</span>(<span class="fu">theme_sjplot2</span>())</span>
+<span id="cb2-17"><a href="#cb2-17"></a></span>
+<span id="cb2-18"><a href="#cb2-18"></a><span class="co"># Paquetes AA</span></span>
+<span id="cb2-19"><a href="#cb2-19"></a><span class="fu">library</span>(mlr3verse)</span>
+<span id="cb2-20"><a href="#cb2-20"></a><span class="fu">library</span>(mlr3tuning)</span>
+<span id="cb2-21"><a href="#cb2-21"></a><span class="fu">library</span>(mlr3tuningspaces)</span>
+<span id="cb2-22"><a href="#cb2-22"></a><span class="fu">library</span>(gbm)</span>
+<span id="cb2-23"><a href="#cb2-23"></a><span class="fu">library</span>(RWeka)</span>
+<span id="cb2-24"><a href="#cb2-24"></a><span class="fu">library</span>(xgboost)</span>
+<span id="cb2-25"><a href="#cb2-25"></a><span class="fu">library</span>(lightgbm)</span>
+<span id="cb2-26"><a href="#cb2-26"></a><span class="fu">library</span>(FactoMineR)</span>
+<span id="cb2-27"><a href="#cb2-27"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb2-28"><a href="#cb2-28"></a><span class="fu">library</span>(rsvd)</span>
+<span id="cb2-29"><a href="#cb2-29"></a><span class="fu">library</span>(kernlab)</span>
+<span id="cb2-30"><a href="#cb2-30"></a><span class="fu">library</span>(fastICA)</span>
+<span id="cb2-31"><a href="#cb2-31"></a><span class="fu">library</span>(RDRToolbox)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="sec-170.3.1" class="level3" data-number="17.3.1">
+<h3 data-number="17.3.1" class="anchored" data-anchor-id="sec-170.3.1"><span class="header-section-number">17.3.1</span> Bancos de datos</h3>
+<p>Para ejemplificar el uso de los modelos de escalamiento multidimensional vamos a utilizar tres bancos de datos: <code>Gene expression leukemia</code>, <code>Vehicle silhouettes</code>, y <code>Sales</code>. A continuación presentamos los tres bancos de datos.</p>
+<section id="gene-expression-leukemia" class="level4" data-number="17.3.1.1">
+<h4 data-number="17.3.1.1" class="anchored" data-anchor-id="gene-expression-leukemia"><span class="header-section-number">17.3.1.1</span> Gene expression leukemia</h4>
+<p>Este banco de datos lo hemos descrito en temas anteriores. Cargamos los datos y generamos un vector con la variable que identifica el tipo de leucemia.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Leemos los datos</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>geneexpleu <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"geneexpressionleukemia.rds"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co"># Eliminamos el indicador de la muestra</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>geneexpleu <span class="ot">=</span> geneexpleu <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>samples)</span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="co"># Consideramos matriz de características y tipos</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>X_genes <span class="ot">=</span> geneexpleu <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>type)</span>
+<span id="cb3-7"><a href="#cb3-7"></a>y_genes <span class="ot">=</span> geneexpleu[,<span class="st">"type"</span>]</span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co"># Debemos cambiar los nombres pq no se respeta la convención de R ya que todas ellas empiezan por un número</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="fu">names</span>(X_genes) <span class="ot">=</span> <span class="fu">str_replace_all</span>(<span class="fu">names</span>(X_genes),<span class="st">"[/_-]"</span>,<span class="st">""</span>)</span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="fu">names</span>(X_genes) <span class="ot">=</span> <span class="fu">paste</span>(<span class="st">"V"</span>, <span class="fu">names</span>(X_genes), <span class="at">sep=</span><span class="st">"_"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="vehicle-silhouettes" class="level4" data-number="17.3.1.2">
+<h4 data-number="17.3.1.2" class="anchored" data-anchor-id="vehicle-silhouettes"><span class="header-section-number">17.3.1.2</span> Vehicle silhouettes</h4>
+<p>Este conjunto de datos recoge información de cuatro tipos diferentes de vehículos, utilizando un conjunto de características extraídas de su silueta. Para el experimento se utilizaron cuatro vehículos modelo “Corgie”: un bus de dos pisos, una camioneta Cheverolet, un Saab 9000 y un Opel Manta 400. El objetivo del estudio es clasificar una silueta dada como uno de cuatro tipos diferentes de vehículos. Todos los atributos son numéricos discretos salvo la última variable que registra el tipo de vehículo. No existen valores perdidos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># Leemos los datos</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>vehicle <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"vehicle.rds"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="co"># Consideramos matriz de características y tipos</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>X_vehicle <span class="ot">=</span> vehicle <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>Class)</span>
+<span id="cb4-5"><a href="#cb4-5"></a>y_vehicle <span class="ot">=</span> vehicle[,<span class="st">"Class"</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sales" class="level4" data-number="17.3.1.3">
+<h4 data-number="17.3.1.3" class="anchored" data-anchor-id="sales"><span class="header-section-number">17.3.1.3</span> Sales</h4>
+<p>Contiene las cantidades compradas semanalmente de 800 productos a lo largo de 52 semanas. Todos los atributos son numéricos sin valores perdidos y van identificados mediante W(número de la semana). En este caso no tenemos posible variable target.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Leemos los datos</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>sales <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"sales.rds"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co"># Eliminamos la variable que identifica el código del producto y la almacenamos por si hiciera falta</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>X_sales <span class="ot">=</span> sales <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>Product_Code)</span>
+<span id="cb5-5"><a href="#cb5-5"></a>y_sales <span class="ot">=</span> sales[,<span class="st">"Product_Code"</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="sec-170.3.2" class="level3" data-number="17.3.2">
+<h3 data-number="17.3.2" class="anchored" data-anchor-id="sec-170.3.2"><span class="header-section-number">17.3.2</span> Modelos</h3>
+<p>Para cada banco de datos probamos los diferentes modelos de escalamiento multidimensional y valoramos las soluciones obtenidas.</p>
+<section id="gene-expression-leukemia-1" class="level4" data-number="17.3.2.1">
+<h4 data-number="17.3.2.1" class="anchored" data-anchor-id="gene-expression-leukemia-1"><span class="header-section-number">17.3.2.1</span> Gene expression leukemia</h4>
+<p>Comenzamos con el banco de datos de expresiones génicas. Para poder utilizar los algoritmos MDS debemos obtener en primer lugar la matriz de distancias entre muestras para lo que utilizaremos la distancia euclídea.</p>
+<p>Comenzamos con los diferentes algoritmos.</p>
+<section id="mds-métrico" class="level5">
+<h5 class="anchored" data-anchor-id="mds-métrico">MDS métrico</h5>
+<p>Obtenemos las solución del MDS métrico para dos dimensiones.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># Matriz de distancias</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>mds_leukemia <span class="ot">=</span> X_genes <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>  <span class="fu">dist</span>() <span class="sc">%&gt;%</span>        <span class="co"># Calculamos distancia</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>  <span class="fu">cmdscale</span>(<span class="at">k=</span><span class="dv">2</span>, <span class="at">eig =</span> <span class="cn">TRUE</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Creamos un tibble con las coordenadas y añadimos la columna que identifica el tipo de leucemia para poder representar la solución vinculada con el target original.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(mds_leukemia<span class="sc">$</span>points)</span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co"># añadimos tipo</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>mds_plot<span class="sc">$</span>type <span class="ot">=</span> y_genes<span class="sc">$</span>type</span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2, <span class="at">color =</span> type)) <span class="sc">+</span> </span>
+<span id="cb7-8"><a href="#cb7-8"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-007-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>La solución MDS parece identificar claramente los grupos <code>PB</code>, <code>Bone_Marrow_CD34</code>, y <code>PBSC_CD34</code>, mientras que parece confundir los grupos <code>AML</code> y <code>Bone_Marrow</code>. Al igual que ocurre con las CP podemos saber el porcentaje de variabilidad explicada por la solución MDS construida con:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>mds_leukemia<span class="sc">$</span>GOF</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4386531 0.4386531</code></pre>
+</div>
+</div>
+<p>El valor es bastante bajo indicando que la solución es algo pobre. Podemos valorar el ajuste comparando las distancias originales frente a las que obtendríamos con la solución MDS. Calculamos ambas distancias y las representamos gráficamente.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># Distancias</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>original <span class="ot">=</span> X_genes <span class="sc">%&gt;%</span> <span class="fu">dist</span>()</span>
+<span id="cb10-3"><a href="#cb10-3"></a>predicha <span class="ot">=</span> mds_leukemia<span class="sc">$</span>points <span class="sc">%&gt;%</span> <span class="fu">dist</span>()</span>
+<span id="cb10-4"><a href="#cb10-4"></a>df <span class="ot">=</span> <span class="fu">data.frame</span>(original, predicha)</span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="co"># Gráfico</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(original, predicha)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-009-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>la nube de puntos se alejan de la diagonal, que mostraría un ajuste perfecto, lo que demuestra que la solución no es adecuada. Pasamos el MDS no métrico.</p>
+</section>
+<section id="mds-no-métrico" class="level5">
+<h5 class="anchored" data-anchor-id="mds-no-métrico">MDS no métrico</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co"># Matriz de distancias</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>mdsnm_leukemia <span class="ot">=</span> X_genes <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3"></a>  <span class="fu">dist</span>() <span class="sc">%&gt;%</span>        <span class="co"># Calculamos distancia</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a>  <span class="fu">isoMDS</span>(<span class="at">k=</span><span class="dv">2</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>initial  value 24.485837 
+final  value 24.470167 
+converged</code></pre>
+</div>
+</div>
+<p>El valor de stress final es bastante algo lo que indica que el modelo puede no ser adecuado para este conjunto de datos. Representamos la solución identificando de nuevo por los tipos de leucemia.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(mdsnm_leukemia<span class="sc">$</span>points)</span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="co"># añadimos tipo</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a>mds_plot<span class="sc">$</span>type <span class="ot">=</span> y_genes<span class="sc">$</span>type</span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2, <span class="at">color =</span> type)) <span class="sc">+</span> </span>
+<span id="cb13-8"><a href="#cb13-8"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-011-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>La solución no métrica es prácticamente idéntica a la métrica lo que demuestra que la solución no es muy adecuada. Probamos con los otros algoritmos</p>
+</section>
+<section id="isomap" class="level5">
+<h5 class="anchored" data-anchor-id="isomap">Isomap</h5>
+<p>En estos modelos no hace falta pasar la matriz de distancias ya que podemos utilizar los datos originales. Podemos probar diferentes configuraciones del número de vecinos pero para comenzar seleccionaremos <code>k=5</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>isomap_leukemia <span class="ot">=</span> <span class="fu">Isomap</span>(<span class="fu">as.matrix</span>(X_genes), <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">k =</span> <span class="dv">5</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Como en los modelos anteriores utilizamos las coordenadas de la solución obtenida para ver el comportamiento de los diferentes tipos de leucemia.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(isomap_leukemia<span class="sc">$</span>dim2)</span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="co"># añadimos tipo</span></span>
+<span id="cb15-5"><a href="#cb15-5"></a>mds_plot<span class="sc">$</span>type <span class="ot">=</span> y_genes<span class="sc">$</span>type</span>
+<span id="cb15-6"><a href="#cb15-6"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb15-7"><a href="#cb15-7"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2, <span class="at">color =</span> type)) <span class="sc">+</span> </span>
+<span id="cb15-8"><a href="#cb15-8"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-013-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>La solución con cinco vecinos del Isomap parece incluso peor que las soluciones MDS obtenidas antes. En este caso solo se identifica claramente el tipo <code>Bone_Marrow_CD34</code>. Veamos que ocurre si reducimos el número de vecinos a 3.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>isomap_leukemia <span class="ot">=</span> <span class="fu">Isomap</span>(<span class="fu">as.matrix</span>(X_genes), <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">k =</span> <span class="dv">3</span>)</span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb16-3"><a href="#cb16-3"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(isomap_leukemia<span class="sc">$</span>dim2)</span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb16-5"><a href="#cb16-5"></a><span class="co"># añadimos tipo</span></span>
+<span id="cb16-6"><a href="#cb16-6"></a>mds_plot<span class="sc">$</span>type <span class="ot">=</span> y_genes<span class="sc">$</span>type</span>
+<span id="cb16-7"><a href="#cb16-7"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb16-8"><a href="#cb16-8"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2, <span class="at">color =</span> type)) <span class="sc">+</span> </span>
+<span id="cb16-9"><a href="#cb16-9"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-014-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>La solución es algo diferente y parecen identificarse dos tipos en lugar de uno solo. Por último probamos una solución con 10 vecinos para ver el efecto que tiene en la solución.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>isomap_leukemia <span class="ot">=</span> <span class="fu">Isomap</span>(<span class="fu">as.matrix</span>(X_genes), <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">k =</span> <span class="dv">10</span>)</span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb17-3"><a href="#cb17-3"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(isomap_leukemia<span class="sc">$</span>dim2)</span>
+<span id="cb17-4"><a href="#cb17-4"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb17-5"><a href="#cb17-5"></a><span class="co"># añadimos tipo</span></span>
+<span id="cb17-6"><a href="#cb17-6"></a>mds_plot<span class="sc">$</span>type <span class="ot">=</span> y_genes<span class="sc">$</span>type</span>
+<span id="cb17-7"><a href="#cb17-7"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb17-8"><a href="#cb17-8"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2, <span class="at">color =</span> type)) <span class="sc">+</span> </span>
+<span id="cb17-9"><a href="#cb17-9"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-015-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En este caso el único tipo que se identifica aisladamente es <code>PB</code> mientras que el resto está bastante disperso. No parece que ninguna de las soluciones propuestas nos sira para nuestro objetivo final. Veamos que ocurre cuando usamos LLE.</p>
+</section>
+<section id="lle" class="level5">
+<h5 class="anchored" data-anchor-id="lle">LLE</h5>
+<p>En este caso comenzamos con 5 vecinos como en el caso de Isomap. Obtenemos las solución y la representamos gráficamente.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>lle_leukemia <span class="ot">=</span> <span class="fu">LLE</span>(<span class="fu">as.matrix</span>(X_genes), <span class="at">dim =</span> <span class="dv">2</span>, <span class="at">k =</span> <span class="dv">5</span>)</span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb18-3"><a href="#cb18-3"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(lle_leukemia)</span>
+<span id="cb18-4"><a href="#cb18-4"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb18-5"><a href="#cb18-5"></a><span class="co"># añadimos tipo</span></span>
+<span id="cb18-6"><a href="#cb18-6"></a>mds_plot<span class="sc">$</span>type <span class="ot">=</span> y_genes<span class="sc">$</span>type</span>
+<span id="cb18-7"><a href="#cb18-7"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb18-8"><a href="#cb18-8"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2, <span class="at">color =</span> type)) <span class="sc">+</span> </span>
+<span id="cb18-9"><a href="#cb18-9"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-016-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En este caso si se identifican los cinco grupos claramente. De hecho las observaciones de tres de ellos se asignan en el mismo punto. El único tipo que parece disperso es <code>AML</code>, que ya vimos en análisis anteriores que era el más difícil de identificar. Esta solución resulta adecuada si estamos interesado sen diferenciar los tipos de tumor pero parece demasiado restrictiva. Veamos que ocurre si aumentamos el número de vecinos a 10.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>lle_leukemia <span class="ot">=</span> <span class="fu">LLE</span>(<span class="fu">as.matrix</span>(X_genes), <span class="at">dim =</span> <span class="dv">2</span>, <span class="at">k =</span> <span class="dv">10</span>)</span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb19-3"><a href="#cb19-3"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(lle_leukemia)</span>
+<span id="cb19-4"><a href="#cb19-4"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb19-5"><a href="#cb19-5"></a><span class="co"># añadimos tipo</span></span>
+<span id="cb19-6"><a href="#cb19-6"></a>mds_plot<span class="sc">$</span>type <span class="ot">=</span> y_genes<span class="sc">$</span>type</span>
+<span id="cb19-7"><a href="#cb19-7"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb19-8"><a href="#cb19-8"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2, <span class="at">color =</span> type)) <span class="sc">+</span> </span>
+<span id="cb19-9"><a href="#cb19-9"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-017-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En este caso se diferencian los grupos <code>PB</code>, <code>Bone_Marrow</code> y <code>PBSC_CD34</code>, mientras que los otros dos aparecen muy mezclados. La solución LLE parece que muestra el mejor funcionamiento de todos los algoritmos utilizados para este banco de datos.</p>
+</section>
+</section>
+<section id="vehicle-silhouettes-1" class="level4" data-number="17.3.2.2">
+<h4 data-number="17.3.2.2" class="anchored" data-anchor-id="vehicle-silhouettes-1"><span class="header-section-number">17.3.2.2</span> Vehicle silhouettes</h4>
+<section id="mds-métrico-1" class="level5">
+<h5 class="anchored" data-anchor-id="mds-métrico-1">MDS métrico</h5>
+<p>Obtenemos las solución del MDS métrico para dos dimensiones.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>mds_vehicle <span class="ot">=</span> X_vehicle <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2"></a>  <span class="fu">dist</span>() <span class="sc">%&gt;%</span>        <span class="co"># Calculamos distancia</span></span>
+<span id="cb20-3"><a href="#cb20-3"></a>  <span class="fu">cmdscale</span>(<span class="at">k=</span><span class="dv">2</span>, <span class="at">eig =</span> <span class="cn">TRUE</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Creamos un tibble con las coordenadas y añadimos la columna que identifica el tipo de leucemia para poder representar la solución vinculada con el target original.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(mds_vehicle<span class="sc">$</span>points)</span>
+<span id="cb21-3"><a href="#cb21-3"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="co"># añadimos tipo</span></span>
+<span id="cb21-5"><a href="#cb21-5"></a>mds_plot<span class="sc">$</span>vehicle <span class="ot">=</span> y_vehicle</span>
+<span id="cb21-6"><a href="#cb21-6"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb21-7"><a href="#cb21-7"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2, <span class="at">color =</span> vehicle)) <span class="sc">+</span> </span>
+<span id="cb21-8"><a href="#cb21-8"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-019-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Claramente la solución métrica no permite caracterizar los cuatro grupos de vehículos. Veamos que ocurre con la solución no métrica.</p>
+</section>
+<section id="mds-no-métrico-1" class="level5">
+<h5 class="anchored" data-anchor-id="mds-no-métrico-1">MDS no métrico</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="co"># Matriz de distancias</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a>mdsnm_vehicle <span class="ot">=</span> X_vehicle <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3"></a>  <span class="fu">dist</span>() <span class="sc">%&gt;%</span>        <span class="co"># Calculamos distancia</span></span>
+<span id="cb22-4"><a href="#cb22-4"></a>  <span class="fu">isoMDS</span>(<span class="at">k=</span><span class="dv">2</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>initial  value 2.813486 
+final  value 2.813402 
+converged</code></pre>
+</div>
+</div>
+<p>El valor de strees es bajo mostrando que la solución podría se adecuada. Veamos la representación gráfica de la solución.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb24-2"><a href="#cb24-2"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(mdsnm_vehicle<span class="sc">$</span>points)</span>
+<span id="cb24-3"><a href="#cb24-3"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb24-4"><a href="#cb24-4"></a><span class="co"># añadimos tipo</span></span>
+<span id="cb24-5"><a href="#cb24-5"></a>mds_plot<span class="sc">$</span>type <span class="ot">=</span> y_vehicle</span>
+<span id="cb24-6"><a href="#cb24-6"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb24-7"><a href="#cb24-7"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2, <span class="at">color =</span> type)) <span class="sc">+</span> </span>
+<span id="cb24-8"><a href="#cb24-8"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-021-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>La solución del modelo no métrico coincide con la del métrico, lo que era de esperar vistos lo valores de stress inicial y final.</p>
+</section>
+<section id="isomap-1" class="level5">
+<h5 class="anchored" data-anchor-id="isomap-1">Isomap</h5>
+<p>Veamos la solución Isomap con un número de vecinos <code>k=5</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>isomap_vehicle <span class="ot">=</span> <span class="fu">Isomap</span>(<span class="fu">as.matrix</span>(X_vehicle), <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">k =</span> <span class="dv">5</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Como en los modelos anteriores utilizamos las coordenadas de la solución obtenida para ver el comportamiento de los diferentes tipos de leucemia.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb26-2"><a href="#cb26-2"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(isomap_vehicle<span class="sc">$</span>dim2)</span>
+<span id="cb26-3"><a href="#cb26-3"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb26-4"><a href="#cb26-4"></a><span class="co"># añadimos tipo</span></span>
+<span id="cb26-5"><a href="#cb26-5"></a>mds_plot<span class="sc">$</span>type <span class="ot">=</span> y_vehicle</span>
+<span id="cb26-6"><a href="#cb26-6"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb26-7"><a href="#cb26-7"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2, <span class="at">color =</span> type)) <span class="sc">+</span> </span>
+<span id="cb26-8"><a href="#cb26-8"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-023-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>La solución se parece a las dos anteriores pero parece separar algo más los puntos y tiende a concentrar los del mismo tipo. Veamos que ocurre si aumentamos el número de vecinos a 10.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>isomap_vehicle <span class="ot">=</span> <span class="fu">Isomap</span>(<span class="fu">as.matrix</span>(X_vehicle), <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">k =</span> <span class="dv">10</span>)</span>
+<span id="cb27-2"><a href="#cb27-2"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb27-3"><a href="#cb27-3"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(isomap_vehicle<span class="sc">$</span>dim2)</span>
+<span id="cb27-4"><a href="#cb27-4"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb27-5"><a href="#cb27-5"></a><span class="co"># añadimos tipo</span></span>
+<span id="cb27-6"><a href="#cb27-6"></a>mds_plot<span class="sc">$</span>type <span class="ot">=</span> y_vehicle</span>
+<span id="cb27-7"><a href="#cb27-7"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb27-8"><a href="#cb27-8"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2, <span class="at">color =</span> type)) <span class="sc">+</span> </span>
+<span id="cb27-9"><a href="#cb27-9"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-024-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>La solución es diferente a las anteriores pero sigue sin cumplir el objetivo que se persigue. Exploramos el algoritmo siguiente.</p>
+</section>
+<section id="lle-1" class="level5">
+<h5 class="anchored" data-anchor-id="lle-1">LLE</h5>
+<p>En este caso comenzamos con 5 vecinos como en el caso de Isomap. Obtenemos las solución y la representamos gráficamente.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>lle_vehicle <span class="ot">=</span> <span class="fu">LLE</span>(<span class="fu">as.matrix</span>(X_vehicle), <span class="at">dim =</span> <span class="dv">2</span>, <span class="at">k =</span> <span class="dv">5</span>)</span>
+<span id="cb28-2"><a href="#cb28-2"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb28-3"><a href="#cb28-3"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(lle_vehicle)</span>
+<span id="cb28-4"><a href="#cb28-4"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb28-5"><a href="#cb28-5"></a><span class="co"># añadimos tipo</span></span>
+<span id="cb28-6"><a href="#cb28-6"></a>mds_plot<span class="sc">$</span>type <span class="ot">=</span> y_vehicle</span>
+<span id="cb28-7"><a href="#cb28-7"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb28-8"><a href="#cb28-8"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2, <span class="at">color =</span> type)) <span class="sc">+</span> </span>
+<span id="cb28-9"><a href="#cb28-9"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-025-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>La solución no resulta adecuada y se puede ver como cambiando el número de vecinos no mejoramos lo suficiente. Queda claro que la clasificación buscada resulta muy complicada con los datos recogidos. Esto puede ser debido a que hay una gran confusión en los tipos de vehículo atendiendo a las variables consideradas.</p>
+<p>Veamos que ocurre con el último ejemplo.</p>
+</section>
+</section>
+<section id="sales-1" class="level4" data-number="17.3.2.3">
+<h4 data-number="17.3.2.3" class="anchored" data-anchor-id="sales-1"><span class="header-section-number">17.3.2.3</span> Sales</h4>
+<p>Analizamos el fichero de ventas donde no tenemos variable target.</p>
+<section id="mds-métrico-2" class="level5">
+<h5 class="anchored" data-anchor-id="mds-métrico-2">MDS métrico</h5>
+<p>Obtenemos las solución del MDS métrico para dos dimensiones y representamos gráficamente la solución.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>mds_sales <span class="ot">=</span> X_sales <span class="sc">%&gt;%</span></span>
+<span id="cb29-2"><a href="#cb29-2"></a>  <span class="fu">dist</span>() <span class="sc">%&gt;%</span>        <span class="co"># Calculamos distancia</span></span>
+<span id="cb29-3"><a href="#cb29-3"></a>  <span class="fu">cmdscale</span>(<span class="at">k=</span><span class="dv">2</span>, <span class="at">eig =</span> <span class="cn">TRUE</span>) </span>
+<span id="cb29-4"><a href="#cb29-4"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb29-5"><a href="#cb29-5"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(mds_sales<span class="sc">$</span>points)</span>
+<span id="cb29-6"><a href="#cb29-6"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb29-7"><a href="#cb29-7"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb29-8"><a href="#cb29-8"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2)) <span class="sc">+</span> </span>
+<span id="cb29-9"><a href="#cb29-9"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-026-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En el gráfico aparecen determinarse tres agrupaciones de puntos sobre los valores de la dimensión 1. Veamos la calidad de la solución representando las distancias originales frente a las predichas por el modelo.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a><span class="co"># Distancias</span></span>
+<span id="cb30-2"><a href="#cb30-2"></a>original <span class="ot">=</span> X_sales <span class="sc">%&gt;%</span> <span class="fu">dist</span>()</span>
+<span id="cb30-3"><a href="#cb30-3"></a>predicha <span class="ot">=</span> mds_sales<span class="sc">$</span>points <span class="sc">%&gt;%</span> <span class="fu">dist</span>()</span>
+<span id="cb30-4"><a href="#cb30-4"></a>df <span class="ot">=</span> <span class="fu">data.frame</span>(original, predicha)</span>
+<span id="cb30-5"><a href="#cb30-5"></a><span class="co"># Gráfico</span></span>
+<span id="cb30-6"><a href="#cb30-6"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(original, predicha)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-027-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Las distancias obtenidas con el modelo se aproximan bastante bien a las originales salvo en las distancia bajas. Veamos que ocurre con la solución no métrica.</p>
+</section>
+<section id="mds-no-métrico-2" class="level5">
+<h5 class="anchored" data-anchor-id="mds-no-métrico-2">MDS no métrico</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a><span class="co"># Matriz de distancias</span></span>
+<span id="cb31-2"><a href="#cb31-2"></a>mdsnm_sales <span class="ot">=</span> X_sales <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href="#cb31-3"></a>  <span class="fu">dist</span>() <span class="sc">%&gt;%</span>        <span class="co"># Calculamos distancia</span></span>
+<span id="cb31-4"><a href="#cb31-4"></a>  <span class="fu">isoMDS</span>(<span class="at">k=</span><span class="dv">2</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>initial  value 6.265815 
+final  value 6.265459 
+converged</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb33-2"><a href="#cb33-2"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(mdsnm_sales<span class="sc">$</span>points)</span>
+<span id="cb33-3"><a href="#cb33-3"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb33-4"><a href="#cb33-4"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb33-5"><a href="#cb33-5"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2)) <span class="sc">+</span> </span>
+<span id="cb33-6"><a href="#cb33-6"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-028-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>A la vista de los valores de stress la solución métrica y no métrica son muy similares. Pasamos a explorar el resto de soluciones.</p>
+</section>
+<section id="isomap-2" class="level5">
+<h5 class="anchored" data-anchor-id="isomap-2">Isomap</h5>
+<p>Veamos la solución Isomap con un número de vecinos <code>k=5</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a>isomap_sales <span class="ot">=</span> <span class="fu">Isomap</span>(<span class="fu">as.matrix</span>(X_sales), <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">k =</span> <span class="dv">5</span>)</span>
+<span id="cb34-2"><a href="#cb34-2"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb34-3"><a href="#cb34-3"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(isomap_sales<span class="sc">$</span>dim2)</span>
+<span id="cb34-4"><a href="#cb34-4"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb34-5"><a href="#cb34-5"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb34-6"><a href="#cb34-6"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2)) <span class="sc">+</span> </span>
+<span id="cb34-7"><a href="#cb34-7"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-029-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>La configuración de la solución es bastante diferente a la de la solución MDS. Veamos que ocurre si variamos el número de vecinos. Cambiamos a 10 vecinos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a>isomap_sales <span class="ot">=</span> <span class="fu">Isomap</span>(<span class="fu">as.matrix</span>(X_sales), <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">k =</span> <span class="dv">10</span>)</span>
+<span id="cb35-2"><a href="#cb35-2"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb35-3"><a href="#cb35-3"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(isomap_sales<span class="sc">$</span>dim2)</span>
+<span id="cb35-4"><a href="#cb35-4"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb35-5"><a href="#cb35-5"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb35-6"><a href="#cb35-6"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2)) <span class="sc">+</span> </span>
+<span id="cb35-7"><a href="#cb35-7"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-030-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Ampliar el número de vecinos no cambia la configuración de las dos dimensiones. Exploramos la solución LLE.</p>
+</section>
+<section id="lle-2" class="level5">
+<h5 class="anchored" data-anchor-id="lle-2">LLE</h5>
+<p>En este caso comenzamos con 5 vecinos como en el caso de Isomap. Obtenemos las solución y la representamos gráficamente.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a>lle_sales <span class="ot">=</span> <span class="fu">LLE</span>(<span class="fu">as.matrix</span>(X_sales), <span class="at">dim =</span> <span class="dv">2</span>, <span class="at">k =</span> <span class="dv">5</span>)</span>
+<span id="cb36-2"><a href="#cb36-2"></a><span class="co"># tibble de coordenadas</span></span>
+<span id="cb36-3"><a href="#cb36-3"></a>mds_plot <span class="ot">=</span> <span class="fu">as.tibble</span>(lle_sales)</span>
+<span id="cb36-4"><a href="#cb36-4"></a><span class="fu">colnames</span>(mds_plot) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Dim1"</span>, <span class="st">"Dim2"</span>)</span>
+<span id="cb36-5"><a href="#cb36-5"></a><span class="co"># Gráfico MDS</span></span>
+<span id="cb36-6"><a href="#cb36-6"></a><span class="fu">ggplot</span>(mds_plot, <span class="fu">aes</span>(Dim1, Dim2)) <span class="sc">+</span> </span>
+<span id="cb36-7"><a href="#cb36-7"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="170_MDSmodels_files/figure-html/mds-031-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>La solución agrupa conjuntos de muestras en una misma posición (por lo que no vemos una nube de puntos completa), lo cual dificulta la interpretación de la solución.</p>
+</section>
+</section>
+</section>
+</section>
+<section id="sec-170.4" class="level2" data-number="17.4">
+<h2 data-number="17.4" class="anchored" data-anchor-id="sec-170.4"><span class="header-section-number">17.4</span> Ejercicios</h2>
+<ol type="1">
+<li>Ajustar un modelo de aprendizaje automático basado en escalas multidimensionales para el banco de datos <code>Iris</code><a href="40_DataBases.html#sec-iris"><span>4.3.3</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en escalas multidimensionales para el banco de datos <code>Wine quality</code><a href="40_DataBases.html#sec-winequality"><span>4.3.8</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en escalas multidimensionales para el banco de datos <code>WGene expression breast cancer</code><a href="40_DataBases.html#sec-geneexp"><span>4.3.10</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en escalas multidimensionales para el banco de datos <code>QSAR</code><a href="40_DataBases.html#sec-qsar"><span>4.2.8</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en escalas multidimensionales para el banco de datos <code>Meat spec</code><a href="40_DataBases.html#sec-meatspec"><span>4.2.5</span></a>.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "¡Copiado!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "¡Copiado!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./160_PrinCompmodels.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./180_Clustermodels.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Análisis cluster</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

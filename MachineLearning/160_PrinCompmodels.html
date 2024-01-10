@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MachineLearning - 16&nbsp; Componentes principales (CP)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./170_MDSmodels.html" rel="next">
+<link href="./150_Discriminantmodels.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos coincidentes",
+    "search-copy-link-title": "Copiar enlace para buscar",
+    "search-hide-matches-text": "Ocultar coincidencias adicionales",
+    "search-more-match-text": "más coincidencia en este documento",
+    "search-more-matches-text": "más coincidencias en este documento",
+    "search-clear-button-title": "Limpiar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Entregar"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MachineLearning</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Prefacio</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./01_IntroCourse.html" class="sidebar-item-text sidebar-link">Parte 1. Introducción</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_introAD.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_introAA.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./30_RandRstudio.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./40_DataBases.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./02_FirstStepsAA.html" class="sidebar-item-text sidebar-link">Parte 2. Primeros pasos</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./50_AED.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./03_SupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 3. Aprendizaje supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./60_RegressionModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regresión</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./70_LogisticModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelos de Regresión Logística</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./80_SurvivalModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./90_BayesianClassif.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./100_kNNmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./110_SVMmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./120_DTmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./130_Ensemblemodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Modelos de conjunto (Ensemble models)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./140_Boostingmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Modelos Boosting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./04_NonSupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 4. Aprendizaje no supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./150_Discriminantmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análisis discriminante (AD)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./160_PrinCompmodels.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./170_MDSmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./180_Clustermodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Análisis cluster</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">Referencias</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#sec-160.1" id="toc-sec-160.1" class="nav-link active" data-scroll-target="#sec-160.1"><span class="toc-section-number">16.1</span>  CP lineales</a>
+  <ul>
+  <li><a href="#sec-160.1.1" id="toc-sec-160.1.1" class="nav-link" data-scroll-target="#sec-160.1.1"><span class="toc-section-number">16.1.1</span>  Interpretación geométrica</a></li>
+  <li><a href="#sec-160.1.2" id="toc-sec-160.1.2" class="nav-link" data-scroll-target="#sec-160.1.2"><span class="toc-section-number">16.1.2</span>  Extracción de componentes</a></li>
+  <li><a href="#sec-160.1.3" id="toc-sec-160.1.3" class="nav-link" data-scroll-target="#sec-160.1.3"><span class="toc-section-number">16.1.3</span>  Variabilidad asociada a cada componente</a></li>
+  <li><a href="#sec-160.1.4" id="toc-sec-160.1.4" class="nav-link" data-scroll-target="#sec-160.1.4"><span class="toc-section-number">16.1.4</span>  Número óptimo de componentes</a></li>
+  <li><a href="#sec-160.1.5" id="toc-sec-160.1.5" class="nav-link" data-scroll-target="#sec-160.1.5"><span class="toc-section-number">16.1.5</span>  A tener en cuenta</a></li>
+  <li><a href="#sec-160.1.6" id="toc-sec-160.1.6" class="nav-link" data-scroll-target="#sec-160.1.6"><span class="toc-section-number">16.1.6</span>  Puntuaciones asociadas a las componentes</a></li>
+  <li><a href="#sec-160.1.7" id="toc-sec-160.1.7" class="nav-link" data-scroll-target="#sec-160.1.7"><span class="toc-section-number">16.1.7</span>  Representaciones gráficas</a></li>
+  <li><a href="#sec-160.1.8" id="toc-sec-160.1.8" class="nav-link" data-scroll-target="#sec-160.1.8"><span class="toc-section-number">16.1.8</span>  Usos de las CP</a></li>
+  </ul></li>
+  <li><a href="#sec-160.2" id="toc-sec-160.2" class="nav-link" data-scroll-target="#sec-160.2"><span class="toc-section-number">16.2</span>  CP no lineales</a>
+  <ul>
+  <li><a href="#sec-160.2.1" id="toc-sec-160.2.1" class="nav-link" data-scroll-target="#sec-160.2.1"><span class="toc-section-number">16.2.1</span>  CP aleatorizadas</a></li>
+  <li><a href="#sec-160.2.2" id="toc-sec-160.2.2" class="nav-link" data-scroll-target="#sec-160.2.2"><span class="toc-section-number">16.2.2</span>  CP Kernel</a></li>
+  <li><a href="#sec-160.2.3" id="toc-sec-160.2.3" class="nav-link" data-scroll-target="#sec-160.2.3"><span class="toc-section-number">16.2.3</span>  CP Independientes</a></li>
+  </ul></li>
+  <li><a href="#sec-160.3" id="toc-sec-160.3" class="nav-link" data-scroll-target="#sec-160.3"><span class="toc-section-number">16.3</span>  CP en R</a>
+  <ul>
+  <li><a href="#sec-160.3.1" id="toc-sec-160.3.1" class="nav-link" data-scroll-target="#sec-160.3.1"><span class="toc-section-number">16.3.1</span>  Bancos de datos</a>
+  <ul class="collapse">
+  <li><a href="#breast-cancer-wisconsin" id="toc-breast-cancer-wisconsin" class="nav-link" data-scroll-target="#breast-cancer-wisconsin"><span class="toc-section-number">16.3.1.1</span>  Breast Cancer Wisconsin</a></li>
+  <li><a href="#abalone" id="toc-abalone" class="nav-link" data-scroll-target="#abalone"><span class="toc-section-number">16.3.1.2</span>  Abalone</a></li>
+  <li><a href="#gene-expression-leukemia" id="toc-gene-expression-leukemia" class="nav-link" data-scroll-target="#gene-expression-leukemia"><span class="toc-section-number">16.3.1.3</span>  Gene expression leukemia</a></li>
+  </ul></li>
+  <li><a href="#sec-160.3.2" id="toc-sec-160.3.2" class="nav-link" data-scroll-target="#sec-160.3.2"><span class="toc-section-number">16.3.2</span>  Modelos</a>
+  <ul class="collapse">
+  <li><a href="#breast-cancer-wisconsin-1" id="toc-breast-cancer-wisconsin-1" class="nav-link" data-scroll-target="#breast-cancer-wisconsin-1"><span class="toc-section-number">16.3.2.1</span>  Breast Cancer Wisconsin</a></li>
+  <li><a href="#abalone-1" id="toc-abalone-1" class="nav-link" data-scroll-target="#abalone-1"><span class="toc-section-number">16.3.2.2</span>  Abalone</a></li>
+  <li><a href="#gene-expression-leukemia-1" id="toc-gene-expression-leukemia-1" class="nav-link" data-scroll-target="#gene-expression-leukemia-1"><span class="toc-section-number">16.3.2.3</span>  Gene expression leukemia</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#sec-160.4" id="toc-sec-160.4" class="nav-link" data-scroll-target="#sec-160.4"><span class="toc-section-number">16.4</span>  Ejercicios</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-160" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Supongamos que disponemos de una muestra de <span class="math inline">\(n\)</span> individuos medidos en <span class="math inline">\(p\)</span> variables diferentes con <span class="math inline">\(p\)</span> grande. La idea que subyace en los métodos de reducción de la dimensión es construir <span class="math inline">\(k\)</span> variables artificiales, con <span class="math inline">\(k &lt;&lt; p\)</span>, que poseen la misma capacidad explicativa que el conjunto original. De esta forma, cada sujeto pasa de ser representado por un vector de <span class="math inline">\(p\)</span> dimensiones (que gráficamente resulta difícil de visualizar) por uno de <span class="math inline">\(k\)</span> dimensiones. Si <span class="math inline">\(k \leq 3\)</span> resulta posible representar gráficamente la información contenida en todos los sujetos sin pérdida de capacidad explicativa.</p>
+<p>En los puntos siguientes se desarrolla el procedimiento de componentes principales que es el más utilizado en la literatura y cuyas aplicaciones más relevantes son la visualización de conjuntos multidimensionales o el pretratamiento de datos para la aplicación de otros algoritmos de aprendizaje automático.</p>
+<section id="sec-160.1" class="level2" data-number="16.1">
+<h2 data-number="16.1" class="anchored" data-anchor-id="sec-160.1"><span class="header-section-number">16.1</span> CP lineales</h2>
+<p>Consideramos una matriz de variables <span class="math inline">\(\mathbf{X}\)</span> compuesta por <span class="math inline">\(p\)</span> variables medidas en <span class="math inline">\(n\)</span> sujetos que denotamos por:</p>
+<p><span class="math display">\[\mathbf{X} =
+\begin{bmatrix}
+x_{11}&amp;...&amp;x_{1p}\\
+x_{21}&amp;...&amp;x_{2p}\\
+...&amp;...&amp;...\\
+x_{n1}&amp;...&amp;x_{np}
+\end{bmatrix}\]</span></p>
+<p>y cuya matriz de varianzas-covarianzas viene dada por <span class="math inline">\(\mathbf{\Sigma}\)</span>.</p>
+<p>El procedimiento de componentes principales fue inicialmente desarrollado por Pearson a finales del siglo XIX y posteriormente por Hotelling en los años 30 del siglo XX. Sin embargo, hasta la aparición de los ordenadores no se empezó a popularizar. Para estudiar las relaciones que se presentan entre <span class="math inline">\(p\)</span> variables correlacionadas (que miden información común) se puede transformar el conjunto original de variables en otro conjunto de nuevas variables incorreladas entre sí (que no tenga repetición o redundancia en la información) llamado conjunto de componentes principales.</p>
+<p>Las componentes principales se obtienen como combinaciones lineales de las variables originales y se van construyendo según el orden de importancia en cuanto a la variabilidad total que recogen de la muestra. De modo ideal, se buscan <span class="math inline">\(k &lt;&lt; p\)</span> variables que sean combinaciones lineales de las <span class="math inline">\(p\)</span> originales y que estén incorreladas, recogiendo la mayor parte de la información o variabilidad de los datos. Si las variables originales están incorreladas de partida, entonces no tiene sentido realizar un análisis de componentes principales.</p>
+<p>Si denotamos por <span class="math inline">\([\mathbf{y}_1,...,\mathbf{y}_p]\)</span> a las componentes principales, estas se pueden escribir como:</p>
+<p><span class="math display">\[\mathbf{y}_j = a_{j1}\mathbf{x}_1 + a_{j2}\mathbf{x}_2 + ... + a_{jp}\mathbf{x}_p = \mathbf{a}_j^{T}\mathbf{x}, \quad j=1,...,p\]</span></p>
+<p>Obviamente, si lo que queremos es maximizar la varianza, como veremos luego, una forma simple podría ser aumentar los coeficientes <span class="math inline">\(a_{ij}\)</span>. Por ello, para mantener la ortogonalidad de la transformación se impone que el módulo del vector <span class="math inline">\(\mathbf{a}_j^T = (a_{j1},...,a_{jp})\)</span> sea 1, es decir:</p>
+<p><span class="math display">\[\mathbf{a}_j^T \mathbf{a}_j = \sum_{i=1}^{p} a_{ji}^2= 1\]</span></p>
+<p>La primera componente se calcula eligiendo <span class="math inline">\(\mathbf{a}_1\)</span> de modo que <span class="math inline">\(\mathbf{y}_1\)</span> tenga la mayor varianza posible, sujeta a la restricción <span class="math inline">\(\mathbf{a}_j^T \mathbf{a}_j = 1\)</span>. La segunda componente principal se calcula obteniendo <span class="math inline">\(\mathbf{a}_2\)</span> de modo que la variable obtenida, <span class="math inline">\(\mathbf{y}_2\)</span> esté incorrelada con <span class="math inline">\(\mathbf{y}_1\)</span>. Del mismo modo se eligen <span class="math inline">\((\mathbf{y}_1\)</span>,…, <span class="math inline">\(\mathbf{y}_p)\)</span>, incorrelados entre sí, de manera que las variables aleatorias obtenidas vayan teniendo cada vez menor varianza.</p>
+<p>Los términos <span class="math inline">\(\mathbf{a}_1,...,\mathbf{a}_p\)</span> reciben el nombre de “<em>loadings</em>” y definen las componentes de forma única. Los <em>loadings</em> pueden interpretarse como el peso/importancia que tiene cada variable en cada componente y, por lo tanto, ayudan a conocer que tipo de información que recoge cada una de las componentes.</p>
+<section id="sec-160.1.1" class="level3" data-number="16.1.1">
+<h3 data-number="16.1.1" class="anchored" data-anchor-id="sec-160.1.1"><span class="header-section-number">16.1.1</span> Interpretación geométrica</h3>
+<p>Una forma intuitiva de entender el proceso de PCA es interpretar las componentes principales desde un punto de vista geométrico. Supóngase un conjunto de observaciones para las que se dispone de dos variables <span class="math inline">\((\mathbf{X}_1, \mathbf{X}_2)\)</span>. El vector que define la primera componente principal sigue la dirección en la que las observaciones tienen más varianza (línea roja). La proyección de cada observación sobre esa dirección equivale al valor de la primera componente para dicha observación.</p>
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/pc1.png" width="350" height="250"></p>
+<p>La segunda componente sigue la segunda dirección en la que los datos muestran mayor varianza y que no está correlacionada con la primera componente. La condición de no correlación entre componentes principales equivale a decir que sus direcciones son perpendiculares/ortogonales.</p>
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/pc2.png" width="350" height="250"></p>
+</section>
+<section id="sec-160.1.2" class="level3" data-number="16.1.2">
+<h3 data-number="16.1.2" class="anchored" data-anchor-id="sec-160.1.2"><span class="header-section-number">16.1.2</span> Extracción de componentes</h3>
+<p>El primer paso en la obtención de las componentes principales es centrar todas las variables originales, es decir, se resta a cada valor la media de la variable a la que pertenece. Con esto se consigue que todas las variables tengan media cero.</p>
+<p>Comenzamos el proceso obteniendo la primera componente principal, mediante el proceso de optimización:</p>
+<p><span class="math display">\[\underset{\mathbf{a}_1}{max} \text{ } Var(\mathbf{y}_1) = \underset{\mathbf{a}_1}{max}  \text{ }  Var(\mathbf{a}_1^T \mathbf{X}) = \underset{\mathbf{a}_1}{max}  \text{ }  \mathbf{a}_1^T \mathbf{\Sigma}\mathbf{a}_1\]</span></p>
+<p>con la restricción:</p>
+<p><span class="math display">\[\mathbf{a}_1^T \mathbf{a}_1 = 1.\]</span></p>
+<p>Utilizando el procedimiento habitual basado en los multiplicadores de Lagrange el problema planteado es equivalente a optimizar la función:</p>
+<p><span class="math display">\[f(\mathbf{a}_1) = \mathbf{a}_1^T \mathbf{\Sigma}\mathbf{a}_1 - \lambda (\mathbf{a}_1^T \mathbf{a}_1-1)\]</span></p>
+<p>Derivando e igualando a cero se puede ver que <span class="math inline">\(\lambda\)</span> se corresponde con el mayor valor propio de <span class="math inline">\(\mathbf{\Sigma}\)</span> y <span class="math inline">\(\mathbf{a}_1\)</span> con el correspondiente vector propio.</p>
+<p>Para obtener la segunda componente planteamos el problema de optimización:</p>
+<p><span class="math display">\[\underset{\mathbf{a}_2}{max}  \text{ }  \mathbf{a}_2^T \mathbf{\Sigma}\mathbf{a}_2\]</span></p>
+<p>con las restricciones:</p>
+<p><span class="math display">\[\mathbf{a}_2^T \mathbf{a}_2 = 1 \quad \text{ y } \quad \mathbf{a}_2^T \mathbf{a}_1 = 1.\]</span></p>
+<p>Utilizando de nuevo los multiplicadores de Lagrange podemos ver que la segunda componente se corresponde con el vector propio asociado con el segundo mayor valor propio de <span class="math inline">\(\mathbf{\Sigma}\)</span>.</p>
+<p>Sucesivamente se puede ver que las <span class="math inline">\(p\)</span> componentes principales se corresponden con los <span class="math inline">\(p\)</span> vectores propios asociados con los <span class="math inline">\(p\)</span> valores propios, <span class="math inline">\(\lambda_1,...,\lambda_p\)</span> (ordenados de mayor a menor) de <span class="math inline">\(\mathbf{\Sigma}\)</span>.</p>
+<p>Para obtener las componentes podemos usar entonces al descomposición de valores y vectores singulares (SVD) de <span class="math inline">\(\mathbf{\Sigma}\)</span>.</p>
+</section>
+<section id="sec-160.1.3" class="level3" data-number="16.1.3">
+<h3 data-number="16.1.3" class="anchored" data-anchor-id="sec-160.1.3"><span class="header-section-number">16.1.3</span> Variabilidad asociada a cada componente</h3>
+<p>Una de las preguntas más frecuentes que surge tras realizar un PCA es: ¿Cuánta información presente en el conjunto de datos original se pierde al proyectar las observaciones en un espacio de menor dimensión?, o lo que es lo mismo, ¿Cuanta información es capaz de capturar cada una de las componentes principales obtenidas? Para contestar a estas preguntas se recurre a la proporción de varianza explicada por cada componente principal.</p>
+<p>Asumiendo que las variables se han normalizado para tener media cero, y como hemos visto que cada autovalor corresponde a la varianza de la componente correspondiente, que se definía por medio del autovector <span class="math inline">\(\mathbf{a}_i\)</span>, es decir, <span class="math inline">\(Var(\mathbf{y}_i) = \lambda_i\)</span>, la varianza total presente en el conjunto de datos se define como:</p>
+<p><span class="math display">\[\sum_{i=1}^p Var(\mathbf{y_i}) = \sum_{i=1}^p \lambda_i = Tr(\mathbf{\Delta}),\]</span></p>
+<p>donde <span class="math inline">\(\mathbf{\Delta}\)</span> es la matriz diagonal:</p>
+<p><span class="math display">\[\begin{bmatrix}
+\lambda_1&amp;0&amp;...&amp;0\\
+0&amp;\lambda_2&amp;...&amp;0\\
+...&amp;...&amp;...&amp;...\\
+0&amp;0&amp;...&amp;\lambda_p
+\end{bmatrix}\]</span></p>
+<p>Utilizando las propiedades de la traza tenemos que:</p>
+<p><span class="math display">\[Tr(\mathbf{\Delta}) = Tr(\mathbf{A^t\Sigma A}) = Tr(\mathbf{\Sigma A^tA}) = Tr(\mathbf{\Sigma}),\]</span></p>
+<p>donde <span class="math inline">\(\mathbf{A}\)</span> es la matriz con filas formadas por cada uno de los <span class="math inline">\(p\)</span> vectores propios obtenidos.</p>
+<p>De esta forma la variabilidad del banco de datos original se corresponde con la variabilidad de las componentes. Esto permite hablar del porcentaje de varianza total que recoge la primera componente principal como:</p>
+<p><span class="math display">\[\frac{\lambda_1}{\sum_{i=1}^p \lambda_i}\times 100\]</span></p>
+<p>y del porcentaje de variabilidad recogido en las <span class="math inline">\(k\)</span> primeras componentes:</p>
+<p><span class="math display">\[\frac{\sum_{i=1}^k \lambda_i}{\sum_{i=1}^p \lambda_i}\times 100\]</span></p>
+</section>
+<section id="sec-160.1.4" class="level3" data-number="16.1.4">
+<h3 data-number="16.1.4" class="anchored" data-anchor-id="sec-160.1.4"><span class="header-section-number">16.1.4</span> Número óptimo de componentes</h3>
+<p>Por lo general, dada una matriz de datos de dimensiones n x p, el número de componentes principales que se pueden calcular es como máximo de n-1 o p (el menor de los dos valores es el limitante). Sin embargo, siendo el objetivo del PCA reducir la dimensionalidad, suelen ser de interés utilizar el número mínimo de componentes que resultan suficientes para explicar los datos. No existe una respuesta o método único que permita identificar cual es el número óptimo de componentes principales a utilizar. Una forma de proceder muy extendida consiste en evaluar la proporción de varianza explicada acumulada y seleccionar el número de componentes mínimo a partir del cual el incremento deja de ser sustancial.</p>
+<p>Para ello se suele hacer un gráfico de variabilidad explicada versus número de componentes para observar cuando el crecimiento de la curva resultante no resulta relevante.</p>
+</section>
+<section id="sec-160.1.5" class="level3" data-number="16.1.5">
+<h3 data-number="16.1.5" class="anchored" data-anchor-id="sec-160.1.5"><span class="header-section-number">16.1.5</span> A tener en cuenta</h3>
+<p>El proceso de PCA estándar es determinista, genera siempre las mismas componentes principales, es decir, el valor de los <em>loadings</em> resultantes es el mismo. La única diferencia que puede darse es que el signo de todos los <em>loadings</em> esté invertido. Esto es así porque el vector de <em>loadings</em> determina la dirección de la componente, y dicha dirección es la misma independientemente del signo (la componente sigue una línea que se extiende en ambas direcciones).</p>
+<p>Al trabajar con varianzas, el método PCA es muy sensible a <em>outliers</em>, por lo que es recomendable estudiar si los hay. La detección de valores atípicos con respecto a una determinada dimensión es algo relativamente sencillo de hacer mediante comprobaciones gráficas. Sin embargo, cuando se trata con múltiples dimensiones el proceso se complica.</p>
+</section>
+<section id="sec-160.1.6" class="level3" data-number="16.1.6">
+<h3 data-number="16.1.6" class="anchored" data-anchor-id="sec-160.1.6"><span class="header-section-number">16.1.6</span> Puntuaciones asociadas a las componentes</h3>
+<p>Una vez obtenidas las componentes principales resulta posible obtener la puntuación que obtendría cada una de las muestras del banco de datos sin más que sustituir los valores correspondientes en cada una de las ecuaciones de las componentes. Para obtener las puntuaciones en la primera componente de todas las muestras que componen el banco de datos original tendríamos:</p>
+<p><span class="math display">\[y_{1j} = a_{11}x_{j1} + a_{12}x_{j2}+...+a_{1p}x_{jp}, \quad j=1,...,n\]</span></p>
+<p>De forma similar podemos obtener las puntuaciones en el resto de componentes:</p>
+<p><span class="math display">\[y_{lj} = a_{l1}x_{jl} + a_{l2}x_{j2}+...+a_{lp}x_{jp}, \quad l=1,...,p; j=1,...,n\]</span></p>
+</section>
+<section id="sec-160.1.7" class="level3" data-number="16.1.7">
+<h3 data-number="16.1.7" class="anchored" data-anchor-id="sec-160.1.7"><span class="header-section-number">16.1.7</span> Representaciones gráficas</h3>
+<p>La mejor forma de entender la solución pasa por diferentes representaciones gráficas tanto de las componentes obtenidas como de las puntuaciones asociadas con dichas componentes:</p>
+<ol type="1">
+<li><p>Gráfico de los pesos de las variables originales en cada una de las componentes. Generalmente se toma el gráfico de las dos primeras componentes para estudiar cómo influye cada una de las variables originales en su construcción.</p></li>
+<li><p>Gráfico de las puntuaciones de las diferentes muestras con respecto a las primeras componentes para tratar de establecer patrones de comportamiento en los valores observados. Si además disponemos de una variable de etiquetas para los puntos podemos utilizarla para tratar de establecer dichos patrones.</p></li>
+<li><p>Gráfico <em>biplot</em> donde integramos de forma conjunta tanto el gráfico de los pesos de las variables originales como el de las puntuaciones de las componentes. Este gráfico nos permite tanto estudiar la relevancia de las variables en cada componente, así como saber si los patrones de las puntuaciones se corresponden con ellas.</p></li>
+</ol>
+</section>
+<section id="sec-160.1.8" class="level3" data-number="16.1.8">
+<h3 data-number="16.1.8" class="anchored" data-anchor-id="sec-160.1.8"><span class="header-section-number">16.1.8</span> Usos de las CP</h3>
+<p>Aunque las componentes principales constituyen por si mismo un algoritmo de aprendizaje automático, la realidad es que en muchas ocasiones se usa como complemento o paso previo de preparación de las muestras para el uso de un algoritmo supervisado. En este caso es necesario que la base de datos disponga de una variable respuesta (numérica o de etiquetas) que es utilizada en el algoritmo supervisado.</p>
+</section>
+</section>
+<section id="sec-160.2" class="level2" data-number="16.2">
+<h2 data-number="16.2" class="anchored" data-anchor-id="sec-160.2"><span class="header-section-number">16.2</span> CP no lineales</h2>
+<p>Existen situaciones donde no resulta posible utilizar las componentes principales lineales ya que los comportamientos a reproducir no son exactamente lineales al igual que cuando estudiamos las máquinas de vector soporte. Por eso introducimos nuevos métodos de componentes principales que nos permiten trabajar en dichas situaciones.</p>
+<p>Todos los métodos de componentes principales que vamos a estudiar a continuación tienen en común que se utilizan para reducir la dimensión de un conjunto de datos. Cada uno de estos tiene matices que los hace únicos, entre ellos encontramos el método de componentes principales aleatorizadas (RPCA), componentes principales Kernel (KernelPCA), y componentes principales independientes (FastICA).</p>
+<section id="sec-160.2.1" class="level3" data-number="16.2.1">
+<h3 data-number="16.2.1" class="anchored" data-anchor-id="sec-160.2.1"><span class="header-section-number">16.2.1</span> CP aleatorizadas</h3>
+<p>A diferencia del método básico de componentes principales (PCA), este método no solo se utiliza para reducir la dimensión de un conjunto de datos, sino también para encontrar patrones ocultos en estos. Se basa en el método de componentes principales, con una mayor eficiencia y estabilidad ya que utiliza un enfoque aleatorizado que permite conseguir mejores resultados.</p>
+<p>En lugar de utilizar los datos originales, primero aplica una transformación aleatoria a los datos y luego calcula las componentes principales sobre los datos transformados. Esta transformación permite más velocidad de ejecución del algoritmo y menos requerimientos de memoria. Además, es más robusto y menos sensible a los valores atípicos.</p>
+</section>
+<section id="sec-160.2.2" class="level3" data-number="16.2.2">
+<h3 data-number="16.2.2" class="anchored" data-anchor-id="sec-160.2.2"><span class="header-section-number">16.2.2</span> CP Kernel</h3>
+<p>Este se utiliza para permitir que el algoritmo maneje datos que linealmente no se pueden separar. Cuando nuestros datos no tienen una naturaleza lineal y nuestro método es incapaz de capturarla buscamos un nuevo espacio donde estos puntos tengan una distribución más bien lineal, aplicamos el análisis de componentes principales reduciendo así su dimensionalidad y luego volvemos al espacio original. Es una técnica útil para el análisis de datos en muchas aplicaciones, especialmente en el aprendizaje automático y el análisis de imágenes.</p>
+<p>Para movernos entre un espacio y otro utilizamos las funciones kernel que ya vimos en SVM.</p>
+</section>
+<section id="sec-160.2.3" class="level3" data-number="16.2.3">
+<h3 data-number="16.2.3" class="anchored" data-anchor-id="sec-160.2.3"><span class="header-section-number">16.2.3</span> CP Independientes</h3>
+<p><em>FastICA</em> utiliza un enfoque no lineal para permitir que el algoritmo maneje datos que linealmente no se pueden separar. En lugar de buscar componentes principales que capturen la mayor cantidad de varianza en los datos, este busca componentes independientes que sean lo más diferentes posibles entre sí, permitiendo al algoritmo capturar patrones no lineales en los datos originales y reducir la dimensión de manera efectiva. Se suele utilizar en el aprendizaje automático y en el análisis de señales.</p>
+</section>
+</section>
+<section id="sec-160.3" class="level2" data-number="16.3">
+<h2 data-number="16.3" class="anchored" data-anchor-id="sec-160.3"><span class="header-section-number">16.3</span> CP en R</h2>
+<p>Como ocurría con el análisis discriminante la librería <code>mlr3</code> pone a nuestra disposición dos <code>pipiOps</code> para llevar a cabo el preprocesamiento mediante componentes principales, pero en este caso vamos a optar por usar directamente las librerías y funciones de <code>R</code> para realizar un análisis más completo.</p>
+<p>Las librerías que vamos a utilizar (las deberemos instalar) son:</p>
+<ul>
+<li><code>FactoMineR</code> y <code>factoextra</code> para el análisis de componentes principales lineal.</li>
+<li><code>rsvd</code> para el análisis de componentes principales aleatorizadas.</li>
+<li><code>kernlab</code> para el análisis de componentes principales kernel.</li>
+<li><code>fastICA</code> para el análisis de componentes principales independientes.</li>
+</ul>
+<p>Comenzamos cargando todas las librerías que hemos utilizado y las que terminamos de instalar:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Paquetes anteriores</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(knitr) <span class="co"># para formatos de tablas</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">library</span>(DataExplorer)</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="fu">library</span>(cvms)</span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="fu">library</span>(kknn)</span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="fu">library</span>(rpart.plot)</span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="fu">library</span>(rda)</span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="fu">library</span>(klaR)</span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="fu">library</span>(ggord)</span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="fu">theme_set</span>(<span class="fu">theme_sjplot2</span>())</span>
+<span id="cb1-17"><a href="#cb1-17"></a></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="co"># Paquetes AA</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="fu">library</span>(mlr3verse)</span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="fu">library</span>(mlr3tuning)</span>
+<span id="cb1-21"><a href="#cb1-21"></a><span class="fu">library</span>(mlr3tuningspaces)</span>
+<span id="cb1-22"><a href="#cb1-22"></a><span class="fu">library</span>(gbm)</span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="fu">library</span>(RWeka)</span>
+<span id="cb1-24"><a href="#cb1-24"></a><span class="fu">library</span>(xgboost)</span>
+<span id="cb1-25"><a href="#cb1-25"></a><span class="fu">library</span>(lightgbm)</span>
+<span id="cb1-26"><a href="#cb1-26"></a><span class="fu">library</span>(FactoMineR)</span>
+<span id="cb1-27"><a href="#cb1-27"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb1-28"><a href="#cb1-28"></a><span class="fu">library</span>(rsvd)</span>
+<span id="cb1-29"><a href="#cb1-29"></a><span class="fu">library</span>(kernlab)</span>
+<span id="cb1-30"><a href="#cb1-30"></a><span class="fu">library</span>(fastICA)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="sec-160.3.1" class="level3" data-number="16.3.1">
+<h3 data-number="16.3.1" class="anchored" data-anchor-id="sec-160.3.1"><span class="header-section-number">16.3.1</span> Bancos de datos</h3>
+<p>Para ejemplificar el uso de los modelos de análisis de componentes principales vamos a utilizar tres bancos de datos: <code>Breast Cancer Wisconsin</code>, <code>Abalone</code>, y <code>Gene expression leukemia</code>. En concreto nos centramos en mostrar únicamente la aproximación de las componentes principales lineales. para el resto se puede acudir a las ayudas de las funciones en las librerías correspondientes.</p>
+<p>A continuación presentamos los tres bancos de datos y el código para cargar las bases de datos correspondientes.</p>
+<section id="breast-cancer-wisconsin" class="level4" data-number="16.3.1.1">
+<h4 data-number="16.3.1.1" class="anchored" data-anchor-id="breast-cancer-wisconsin"><span class="header-section-number">16.3.1.1</span> Breast Cancer Wisconsin</h4>
+<p>El código para cargar el banco de datos es:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Leemos datos</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>cancer <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"breastcancer.rds"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="co"># Eliminamos la variable id</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>cancer <span class="ot">=</span> cancer <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>id)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="abalone" class="level4" data-number="16.3.1.2">
+<h4 data-number="16.3.1.2" class="anchored" data-anchor-id="abalone"><span class="header-section-number">16.3.1.2</span> Abalone</h4>
+<p>El código para cargar el banco de datos es:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Leemos los datos</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>abalone <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"abalone.rds"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="fu">names</span>(abalone) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Sex"</span>, <span class="st">"Length"</span>, <span class="st">"Diameter"</span>, <span class="st">"Height"</span>, <span class="st">"Whole_weight"</span>, <span class="st">"Shucked_weight"</span>, <span class="st">"Viscera_weight"</span>, <span class="st">"Shell_weight"</span>, <span class="st">"Rings"</span>)  </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="gene-expression-leukemia" class="level4" data-number="16.3.1.3">
+<h4 data-number="16.3.1.3" class="anchored" data-anchor-id="gene-expression-leukemia"><span class="header-section-number">16.3.1.3</span> Gene expression leukemia</h4>
+<p>Este archivo que contiene los niveles de expresión génica de 22284 genes (columnas) de 64 muestras (filas). Hay 5 tipos diferentes de leucemia representados en este conjunto de datos (columna “type”). Más información sobre este conjunto de datos, así como otros formatos de archivo como TAB y ARFF, visualización de datos y puntos de referencia de clasificación y agrupación están disponibles gratuitamente en el sitio web oficial de CuMiDa con el id GSE9476: http://sbcb.inf.ufrgs.br/cumida</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># Leemos los datos</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>geneexpleu <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"geneexpressionleukemia.rds"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="co"># Eliminamos el indicador de la muestra</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>geneexpleu <span class="ot">=</span> geneexpleu <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>samples)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="sec-160.3.2" class="level3" data-number="16.3.2">
+<h3 data-number="16.3.2" class="anchored" data-anchor-id="sec-160.3.2"><span class="header-section-number">16.3.2</span> Modelos</h3>
+<p>Para cada banco de datos probamos diferentes modelos de componentes principales para ver como afecta la posible reducción de la dimensión. Además, como en todos los ejemplos tenemos una variable que identifica el grupo al que pertenecen los sujetos, la utilizaremos para valorar el modelo obtenido.</p>
+<section id="breast-cancer-wisconsin-1" class="level4" data-number="16.3.2.1">
+<h4 data-number="16.3.2.1" class="anchored" data-anchor-id="breast-cancer-wisconsin-1"><span class="header-section-number">16.3.2.1</span> Breast Cancer Wisconsin</h4>
+<p>Comenzamos con el análisis de datos de cáncer de mama en wisconsin. En primer lugar vamos a construir las matrices de datos necesarias para el entrenamiento y validación del modelo.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Codificación de muestras 80%-20%</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>ids <span class="ot">=</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">size =</span> <span class="fu">nrow</span>(cancer), <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>))</span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co"># Muestras de variables</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>train_cancer <span class="ot">=</span> cancer[ids <span class="sc">==</span> <span class="dv">1</span>,]</span>
+<span id="cb5-5"><a href="#cb5-5"></a>test_cancer <span class="ot">=</span> cancer[ids<span class="sc">==</span><span class="dv">2</span>, ]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para construir el modelo de CP utilizamos únicamente las características numéricas y nos guardaremos la variable de etiquetas (<code>diagnosis</code>) para valorar la solución obtenida. Para ello utilizamos la función <code>princomp()</code> de la librería <code>FactoMineR</code>. Los parámetros principales de esta función son:</p>
+<ul>
+<li><code>x</code>: una matriz numérica o data frame que proporciona los datos para el análisis de componentes principales.</li>
+<li><code>cor</code>: condición lógica que indica si debemos usar la matriz de correlaciones de <code>x</code>, es decir, si debemos escalar las variables. Por defecto el valor es <code>FALSE</code>.</li>
+<li><code>scores</code>: una condición lógica que indica si debemos calcular las puntuaciones de cada muestra para cada una de las componentes principales extraídas. Por defecto el valor es <code>TRUE</code>.</li>
+</ul>
+<p>Para acceder a los resultados del análisis podemos utilizar las funciones:</p>
+<ul>
+<li><code>get_eigenvalue()</code> para obtener la información sobre los valores propios.</li>
+<li><code>get_pca_var()</code> para obtener información sobre las componentes principales. Podemos obtener las coordenadas, las contribuciones a las componentes, y la calidad de la representación con los métodos <code>coord</code>, <code>contrib</code>, y <code>cos2</code>.<br>
+</li>
+<li><code>get_pca_ind()</code> para obtener la información de las muestras sobre las componentes principales. Podemos obtener las coordenadas, contribuciones a las componentes, y la calidad de la representación con los métodos <code>coord</code>, <code>contrib</code>, y <code>cos2</code>.</li>
+</ul>
+<p>Comenzamos obteniendo las CP para este conjunto de datos y analizamos numéricamente la calidad de la solución.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>X_train <span class="ot">=</span> train_cancer <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>diagnosis)</span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="co"># CP</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>cancer_cp <span class="ot">=</span> <span class="fu">princomp</span>(X_train, <span class="at">scale =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="co"># Resumen numérico del análisis</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="fu">get_eigenvalue</span>(cancer_cp)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         eigenvalue variance.percent cumulative.variance.percent
+Dim.1  4.544424e+05     9.827174e+01                    98.27174
+Dim.2  7.084840e+03     1.532074e+00                    99.80381
+Dim.3  8.073646e+02     1.745900e-01                    99.97840
+Dim.4  5.462594e+01     1.181269e-02                    99.99021
+Dim.5  3.989682e+01     8.627561e-03                    99.99884
+Dim.6  3.008991e+00     6.506848e-04                    99.99949
+Dim.7  1.700384e+00     3.677027e-04                    99.99986
+Dim.8  3.540018e-01     7.655177e-05                    99.99994
+Dim.9  1.575402e-01     3.406757e-05                    99.99997
+Dim.10 8.705421e-02     1.882520e-05                    99.99999
+Dim.11 3.047705e-02     6.590566e-06                   100.00000
+Dim.12 7.526044e-03     1.627483e-06                   100.00000
+Dim.13 2.940581e-03     6.358914e-07                   100.00000
+Dim.14 2.283617e-03     4.938249e-07                   100.00000
+Dim.15 1.278475e-03     2.764661e-07                   100.00000
+Dim.16 6.294514e-04     1.361169e-07                   100.00000
+Dim.17 3.922398e-04     8.482061e-08                   100.00000
+Dim.18 2.448805e-04     5.295464e-08                   100.00000
+Dim.19 1.917317e-04     4.146138e-08                   100.00000
+Dim.20 1.695831e-04     3.667181e-08                   100.00000
+Dim.21 8.352442e-05     1.806189e-08                   100.00000
+Dim.22 5.695513e-05     1.231637e-08                   100.00000
+Dim.23 3.683906e-05     7.966331e-09                   100.00000
+Dim.24 2.868066e-05     6.202103e-09                   100.00000
+Dim.25 1.609069e-05     3.479560e-09                   100.00000
+Dim.26 1.375499e-05     2.974472e-09                   100.00000
+Dim.27 3.696495e-06     7.993554e-10                   100.00000
+Dim.28 2.830228e-06     6.120279e-10                   100.00000
+Dim.29 1.984835e-06     4.292142e-10                   100.00000
+Dim.30 7.516780e-07     1.625480e-10                   100.00000</code></pre>
+</div>
+</div>
+<p>Con las dos primeras CP alcanzamos un 99.80% de variabilidad explicada lo que nos da un solución muy precisa. Si nos quedamos con tres componentes tendríamos un 99.97% de variabilidad explicada. Sin embargo, para poder representar la solución en gráficos dimensionales nos quedaremos solo con las dos primeras componentes. Generamos el scree plot asociado a este modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># Resumen gráfico del análisis</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="fu">fviz_eig</span>(cancer_cp)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-007-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Claramente al solución con dos dimensiones parece la acertada en esta situación.</p>
+<p>Estudiamos con detalle las dos primeras componentes para determinar la contribución de cada característica original en su construcción:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># Coordenadas de las características en las dos primeras componentes</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>var_pca <span class="ot">=</span> <span class="fu">get_pca_var</span>(cancer_cp)</span>
+<span id="cb9-3"><a href="#cb9-3"></a>var_pca<span class="sc">$</span>coord[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                Dim.1         Dim.2
+radius_mean              3.433801e+00  7.454521e-01
+texture_mean             1.480468e+00 -1.928105e-01
+perimeter_mean           2.367916e+01  4.978667e+00
+area_mean                3.510156e+02  7.148080e+01
+smoothness_mean          2.970629e-03 -1.418917e-03
+compactness_mean         2.696521e-02 -2.543761e-03
+concavity_mean           5.446966e-02  3.903219e-03
+concave_points_mean      3.219301e-02  2.924041e-03
+symmetry_mean            4.519380e-03 -3.281438e-03
+fractal_dimension_mean  -1.916002e-03 -1.534539e-03
+radius_se                2.156650e-01 -3.947865e-04
+texture_se              -3.967902e-02  3.367215e-02
+perimeter_se             1.527836e+00  9.242231e-02
+area_se                  3.845229e+01  1.846987e+00
+smoothness_se           -4.888490e-04  2.349369e-04
+compactness_se           3.541010e-03  5.660275e-04
+concavity_se             5.173307e-03  1.751959e-03
+concave_points_se        2.073223e-03  5.720825e-04
+symmetry_se             -8.231274e-04  1.132139e-03
+fractal_dimension_se    -1.138313e-04 -2.232285e-05
+radius_worst             4.799605e+00 -1.205125e-01
+texture_worst            2.042503e+00 -1.079647e+00
+perimeter_worst          3.312295e+01 -5.914483e-01
+area_worst               5.727569e+02 -4.410217e+01
+smoothness_worst         4.179783e-03 -7.238337e-03
+compactness_worst        6.699417e-02 -3.004328e-02
+concavity_worst          1.089645e-01 -2.509081e-02
+concave_points_worst     4.899289e-02 -5.216096e-03
+symmetry_worst           1.092528e-02 -1.647904e-02
+fractal_dimension_worst  7.422932e-04 -5.467551e-03</code></pre>
+</div>
+</div>
+<p>Los valores en valor absoluto más grandes en cada componente nos indican las características que más contribuyen en cada componente. Estos valores son los coeficientes asociados con las características consideradas en cada una de las componentes. Sin embargo, como el número de variables es grande nos va a resultar más útil presentar la solución mediante un gráfico. En concreto realizamos el gráfico de contribución de las características sobre las componentes:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu">fviz_pca_var</span>(cancer_cp, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),</span>
+<span id="cb11-2"><a href="#cb11-2"></a>             <span class="at">col.var =</span> <span class="st">"contrib"</span>, </span>
+<span id="cb11-3"><a href="#cb11-3"></a>             <span class="at">gradient.cols =</span> <span class="fu">c</span>(<span class="st">"aquamarine3"</span>, <span class="st">"darkgoldenrod1"</span>, <span class="st">"coral3"</span>),</span>
+<span id="cb11-4"><a href="#cb11-4"></a>             <span class="at">repel =</span> <span class="cn">TRUE</span>     </span>
+<span id="cb11-5"><a href="#cb11-5"></a>             )</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-009-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Podemos ver dos variables que contribuyen tanto en la componente 1 y la 2 como son <code>area_mean</code> y <code>area_worst</code>, mientras que hay un gran conjunto que contribuyen en menor medida. para poder comprender mejor este gráfico vamos a seleccionar las cinco variables que más contribuyen en la elaboración de las componentes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="fu">fviz_pca_var</span>(cancer_cp, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),</span>
+<span id="cb12-2"><a href="#cb12-2"></a>             <span class="at">select.var =</span> <span class="fu">list</span>(<span class="at">contrib =</span> <span class="dv">5</span>),</span>
+<span id="cb12-3"><a href="#cb12-3"></a>             <span class="at">col.var =</span> <span class="st">"contrib"</span>, </span>
+<span id="cb12-4"><a href="#cb12-4"></a>             <span class="at">gradient.cols =</span> <span class="fu">c</span>(<span class="st">"aquamarine3"</span>, <span class="st">"darkgoldenrod1"</span>, <span class="st">"coral3"</span>),</span>
+<span id="cb12-5"><a href="#cb12-5"></a>             <span class="at">repel =</span> <span class="cn">TRUE</span>     </span>
+<span id="cb12-6"><a href="#cb12-6"></a>             )</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-010-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Hemos identificado que las variables que más contribuyen so las relacionadas con el área y el perímetro del tumor. Para entender mejor el funcionamiento de las componentes representamos las muestras de entrenamiento a partir de los valores obtenidos por cada una de ellas en las dos componentes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="fu">fviz_pca_ind</span>(cancer_cp, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">geom =</span> <span class="st">"point"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-011-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>La nube de puntos se establece a lo largo de la componente 1, como era de esperar dado su gran capacidad explicativa, apreciándose una nube de puntos bastante concentrada en la parte negativa de la componente, mientras que es mucho más dispersa en la parte positiva. Para ver la posible asociación entre las componentes y la variable de etiquetas podemos repetir el gráfico anterior identificando cada punto según su etiqueta.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="fu">fviz_pca_ind</span>(cancer_cp, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">geom =</span> <span class="st">"point"</span>, </span>
+<span id="cb14-2"><a href="#cb14-2"></a>             <span class="at">label =</span> <span class="st">"none"</span>, </span>
+<span id="cb14-3"><a href="#cb14-3"></a>             <span class="at">habillage =</span> train_cancer<span class="sc">$</span>diagnosis,</span>
+<span id="cb14-4"><a href="#cb14-4"></a>             <span class="at">addEllipses=</span><span class="cn">TRUE</span>, <span class="at">ellipse.level=</span><span class="fl">0.95</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-012-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>El gráfico resulta muy interesante porque somos capaces de agrupar en la parte negativa de la componente 1 casi todas las muestras identificadas como tumor benigno, mientras que en la parte positiva tenemos casi todos los malignos. Para ello hemos utilizado la información de todas las variables sin necesidad de ningún procedimiento de selección de características. El paso siguiente es vincular las muestras con las características utilizadas mediante un gráfico conjunto. En este caso los tumores malignos parecen asociarse con los valores más grandes en las variables relacionadas con el área y perímetro del tumor, ya que todas ellas contribuyen en la parte positiva de dicha componente. Este gráfico nos permite establecer una regla de clasificación a partir de la componente 1 para futuras observaciones, sin más que calcular el valor de dicha componente y asignar la etiqueta <code>B</code> si el valor es negativo, o <code>M</code> si es positivo. En temas siguientes veremos como podemos utilizar las técnicas de agrupación par establecer estas etiquetas sin necesidad de marcar un umbral de clasificación como es el cero en este caso.</p>
+<p>Otra forma de proceder es utilizar las dos componentes obtenidas y utilizarlas para construir un algoritmo de aprendizaje supervisado como por ejemplo kNN. Tengamos en cuenta que pasamos de un conjunto inicial de 30 características a una solución a partir de dos componentes.</p>
+<p>Finalizamos el análisis estudiando el comportamiento de las muestras de validación con el modelo obtenido. En primer lugar debemos obtener la predicción de los valores de las componentes para la muestra de validación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># Valores de validación</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a>X_test <span class="ot">=</span> test_cancer <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>diagnosis)</span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="co"># Predicción para el modelo propuesto</span></span>
+<span id="cb15-4"><a href="#cb15-4"></a>predict.test <span class="ot">=</span> <span class="fu">predict</span>(cancer_cp, <span class="at">newdata =</span> X_test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Representamos ahora la solución para la muestra de entrenamiento superponiendo los valores de la muestra de validación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="co"># valores muestra de entrenamiento</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a>p <span class="ot">=</span> <span class="fu">fviz_pca_ind</span>(cancer_cp, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">geom =</span> <span class="st">"point"</span>, <span class="at">label =</span> <span class="st">"none"</span>)</span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="co"># valores muestra de validación</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="fu">fviz_add</span>(p, predict.test[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">color =</span><span class="st">"blue"</span>, <span class="at">geom =</span> <span class="st">"point"</span>, <span class="at">addlabel =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-014-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Se puede ver como las predicciones e las muestras de validación se corresponde con las de la muestra de entrenamiento.</p>
+<p>para finalizar vemos como crear el nuevo banco de datos que nos permita definir la tarea de clasificación para ser utilizad por cualquier algoritmo de aprendizaje.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># matriz con las dos primeras componentes</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a>ind_pca <span class="ot">=</span> <span class="fu">get_pca_ind</span>(cancer_cp)<span class="sc">$</span>coord[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb17-3"><a href="#cb17-3"></a><span class="co"># predicciones para la muestra de validación en las dos primeras componentes</span></span>
+<span id="cb17-4"><a href="#cb17-4"></a>predict.test <span class="ot">=</span> <span class="fu">predict</span>(cancer_cp, <span class="at">newdata =</span> X_test)[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb17-5"><a href="#cb17-5"></a><span class="co"># Matriz conjunta de coordenadas</span></span>
+<span id="cb17-6"><a href="#cb17-6"></a>X <span class="ot">=</span> <span class="fu">rbind</span>(ind_pca, predict.test)</span>
+<span id="cb17-7"><a href="#cb17-7"></a><span class="co"># vector target</span></span>
+<span id="cb17-8"><a href="#cb17-8"></a>y <span class="ot">=</span> <span class="fu">rbind</span>(train_cancer[,<span class="st">"diagnosis"</span>], test_cancer[,<span class="st">"diagnosis"</span>])</span>
+<span id="cb17-9"><a href="#cb17-9"></a><span class="co"># matriz de datos</span></span>
+<span id="cb17-10"><a href="#cb17-10"></a>data_cp <span class="ot">=</span> <span class="fu">as.tibble</span>(<span class="fu">data.frame</span>(y, X))</span>
+<span id="cb17-11"><a href="#cb17-11"></a><span class="co"># Creación de task </span></span>
+<span id="cb17-12"><a href="#cb17-12"></a>tsk_abalone <span class="ot">=</span> <span class="fu">as_task_classif</span>(data_cp, <span class="at">target =</span> <span class="st">"diagnosis"</span>)</span>
+<span id="cb17-13"><a href="#cb17-13"></a>tsk_abalone</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;TaskClassif:data_cp&gt; (569 x 3)
+* Target: diagnosis
+* Properties: twoclass
+* Features (2):
+  - dbl (2): Dim.1, Dim.2</code></pre>
+</div>
+</div>
+</section>
+<section id="abalone-1" class="level4" data-number="16.3.2.2">
+<h4 data-number="16.3.2.2" class="anchored" data-anchor-id="abalone-1"><span class="header-section-number">16.3.2.2</span> Abalone</h4>
+<p>Realizamos el análisis para el banco de datos Abalone. En primer lugar creamos la división en muestra de entrenamiento y validación de forma similar al banco de datos anterior.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="co"># Codificación de muestras 80%-20%</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a>ids <span class="ot">=</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">size =</span> <span class="fu">nrow</span>(abalone), <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>))</span>
+<span id="cb19-3"><a href="#cb19-3"></a><span class="co"># Muestras de variables</span></span>
+<span id="cb19-4"><a href="#cb19-4"></a>train_abalone <span class="ot">=</span> abalone[ids <span class="sc">==</span> <span class="dv">1</span>,]</span>
+<span id="cb19-5"><a href="#cb19-5"></a>test_abalone <span class="ot">=</span> abalone[ids<span class="sc">==</span><span class="dv">2</span>, ]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Obtenemos las CP lineales para este conjunto de datos y analizamos numéricamente la calidad de la solución.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>X_train <span class="ot">=</span> train_abalone <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>Sex)</span>
+<span id="cb20-2"><a href="#cb20-2"></a><span class="co"># CP</span></span>
+<span id="cb20-3"><a href="#cb20-3"></a>abalone_cp <span class="ot">=</span> <span class="fu">princomp</span>(X_train, <span class="at">scale =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb20-4"><a href="#cb20-4"></a><span class="co"># Resumen numérico del análisis</span></span>
+<span id="cb20-5"><a href="#cb20-5"></a><span class="fu">get_eigenvalue</span>(abalone_cp)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        eigenvalue variance.percent cumulative.variance.percent
+Dim.1 1.034609e+01     97.641532209                    97.64153
+Dim.2 2.419785e-01      2.283678798                    99.92521
+Dim.3 3.082687e-03      0.029092940                    99.95430
+Dim.4 2.655909e-03      0.025065211                    99.97937
+Dim.5 1.073762e-03      0.010133660                    99.98950
+Dim.6 5.399308e-04      0.005095611                    99.99460
+Dim.7 4.215568e-04      0.003978454                    99.99858
+Dim.8 1.507935e-04      0.001423118                   100.00000</code></pre>
+</div>
+</div>
+<p>El resumen del modelo nos muestra que con las dos primeras componentes alcanzamos un 99.99% de variabilidad explicada, es decir, podemos reducir la información contenida en las 8 características originales con tan solo dos componentes. De hecho con la primera ya alcanzamos un 97.7% de variabilidad explicada.Podemos obtener el scree plot (o resumen gráfico del modelo) con la función <code>fviz_eig</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="co"># Resumen gráfico del análisis</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a><span class="fu">fviz_eig</span>(abalone_cp)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-018-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Estudiamos con detalle las dos primeras componentes para determinar la contribución de cada característica original en su construcción:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># Coordenadas de las características en las dos primeras componentes</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a>var_pca <span class="ot">=</span> <span class="fu">get_pca_var</span>(abalone_cp)</span>
+<span id="cb23-3"><a href="#cb23-3"></a>var_pca<span class="sc">$</span>coord[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    Dim.1       Dim.2
+Length         0.06888311  0.08964353
+Diameter       0.05867659  0.07273990
+Height         0.02361168  0.02599891
+Whole_weight   0.27472170  0.41058411
+Shucked_weight 0.09811647  0.19721625
+Viscera_weight 0.05728304  0.08974881
+Shell_weight   0.08979225  0.10014924
+Rings          3.20014154 -0.04916569</code></pre>
+</div>
+</div>
+<p>En este caso si nos resulta más sencillo escribir las ecuaciones de la componentes que viene dadas por las expresiones:</p>
+<p><span class="math display">\[CP1 = 0.068*Length + 0.058*Diameter + 0.024*Height  + 0.273*Whole + 0.097*Shucked + 0.057*Viscera + 0.090* Shell + 3.241*Rings\]</span> <span class="math display">\[CP2 = 0.089*Length + 0.073*Diameter + 0.025*Height  + 0.408*Whole + 0.195*Shucked + 0.089*Viscera + 0.101* Shell -0.048*Rings\]</span></p>
+<p>donde podemos ver que la variable <code>Rings</code> es la relevante en la CP1, mientras que <code>Whole_weight</code> y <code>Shucked_weight</code> lo son en la componente 2. Esas tres características son las más relevantes en la construcción de las componentes como podemos ver a partir de su contribución:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="co"># Contribuciones de las características en las dos primeras componentes</span></span>
+<span id="cb25-2"><a href="#cb25-2"></a>var_pca<span class="sc">$</span>contrib[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      Dim.1      Dim.2
+Length          0.045861586  3.3209398
+Diameter        0.033277705  2.1865957
+Height          0.005388615  0.2793402
+Whole_weight    0.729473460 69.6670491
+Shucked_weight  0.093048083 16.0734297
+Viscera_weight  0.031715798  3.3287448
+Shell_weight    0.077929387  4.1449422
+Rings          98.983305365  0.9989584</code></pre>
+</div>
+</div>
+<p>En los valores de las contribuciones podemos ver claramente las características más relevantes en cada una de las componentes. A continuación representamos gráficamente las contribuciones.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="fu">fviz_pca_var</span>(abalone_cp, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),</span>
+<span id="cb27-2"><a href="#cb27-2"></a>             <span class="at">col.var =</span> <span class="st">"contrib"</span>, </span>
+<span id="cb27-3"><a href="#cb27-3"></a>             <span class="at">gradient.cols =</span> <span class="fu">c</span>(<span class="st">"aquamarine3"</span>, <span class="st">"darkgoldenrod1"</span>, <span class="st">"coral3"</span>),</span>
+<span id="cb27-4"><a href="#cb27-4"></a>             <span class="at">repel =</span> <span class="cn">TRUE</span>     </span>
+<span id="cb27-5"><a href="#cb27-5"></a>             )</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-021-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En el gráfico se aprecia claramente la contribución de cada variables en cada una de las componentes. Como hay pocas características que contribuyan,estas tienden a agruparse en torno al cero. Para evitar esa aglomeración y que el gráfico sea más informativo vamos a representar solo las características más relevantes. En este caso seleccionamos las tres variables que más contribuyen a la solución.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a><span class="fu">fviz_pca_var</span>(abalone_cp, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),</span>
+<span id="cb28-2"><a href="#cb28-2"></a>             <span class="at">select.var =</span> <span class="fu">list</span>(<span class="at">contrib =</span> <span class="dv">3</span>),</span>
+<span id="cb28-3"><a href="#cb28-3"></a>             <span class="at">col.var =</span> <span class="st">"contrib"</span>, </span>
+<span id="cb28-4"><a href="#cb28-4"></a>             <span class="at">gradient.cols =</span> <span class="fu">c</span>(<span class="st">"aquamarine3"</span>, <span class="st">"darkgoldenrod1"</span>, <span class="st">"coral3"</span>),</span>
+<span id="cb28-5"><a href="#cb28-5"></a>             <span class="at">repel =</span> <span class="cn">TRUE</span>     </span>
+<span id="cb28-6"><a href="#cb28-6"></a>             )</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-022-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Podemos trabajar ahora con las muestras consideradas en el entrenamiento representando sus valores en cada una de las componentes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a><span class="fu">fviz_pca_ind</span>(abalone_cp, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">geom =</span> <span class="st">"point"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-023-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En el gráfico se representan cada una de las muestras con respecto a las dos primeras CP, es decir, los valores que obtenemos para ambas al sustituir los valores de sus características en las ecuaciones obtenidas. Para entender mejor el comportamiento de las muestras podemos representar los puntos anteriores coloreando cada uno de ellos con la variable <code>Sex</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a><span class="fu">fviz_pca_ind</span>(abalone_cp, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">geom =</span> <span class="st">"point"</span>, </span>
+<span id="cb30-2"><a href="#cb30-2"></a>             <span class="at">label =</span> <span class="st">"none"</span>, </span>
+<span id="cb30-3"><a href="#cb30-3"></a>             <span class="at">habillage =</span> train_abalone<span class="sc">$</span>Sex,</span>
+<span id="cb30-4"><a href="#cb30-4"></a>             <span class="at">addEllipses=</span><span class="cn">TRUE</span>, <span class="at">ellipse.level=</span><span class="fl">0.95</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-024-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Podemos ver como los sujetos identificados con el grupo <code>I</code> se sitúan en el tercer cuadrante principalmente mientras que los otros dos grupos se reparten por los otros tres cuadrantes. Este es el motivo por el cual en modelos anteriores el porcentaje de clasificación era tan bajo. Podemos comprobar eso con las elipses obtenidas para cada uno de los grupos donde vemos claramente intersecciones entre ellas.</p>
+<p>Para finalizar el análisis de la muestra de entrenamiento vamos a representar conjuntamente las muestras con la contribución de las variables para entender cuales de ellas caracterizan a las muestras más cercanas.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a><span class="fu">fviz_pca_biplot</span>(abalone_cp, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">geom =</span> <span class="st">"point"</span>, </span>
+<span id="cb31-2"><a href="#cb31-2"></a>                <span class="at">label=</span><span class="st">"var"</span>, </span>
+<span id="cb31-3"><a href="#cb31-3"></a>                <span class="at">habillage =</span> train_abalone<span class="sc">$</span>Sex,</span>
+<span id="cb31-4"><a href="#cb31-4"></a>                <span class="at">col.var =</span> <span class="st">"black"</span>, </span>
+<span id="cb31-5"><a href="#cb31-5"></a>                <span class="at">addEllipses=</span><span class="cn">TRUE</span>, <span class="at">ellipse.level=</span><span class="fl">0.95</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-025-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Con este gráfico podemos determinar que los sujetos en el grupo <code>I</code> tienen los valores más bajos en las variables que más contribuyen al análisis de CP. Finalizamos el análisis estudiando el comportamiento de las muestras de validación con el modelo obtenido. En primer lugar debemos obtener la predicción de los valores de las componentes para la muestra de validación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a><span class="co"># Valores de validación</span></span>
+<span id="cb32-2"><a href="#cb32-2"></a>X_test <span class="ot">=</span> test_abalone <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>Sex)</span>
+<span id="cb32-3"><a href="#cb32-3"></a><span class="co"># Predicción para el modelo propuesto</span></span>
+<span id="cb32-4"><a href="#cb32-4"></a>predict.test <span class="ot">=</span> <span class="fu">predict</span>(abalone_cp, <span class="at">newdata =</span> X_test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Representamos ahora la solución para la muestra de entrenamiento superponiendo los valores de la muestra de validación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a><span class="co"># valores muestra de entrenamiento</span></span>
+<span id="cb33-2"><a href="#cb33-2"></a>p <span class="ot">=</span> <span class="fu">fviz_pca_ind</span>(abalone_cp, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">geom =</span> <span class="st">"point"</span>, <span class="at">label =</span> <span class="st">"none"</span>)</span>
+<span id="cb33-3"><a href="#cb33-3"></a><span class="co"># valores muestra de validación</span></span>
+<span id="cb33-4"><a href="#cb33-4"></a><span class="fu">fviz_add</span>(p, predict.test[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">color =</span><span class="st">"blue"</span>, <span class="at">geom =</span> <span class="st">"point"</span>, <span class="at">addlabel =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-027-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Como era de esperar la predicción para la muestra de validación es compatible con los resultados de la muestra de entrenamiento.</p>
+<p>Como hemos hecho en el banco de datos anterior podemos definir una tarea de clasificación a partir de las componentes obtenidas para llevar a cabo un modelo de aprendizaje supervisado.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a><span class="co"># matriz con las dos primeras componentes</span></span>
+<span id="cb34-2"><a href="#cb34-2"></a>ind_pca <span class="ot">=</span> <span class="fu">get_pca_ind</span>(abalone_cp)<span class="sc">$</span>coord[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb34-3"><a href="#cb34-3"></a><span class="co"># predicciones para la muestra de validación en las dos primeras componentes</span></span>
+<span id="cb34-4"><a href="#cb34-4"></a>predict.test <span class="ot">=</span> <span class="fu">predict</span>(abalone_cp, <span class="at">newdata =</span> X_test)[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb34-5"><a href="#cb34-5"></a><span class="co"># Matriz conjunta de coordenadas</span></span>
+<span id="cb34-6"><a href="#cb34-6"></a>X <span class="ot">=</span> <span class="fu">rbind</span>(ind_pca, predict.test)</span>
+<span id="cb34-7"><a href="#cb34-7"></a><span class="co"># vector target</span></span>
+<span id="cb34-8"><a href="#cb34-8"></a>y <span class="ot">=</span> <span class="fu">rbind</span>(train_abalone[,<span class="st">"Sex"</span>], test_abalone[,<span class="st">"Sex"</span>])</span>
+<span id="cb34-9"><a href="#cb34-9"></a><span class="co"># matriz de datos</span></span>
+<span id="cb34-10"><a href="#cb34-10"></a>data_cp <span class="ot">=</span> <span class="fu">as.tibble</span>(<span class="fu">data.frame</span>(y, X))</span>
+<span id="cb34-11"><a href="#cb34-11"></a><span class="co"># Creación de task </span></span>
+<span id="cb34-12"><a href="#cb34-12"></a>tsk_abalone <span class="ot">=</span> <span class="fu">as_task_classif</span>(data_cp, <span class="at">target =</span> <span class="st">"Sex"</span>)</span>
+<span id="cb34-13"><a href="#cb34-13"></a>tsk_abalone</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;TaskClassif:data_cp&gt; (4177 x 3)
+* Target: Sex
+* Properties: multiclass
+* Features (2):
+  - dbl (2): Dim.1, Dim.2</code></pre>
+</div>
+</div>
+</section>
+<section id="gene-expression-leukemia-1" class="level4" data-number="16.3.2.3">
+<h4 data-number="16.3.2.3" class="anchored" data-anchor-id="gene-expression-leukemia-1"><span class="header-section-number">16.3.2.3</span> Gene expression leukemia</h4>
+<p>Este ejemplo es el más habitual dentro de los modelos de reducción de la dimensión, ya que solo disponemos de 64 muestras, mientras que tenemos 22284 expresiones (características) para identificar el tipo de leucemia al que pertenecen. Conseguir reducir la dimensión de la matriz de datos para poder identificar las muestras adecuadamente es el objetivo de las CP en esta situación.</p>
+<p>En primer lugar creamos la división en muestra de entrenamiento y validación de forma similar al banco de datos anterior.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a><span class="co"># Codificación de muestras 80%-20%</span></span>
+<span id="cb36-2"><a href="#cb36-2"></a>ids <span class="ot">=</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">size =</span> <span class="fu">nrow</span>(geneexpleu), <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>))</span>
+<span id="cb36-3"><a href="#cb36-3"></a><span class="co"># Muestras de variables</span></span>
+<span id="cb36-4"><a href="#cb36-4"></a>train_leukemia <span class="ot">=</span> geneexpleu[ids <span class="sc">==</span> <span class="dv">1</span>,]</span>
+<span id="cb36-5"><a href="#cb36-5"></a>test_leukemia <span class="ot">=</span> geneexpleu[ids<span class="sc">==</span><span class="dv">2</span>, ]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Obtenemos las CP lineales para este conjunto de datos y analizamos numéricamente la calidad de la solución. En este caso debemos cambiar la función que os permite realizar el análisis de componentes, dado que <code>princomp</code> sol funciona cuando el número de muestras es mayo que el de variables. En este caso utilizamos la función <code>prcomp</code> que tiene las mismas características que la anterior pero funciona en esta situación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a>X_train <span class="ot">=</span> train_leukemia <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>type)</span>
+<span id="cb37-2"><a href="#cb37-2"></a><span class="co"># CP</span></span>
+<span id="cb37-3"><a href="#cb37-3"></a>leukemia_cp <span class="ot">=</span> <span class="fu">prcomp</span>(X_train, <span class="at">scale =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb37-4"><a href="#cb37-4"></a><span class="co"># Resumen numérico del análisis</span></span>
+<span id="cb37-5"><a href="#cb37-5"></a><span class="fu">get_eigenvalue</span>(leukemia_cp)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         eigenvalue variance.percent cumulative.variance.percent
+Dim.1  4.520739e+03     2.028784e+01                    20.28784
+Dim.2  3.501512e+03     1.571383e+01                    36.00166
+Dim.3  1.676743e+03     7.524765e+00                    43.52643
+Dim.4  1.425329e+03     6.396485e+00                    49.92291
+Dim.5  1.085828e+03     4.872897e+00                    54.79581
+Dim.6  8.110920e+02     3.639959e+00                    58.43577
+Dim.7  6.420111e+02     2.881170e+00                    61.31694
+Dim.8  6.188420e+02     2.777194e+00                    64.09413
+Dim.9  5.770235e+02     2.589523e+00                    66.68366
+Dim.10 4.940824e+02     2.217306e+00                    68.90096
+Dim.11 4.397460e+02     1.973460e+00                    70.87442
+Dim.12 4.358849e+02     1.956132e+00                    72.83055
+Dim.13 3.367410e+02     1.511202e+00                    74.34175
+Dim.14 3.086688e+02     1.385221e+00                    75.72698
+Dim.15 2.956141e+02     1.326635e+00                    77.05361
+Dim.16 2.848350e+02     1.278261e+00                    78.33187
+Dim.17 2.742650e+02     1.230826e+00                    79.56270
+Dim.18 2.738469e+02     1.228950e+00                    80.79165
+Dim.19 2.526948e+02     1.134025e+00                    81.92567
+Dim.20 2.447249e+02     1.098258e+00                    83.02393
+Dim.21 2.211324e+02     9.923815e-01                    84.01631
+Dim.22 2.132694e+02     9.570945e-01                    84.97341
+Dim.23 2.028438e+02     9.103075e-01                    85.88372
+Dim.24 1.888337e+02     8.474341e-01                    86.73115
+Dim.25 1.809886e+02     8.122274e-01                    87.54338
+Dim.26 1.747806e+02     7.843677e-01                    88.32774
+Dim.27 1.604691e+02     7.201416e-01                    89.04789
+Dim.28 1.544187e+02     6.929888e-01                    89.74087
+Dim.29 1.533225e+02     6.880693e-01                    90.42894
+Dim.30 1.481118e+02     6.646850e-01                    91.09363
+Dim.31 1.369662e+02     6.146666e-01                    91.70830
+Dim.32 1.346512e+02     6.042777e-01                    92.31257
+Dim.33 1.308830e+02     5.873668e-01                    92.89994
+Dim.34 1.260239e+02     5.655607e-01                    93.46550
+Dim.35 1.228773e+02     5.514395e-01                    94.01694
+Dim.36 1.159545e+02     5.203722e-01                    94.53731
+Dim.37 1.112905e+02     4.994415e-01                    95.03675
+Dim.38 1.082983e+02     4.860132e-01                    95.52277
+Dim.39 1.007091e+02     4.519548e-01                    95.97472
+Dim.40 9.781492e+01     4.389666e-01                    96.41369
+Dim.41 9.509857e+01     4.267763e-01                    96.84046
+Dim.42 9.322575e+01     4.183716e-01                    97.25884
+Dim.43 8.566623e+01     3.844466e-01                    97.64328
+Dim.44 8.525253e+01     3.825900e-01                    98.02587
+Dim.45 8.167464e+01     3.665334e-01                    98.39241
+Dim.46 7.888189e+01     3.540003e-01                    98.74641
+Dim.47 7.772464e+01     3.488069e-01                    99.09521
+Dim.48 7.421464e+01     3.330550e-01                    99.42827
+Dim.49 7.054615e+01     3.165918e-01                    99.74486
+Dim.50 5.685270e+01     2.551394e-01                   100.00000
+Dim.51 3.832475e-26     1.719910e-28                   100.00000</code></pre>
+</div>
+</div>
+<p>Podemos ver que para alcanzar un porcentaje de clasificación correcta superior al 70% deberíamos considerar al menos 12 componentes. Esto puede parecer mucho pero hay que tener en cuenta que partimos de 22284 y nos estamos quedando con 12. Si nos parece que el porcentaje es demasiado bajo podríamos llegar hasta las 20 componentes con un porcentaje superior al 80%. El problema en esta situación es que los gráficos unidimensionales con las dos primeras componentes ya no resultan tan informativos como en los ejemplos anteriores dado que solo explican el 32.9% de la variabilidad.</p>
+<p>De todas formas vamos a identificar las 10 expresiones más relevantes en las dos primeras componentes y representaremos las muestras etiquetadas para ver su comportamiento.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a><span class="fu">fviz_pca_var</span>(leukemia_cp, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),</span>
+<span id="cb39-2"><a href="#cb39-2"></a>             <span class="at">select.var =</span> <span class="fu">list</span>(<span class="at">contrib =</span> <span class="dv">10</span>),</span>
+<span id="cb39-3"><a href="#cb39-3"></a>             <span class="at">col.var =</span> <span class="st">"contrib"</span>, </span>
+<span id="cb39-4"><a href="#cb39-4"></a>             <span class="at">gradient.cols =</span> <span class="fu">c</span>(<span class="st">"aquamarine3"</span>, <span class="st">"darkgoldenrod1"</span>, <span class="st">"coral3"</span>),</span>
+<span id="cb39-5"><a href="#cb39-5"></a>             <span class="at">repel =</span> <span class="cn">TRUE</span>     </span>
+<span id="cb39-6"><a href="#cb39-6"></a>             )</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-031-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Podemos ver las 10 expresiones que más contribuyen en la construcción de las dos primeras componentes, que recordemos son las más relevantes ya que las construimos por orden de importancia. Veamos el gráfico de muestras:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a><span class="fu">fviz_pca_ind</span>(leukemia_cp, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">geom =</span> <span class="st">"point"</span>, </span>
+<span id="cb40-2"><a href="#cb40-2"></a>             <span class="at">label =</span> <span class="st">"none"</span>, </span>
+<span id="cb40-3"><a href="#cb40-3"></a>             <span class="at">habillage =</span> train_leukemia<span class="sc">$</span>type,</span>
+<span id="cb40-4"><a href="#cb40-4"></a>             <span class="at">addEllipses=</span><span class="cn">TRUE</span>, <span class="at">ellipse.level=</span><span class="fl">0.95</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-032-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Si ignoramos las observaciones del grupo <code>AML</code> podemos ver como con dos componentes somos capaces de ordenar los otros cuatro grupos de izquierda a derecha. Tengamos en cuenta que hemos pasado la información de 22284 característica a tan solo 2. Esta solución nos permite establecer scores arbitrarios de clasificación en cada uno de los grupos, pero para evitar sesgos vamos a construir un algoritmo de aprendizaje completo utilizando las CP en la tarea de preprocesado.</p>
+<p>En primer lugar vamos a definir la tarea correspondiente, aplicaremos las componentes principales y utilizaremos los resultados en un modelo de aprendizaje. En este caso utilizaremos <code>kNN</code> por su sencillez y porque utiliza distancias que es al final lo que estamos observando en la solución de CP.</p>
+<p>Para poder utilizar el algoritmo de aprendizaje debemos generar en primer lugar con los que tenderemos que entrenarlo. para ellos vamos a seleccionar dentro de cada tipo de leucemia el 80% de los datos para entrenamiento y reservaremos el otro 20% para la validación. en este caso hacemos la construcción manualmente para que se entienda el proceso de selección de muestras y para poder usar la función <code>prcomp</code> directamente.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="co"># Generamos factor y contamos los elementos en cada grupo</span></span>
+<span id="cb41-2"><a href="#cb41-2"></a>geneexpleu<span class="sc">$</span>type <span class="ot">=</span> <span class="fu">as.factor</span>(geneexpleu<span class="sc">$</span>type)</span>
+<span id="cb41-3"><a href="#cb41-3"></a>grupos <span class="ot">=</span> <span class="fu">levels</span>(geneexpleu<span class="sc">$</span>type)</span>
+<span id="cb41-4"><a href="#cb41-4"></a><span class="co"># ordenamos los datos de acuerdo a los niveles del factor</span></span>
+<span id="cb41-5"><a href="#cb41-5"></a>df <span class="ot">=</span> geneexpleu[<span class="fu">order</span>(geneexpleu<span class="sc">$</span>type),]</span>
+<span id="cb41-6"><a href="#cb41-6"></a><span class="co"># tamaño de cada grupo</span></span>
+<span id="cb41-7"><a href="#cb41-7"></a>ngroup <span class="ot">=</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb41-8"><a href="#cb41-8"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
+<span id="cb41-9"><a href="#cb41-9"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>()) </span>
+<span id="cb41-10"><a href="#cb41-10"></a><span class="co"># Bucle para la selección de la regla 80-20 dentro de cada grupo</span></span>
+<span id="cb41-11"><a href="#cb41-11"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb41-12"><a href="#cb41-12"></a>ids <span class="ot">=</span> <span class="fu">c</span>()</span>
+<span id="cb41-13"><a href="#cb41-13"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(ngroup))</span>
+<span id="cb41-14"><a href="#cb41-14"></a>{</span>
+<span id="cb41-15"><a href="#cb41-15"></a>  id_0 <span class="ot">=</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">size =</span> ngroup<span class="sc">$</span>n[i], <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>))</span>
+<span id="cb41-16"><a href="#cb41-16"></a>  ids <span class="ot">=</span> <span class="fu">c</span>(ids, id_0)</span>
+<span id="cb41-17"><a href="#cb41-17"></a>}</span>
+<span id="cb41-18"><a href="#cb41-18"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb41-19"><a href="#cb41-19"></a>train_df <span class="ot">=</span> df[ids <span class="sc">==</span> <span class="dv">1</span>,]</span>
+<span id="cb41-20"><a href="#cb41-20"></a>test_df <span class="ot">=</span> df[ids<span class="sc">==</span><span class="dv">2</span>, ]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Procedemos con el análisis de CP para la muestra de entrenamiento.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>X_train <span class="ot">=</span> train_df <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>type)</span>
+<span id="cb42-2"><a href="#cb42-2"></a><span class="co"># CP</span></span>
+<span id="cb42-3"><a href="#cb42-3"></a>leukemia_cp <span class="ot">=</span> <span class="fu">prcomp</span>(X_train, <span class="at">scale =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb42-4"><a href="#cb42-4"></a><span class="co"># Resumen numérico del análisis</span></span>
+<span id="cb42-5"><a href="#cb42-5"></a><span class="fu">get_eigenvalue</span>(leukemia_cp)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         eigenvalue variance.percent cumulative.variance.percent
+Dim.1  4.411351e+03     1.979694e+01                    19.79694
+Dim.2  3.401979e+03     1.526715e+01                    35.06409
+Dim.3  1.613096e+03     7.239134e+00                    42.30322
+Dim.4  1.419492e+03     6.370293e+00                    48.67351
+Dim.5  1.064312e+03     4.776339e+00                    53.44985
+Dim.6  8.118393e+02     3.643312e+00                    57.09316
+Dim.7  7.066226e+02     3.171129e+00                    60.26429
+Dim.8  6.057231e+02     2.718319e+00                    62.98261
+Dim.9  5.830974e+02     2.616782e+00                    65.59939
+Dim.10 4.512864e+02     2.025250e+00                    67.62464
+Dim.11 4.326276e+02     1.941514e+00                    69.56616
+Dim.12 4.187507e+02     1.879239e+00                    71.44540
+Dim.13 3.265857e+02     1.465627e+00                    72.91102
+Dim.14 3.087774e+02     1.385709e+00                    74.29673
+Dim.15 2.979314e+02     1.337035e+00                    75.63377
+Dim.16 2.700705e+02     1.212002e+00                    76.84577
+Dim.17 2.665257e+02     1.196094e+00                    78.04186
+Dim.18 2.516485e+02     1.129329e+00                    79.17119
+Dim.19 2.359456e+02     1.058859e+00                    80.23005
+Dim.20 2.330587e+02     1.045903e+00                    81.27596
+Dim.21 2.169408e+02     9.735710e-01                    82.24953
+Dim.22 2.161647e+02     9.700878e-01                    83.21961
+Dim.23 2.059366e+02     9.241870e-01                    84.14380
+Dim.24 1.936774e+02     8.691710e-01                    85.01297
+Dim.25 1.830696e+02     8.215662e-01                    85.83454
+Dim.26 1.814853e+02     8.144562e-01                    86.64900
+Dim.27 1.735029e+02     7.786333e-01                    87.42763
+Dim.28 1.647993e+02     7.395741e-01                    88.16720
+Dim.29 1.537400e+02     6.899432e-01                    88.85715
+Dim.30 1.505584e+02     6.756648e-01                    89.53281
+Dim.31 1.441521e+02     6.469153e-01                    90.17973
+Dim.32 1.358827e+02     6.098042e-01                    90.78953
+Dim.33 1.331839e+02     5.976926e-01                    91.38722
+Dim.34 1.303979e+02     5.851902e-01                    91.97241
+Dim.35 1.270160e+02     5.700130e-01                    92.54243
+Dim.36 1.230039e+02     5.520079e-01                    93.09443
+Dim.37 1.205819e+02     5.411387e-01                    93.63557
+Dim.38 1.160503e+02     5.208019e-01                    94.15637
+Dim.39 1.144249e+02     5.135075e-01                    94.66988
+Dim.40 1.096759e+02     4.921954e-01                    95.16208
+Dim.41 1.089276e+02     4.888371e-01                    95.65091
+Dim.42 1.008546e+02     4.526080e-01                    96.10352
+Dim.43 9.688027e+01     4.347721e-01                    96.53829
+Dim.44 8.988757e+01     4.033908e-01                    96.94169
+Dim.45 8.776299e+01     3.938562e-01                    97.33554
+Dim.46 8.632529e+01     3.874043e-01                    97.72295
+Dim.47 8.281361e+01     3.716448e-01                    98.09459
+Dim.48 7.973399e+01     3.578243e-01                    98.45241
+Dim.49 7.666314e+01     3.440432e-01                    98.79646
+Dim.50 7.388179e+01     3.315612e-01                    99.12802
+Dim.51 7.175739e+01     3.220275e-01                    99.45005
+Dim.52 6.561306e+01     2.944534e-01                    99.74450
+Dim.53 5.693301e+01     2.554997e-01                   100.00000
+Dim.54 3.668946e-26     1.646523e-28                   100.00000</code></pre>
+</div>
+</div>
+<p>El resultado obtenido es similar al anterior donde no hemos estratificado por <code>type</code>. En principio vamos a optar por una solución con 15 componentes donde alcanzamos el 75% de variabilidad explicada.</p>
+<p>Para facilitar la implementación del CP dentro del algoritmo de aprendizaje vamos a definir una función que nos de las puntuaciones de las CP (para un número fijo de componentes) junto con el vector de etiquetas. De esta forma utilizamos el resultado de esa función como entrada de datos del algoritmo de aprendizaje.</p>
+<p>Para generar la tarea debemos obtener las puntuaciones en esas 15 CP tanto de los datos de entrenamiento como los de validación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a><span class="co"># Función para obtener las coordenadas de las muestras en las CP</span></span>
+<span id="cb44-2"><a href="#cb44-2"></a>obtain_cp <span class="ot">=</span> <span class="cf">function</span>(dtrain, dtest, ncomp)</span>
+<span id="cb44-3"><a href="#cb44-3"></a>{</span>
+<span id="cb44-4"><a href="#cb44-4"></a>  <span class="co"># dtrain: datos de entrenamiento</span></span>
+<span id="cb44-5"><a href="#cb44-5"></a>  <span class="co"># dtest: datos de validación</span></span>
+<span id="cb44-6"><a href="#cb44-6"></a>  <span class="co"># ncomp: numero de componentes a extraer</span></span>
+<span id="cb44-7"><a href="#cb44-7"></a>  </span>
+<span id="cb44-8"><a href="#cb44-8"></a>  <span class="co"># Modelo CP</span></span>
+<span id="cb44-9"><a href="#cb44-9"></a>  model_cp <span class="ot">=</span> <span class="fu">prcomp</span>(dtrain, <span class="at">scale =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb44-10"><a href="#cb44-10"></a>  <span class="co"># Puntuaciones de la muestra de entrenamiento</span></span>
+<span id="cb44-11"><a href="#cb44-11"></a>  cp_train <span class="ot">=</span> <span class="fu">get_pca_ind</span>(model_cp)<span class="sc">$</span>coord[,<span class="dv">1</span><span class="sc">:</span>ncomp]</span>
+<span id="cb44-12"><a href="#cb44-12"></a>  <span class="co"># Puntuaciones de la muestra de validación</span></span>
+<span id="cb44-13"><a href="#cb44-13"></a>  cp_test <span class="ot">=</span> <span class="fu">predict</span>(model_cp, <span class="at">newdata =</span> dtest)[,<span class="dv">1</span><span class="sc">:</span>ncomp]</span>
+<span id="cb44-14"><a href="#cb44-14"></a>  <span class="co"># matriz de puntuaciones</span></span>
+<span id="cb44-15"><a href="#cb44-15"></a>  df <span class="ot">=</span> <span class="fu">as.tibble</span>(<span class="fu">rbind</span>(cp_train, cp_test))</span>
+<span id="cb44-16"><a href="#cb44-16"></a>  <span class="fu">return</span>(df)</span>
+<span id="cb44-17"><a href="#cb44-17"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a><span class="co"># Matriz de componentes y etiquetas para la definición de la tarea</span></span>
+<span id="cb45-2"><a href="#cb45-2"></a>ncp <span class="ot">=</span> <span class="dv">15</span></span>
+<span id="cb45-3"><a href="#cb45-3"></a>X_test <span class="ot">=</span> test_df <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>type)</span>
+<span id="cb45-4"><a href="#cb45-4"></a>df_leukemia <span class="ot">=</span> <span class="fu">obtain_cp</span>(X_train, X_test, ncp)</span>
+<span id="cb45-5"><a href="#cb45-5"></a>df_leukemia<span class="sc">$</span>type <span class="ot">=</span> <span class="fu">c</span>(train_df<span class="sc">$</span>type, test_df<span class="sc">$</span>type)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora ya estamos en disposición de definir la tarea de clasificación usando el algoritmo kNN.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a><span class="co"># Creación de task eliminado la columna que identifica os sujetos</span></span>
+<span id="cb46-2"><a href="#cb46-2"></a>tsk_leukemia <span class="ot">=</span> <span class="fu">as_task_classif</span>(df_leukemia, <span class="at">target =</span> <span class="st">"type"</span>)</span>
+<span id="cb46-3"><a href="#cb46-3"></a>tsk_leukemia</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;TaskClassif:df_leukemia&gt; (64 x 16)
+* Target: type
+* Properties: multiclass
+* Features (15):
+  - dbl (15): Dim.1, Dim.10, Dim.11, Dim.12, Dim.13, Dim.14, Dim.15,
+    Dim.2, Dim.3, Dim.4, Dim.5, Dim.6, Dim.7, Dim.8, Dim.9</code></pre>
+</div>
+</div>
+<p>Configuramos el algoritmo para trabajar con 4 vecinos, dado que el número de muestras es bastante pequeño. Además creamos las divisiones para el entrenamiento y la validación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a><span class="co"># Definimos learner para predecir la probabilidad</span></span>
+<span id="cb48-2"><a href="#cb48-2"></a>lknn_classif <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.kknn"</span>, <span class="at">k=</span><span class="dv">4</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb48-3"><a href="#cb48-3"></a></span>
+<span id="cb48-4"><a href="#cb48-4"></a><span class="co"># Generamos variable de estrato</span></span>
+<span id="cb48-5"><a href="#cb48-5"></a>tsk_leukemia<span class="sc">$</span>col_roles<span class="sc">$</span>stratum <span class="ot">&lt;-</span> <span class="st">"type"</span></span>
+<span id="cb48-6"><a href="#cb48-6"></a><span class="co"># Fijamos semilla para asegurar la reproducibilidad del modelo</span></span>
+<span id="cb48-7"><a href="#cb48-7"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb48-8"><a href="#cb48-8"></a><span class="co"># Creamos la partición</span></span>
+<span id="cb48-9"><a href="#cb48-9"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_leukemia, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb48-10"><a href="#cb48-10"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb48-11"><a href="#cb48-11"></a>tsk_train_leukemia <span class="ot">=</span> tsk_leukemia<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb48-12"><a href="#cb48-12"></a>tsk_test_leukemia  <span class="ot">=</span> tsk_leukemia<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Evaluamos la capacidad de clasificación del modelo a partir de los scores habituales y del estudio de la matriz de confusión.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1"></a><span class="co"># Entrenamiento</span></span>
+<span id="cb49-2"><a href="#cb49-2"></a>lknn_classif<span class="sc">$</span><span class="fu">train</span>(tsk_train_leukemia)</span>
+<span id="cb49-3"><a href="#cb49-3"></a><span class="co"># Predicción de la muestra de entrenamiento y validación</span></span>
+<span id="cb49-4"><a href="#cb49-4"></a>pred_train <span class="ot">=</span> lknn_classif<span class="sc">$</span><span class="fu">predict</span>(tsk_train_leukemia)</span>
+<span id="cb49-5"><a href="#cb49-5"></a>pred_test <span class="ot">=</span> lknn_classif<span class="sc">$</span><span class="fu">predict</span>(tsk_test_leukemia)</span>
+<span id="cb49-6"><a href="#cb49-6"></a><span class="co"># scores de validación</span></span>
+<span id="cb49-7"><a href="#cb49-7"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"classif.acc"</span>, <span class="st">"classif.bacc"</span>))</span>
+<span id="cb49-8"><a href="#cb49-8"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb49-9"><a href="#cb49-9"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> classif.acc classif.bacc 
+           1            1 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb51-2"><a href="#cb51-2"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> classif.acc classif.bacc 
+           1            1 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a><span class="co"># Matriz de confusión</span></span>
+<span id="cb53-2"><a href="#cb53-2"></a>cm <span class="ot">=</span> <span class="fu">confusion_matrix</span>(pred_test<span class="sc">$</span>truth, pred_test<span class="sc">$</span>response)</span>
+<span id="cb53-3"><a href="#cb53-3"></a><span class="fu">plot_confusion_matrix</span>(cm<span class="sc">$</span><span class="st">`</span><span class="at">Confusion Matrix</span><span class="st">`</span>[[<span class="dv">1</span>]]) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-039-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Los resultados muestran una clasificación perfecta del 100%, es decir, con 15 componentes somo capaces de clasificar los diferentes tipos de tumor a partir de las 22248 expresiones. Sin embargo, vamos a ver que efecto tiene el reducir el número de componentes para obtener un modelo más sencillo. Veamos que ocurre si consideramos únicamente dos componentes principales.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a>df_leukemia <span class="ot">=</span> <span class="fu">obtain_cp</span>(X_train, X_test, <span class="dv">2</span>)</span>
+<span id="cb54-2"><a href="#cb54-2"></a>df_leukemia<span class="sc">$</span>type <span class="ot">=</span> <span class="fu">c</span>(train_df<span class="sc">$</span>type, test_df<span class="sc">$</span>type)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Generamos y evaluamos el nuevo modelo</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a><span class="co"># Creación de task eliminado la columna que identifica os sujetos</span></span>
+<span id="cb55-2"><a href="#cb55-2"></a>tsk_leukemia <span class="ot">=</span> <span class="fu">as_task_classif</span>(df_leukemia, <span class="at">target =</span> <span class="st">"type"</span>)</span>
+<span id="cb55-3"><a href="#cb55-3"></a><span class="co"># Definimos learner para predecir la probabilidad</span></span>
+<span id="cb55-4"><a href="#cb55-4"></a>lknn_classif <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.kknn"</span>, <span class="at">k=</span><span class="dv">4</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb55-5"><a href="#cb55-5"></a><span class="co"># Generamos variable de estrato</span></span>
+<span id="cb55-6"><a href="#cb55-6"></a>tsk_leukemia<span class="sc">$</span>col_roles<span class="sc">$</span>stratum <span class="ot">&lt;-</span> <span class="st">"type"</span></span>
+<span id="cb55-7"><a href="#cb55-7"></a><span class="co"># Fijamos semilla para asegurar la reproducibilidad del modelo</span></span>
+<span id="cb55-8"><a href="#cb55-8"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb55-9"><a href="#cb55-9"></a><span class="co"># Creamos la partición</span></span>
+<span id="cb55-10"><a href="#cb55-10"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_leukemia, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb55-11"><a href="#cb55-11"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb55-12"><a href="#cb55-12"></a>tsk_train_leukemia <span class="ot">=</span> tsk_leukemia<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb55-13"><a href="#cb55-13"></a>tsk_test_leukemia  <span class="ot">=</span> tsk_leukemia<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span>
+<span id="cb55-14"><a href="#cb55-14"></a><span class="co"># Entrenamiento</span></span>
+<span id="cb55-15"><a href="#cb55-15"></a>lknn_classif<span class="sc">$</span><span class="fu">train</span>(tsk_train_leukemia)</span>
+<span id="cb55-16"><a href="#cb55-16"></a><span class="co"># Predicción de la muestra de entrenamiento y validación</span></span>
+<span id="cb55-17"><a href="#cb55-17"></a>pred_train <span class="ot">=</span> lknn_classif<span class="sc">$</span><span class="fu">predict</span>(tsk_train_leukemia)</span>
+<span id="cb55-18"><a href="#cb55-18"></a>pred_test <span class="ot">=</span> lknn_classif<span class="sc">$</span><span class="fu">predict</span>(tsk_test_leukemia)</span>
+<span id="cb55-19"><a href="#cb55-19"></a><span class="co"># scores de validación</span></span>
+<span id="cb55-20"><a href="#cb55-20"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"classif.acc"</span>, <span class="st">"classif.bacc"</span>))</span>
+<span id="cb55-21"><a href="#cb55-21"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb55-22"><a href="#cb55-22"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> classif.acc classif.bacc 
+   0.8627451    0.8630952 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb57-2"><a href="#cb57-2"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> classif.acc classif.bacc 
+   0.8461538    0.8600000 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a><span class="co"># Matriz de confusión</span></span>
+<span id="cb59-2"><a href="#cb59-2"></a>cm <span class="ot">=</span> <span class="fu">confusion_matrix</span>(pred_test<span class="sc">$</span>truth, pred_test<span class="sc">$</span>response)</span>
+<span id="cb59-3"><a href="#cb59-3"></a><span class="fu">plot_confusion_matrix</span>(cm<span class="sc">$</span><span class="st">`</span><span class="at">Confusion Matrix</span><span class="st">`</span>[[<span class="dv">1</span>]]) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-041-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Si trabajamos con dos CP el porcentaje de clasificación correcta alcanza el 86% para la muestra de validación, y solo se observan errores de clasificación con los tipos <code>AML</code> y <code>Bone_Marrow_CD34</code>. Dado que hemos caído un 14% en el porcentaje de clasificación puede parecer que la solución no es muy buena, pero recordemos la reducción en el número de características consideradas. Veamos que ocurre si duplicamos el número de CP.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1"></a>df_leukemia <span class="ot">=</span> <span class="fu">obtain_cp</span>(X_train, X_test, <span class="dv">4</span>)</span>
+<span id="cb60-2"><a href="#cb60-2"></a>df_leukemia<span class="sc">$</span>type <span class="ot">=</span> <span class="fu">c</span>(train_df<span class="sc">$</span>type, test_df<span class="sc">$</span>type)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1"></a><span class="co"># Creación de task eliminado la columna que identifica os sujetos</span></span>
+<span id="cb61-2"><a href="#cb61-2"></a>tsk_leukemia <span class="ot">=</span> <span class="fu">as_task_classif</span>(df_leukemia, <span class="at">target =</span> <span class="st">"type"</span>)</span>
+<span id="cb61-3"><a href="#cb61-3"></a><span class="co"># Definimos learner para predecir la probabilidad</span></span>
+<span id="cb61-4"><a href="#cb61-4"></a>lknn_classif <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.kknn"</span>, <span class="at">k=</span><span class="dv">4</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb61-5"><a href="#cb61-5"></a><span class="co"># Generamos variable de estrato</span></span>
+<span id="cb61-6"><a href="#cb61-6"></a>tsk_leukemia<span class="sc">$</span>col_roles<span class="sc">$</span>stratum <span class="ot">&lt;-</span> <span class="st">"type"</span></span>
+<span id="cb61-7"><a href="#cb61-7"></a><span class="co"># Fijamos semilla para asegurar la reproducibilidad del modelo</span></span>
+<span id="cb61-8"><a href="#cb61-8"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb61-9"><a href="#cb61-9"></a><span class="co"># Creamos la partición</span></span>
+<span id="cb61-10"><a href="#cb61-10"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_leukemia, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb61-11"><a href="#cb61-11"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb61-12"><a href="#cb61-12"></a>tsk_train_leukemia <span class="ot">=</span> tsk_leukemia<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb61-13"><a href="#cb61-13"></a>tsk_test_leukemia  <span class="ot">=</span> tsk_leukemia<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span>
+<span id="cb61-14"><a href="#cb61-14"></a><span class="co"># Entrenamiento</span></span>
+<span id="cb61-15"><a href="#cb61-15"></a>lknn_classif<span class="sc">$</span><span class="fu">train</span>(tsk_train_leukemia)</span>
+<span id="cb61-16"><a href="#cb61-16"></a><span class="co"># Predicción de la muestra de entrenamiento y validación</span></span>
+<span id="cb61-17"><a href="#cb61-17"></a>pred_train <span class="ot">=</span> lknn_classif<span class="sc">$</span><span class="fu">predict</span>(tsk_train_leukemia)</span>
+<span id="cb61-18"><a href="#cb61-18"></a>pred_test <span class="ot">=</span> lknn_classif<span class="sc">$</span><span class="fu">predict</span>(tsk_test_leukemia)</span>
+<span id="cb61-19"><a href="#cb61-19"></a><span class="co"># scores de validación</span></span>
+<span id="cb61-20"><a href="#cb61-20"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"classif.acc"</span>, <span class="st">"classif.bacc"</span>))</span>
+<span id="cb61-21"><a href="#cb61-21"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb61-22"><a href="#cb61-22"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> classif.acc classif.bacc 
+   0.9607843    0.9571429 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb63-2"><a href="#cb63-2"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> classif.acc classif.bacc 
+           1            1 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1"></a><span class="co"># Matriz de confusión</span></span>
+<span id="cb65-2"><a href="#cb65-2"></a>cm <span class="ot">=</span> <span class="fu">confusion_matrix</span>(pred_test<span class="sc">$</span>truth, pred_test<span class="sc">$</span>response)</span>
+<span id="cb65-3"><a href="#cb65-3"></a><span class="fu">plot_confusion_matrix</span>(cm<span class="sc">$</span><span class="st">`</span><span class="at">Confusion Matrix</span><span class="st">`</span>[[<span class="dv">1</span>]]) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="160_PrinCompmodels_files/figure-html/prcomp-043-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Con cuatro componentes pasamos a un 95% de clasificación correcta y un 100% de clasificación ponderada para la muestra de validación. Parece claro que una solución con cuatro componentes resulta muy aceptable en esta situación.</p>
+<p>En este último ejemplo hemos visto como podemos combinar el método de CP y un algoritmo de clasificación, pero podríamos hacer algo similar en problemas de regresión donde nuestro objetivo es la predicción y no la clasificación. la forma de proceder es similar salvo por el hecho de que no podemos colorear los puntos en los gráficos de componentes.</p>
+</section>
+</section>
+</section>
+<section id="sec-160.4" class="level2" data-number="16.4">
+<h2 data-number="16.4" class="anchored" data-anchor-id="sec-160.4"><span class="header-section-number">16.4</span> Ejercicios</h2>
+<ol type="1">
+<li>Ajustar un modelo de aprendizaje automático basado en componentes principales y un algoritmo de clasificación para el banco de datos <code>Iris</code><a href="40_DataBases.html#sec-iris"><span>4.3.3</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en componentes principales y un algoritmo de clasificación para el banco de datos <code>Wine quality</code><a href="40_DataBases.html#sec-winequality"><span>4.3.8</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en componentes principales y un algoritmo de clasificación para el banco de datos <code>WGene expression breast cancer</code><a href="40_DataBases.html#sec-geneexp"><span>4.3.10</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en componentes principales y un algoritmo de clasificación para el banco de datos <code>QSAR</code><a href="40_DataBases.html#sec-qsar"><span>4.2.8</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en componentes principales y un algoritmo de clasificación para el banco de datos <code>Meat spec</code><a href="40_DataBases.html#sec-meatspec"><span>4.2.5</span></a>.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "¡Copiado!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "¡Copiado!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./150_Discriminantmodels.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análisis discriminante (AD)</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./170_MDSmodels.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

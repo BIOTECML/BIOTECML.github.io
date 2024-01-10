@@ -1,0 +1,2195 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MachineLearning - 14&nbsp; Modelos Boosting</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./04_NonSupervisedAA.html" rel="next">
+<link href="./130_Ensemblemodels.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos coincidentes",
+    "search-copy-link-title": "Copiar enlace para buscar",
+    "search-hide-matches-text": "Ocultar coincidencias adicionales",
+    "search-more-match-text": "más coincidencia en este documento",
+    "search-more-matches-text": "más coincidencias en este documento",
+    "search-clear-button-title": "Limpiar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Entregar"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Modelos Boosting</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MachineLearning</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Prefacio</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./01_IntroCourse.html" class="sidebar-item-text sidebar-link">Parte 1. Introducción</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_introAD.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_introAA.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./30_RandRstudio.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./40_DataBases.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./02_FirstStepsAA.html" class="sidebar-item-text sidebar-link">Parte 2. Primeros pasos</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./50_AED.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./03_SupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 3. Aprendizaje supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./60_RegressionModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regresión</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./70_LogisticModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelos de Regresión Logística</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./80_SurvivalModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./90_BayesianClassif.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./100_kNNmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./110_SVMmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./120_DTmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./130_Ensemblemodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Modelos de conjunto (Ensemble models)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./140_Boostingmodels.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Modelos Boosting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./04_NonSupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 4. Aprendizaje no supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./150_Discriminantmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análisis discriminante (AD)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./160_PrinCompmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./170_MDSmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./180_Clustermodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Análisis cluster</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">Referencias</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#sec-140.1" id="toc-sec-140.1" class="nav-link active" data-scroll-target="#sec-140.1"><span class="toc-section-number">14.1</span>  Descenso del gradiente</a></li>
+  <li><a href="#sec-140.2" id="toc-sec-140.2" class="nav-link" data-scroll-target="#sec-140.2"><span class="toc-section-number">14.2</span>  Algorirmos Boosting</a>
+  <ul>
+  <li><a href="#sec-140.2.1" id="toc-sec-140.2.1" class="nav-link" data-scroll-target="#sec-140.2.1"><span class="toc-section-number">14.2.1</span>  AdaBoost</a></li>
+  <li><a href="#sec-140.2.2" id="toc-sec-140.2.2" class="nav-link" data-scroll-target="#sec-140.2.2"><span class="toc-section-number">14.2.2</span>  Gradient Boosting</a></li>
+  <li><a href="#sec-140.2.3" id="toc-sec-140.2.3" class="nav-link" data-scroll-target="#sec-140.2.3"><span class="toc-section-number">14.2.3</span>  XGBoost</a></li>
+  <li><a href="#sec-140.2.4" id="toc-sec-140.2.4" class="nav-link" data-scroll-target="#sec-140.2.4"><span class="toc-section-number">14.2.4</span>  LightGBM</a></li>
+  </ul></li>
+  <li><a href="#sec-140.3" id="toc-sec-140.3" class="nav-link" data-scroll-target="#sec-140.3"><span class="toc-section-number">14.3</span>  Algortimos Boosting en mlr3</a>
+  <ul>
+  <li><a href="#sec-140.3.1" id="toc-sec-140.3.1" class="nav-link" data-scroll-target="#sec-140.3.1"><span class="toc-section-number">14.3.1</span>  AdaBoost</a></li>
+  <li><a href="#sec-140.3.2" id="toc-sec-140.3.2" class="nav-link" data-scroll-target="#sec-140.3.2"><span class="toc-section-number">14.3.2</span>  Gradient Boosting</a></li>
+  <li><a href="#sec-140.3.3" id="toc-sec-140.3.3" class="nav-link" data-scroll-target="#sec-140.3.3"><span class="toc-section-number">14.3.3</span>  XGBoost</a></li>
+  <li><a href="#sec-140.3.4" id="toc-sec-140.3.4" class="nav-link" data-scroll-target="#sec-140.3.4"><span class="toc-section-number">14.3.4</span>  LightGBM</a></li>
+  </ul></li>
+  <li><a href="#sec-140.4" id="toc-sec-140.4" class="nav-link" data-scroll-target="#sec-140.4"><span class="toc-section-number">14.4</span>  Aplicaciones</a>
+  <ul>
+  <li><a href="#sec-140.4.1" id="toc-sec-140.4.1" class="nav-link" data-scroll-target="#sec-140.4.1"><span class="toc-section-number">14.4.1</span>  Bancos de datos</a>
+  <ul class="collapse">
+  <li><a href="#stroke" id="toc-stroke" class="nav-link" data-scroll-target="#stroke"><span class="toc-section-number">14.4.1.1</span>  Stroke</a></li>
+  <li><a href="#water-potability" id="toc-water-potability" class="nav-link" data-scroll-target="#water-potability"><span class="toc-section-number">14.4.1.2</span>  Water Potability</a></li>
+  <li><a href="#housing-in-california" id="toc-housing-in-california" class="nav-link" data-scroll-target="#housing-in-california"><span class="toc-section-number">14.4.1.3</span>  Housing in California</a></li>
+  </ul></li>
+  <li><a href="#sec-140.4.2" id="toc-sec-140.4.2" class="nav-link" data-scroll-target="#sec-140.4.2"><span class="toc-section-number">14.4.2</span>  Modelos</a>
+  <ul class="collapse">
+  <li><a href="#stroke-1" id="toc-stroke-1" class="nav-link" data-scroll-target="#stroke-1"><span class="toc-section-number">14.4.2.1</span>  Stroke</a></li>
+  <li><a href="#water-potability-1" id="toc-water-potability-1" class="nav-link" data-scroll-target="#water-potability-1"><span class="toc-section-number">14.4.2.2</span>  Water Potability</a></li>
+  <li><a href="#housing-in-california-1" id="toc-housing-in-california-1" class="nav-link" data-scroll-target="#housing-in-california-1"><span class="toc-section-number">14.4.2.3</span>  Housing in California</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#sec-140.5" id="toc-sec-140.5" class="nav-link" data-scroll-target="#sec-140.5"><span class="toc-section-number">14.5</span>  Ejercicios</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-140" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Modelos Boosting</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>El <em>boosting</em> es una técnica de modelado de conjunto que intenta construir un <em>strong learner</em> a partir de un número de <em>weak learner</em> secuenciales, todos basados en el mismo algoritmo de predicción o clasificación. El proceso de construcción del <em>strong learner</em> comienza fijando un modelo inicial sobre los datos de entrenamiento y obteniendo los errores de dicho modelo (errores de predicción o clasificación). A continuación, se construye un segundo modelo que intenta corregir los errores presentes en el primer modelo mediante la asignación de pesos a todos los datos de entrenamiento en función del error cometido en la primera etapa. Este procedimiento continúa y se añaden modelos hasta que se predice correctamente todo el conjunto de datos de entrenamiento o se añade el máximo número de modelos. Finalmente se combinan los resultados de los diferentes modelos secuenciales para obtener el modelo final. Los métodos de <em>boosting</em> más empleados son <strong><em>AdaBoost</em></strong>, <strong><em>Gradient Boosting</em></strong>, <strong><em>XGBoost</em></strong> y <strong><em>LightGBM</em></strong>. Casi todos ellos toman como <em>weak learner</em> basado en árboles de decisión, pero en teoría se pueden utilizar con otro tipo de algoritmos de aprendizaje automático. A continuación podemos ver una imagen del proceso secuencial de construcción para un problema de clasificación:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/boosting-1.png" width="550" height="400" class="figure-img"></p>
+</figure>
+</div>
+<p>Antes de pasar a describir los diferentes modelos debemos entender el algoritmo del descenso del gradiente que nos permite construir modelos secuenciales de forma más o menos automática. Las diferentes versiones de este algoritmo nos proporciona los diferentes modelos de boosting que estudiaremos.</p>
+<section id="sec-140.1" class="level2" data-number="14.1">
+<h2 data-number="14.1" class="anchored" data-anchor-id="sec-140.1"><span class="header-section-number">14.1</span> Descenso del gradiente</h2>
+<p>El término <strong><em>boosting</em></strong> proviene del principal algoritmo que se utiliza como base para el ajuste de los diferentes modelos secuenciales que conforman este tipo de solución. Dicho algoritmo es el conocido como <strong>algoritmo de descenso del gradiente</strong> (<em>gradient descent algorithm</em>) y es muy utilizado en los algoritmos de optimización usados para minimizar funciones de coste o pérdida. Su aplicación se encuentra muy extendida en diferentes algoritmos de aprendizaje automático.</p>
+<p>Dada una función de pérdida <span class="math inline">\(f\)</span> que depende del parámetro <span class="math inline">\(\theta\)</span> , y fijada una tasa de aprendizaje <span class="math inline">\(\lambda\)</span>, el algoritmo del descenso del gradiente se estructura de la forma siguiente:</p>
+<ol type="1">
+<li><p>Fijar un valor inicial <span class="math inline">\(\theta_0\)</span> para el parámetro de interés.</p></li>
+<li><p>Obtener la derivada parcial de la función con respecto a <span class="math inline">\(\theta\)</span>, y evaluarla en <span class="math inline">\(\theta_0\)</span> (gradiente descendiente):</p></li>
+</ol>
+<p><span class="math display">\[\bigtriangledown f_{\theta_0} = \left[\frac{\partial f}{\partial \theta} \right ]_{\theta = \theta_0}\]</span></p>
+<ol start="3" type="1">
+<li>Calcular un nuevo valor del parámetro mediante el “descenso” del valor anterior a partir del gradiente obtenido y la tasa de aprendizaje:</li>
+</ol>
+<p><span class="math display">\[\theta_1 = \theta_0 - \lambda *\bigtriangledown f_{\theta_0}\]</span></p>
+<ol start="4" type="1">
+<li>Comprobar si el cambio en la actualización del parámetro es inferior a un fijado previamente (llamada criterio de parada), de forma que si es afirmativo el algoritmo se detiene, y en caso contrario se actualiza el gradiente y se pasa a un nuevo valor de <span class="math inline">\(\theta\)</span>.</li>
+</ol>
+<p>Este algoritmo se puede generalizar a situaciones más generales con múltiples parámetros. Sin embargo, la mayor dificultad estriba en que no tenemos asegurado alcanzar el mínimo absoluto de la función <span class="math inline">\(f\)</span>, ya que cuando el algoritmo encuentra un mínimo relativo resulta imposible salir de dicho punto.</p>
+<p>Por su modo de implementación, el descenso del gradiente puede realizarse de tres modos diferentes para la función de pérdida establecida en cada uno de los algoritmos de aprendizaje automático:</p>
+<ul>
+<li><p><strong>Descenso de gradiente por lotes</strong>. Este es un tipo de descenso de gradiente que procesa todas las muestras de entrenamiento en cada iteración del descenso de gradiente. Si el número de muestras de entrenamiento es grande, el descenso de gradiente por lotes es computacionalmente muy caro.</p></li>
+<li><p><strong>Descenso de gradiente estocástico</strong>. Este es un tipo de descenso de gradiente que procesa una muestra de entrenamiento por iteración. Por lo tanto, los parámetros se actualizan incluso después de cada iteración. Por lo tanto, es bastante más rápido que el descenso de gradiente por lotes. Pero de nuevo, cuando el número de muestras de entrenamiento es grande, incluso entonces se procesa sólo una muestra que puede ser una sobrecarga adicional para el sistema ya que el número de iteraciones será bastante grande.</p></li>
+<li><p><strong>Descenso de gradiente en mini lotes</strong>. Este es un tipo de descenso de gradiente que funciona más rápido que el descenso de gradiente por lotes y el descenso de gradiente estocástico. Aquí se procesan <span class="math inline">\(b\)</span> muestras por iteración donde <span class="math inline">\(b\)</span> es inferior al tamaño de la muestra de entrenamiento. Así, aunque el número de muestras de entrenamiento sea grande, se procesa en lotes de tamaño <span class="math inline">\(b\)</span> de una sola vez. Por lo tanto, funciona para los ejemplos de entrenamiento más grandes y también con un menor número de iteraciones.</p></li>
+</ul>
+</section>
+<section id="sec-140.2" class="level2" data-number="14.2">
+<h2 data-number="14.2" class="anchored" data-anchor-id="sec-140.2"><span class="header-section-number">14.2</span> Algorirmos Boosting</h2>
+<p>A continuación se muestran los algoritmos principales que hacen uso del descenso de gradiente para los modelos de conjunto. Casi todos ellos utilizan como modelo base los árboles de decisión. Como en el caso de los algoritmos de <em>bagging</em> mostraremos los aspectos teóricos de cada uno de ellos aplicados a un problema de clasificación, aunque se pueden generalizar a los problemas de regresión de forma inmediata. Para finalizar con cada algoritmo se presenta la función en mlr3 que nos permite el ajuste de dicho modelo.</p>
+<section id="sec-140.2.1" class="level3" data-number="14.2.1">
+<h3 data-number="14.2.1" class="anchored" data-anchor-id="sec-140.2.1"><span class="header-section-number">14.2.1</span> AdaBoost</h3>
+<p>Fue el primer algoritmo en hacer uso del <em>boosting</em> en los algoritmos de aprendizaje automático. Si estamos interesados en un problema de clasificación con dos grupos posibles necesitamos como punto de partida:</p>
+<ol type="1">
+<li><p>Un <em>weak learner</em> que sea capaz de predecir la variable respuesta con un porcentaje de acierto ligeramente superior a lo esperado por azar.</p></li>
+<li><p>Codificar las dos clases de la variable respuesta como +1 y -1.</p></li>
+<li><p>Un peso inicial e igual para todas las observaciones que forman el <em>set</em> de entrenamiento.</p></li>
+</ol>
+<p>Una vez que estos tres puntos se han establecido, se inicia un proceso iterativo. En la primera iteración, se ajusta el <em>weak learner</em> empleando los datos de entrenamiento y los pesos iniciales (todos iguales). Con el <em>weak learner</em> ajustado y almacenado, se predicen las observaciones de entrenamiento y se identifican aquellas bien y mal clasificadas. Con esta información:</p>
+<ul>
+<li><p>Se actualizan los pesos de las observaciones, disminuyendo el de las que están bien clasificadas y aumentando el de las mal clasificadas.</p></li>
+<li><p>Se asigna un peso total al <em>weak learner</em>, proporcional al total de aciertos. Cuantos más aciertos consiga el <em>weak learner</em>, mayor su influencia en el conjunto del <em>ensemble</em>.</p></li>
+</ul>
+<p>En la siguiente iteración, se llama de nuevo al <em>weak learner</em> y se vuelve a ajustar, esta vez, empleando los pesos actualizados en la iteración anterior. El nuevo <em>weak learner</em> se almacena, obteniendo así un nuevo modelo para el conjunto. Este proceso se repite <span class="math inline">\(M\)</span> veces, generando un total de <span class="math inline">\(M\)</span> <em>weak learners</em>. Para clasificar nuevas observaciones, se obtiene la predicción de cada uno de los <em>weak learners</em> que forman el conjunto y se agregan sus resultados, ponderando el peso de cada uno acorde al peso que se le ha asignado en el ajuste. El objetivo detrás de esta estrategia es que cada nuevo <em>weak learner</em> se centra en predecir correctamente las observaciones que los anteriores no han sido capaces. A continuación se muestra la estructura del algoritmo.</p>
+<p>Consideramos <span class="math inline">\(y\)</span> la variable respuesta, <span class="math inline">\(X\)</span> el conjunto de variables predictoras, <span class="math inline">\(N\)</span> número de muestras de entrenamiento, <span class="math inline">\(M\)</span> número de iteraciones de aprendizaje, <span class="math inline">\(G_m\)</span> <em>weak learner</em> en la iteración <span class="math inline">\(m\)</span>, <span class="math inline">\(w_i\)</span> peso de la observación <span class="math inline">\(i\)</span>, y <span class="math inline">\(\alpha_m\)</span> el peso del <em>weak learner</em> <span class="math inline">\(m\)</span>, de forma que el algoritmo viene dado por:</p>
+<ol type="1">
+<li>Inicializamos los pesos de las observaciones</li>
+</ol>
+<p><span class="math display">\[w_i = \frac{1}{N}, \quad i=1,...,N\]</span></p>
+<ol start="2" type="1">
+<li>Para <span class="math inline">\(m=1\)</span> hasta <span class="math inline">\(M\)</span>:</li>
+</ol>
+<ul>
+<li><p>Ajustar el <em>weak learner</em> <span class="math inline">\(G_m\)</span> utilizando las muestras de entrenamiento y los pesos <span class="math inline">\(w_i\)</span>, para obtener la predicción <span class="math inline">\(\hat{y}_i\)</span> de cada <span class="math inline">\(y_i\)</span></p></li>
+<li><p>Calcular el error del <em>weak learner</em> como:</p></li>
+</ul>
+<p><span class="math display">\[err_m = \frac{\sum_{i=1}^N w_i I(y_i \neq \hat{y}_i)}{\sum_{i=1}^N w_i}\]</span></p>
+<ul>
+<li>Calcular el peso asignado al <em>weak learner</em> <span class="math inline">\(G_m\)</span>:</li>
+</ul>
+<p><span class="math display">\[\alpha_m = log\left(\frac{1-err_m}{err_m}\right)\]</span></p>
+<ul>
+<li>Actualizar los pesos de las observaciones:</li>
+</ul>
+<p><span class="math display">\[w_i = w_i exp[\alpha_m I(y_i \neq \hat{y}_i)], \quad i=1,...,N\]</span></p>
+<ol start="3" type="1">
+<li>Construcción del <em>strong learner</em> agregando todos los <em>weak learner</em> obtenidos en el proceso iterativo ponderándolos por su peso:</li>
+</ol>
+<p><span class="math display">\[G(x) = sign\left[\sum_{m=1}^M \alpha_m G_m(X)\right]\]</span></p>
+</section>
+<section id="sec-140.2.2" class="level3" data-number="14.2.2">
+<h3 data-number="14.2.2" class="anchored" data-anchor-id="sec-140.2.2"><span class="header-section-number">14.2.2</span> Gradient Boosting</h3>
+<p>El <em>gradient boosting</em> o refuerzo del gradiente es uno de los algoritmos de aprendizaje automático más populares. Es lo suficientemente potente como para encontrar cualquier relación no lineal entre el objetivo del modelo y las variables predictoras, y tiene una gran facilidad de uso ya que nos permite trabajar con valores perdidos, valores atípicos y valores categóricos de alta cardinalidad sin ningún tratamiento especial. De forma habitual este tipo de algoritmos toman como <em>weak learner</em> los árboles de decisión lo que provoca que muchas veces este algoritmo se conoce como <strong><em>gradient boosting tree</em></strong>. Se basa en un proceso de boosting donde la actualización en cada iteración se realiza mediante el algoritmo del descenso del gradiente.</p>
+<p>De forma sencilla el <em>gradient boosting</em> ajusta un primer <em>weak learner</em> <span class="math inline">\(f_1\)</span> con el que se predice la variable respuesta <span class="math inline">\(y\)</span>, obteniéndose los errores <span class="math inline">\(y−f_1(x)\)</span>. A continuación, se ajusta un nuevo modelo <span class="math inline">\(𝑓_2\)</span>, que intenta predecir los residuos del modelo anterior, en otras palabras, trata de corregir los errores que ha hecho el modelo <span class="math inline">\(𝑓_1\)</span>:</p>
+<p><span class="math display">\[f_1(x) \sim y,\qquad f_2(x) \sim y-f_1(x)\]</span></p>
+<p>En la siguiente iteración, se calculan los residuos de los dos modelos de forma conjunta <span class="math inline">\(𝑦−𝑓_1(𝑥)−𝑓_2(𝑥)\)</span>, los errores cometidos por <span class="math inline">\(𝑓_1\)</span> y que <span class="math inline">\(𝑓_2\)</span> no ha sido capaz de corregir, y se ajusta un tercer modelo <span class="math inline">\(𝑓_3\)</span> para tratar de corregirlos:</p>
+<p><span class="math display">\[f_3(x) \sim y-f_1(x)-f_2(x)\]</span></p>
+<p>Este proceso se repite <span class="math inline">\(M\)</span> veces, de forma que cada nuevo modelo minimiza los errores del anterior, y construimos el strong learner como:</p>
+<p><span class="math display">\[y \sim f_1(x) + f_2(x) + ... + f_M(x)\]</span></p>
+<p>Dado que el objetivo de <em>Gradient Boosting</em> es ir minimizando los residuos iteración a iteración, es susceptible de sobreajuste. Una forma de evitar este problema es emplear la tasa de aprendizaje (<span class="math inline">\(\lambda\)</span>) sobre cada <em>weak learner</em> en el proceso de <em>boosting</em>, de forma que el predictor final viene dado por:</p>
+<p><span class="math display">\[F(x) = \lambda f_1(x) + \lambda f_2(x) + ... + \lambda f_M(x)\]</span> ### Gradient Boosting en mlr3 {#sec-140.2.4}</p>
+</section>
+<section id="sec-140.2.3" class="level3" data-number="14.2.3">
+<h3 data-number="14.2.3" class="anchored" data-anchor-id="sec-140.2.3"><span class="header-section-number">14.2.3</span> XGBoost</h3>
+<p>El algoritmo más famoso que utiliza como base el <em>gradient boosting</em> es el <em>extreme gradient boosting</em> (<em>XGBosst</em>) que estudiamos a continuación. Todos los aspectos técnicos de este algoritmo se pueden consultar <a href="https://xgboost.readthedocs.io/en/stable/tutorials/model.html">aquí</a>.</p>
+<p>Antes de comentar las diferencias existentes entre <em>gradient boosting</em> y <em>extreme gradient boosting</em> veamos cuales son su puntos en común:</p>
+<ul>
+<li><p>Algoritmos basados en árboles: tanto <em>XGBoost</em> como <em>Gradient Boosting</em> utilizan árboles de decisión como estimadores base.</p></li>
+<li><p>Objetivo de predicción: los árboles se construyen utilizando los residuos, no las etiquetas de clase reales. Por lo tanto, a pesar de que nos centramos en problemas de clasificación, los estimadores base de estos algoritmos son árboles de regresión y no árboles de clasificación. Esto se debe a que los residuos son continuos y no discretos. Al mismo tiempo, sin embargo, algunas de las fórmulas que se presentan a continuación son únicas para la clasificación, así que no podemos asumir su aplicación exactamente igual a los problemas de regresión.</p></li>
+<li><p>Profundidad del árbol: ambos algoritmos permiten controlar el tamaño máximo de los árboles para minimizar el riesgo de sobreajuste de los datos.</p></li>
+<li><p>Métodos de conjunto: similares a <em>Random Forest</em> o <em>AdaBoost</em>, estos algoritmos construyen muchos árboles en el proceso. Al final, la predicción final se basa en todos los árboles.</p></li>
+<li><p>Tasa de aprendizaje: el valor de cada árbol se escala por la tasa de aprendizaje. Esto permite que el algoritmo tenga una mejora más gradual y constante en cada paso.</p></li>
+</ul>
+<p>A continuación se muestra una imagen resumen del funcionamiento de <em>XGBoost</em>:</p>
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/XGBoost.png" data-fig-align="center" width="550" height="400"> Las diferencias entre ambos algoritmos se basan en la construcción de los diferentes árboles de decisión secuenciales.</p>
+<p><em>Gradient Boosting</em> utiliza un método estándar para construir árboles de regresión, en el que se utiliza una métrica típica como el MSE (error cuadrático medio) u otra similar para determinar la mejor división del árbol. El algoritmo calcula el MSE para cada una de las posibles divisiones de nodos y luego elige la que tenga el menor MSE como la que se utilizará en el árbol.</p>
+<p>Por el contrario, <em>XGBoost</em> utiliza su propio método de construcción de árboles en el que la puntuación de similitud y la ganancia determinan las mejores divisiones de nodos. La puntuación de similitud o <em>similarity score</em>(SS) se define como:</p>
+<p><span class="math display">\[SS = \frac{\left(\sum_{i=1}^n r_i \right)^2}{\sum_{i=1}^n  \left[pp_i(1-pp_i)\right] + \lambda}\]</span></p>
+<p>donde:</p>
+<ul>
+<li><p><span class="math inline">\(r_i\)</span> son los residuos o diferencia entre el valor observado actual y el valor predicho.</p></li>
+<li><p><span class="math inline">\(pp_i\)</span> es la probabilidad previa o probabilidad de un evento calculada en un paso anterior. Se supone que la probabilidad inicial es de 0.5 para cada observación, que se utiliza para construir el primer árbol. Para cualquier árbol posterior, la probabilidad anterior se recalcula basándose en la predicción inicial y en las predicciones de todos los árboles anteriores.</p></li>
+<li><p><span class="math inline">\(\lambda\)</span> es un parámetro de regularización. Su aumento reduce desproporcionadamente la influencia de las hojas pequeñas (las que tienen pocas observaciones) mientras que sólo tiene un impacto menor en las hojas más grandes (las que tienen muchas observaciones).</p></li>
+</ul>
+<p>Una vez que tenemos la puntuación de similitud para cada hoja, calculamos la ganancia (<em>gain</em>) utilizando la siguiente fórmula:</p>
+<p><span class="math display">\[Gain = SS_{i} + SS_{d} - SS_{r},\]</span></p>
+<p>donde <span class="math inline">\(SS_i\)</span>, <span class="math inline">\(SS_d\)</span>, y <span class="math inline">\(SS_r\)</span> son las puntuaciones de similitud de la división de la rama izquierda, de la división de la rama derecha, y el nodo raíz del que parten ambas ramas respectivamente. La división del nodo con la mayor ganancia se elige como la mejor división del árbol.</p>
+<p>La introducción de <span class="math inline">\(\lambda\)</span> en el proceso de evaluación de SS es la principal diferencia con <em>gradient boosting</em> ya que en este último el SS se calcula sin añadir ese término de regularización.</p>
+<p>Además de utilizar su propia manera de construir y podar árboles, <em>XGBoost</em> también tiene varias optimizaciones incorporadas para hacer el entrenamiento más rápido cuando se trabaja con conjuntos de datos enormes. He aquí algunas de las principales:</p>
+<ul>
+<li><p>Algoritmo <em>Greedy</em> aproximado - utiliza cuantiles ponderados cuando busca la mejor división de nodos en lugar de evaluar cada división posible.</p></li>
+<li><p>Aprendizaje paralelo: puede dividir los datos en conjuntos de datos más pequeños para ejecutar procesos en paralelo.</p></li>
+<li><p><em>Sparsity-Aware Split Finding</em> - cuando tiene algunos datos perdidos, calcula <em>Gain</em> poniendo las observaciones con valores perdidos en la hoja izquierda. A continuación, hace lo mismo colocándolas en la hoja de la derecha y elige el escenario que produce una mayor ganancia.</p></li>
+<li><p>Acceso consciente del efectivo - <em>XGBoost</em> utiliza la memoria caché de la CPU para almacenar los gradientes y así poder calcular las puntuaciones de similitud más rápidamente.</p></li>
+</ul>
+</section>
+<section id="sec-140.2.4" class="level3" data-number="14.2.4">
+<h3 data-number="14.2.4" class="anchored" data-anchor-id="sec-140.2.4"><span class="header-section-number">14.2.4</span> LightGBM</h3>
+<p><em>LightGBM</em>, abreviatura de <strong><em>light gradient-boosting machine</em></strong>, es un algoritmo que toma como base el <em>gradient boosting</em>, y que fue desarrollado originalmente por Microsoft. Utiliza como modelo de partida los árboles de decisión y se utiliza para la clasificación y otras tareas de aprendizaje automático cuando el conjunto de la muestra de entrenamiento es muy grande. Sus puntos fuertes son la mejora en el rendimiento y la escalabilidad. <em>LightGBM</em> amplía el algoritmo de <em>gradient boosting</em> añadiendo un tipo de selección automática de predictoras centrándose en la evolución del algoritmo hacia las ramas de árbol de decisión con mayores gradientes. Esto puede dar lugar a una gran aceleración del entrenamiento y a una mejora del rendimiento predictivo.</p>
+<p><em>LightGMB</em> posee muchas de las ventajas de <em>XGBoost</em> como la optimización dispersa, el entrenamiento paralelo, las funciones de pérdida múltiples, la regularización, el <em>bagging</em> y la detención temprana. Una de las principales diferencias entre ambos algoritmos es la construcción de los árboles. <em>LightGBM</em> no construye un árbol por niveles, fila por fila, como hacen la mayoría de las implementaciones, sino que lo hace por hojas. Además, <em>LightGBM</em> no utiliza el algoritmo de aprendizaje de árbol de decisión basado en la ordenación, que busca el mejor punto de división en valores de características ordenados, como hacen <em>XGBoost</em> u otras implementaciones. En su lugar, <em>LightGBM</em> implementa un algoritmo de aprendizaje de árbol de decisión basado en un histograma altamente optimizado, que ofrece grandes ventajas tanto en eficiencia como en consumo de memoria. El algoritmo <em>LightGBM</em> utiliza dos técnicas novedosas llamadas <em>Gradient-Based One-Side Sampling</em> (GOSS) y <em>Exclusive Feature Bundling</em> (EFB) que permiten que el algoritmo se ejecute más rápidamente manteniendo un alto nivel de precisión.</p>
+<p>El muestreo unilateral basado en el gradiente, o GOSS por sus siglas en inglés, es una modificación del método <em>gradient boosting</em> que centra la atención en aquellas muestras de entrenamiento que dan lugar a un gradiente mayor, lo que a su vez acelera el aprendizaje y reduce la complejidad computacional del método.</p>
+<p>La agrupación de rasgos exclusivos, o EFB por sus siglas en inglés, es un método para agrupar rasgos dispersos (en su mayoría nulos) mutuamente excluyentes, como los niveles de variables categóricas que han sido codificadas mediante <em>hot-encoding</em>. Como tal, es un tipo de selección automática de características.</p>
+<p>Juntos, estos dos modificaciones dentro del algoritmo de gradiente <em>boosting</em> pueden acelerar el tiempo de entrenamiento del algoritmo hasta 20 veces.</p>
+</section>
+</section>
+<section id="sec-140.3" class="level2" data-number="14.3">
+<h2 data-number="14.3" class="anchored" data-anchor-id="sec-140.3"><span class="header-section-number">14.3</span> Algortimos Boosting en mlr3</h2>
+<p>A continuación se muestran las funciones principales para la obtención de los algoritmos de boosting presentados.</p>
+<section id="sec-140.3.1" class="level3" data-number="14.3.1">
+<h3 data-number="14.3.1" class="anchored" data-anchor-id="sec-140.3.1"><span class="header-section-number">14.3.1</span> AdaBoost</h3>
+<p>Por el momento este algoritmo solo se encuentra disponible para tareas de clasificación mediante la función <code>classif.AdaBoostM1</code> del paquete <code>mlr3extralearners</code>. Para su uso es necesario tener instalada la librería <code>RWeka</code>. Los hiperparámetros más relevantes para este modelo son:</p>
+<ul>
+<li><code>P</code>: Porcentaje de peso masa en el que basar el entrenamiento. Por defecto toma el valor <code>100</code>.</li>
+<li><code>Q</code>: Si se usa remuestreo para el boosting. Por defecto el valor es <code>False</code></li>
+<li><code>S</code>: Semilla aleatoria. Por defecto toma el valor <code>1</code>.</li>
+<li><code>I</code>: Número de iteraciones. Por defecto se establece el valor <code>10</code>.</li>
+<li><code>W</code>: Tipo de weak learner utiliza como modelo de base. Por defecto se usan árboles de decisión.</li>
+</ul>
+</section>
+<section id="sec-140.3.2" class="level3" data-number="14.3.2">
+<h3 data-number="14.3.2" class="anchored" data-anchor-id="sec-140.3.2"><span class="header-section-number">14.3.2</span> Gradient Boosting</h3>
+<p>Los algoritmos principales para gradient boosting en mlr3 son <code>classif.gbm</code> para las tareas de clasificación, y <code>regr.gbm</code> para tareas de regresión, que se encuentran disponibles en el paquete <code>mlr3extralearners</code>. Para poder utilizarlos es necesario tener instalada la librería <code>gbm</code>.</p>
+<p>Los parámetros más relevantes para ambas funciones son:</p>
+<ul>
+<li><code>distribution</code>: cadena de caracteres que especifica el nombre de la distribución a utilizar o una lista con un nombre de componente que especifica la distribución y cualquier parámetro adicional necesario. Para tareas de clasificación las opciones disponibles son <code>bernoulli</code> (target con respuestas 0-1), <code>adaboost</code> (utiliza la función de pérdida exponencial de Adaboost para variables 0-1), <code>huberized</code> (función de pérdida de huber para variables 0-1), <code>multinomial</code> (para respuestas tipo factor.). Por defecto se utiliza el valor <code>bernouilli</code>. Para tareas de regresión las opciones disponibles son <code>gaussian</code> (donde se utiliza la función de pérdida cuadrática), <code>laplace</code> (función de pérdida del valor absoluto), <code>poisson</code> (para respuestas que son conteos), y <code>tdist</code> (para usar la función de pérdida basada en la distribución t). la opción por defecto es <code>gaussian</code>.</li>
+<li><code>n.tress</code>: número de árboles de decisión utilizados como weak learner. Por defecto es valor es <code>100</code>.</li>
+<li><code>interaction.depth</code>: Número entero que especifica la profundidad máxima de cada árbol. El valor por defecto es <code>1</code>.</li>
+<li><code>n.minobsinnode</code>: Número mínimo de observaciones en los nodos terminales en los árboles de decisión. El valor por defecto es <code>10</code>.</li>
+<li><code>shrinkage</code>: Tasa de aprendizaje. Por defecto toma el valor <code>0.001</code>.</li>
+<li><code>bag.fraction</code>: fracción de las observaciones del conjunto de entrenamiento seleccionadas aleatoriamente para proponer el siguiente árbol de la expansión. Valor por defecto igual a 0.5</li>
+<li><code>train.fraction</code>: Las primeras observaciones de <code>train.fraction*nrows(data)</code> se utilizan para ajustar el gbm y el resto se utiliza para calcular estimaciones fuera de muestra de la función de pérdida. El valor por defecto es <code>1</code>.</li>
+<li><code>cv.folds</code>: Número de validaciones cruzadas consideradas. Por defecto se toma el valor <code>0</code>.</li>
+<li><code>n.cores</code>: Número de procesadores utilizados. Por defecto se toma el valor <code>1</code>.</li>
+</ul>
+</section>
+<section id="sec-140.3.3" class="level3" data-number="14.3.3">
+<h3 data-number="14.3.3" class="anchored" data-anchor-id="sec-140.3.3"><span class="header-section-number">14.3.3</span> XGBoost</h3>
+<p>Los algoritmos principales para XGBoost (extrem gradient boosting) en mlr3 son <code>classif.xgboost</code> para las tareas de clasificación, y <code>regr.xgboost</code> para tareas de regresión, que se encuentran disponibles en el paquete <code>mlr3extralearners</code>. Para poder utilizarlos es necesario tener instalada la librería <code>xgboost</code>. La mayor dificultad con estas dos funciones es la gran cantidad de hiperparámetros disponibles para su ajuste. Los más interesantes son:</p>
+<ul>
+<li><code>eta</code>: que controla la tasa de aprendizaje, y que por defecto es igual a <code>0.3</code>.</li>
+<li><code>gamma</code>: reducción mínima de pérdida requerida para realizar una partición adicional en un nodo de hoja del árbol. Cuanto mayor, más conservador será el algoritmo. El valor por defecto es 0.</li>
+<li><code>lambda</code>: parámetro de regularización. El valor por defecto es <code>1</code>.</li>
+</ul>
+</section>
+<section id="sec-140.3.4" class="level3" data-number="14.3.4">
+<h3 data-number="14.3.4" class="anchored" data-anchor-id="sec-140.3.4"><span class="header-section-number">14.3.4</span> LightGBM</h3>
+<p>Los algoritmos principales para LightGBM en mlr3 son <code>classif.lightgbm</code> para las tareas de clasificación, y <code>regr.lightgbm</code> para tareas de regresión, que se encuentran disponibles en el paquete <code>mlr3extralearners</code>. Para poder utilizarlos es necesario tener instalada la librería <code>lightgbm</code>. Este algoritmo tiene una cantidad inmensa de hiperparámetros que nos describiremos. Se puede consultar este <a href="https://mlr3extralearners.mlr-org.com/reference/mlr_learners_classif.lightgbm.html">enlace</a>. Tal vez uno de los más relevantes es <code>early_stopping</code> que os permite indicar si debemos realizar parada temprana para evitar sobre ajuste.</p>
+<div class="callout-note callout callout-style-simple">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container" title="Clasificación binaria">
+<p><strong>Dada la gran cantidad de hiperparámetros que involucran la mayoría de estos modelos en las aplicaciones que presentamos a continuación utilizaremos solo las opciones por defecto, sin búsqueda del óptimo.</strong></p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-140.4" class="level2" data-number="14.4">
+<h2 data-number="14.4" class="anchored" data-anchor-id="sec-140.4"><span class="header-section-number">14.4</span> Aplicaciones</h2>
+<p>En este apartado vamos a utilizar los bancos de datos del tema anterior para ejemplificar el uso de los algoritmos de boosting. Antes de presentar los bancos de datos de nuevo, cargamos todas las librerías necesarias así como las necesarias para los diferentes algoritmos de boosting.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Paquetes anteriores</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(knitr) <span class="co"># para formatos de tablas</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">library</span>(DataExplorer)</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="fu">library</span>(cvms)</span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="fu">library</span>(kknn)</span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="fu">library</span>(rpart.plot)</span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="fu">theme_set</span>(<span class="fu">theme_sjplot2</span>())</span>
+<span id="cb1-14"><a href="#cb1-14"></a></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="co"># Paquetes AA</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="fu">library</span>(mlr3verse)</span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="fu">library</span>(mlr3tuning)</span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="fu">library</span>(mlr3tuningspaces)</span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="fu">library</span>(gbm)</span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="fu">library</span>(RWeka)</span>
+<span id="cb1-21"><a href="#cb1-21"></a><span class="fu">library</span>(xgboost)</span>
+<span id="cb1-22"><a href="#cb1-22"></a><span class="fu">library</span>(lightgbm)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="sec-140.4.1" class="level3" data-number="14.4.1">
+<h3 data-number="14.4.1" class="anchored" data-anchor-id="sec-140.4.1"><span class="header-section-number">14.4.1</span> Bancos de datos</h3>
+<p>Para ejemplificar el uso de los modelos de bagging básicos vamos a utilizar tres bancos de datos: <code>Stroke</code>, <code>Water Potability</code>, y <code>Housing in California</code> que se pueden consultar en el tema <a href="40_DataBases.html"><span>4</span></a>. De los tres con el único con el que no hemos trabajado hasta ahora es <code>Water Potability</code>. A continuación se muestra el código necesario para la carga de cada uno de esos bancos de datos, y la creación de la tarea correspondiente. Los dos primeros corresponden a problemas de clasificación mientras que el último se corresponde con un problema de regresión.</p>
+<section id="stroke" class="level4" data-number="14.4.1.1">
+<h4 data-number="14.4.1.1" class="anchored" data-anchor-id="stroke"><span class="header-section-number">14.4.1.1</span> Stroke</h4>
+<p>El código para este banco de datos aparece a continuación. Para poder ejecutar todos los modelos debemos convertir la respuesta en variable 1-0.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Leemos datos</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>stroke <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"stroke.rds"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="co"># Eliminamos la variable id</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>stroke <span class="ot">=</span> stroke <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>id)</span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="co"># creamos la tarea</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>tsk_stroke <span class="ot">=</span> <span class="fu">as_task_classif</span>(stroke, <span class="at">target =</span> <span class="st">"stroke"</span>, <span class="at">positive =</span><span class="st">"Yes"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="co"># Generamos variable de estrato</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a>tsk_stroke<span class="sc">$</span>col_roles<span class="sc">$</span>stratum <span class="ot">&lt;-</span> <span class="st">"stroke"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="water-potability" class="level4" data-number="14.4.1.2">
+<h4 data-number="14.4.1.2" class="anchored" data-anchor-id="water-potability"><span class="header-section-number">14.4.1.2</span> Water Potability</h4>
+<p>El código para crear la tares es:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Leemos datos</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>waterpot <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"waterpot.rds"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co"># creamos la tarea</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>tsk_water <span class="ot">=</span> <span class="fu">as_task_classif</span>(waterpot, <span class="at">target =</span> <span class="st">"Potability"</span>, <span class="at">positive=</span><span class="st">"1"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="co"># Generamos variable de estrato</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>tsk_water<span class="sc">$</span>col_roles<span class="sc">$</span>stratum <span class="ot">&lt;-</span> <span class="st">"Potability"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="housing-in-california" class="level4" data-number="14.4.1.3">
+<h4 data-number="14.4.1.3" class="anchored" data-anchor-id="housing-in-california"><span class="header-section-number">14.4.1.3</span> Housing in California</h4>
+<p>Cargamos los datos correspondientes:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># Carga de datos</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>housingCA <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"housingCA.rds"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="co"># Creación de task</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>tsk_housing <span class="ot">=</span> <span class="fu">as_task_regr</span>(housingCA, <span class="at">target =</span> <span class="st">"median_house_value"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="sec-140.4.2" class="level3" data-number="14.4.2">
+<h3 data-number="14.4.2" class="anchored" data-anchor-id="sec-140.4.2"><span class="header-section-number">14.4.2</span> Modelos</h3>
+<p>Puesto que los modelos a considerar quedan todos englobados dentro de los algoritmos de boosting, vamos a diseñar un análisis conjunto sobre todos ellos haciendo uso de las funciones <code>benchmark()</code> y <code>benchmark_grid()</code>. Para cada banco de datos estableceos los diferentes modelos de aprendizaje y seleccionamos el que mejor funciona en cada caso. Para ello hemos de tener en cuenta que no todos ellos se pueden utilizar. Por ejemplo xgboost no permite predictoras de tipo factor con lo que una forma de abordar esa situación es codificando los factores para tener solo variables numéricas. En nuestro caso vamos a considerar los algoritmos de <code>AdaBoost</code>, <code>XGBoost</code>, y <code>lightGBM</code> para problemas de clasificación, y <code>GBM</code>, <code>XGBoost</code>, y <code>lightGBM</code> para problemas de regresión.</p>
+<section id="stroke-1" class="level4" data-number="14.4.2.1">
+<h4 data-number="14.4.2.1" class="anchored" data-anchor-id="stroke-1"><span class="header-section-number">14.4.2.1</span> Stroke</h4>
+<p>Al tratarse de un problema de clasificación podemos considerar los cuatro algoritmos presentados. A continuación se detalla el código para poder implantarlos. En cada uno de ellos se consideran las tareas de preprocesamiento correspondientes. En este caso consideramos todas las tareas para poder comparar con los resultado que proporcionarían otro tipo de modelos. En este caso el modelo <code>classif.gbm</code> no se puede ajustar, aunque se muestra el código correspondiente.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Preprocesamiento</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>pp_stroke <span class="ot">=</span>  </span>
+<span id="cb5-3"><a href="#cb5-3"></a>   <span class="fu">po</span>(<span class="st">"scale"</span>, <span class="at">param_vals =</span> <span class="fu">list</span>(<span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;&gt;%</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>   <span class="fu">po</span>(<span class="st">"imputemedian"</span>, <span class="at">affect_columns =</span> <span class="fu">selector_type</span>(<span class="st">"numeric"</span>)) <span class="sc">%&gt;&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>   <span class="fu">po</span>(<span class="st">"encode"</span>, <span class="at">param_vals =</span> <span class="fu">list</span>(<span class="at">method =</span> <span class="st">"one-hot"</span>))</span>
+<span id="cb5-6"><a href="#cb5-6"></a> </span>
+<span id="cb5-7"><a href="#cb5-7"></a></span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="co"># Modelo de aprendizaje AdaBoost</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="co"># ==============================</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a>lrn1 <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.AdaBoostM1"</span>)</span>
+<span id="cb5-11"><a href="#cb5-11"></a>stroke_adaboost <span class="ot">=</span> <span class="fu">as_learner</span>(pp_stroke <span class="sc">%&gt;&gt;%</span> lrn1)</span>
+<span id="cb5-12"><a href="#cb5-12"></a></span>
+<span id="cb5-13"><a href="#cb5-13"></a><span class="co"># Modelo de aprendizaje XGBoost</span></span>
+<span id="cb5-14"><a href="#cb5-14"></a><span class="co"># =======================================</span></span>
+<span id="cb5-15"><a href="#cb5-15"></a>lrn2 <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.xgboost"</span>)</span>
+<span id="cb5-16"><a href="#cb5-16"></a>stroke_xgboost <span class="ot">=</span> <span class="fu">as_learner</span>(pp_stroke <span class="sc">%&gt;&gt;%</span> lrn2)</span>
+<span id="cb5-17"><a href="#cb5-17"></a></span>
+<span id="cb5-18"><a href="#cb5-18"></a><span class="co"># Modelo de aprendizaje lightGBM</span></span>
+<span id="cb5-19"><a href="#cb5-19"></a><span class="co"># =======================================</span></span>
+<span id="cb5-20"><a href="#cb5-20"></a>lrn3 <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.lightgbm"</span>)</span>
+<span id="cb5-21"><a href="#cb5-21"></a>stroke_lightgbm <span class="ot">=</span> <span class="fu">as_learner</span>(pp_stroke <span class="sc">%&gt;&gt;%</span> lrn3)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Definimos el proceso de remuestreo necesario para la combinación de modelos y el proceso de combinación de todos los modelos definidos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">set.seed</span>(<span class="dv">321</span>)</span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="co"># Remuestreo</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>remuestreo <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>)</span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="co"># Grid</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a>design <span class="ot">=</span> <span class="fu">benchmark_grid</span>(tsk_stroke, </span>
+<span id="cb6-6"><a href="#cb6-6"></a>                        <span class="fu">list</span>(stroke_adaboost, stroke_xgboost, stroke_lightgbm), </span>
+<span id="cb6-7"><a href="#cb6-7"></a>                        remuestreo)</span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="co"># Combinación de soluciones</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(design)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos ver ahora los resultados obtenidos con cada algoritmo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">autoplot</span>(bmr, <span class="at">measure =</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="140_Boostingmodels_files/figure-html/boosting-007-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Tanto el modelo <code>xgboost</code> como <code>lightgbm</code> son os que proporcionan mejores resultados del porcentaje de clasificación ponderado. En cualquier caso los resultados no mejoran significativamente los resultados obtenidos hasta ahora para este banco de datos. Vamos a intentar optimizar el modelo <code>xgboost</code> utilizando el espacio de búsqueda definido el la librería <code>mlr3tuningspaces</code> pero integrándolo manualmente. Para ello utilizamos los valores de búsqueda definidos en https://mlr3tuningspaces.mlr-org.com/reference/mlr_tuning_spaces_default.html.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>boost_classif_stroke <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.xgboost"</span>, </span>
+<span id="cb8-2"><a href="#cb8-2"></a>                         <span class="at">eta =</span> <span class="fu">to_tune</span>(<span class="fl">1e-04</span>, <span class="dv">1</span>, <span class="at">logscale =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-3"><a href="#cb8-3"></a>                         <span class="at">nrounds =</span> <span class="fu">to_tune</span>(<span class="dv">1</span>,<span class="dv">5000</span>),</span>
+<span id="cb8-4"><a href="#cb8-4"></a>                         <span class="at">max_depth =</span> <span class="fu">to_tune</span>(<span class="dv">1</span>,<span class="dv">20</span>),</span>
+<span id="cb8-5"><a href="#cb8-5"></a>                         <span class="at">colsample_bytree =</span> <span class="fu">to_tune</span>(<span class="fl">0.1</span>,<span class="dv">1</span>),</span>
+<span id="cb8-6"><a href="#cb8-6"></a>                         <span class="at">colsample_bylevel =</span> <span class="fu">to_tune</span>(<span class="fl">0.1</span>,<span class="dv">1</span>),</span>
+<span id="cb8-7"><a href="#cb8-7"></a>                         <span class="at">lambda =</span> <span class="fu">to_tune</span>(<span class="fl">1e-03</span>, <span class="dv">1000</span>, <span class="at">logscale =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-8"><a href="#cb8-8"></a>                         <span class="at">alpha =</span> <span class="fu">to_tune</span>(<span class="fl">1e-03</span>, <span class="dv">1000</span>, <span class="at">logscale =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-9"><a href="#cb8-9"></a>                         <span class="at">subsample =</span> <span class="fu">to_tune</span>(<span class="fl">0.1</span>, <span class="dv">1</span>)  </span>
+<span id="cb8-10"><a href="#cb8-10"></a>                         )</span>
+<span id="cb8-11"><a href="#cb8-11"></a>gr_stroke <span class="ot">=</span>  pp_stroke <span class="sc">%&gt;&gt;%</span> boost_classif_stroke</span>
+<span id="cb8-12"><a href="#cb8-12"></a>gr_stroke <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr_stroke)</span>
+<span id="cb8-13"><a href="#cb8-13"></a></span>
+<span id="cb8-14"><a href="#cb8-14"></a><span class="co"># Fijamos semilla para reproducibilidad del proceso</span></span>
+<span id="cb8-15"><a href="#cb8-15"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb8-16"><a href="#cb8-16"></a><span class="co"># Definimos instancia de optimización fijando el número de evaluaciones</span></span>
+<span id="cb8-17"><a href="#cb8-17"></a>instance <span class="ot">=</span> <span class="fu">tune</span>(</span>
+<span id="cb8-18"><a href="#cb8-18"></a>  <span class="at">tuner =</span> <span class="fu">tnr</span>(<span class="st">"random_search"</span>),</span>
+<span id="cb8-19"><a href="#cb8-19"></a>  <span class="at">task =</span> tsk_stroke,</span>
+<span id="cb8-20"><a href="#cb8-20"></a>  <span class="at">learner =</span> gr_stroke,</span>
+<span id="cb8-21"><a href="#cb8-21"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>),</span>
+<span id="cb8-22"><a href="#cb8-22"></a>  <span class="at">measures =</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>),</span>
+<span id="cb8-23"><a href="#cb8-23"></a>  <span class="at">term_evals =</span> <span class="dv">50</span></span>
+<span id="cb8-24"><a href="#cb8-24"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos ver el resultado del proceso de optimización con:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>instance<span class="sc">$</span>result<span class="sc">$</span>classif.bacc</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.538524</code></pre>
+</div>
+</div>
+<p>El porcentaje de clasificación correcta ha alcanzado el 53.85 que es el valor más alto obtenido hasta ahora para este banco de datos. Podemos analizar con más detalle este modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co"># Modelo de aprendizaje</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>boost_classif_stroke <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.xgboost"</span>, </span>
+<span id="cb11-3"><a href="#cb11-3"></a>                         <span class="at">eta =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>classif.xgboost.eta,</span>
+<span id="cb11-4"><a href="#cb11-4"></a>                         <span class="at">nrounds =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>classif.xgboost.nrounds,</span>
+<span id="cb11-5"><a href="#cb11-5"></a>                         <span class="at">max_depth =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>classif.xgboost.max_depth,</span>
+<span id="cb11-6"><a href="#cb11-6"></a>                         <span class="at">colsample_bytree =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>classif.xgboost.colsample_bytree,</span>
+<span id="cb11-7"><a href="#cb11-7"></a>                         <span class="at">colsample_bylevel =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>classif.xgboost.colsample_bylevel,</span>
+<span id="cb11-8"><a href="#cb11-8"></a>                         <span class="at">lambda =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>classif.xgboost.lambda,</span>
+<span id="cb11-9"><a href="#cb11-9"></a>                         <span class="at">alpha =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>classif.xgboost.alpha,</span>
+<span id="cb11-10"><a href="#cb11-10"></a>                         <span class="at">subsample =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>classif.xgboost.subsample  </span>
+<span id="cb11-11"><a href="#cb11-11"></a>                         )</span>
+<span id="cb11-12"><a href="#cb11-12"></a>gr_stroke <span class="ot">=</span>  pp_stroke <span class="sc">%&gt;&gt;%</span> boost_classif_stroke</span>
+<span id="cb11-13"><a href="#cb11-13"></a>gr_stroke <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr_stroke)</span>
+<span id="cb11-14"><a href="#cb11-14"></a></span>
+<span id="cb11-15"><a href="#cb11-15"></a><span class="co"># División de muestras</span></span>
+<span id="cb11-16"><a href="#cb11-16"></a><span class="fu">set.seed</span>(<span class="dv">432</span>)</span>
+<span id="cb11-17"><a href="#cb11-17"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_stroke, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb11-18"><a href="#cb11-18"></a>tsk_train_stroke <span class="ot">=</span> tsk_stroke<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb11-19"><a href="#cb11-19"></a>tsk_test_stroke  <span class="ot">=</span> tsk_stroke<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span>
+<span id="cb11-20"><a href="#cb11-20"></a></span>
+<span id="cb11-21"><a href="#cb11-21"></a><span class="co"># Entrenamiento del modelo</span></span>
+<span id="cb11-22"><a href="#cb11-22"></a>gr_stroke<span class="sc">$</span><span class="fu">train</span>(tsk_train_stroke)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Obtenemos ahora las predicciones del modelo y la matriz de confusión</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># Predicción de la muestra de entrenamiento y validación</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>pred_train <span class="ot">=</span> gr_stroke<span class="sc">$</span><span class="fu">predict</span>(tsk_train_stroke)</span>
+<span id="cb12-3"><a href="#cb12-3"></a>pred_test <span class="ot">=</span> gr_stroke<span class="sc">$</span><span class="fu">predict</span>(tsk_test_stroke)</span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="co"># scores de validación</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a>measures <span class="ot">=</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>)</span>
+<span id="cb12-6"><a href="#cb12-6"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb12-7"><a href="#cb12-7"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>classif.bacc 
+           1 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>classif.bacc 
+   0.5355967 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="co"># matriz de confusión</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a>cm <span class="ot">=</span> <span class="fu">confusion_matrix</span>(pred_test<span class="sc">$</span>truth, pred_test<span class="sc">$</span>response)</span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="fu">plot_confusion_matrix</span>(cm<span class="sc">$</span><span class="st">`</span><span class="at">Confusion Matrix</span><span class="st">`</span>[[<span class="dv">1</span>]]) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="140_Boostingmodels_files/figure-html/boosting-011-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>El porcentaje de clasificación sobre la muestra de validación es del 53.55%. El resultado de la matriz de confusión es algo superior al de otros modelos propuestos anteriormente. Además, en este caso si clasificamos algunas muestras con <code>stroke</code> dado que originalmente provenían de ese grupo.</p>
+<p>Para finalizar el estudio de este modelo es necesario estudiar la validez de la solución y valorar la curva de aprendizaje correspondiente:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># Fijamos semilla</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb17-3"><a href="#cb17-3"></a><span class="co"># Definimos proceso de validación cruzada kfold con k=10</span></span>
+<span id="cb17-4"><a href="#cb17-4"></a>resamp <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>)</span>
+<span id="cb17-5"><a href="#cb17-5"></a><span class="co"># Remuestreo</span></span>
+<span id="cb17-6"><a href="#cb17-6"></a>rr <span class="ot">=</span> <span class="fu">resample</span>(tsk_stroke, gr_stroke, resamp, <span class="at">store_models=</span><span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [19:08:37.264] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 1/10)
+INFO  [19:08:42.025] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 2/10)
+INFO  [19:08:46.841] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 3/10)
+INFO  [19:08:51.936] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 4/10)
+INFO  [19:09:03.915] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 5/10)
+INFO  [19:09:09.840] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 6/10)
+INFO  [19:09:21.554] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 7/10)
+INFO  [19:09:34.937] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 8/10)
+INFO  [19:09:40.236] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 9/10)
+INFO  [19:09:47.936] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 10/10)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="co"># Análisis de los valores obtenidos con los scores definidos anteriormente</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="fu">skim</span>(rr<span class="sc">$</span><span class="fu">score</span>(measures))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">rr$score(measures)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Key</td>
+<td style="text-align: left;">NULL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">list</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">task_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">learner_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">41</td>
+<td style="text-align: right;">41</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">resampling_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: list</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 20%">
+<col style="width: 13%">
+<col style="width: 15%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">min_length</th>
+<th style="text-align: right;">max_length</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">task</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">51</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">learner</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">38</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">resampling</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">prediction</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 12%">
+<col style="width: 17%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">iteration</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5.50</td>
+<td style="text-align: right;">3.03</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3.25</td>
+<td style="text-align: right;">5.50</td>
+<td style="text-align: right;">7.75</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: left;">▇▇▇▇▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">classif.bacc</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.54</td>
+<td style="text-align: right;">0.04</td>
+<td style="text-align: right;">0.49</td>
+<td style="text-align: right;">0.50</td>
+<td style="text-align: right;">0.54</td>
+<td style="text-align: right;">0.57</td>
+<td style="text-align: right;">0.59</td>
+<td style="text-align: left;">▇▁▅▇▅</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>El valor medio del porcentaje de clasificación correcta ponderada se sitúa en el 53.9% con una desviación típica del 3%. Aunque los resultados son bastante estables el rango de valores abarca modelos con peores porcentajes que los vistos anteriormente. Por último representamos la curva de aprendizaje.</p>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>ptr <span class="ot">=</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span>)</span>
+<span id="cb20-2"><a href="#cb20-2"></a>lcurve <span class="ot">=</span> <span class="fu">learningcurve</span>(tsk_stroke, gr_stroke, <span class="st">"classif.bacc"</span>, <span class="at">ptr =</span> ptr, <span class="at">rpeats =</span> <span class="dv">10</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [19:10:02.517] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 1/10)
+INFO  [19:10:06.520] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 2/10)
+INFO  [19:10:11.111] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 3/10)
+INFO  [19:10:14.044] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 4/10)
+INFO  [19:10:17.295] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 5/10)
+INFO  [19:10:21.570] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 6/10)
+INFO  [19:10:25.363] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 7/10)
+INFO  [19:10:29.173] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 8/10)
+INFO  [19:10:32.756] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 9/10)
+INFO  [19:10:36.830] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 10/10)
+INFO  [19:10:40.241] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 1/10)
+INFO  [19:10:44.231] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 2/10)
+INFO  [19:10:45.990] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 3/10)
+INFO  [19:10:48.295] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 4/10)
+INFO  [19:10:50.205] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 5/10)
+INFO  [19:10:52.326] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 6/10)
+INFO  [19:10:55.498] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 7/10)
+INFO  [19:10:57.162] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 8/10)
+INFO  [19:10:58.791] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 9/10)
+INFO  [19:11:01.501] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 10/10)
+INFO  [19:11:05.980] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 1/10)
+INFO  [19:11:09.602] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 2/10)
+INFO  [19:11:12.419] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 3/10)
+INFO  [19:11:15.525] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 4/10)
+INFO  [19:11:19.907] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 5/10)
+INFO  [19:11:22.300] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 6/10)
+INFO  [19:11:24.858] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 7/10)
+INFO  [19:11:27.456] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 8/10)
+INFO  [19:11:31.377] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 9/10)
+INFO  [19:11:33.878] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 10/10)
+INFO  [19:11:36.696] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 1/10)
+INFO  [19:11:39.359] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 2/10)
+INFO  [19:11:43.774] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 3/10)
+INFO  [19:11:46.315] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 4/10)
+INFO  [19:11:49.478] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 5/10)
+INFO  [19:11:52.399] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 6/10)
+INFO  [19:11:56.280] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 7/10)
+INFO  [19:11:58.589] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 8/10)
+INFO  [19:12:01.713] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 9/10)
+INFO  [19:12:04.442] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 10/10)
+INFO  [19:12:07.970] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 1/10)
+INFO  [19:12:11.615] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 2/10)
+INFO  [19:12:14.710] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 3/10)
+INFO  [19:12:20.094] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 4/10)
+INFO  [19:12:23.193] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 5/10)
+INFO  [19:12:26.874] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 6/10)
+INFO  [19:12:31.014] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 7/10)
+INFO  [19:12:34.476] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 8/10)
+INFO  [19:12:37.945] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 9/10)
+INFO  [19:12:42.615] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 10/10)
+INFO  [19:12:45.889] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 1/10)
+INFO  [19:12:49.512] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 2/10)
+INFO  [19:12:53.333] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 3/10)
+INFO  [19:12:57.256] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 4/10)
+INFO  [19:13:01.205] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 5/10)
+INFO  [19:13:05.336] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 6/10)
+INFO  [19:13:09.628] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 7/10)
+INFO  [19:13:14.792] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 8/10)
+INFO  [19:13:21.104] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 9/10)
+INFO  [19:13:26.186] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 10/10)
+INFO  [19:13:30.403] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 1/10)
+INFO  [19:13:34.506] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 2/10)
+INFO  [19:13:38.610] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 3/10)
+INFO  [19:13:47.761] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 4/10)
+INFO  [19:13:52.279] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 5/10)
+INFO  [19:13:56.066] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 6/10)
+INFO  [19:14:00.345] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 7/10)
+INFO  [19:14:08.131] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 8/10)
+INFO  [19:14:11.814] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 9/10)
+INFO  [19:14:17.195] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 10/10)
+INFO  [19:14:27.234] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 1/10)
+INFO  [19:14:35.052] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 2/10)
+INFO  [19:14:39.212] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 3/10)
+INFO  [19:14:43.194] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 4/10)
+INFO  [19:14:47.171] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 5/10)
+INFO  [19:14:56.587] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 6/10)
+INFO  [19:15:04.561] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 7/10)
+INFO  [19:15:09.318] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 8/10)
+INFO  [19:15:14.120] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 9/10)
+INFO  [19:15:18.632] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 10/10)
+INFO  [19:15:23.783] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 1/10)
+INFO  [19:15:31.140] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 2/10)
+INFO  [19:15:35.790] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 3/10)
+INFO  [19:15:40.333] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 4/10)
+INFO  [19:15:44.705] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 5/10)
+INFO  [19:15:49.072] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 6/10)
+INFO  [19:15:53.436] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 7/10)
+INFO  [19:15:58.127] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 8/10)
+INFO  [19:16:03.254] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 9/10)
+INFO  [19:16:08.562] [mlr3] Applying learner 'scale.imputemedian.encode.classif.xgboost' on task 'stroke' (iter 10/10)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>datos <span class="ot">=</span> lcurve[lcurve<span class="sc">$</span>Sample<span class="sc">==</span><span class="st">"sco_test"</span>,]</span>
+<span id="cb22-2"><a href="#cb22-2"></a><span class="fu">ggplot</span>(datos, <span class="fu">aes</span>(ptr, MSR)) <span class="sc">+</span> </span>
+<span id="cb22-3"><a href="#cb22-3"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4"></a>    <span class="fu">labs</span>(<span class="at">x =</span><span class="st">"Proporción tamaño muestra entrenamiento"</span>, <span class="at">y =</span> <span class="st">"% Clasificación correcta"</span>) <span class="sc">+</span></span>
+<span id="cb22-5"><a href="#cb22-5"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span>ptr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="140_Boostingmodels_files/figure-html/boosting-014-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Podemos ver que el mejor valor para el porcentaje de clasificación correcta en la muestra de validación se alcanza para un tamaño de muestra de entrenamiento del 70%.</p>
+</section>
+<section id="water-potability-1" class="level4" data-number="14.4.2.2">
+<h4 data-number="14.4.2.2" class="anchored" data-anchor-id="water-potability-1"><span class="header-section-number">14.4.2.2</span> Water Potability</h4>
+<p>Como en el caso anterior comenzamos definiendo todos los modelos. En este caso todas las predictoras son de tipo numérico.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># Preprocesado</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a>pp_water <span class="ot">=</span> <span class="fu">po</span>(<span class="st">"scale"</span>, <span class="at">param_vals =</span> <span class="fu">list</span>(<span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;&gt;%</span></span>
+<span id="cb23-3"><a href="#cb23-3"></a>  <span class="fu">po</span>(<span class="st">"imputemedian"</span>, <span class="at">affect_columns =</span> <span class="fu">selector_type</span>(<span class="st">"numeric"</span>))</span>
+<span id="cb23-4"><a href="#cb23-4"></a><span class="co"># Modelo de aprendizaje AdaBoost</span></span>
+<span id="cb23-5"><a href="#cb23-5"></a><span class="co"># ==============================</span></span>
+<span id="cb23-6"><a href="#cb23-6"></a>lrn1 <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.AdaBoostM1"</span>)</span>
+<span id="cb23-7"><a href="#cb23-7"></a>water_adaboost <span class="ot">=</span> <span class="fu">as_learner</span>(pp_water <span class="sc">%&gt;&gt;%</span> lrn1)</span>
+<span id="cb23-8"><a href="#cb23-8"></a></span>
+<span id="cb23-9"><a href="#cb23-9"></a><span class="co"># Modelo de aprendizaje XGBoost</span></span>
+<span id="cb23-10"><a href="#cb23-10"></a><span class="co"># =======================================</span></span>
+<span id="cb23-11"><a href="#cb23-11"></a>lrn2 <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.xgboost"</span>)</span>
+<span id="cb23-12"><a href="#cb23-12"></a>water_xgboost <span class="ot">=</span> <span class="fu">as_learner</span>(pp_water <span class="sc">%&gt;&gt;%</span> lrn2)</span>
+<span id="cb23-13"><a href="#cb23-13"></a></span>
+<span id="cb23-14"><a href="#cb23-14"></a><span class="co"># Modelo de aprendizaje lightGBM</span></span>
+<span id="cb23-15"><a href="#cb23-15"></a><span class="co"># =======================================</span></span>
+<span id="cb23-16"><a href="#cb23-16"></a>lrn3 <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.lightgbm"</span>)</span>
+<span id="cb23-17"><a href="#cb23-17"></a>water_lightgbm <span class="ot">=</span> <span class="fu">as_learner</span>(pp_water <span class="sc">%&gt;&gt;%</span> lrn3)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Definimos el proceso de remuestreo necesario para la combinación de modelos y el proceso de combinación de todos los modelos definidos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="fu">set.seed</span>(<span class="dv">321</span>)</span>
+<span id="cb24-2"><a href="#cb24-2"></a><span class="co"># Remuestreo</span></span>
+<span id="cb24-3"><a href="#cb24-3"></a>remuestreo <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>)</span>
+<span id="cb24-4"><a href="#cb24-4"></a><span class="co"># Grid</span></span>
+<span id="cb24-5"><a href="#cb24-5"></a>design <span class="ot">=</span> <span class="fu">benchmark_grid</span>(tsk_water, </span>
+<span id="cb24-6"><a href="#cb24-6"></a>                        <span class="fu">list</span>(water_adaboost, water_xgboost, water_lightgbm), </span>
+<span id="cb24-7"><a href="#cb24-7"></a>                        remuestreo)</span>
+<span id="cb24-8"><a href="#cb24-8"></a><span class="co"># Combinación de soluciones</span></span>
+<span id="cb24-9"><a href="#cb24-9"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(design)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos ver ahora los resultados obtenidos con cada algoritmo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="fu">autoplot</span>(bmr, <span class="at">measure =</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="140_Boostingmodels_files/figure-html/boosting-017-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Para este conjunto de datos el algoritmo <code>lightgbm</code> es claramente mejor que los otros con un porcentaje medio de clasificación ponderada por encima del 60%. Este resultado es mucho mejor que los obtenidos hasta ahora para este conjunto de datos. Analizamos los resultados de este modelo introduciendo el proceso de optimización para la tasa de aprendizaje:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>boost_classif_water <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.lightgbm"</span>, </span>
+<span id="cb26-2"><a href="#cb26-2"></a>                         <span class="at">learning_rate =</span> <span class="fu">to_tune</span>(<span class="fl">1e-04</span>, <span class="dv">10</span>, <span class="at">logscale =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb26-3"><a href="#cb26-3"></a>                         )</span>
+<span id="cb26-4"><a href="#cb26-4"></a>gr_water <span class="ot">=</span>  <span class="fu">as_learner</span>(pp_water <span class="sc">%&gt;&gt;%</span> boost_classif_water)</span>
+<span id="cb26-5"><a href="#cb26-5"></a></span>
+<span id="cb26-6"><a href="#cb26-6"></a><span class="co"># Fijamos semilla para reproducibilidad del proceso</span></span>
+<span id="cb26-7"><a href="#cb26-7"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb26-8"><a href="#cb26-8"></a><span class="co"># Definimos instancia de optimización fijando el número de evaluaciones</span></span>
+<span id="cb26-9"><a href="#cb26-9"></a>instance <span class="ot">=</span> <span class="fu">tune</span>(</span>
+<span id="cb26-10"><a href="#cb26-10"></a>  <span class="at">tuner =</span> <span class="fu">tnr</span>(<span class="st">"random_search"</span>),</span>
+<span id="cb26-11"><a href="#cb26-11"></a>  <span class="at">task =</span> tsk_water,</span>
+<span id="cb26-12"><a href="#cb26-12"></a>  <span class="at">learner =</span> gr_water,</span>
+<span id="cb26-13"><a href="#cb26-13"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>),</span>
+<span id="cb26-14"><a href="#cb26-14"></a>  <span class="at">measures =</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>),</span>
+<span id="cb26-15"><a href="#cb26-15"></a>  <span class="at">term_evals =</span> <span class="dv">50</span></span>
+<span id="cb26-16"><a href="#cb26-16"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos ver el resultado del proceso de optimización con:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>instance<span class="sc">$</span>result<span class="sc">$</span>classif.bacc</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6140859</code></pre>
+</div>
+</div>
+<p>El porcentaje de clasificación correcta ha alcanzado el 61.405 que es el valor más alto obtenido hasta ahora para este banco de datos. Podemos analizar con más detalle este modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a><span class="co"># Modelo de aprendizaje</span></span>
+<span id="cb29-2"><a href="#cb29-2"></a>boost_classif_water <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.lightgbm"</span>, </span>
+<span id="cb29-3"><a href="#cb29-3"></a>                         <span class="at">learning_rate =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>classif.lightgbm.learning_rate</span>
+<span id="cb29-4"><a href="#cb29-4"></a>                         )</span>
+<span id="cb29-5"><a href="#cb29-5"></a>gr_water <span class="ot">=</span>  <span class="fu">as_learner</span>(pp_stroke <span class="sc">%&gt;&gt;%</span> boost_classif_water)</span>
+<span id="cb29-6"><a href="#cb29-6"></a></span>
+<span id="cb29-7"><a href="#cb29-7"></a><span class="co"># División de muestras</span></span>
+<span id="cb29-8"><a href="#cb29-8"></a><span class="fu">set.seed</span>(<span class="dv">432</span>)</span>
+<span id="cb29-9"><a href="#cb29-9"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_water, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb29-10"><a href="#cb29-10"></a>tsk_train_water <span class="ot">=</span> tsk_water<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb29-11"><a href="#cb29-11"></a>tsk_test_water  <span class="ot">=</span> tsk_water<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span>
+<span id="cb29-12"><a href="#cb29-12"></a></span>
+<span id="cb29-13"><a href="#cb29-13"></a><span class="co"># Entrenamiento del modelo</span></span>
+<span id="cb29-14"><a href="#cb29-14"></a>gr_water<span class="sc">$</span><span class="fu">train</span>(tsk_train_water)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Obtenemos ahora las predicciones del modelo y la matriz de confusión</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a><span class="co"># Predicción de la muestra de entrenamiento y validación</span></span>
+<span id="cb30-2"><a href="#cb30-2"></a>pred_train <span class="ot">=</span> gr_water<span class="sc">$</span><span class="fu">predict</span>(tsk_train_water)</span>
+<span id="cb30-3"><a href="#cb30-3"></a>pred_test <span class="ot">=</span> gr_water<span class="sc">$</span><span class="fu">predict</span>(tsk_test_water)</span>
+<span id="cb30-4"><a href="#cb30-4"></a><span class="co"># scores de validación</span></span>
+<span id="cb30-5"><a href="#cb30-5"></a>measures <span class="ot">=</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>)</span>
+<span id="cb30-6"><a href="#cb30-6"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb30-7"><a href="#cb30-7"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>classif.bacc 
+   0.9166761 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb32-2"><a href="#cb32-2"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>classif.bacc 
+   0.6135156 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a><span class="co"># matriz de confusión</span></span>
+<span id="cb34-2"><a href="#cb34-2"></a>cm <span class="ot">=</span> <span class="fu">confusion_matrix</span>(pred_test<span class="sc">$</span>truth, pred_test<span class="sc">$</span>response)</span>
+<span id="cb34-3"><a href="#cb34-3"></a><span class="fu">plot_confusion_matrix</span>(cm<span class="sc">$</span><span class="st">`</span><span class="at">Confusion Matrix</span><span class="st">`</span>[[<span class="dv">1</span>]]) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="140_Boostingmodels_files/figure-html/boosting-021-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>El porcentaje de clasificación sobre la muestra de validación es del 61.35%. El resultado de la matriz de confusión es superior al de otros modelos propuestos anteriormente. En este caso el modelo ya es capaz de detectar muestras como potables, lo que no ocurría con otros modelos. De hecho, el 15.4% de las muestras que eran potables son clasificadas como tales con el modelo propuesto. Sin embargo, aún tenemos un 23.6% de muestras que originalmente eran potables y que nuestro modelo no es capaz de clasificar correctamente.</p>
+<p>Estudiamos la validez de la solución y la curva de aprendizaje.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a><span class="co"># Fijamos semilla</span></span>
+<span id="cb35-2"><a href="#cb35-2"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb35-3"><a href="#cb35-3"></a><span class="co"># Definimos proceso de validación cruzada kfold con k=10</span></span>
+<span id="cb35-4"><a href="#cb35-4"></a>resamp <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>)</span>
+<span id="cb35-5"><a href="#cb35-5"></a><span class="co"># Remuestreo</span></span>
+<span id="cb35-6"><a href="#cb35-6"></a>rr <span class="ot">=</span> <span class="fu">resample</span>(tsk_water, gr_water, resamp, <span class="at">store_models=</span><span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [19:18:28.577] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 1/10)
+INFO  [19:18:30.695] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 2/10)
+INFO  [19:18:32.160] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 3/10)
+INFO  [19:18:33.258] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 4/10)
+INFO  [19:18:34.127] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 5/10)
+INFO  [19:18:35.009] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 6/10)
+INFO  [19:18:36.240] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 7/10)
+INFO  [19:18:37.919] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 8/10)
+INFO  [19:18:38.828] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 9/10)
+INFO  [19:18:40.857] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 10/10)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a><span class="co"># Análisis de los valores obtenidos con los scores definidos anteriormente</span></span>
+<span id="cb37-2"><a href="#cb37-2"></a><span class="fu">skim</span>(rr<span class="sc">$</span><span class="fu">score</span>(measures))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">rr$score(measures)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Key</td>
+<td style="text-align: left;">NULL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">list</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">task_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">learner_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">42</td>
+<td style="text-align: right;">42</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">resampling_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: list</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 20%">
+<col style="width: 13%">
+<col style="width: 15%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">min_length</th>
+<th style="text-align: right;">max_length</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">task</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">51</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">learner</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">38</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">resampling</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">prediction</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 12%">
+<col style="width: 17%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">iteration</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5.50</td>
+<td style="text-align: right;">3.03</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3.25</td>
+<td style="text-align: right;">5.50</td>
+<td style="text-align: right;">7.75</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: left;">▇▇▇▇▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">classif.bacc</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.61</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.56</td>
+<td style="text-align: right;">0.59</td>
+<td style="text-align: right;">0.61</td>
+<td style="text-align: right;">0.63</td>
+<td style="text-align: right;">0.66</td>
+<td style="text-align: left;">▅▂▇▇▂</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>El valor medio del porcentaje de clasificación correcta ponderada se sitúa en el 60.8% con una desviación típica del 3%. En este caso el valor mínimo se sitúa en el 55.8% mostrando un mejor comportamiento que el resto de modelos utilizados sobre este banco de datos. Por último representamos la curva de aprendizaje.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a>ptr <span class="ot">=</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span>)</span>
+<span id="cb38-2"><a href="#cb38-2"></a>lcurve <span class="ot">=</span> <span class="fu">learningcurve</span>(tsk_water, gr_water, <span class="st">"classif.bacc"</span>, <span class="at">ptr =</span> ptr, <span class="at">rpeats =</span> <span class="dv">10</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [19:18:50.205] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 1/10)
+INFO  [19:18:53.729] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 2/10)
+INFO  [19:18:57.212] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 3/10)
+INFO  [19:19:00.490] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 4/10)
+INFO  [19:19:02.180] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 5/10)
+INFO  [19:19:04.111] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 6/10)
+INFO  [19:19:05.781] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 7/10)
+INFO  [19:19:07.169] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 8/10)
+INFO  [19:19:08.080] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 9/10)
+INFO  [19:19:09.028] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 10/10)
+INFO  [19:19:11.207] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 1/10)
+INFO  [19:19:13.795] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 2/10)
+INFO  [19:19:15.688] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 3/10)
+INFO  [19:19:16.607] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 4/10)
+INFO  [19:19:17.563] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 5/10)
+INFO  [19:19:18.460] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 6/10)
+INFO  [19:19:19.479] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 7/10)
+INFO  [19:19:20.379] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 8/10)
+INFO  [19:19:21.499] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 9/10)
+INFO  [19:19:22.539] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 10/10)
+INFO  [19:19:23.884] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 1/10)
+INFO  [19:19:24.946] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 2/10)
+INFO  [19:19:27.549] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 3/10)
+INFO  [19:19:28.799] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 4/10)
+INFO  [19:19:29.836] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 5/10)
+INFO  [19:19:30.912] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 6/10)
+INFO  [19:19:32.615] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 7/10)
+INFO  [19:19:33.765] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 8/10)
+INFO  [19:19:34.856] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 9/10)
+INFO  [19:19:36.453] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 10/10)
+INFO  [19:19:37.996] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 1/10)
+INFO  [19:19:39.202] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 2/10)
+INFO  [19:19:39.846] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 3/10)
+INFO  [19:19:40.780] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 4/10)
+INFO  [19:19:41.547] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 5/10)
+INFO  [19:19:42.305] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 6/10)
+INFO  [19:19:43.297] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 7/10)
+INFO  [19:19:44.080] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 8/10)
+INFO  [19:19:44.758] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 9/10)
+INFO  [19:19:45.697] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 10/10)
+INFO  [19:19:48.039] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 1/10)
+INFO  [19:19:49.478] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 2/10)
+INFO  [19:19:50.229] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 3/10)
+INFO  [19:19:51.153] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 4/10)
+INFO  [19:19:52.007] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 5/10)
+INFO  [19:19:53.099] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 6/10)
+INFO  [19:19:53.785] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 7/10)
+INFO  [19:19:54.650] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 8/10)
+INFO  [19:19:55.561] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 9/10)
+INFO  [19:19:56.325] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 10/10)
+INFO  [19:19:58.710] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 1/10)
+INFO  [19:19:59.763] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 2/10)
+INFO  [19:20:00.668] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 3/10)
+INFO  [19:20:01.748] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 4/10)
+INFO  [19:20:02.399] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 5/10)
+INFO  [19:20:03.782] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 6/10)
+INFO  [19:20:04.463] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 7/10)
+INFO  [19:20:05.272] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 8/10)
+INFO  [19:20:05.912] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 9/10)
+INFO  [19:20:06.914] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 10/10)
+INFO  [19:20:08.731] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 1/10)
+INFO  [19:20:11.067] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 2/10)
+INFO  [19:20:12.609] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 3/10)
+INFO  [19:20:13.928] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 4/10)
+INFO  [19:20:14.665] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 5/10)
+INFO  [19:20:15.361] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 6/10)
+INFO  [19:20:16.078] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 7/10)
+INFO  [19:20:16.704] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 8/10)
+INFO  [19:20:17.428] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 9/10)
+INFO  [19:20:18.124] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 10/10)
+INFO  [19:20:19.175] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 1/10)
+INFO  [19:20:20.619] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 2/10)
+INFO  [19:20:21.470] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 3/10)
+INFO  [19:20:22.572] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 4/10)
+INFO  [19:20:23.400] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 5/10)
+INFO  [19:20:24.522] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 6/10)
+INFO  [19:20:25.600] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 7/10)
+INFO  [19:20:26.765] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 8/10)
+INFO  [19:20:27.767] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 9/10)
+INFO  [19:20:28.719] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 10/10)
+INFO  [19:20:30.420] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 1/10)
+INFO  [19:20:32.778] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 2/10)
+INFO  [19:20:33.846] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 3/10)
+INFO  [19:20:35.450] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 4/10)
+INFO  [19:20:36.411] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 5/10)
+INFO  [19:20:37.126] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 6/10)
+INFO  [19:20:37.870] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 7/10)
+INFO  [19:20:38.647] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 8/10)
+INFO  [19:20:39.317] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 9/10)
+INFO  [19:20:40.349] [mlr3] Applying learner 'scale.imputemedian.encode.classif.lightgbm' on task 'waterpot' (iter 10/10)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a>datos <span class="ot">=</span> lcurve[lcurve<span class="sc">$</span>Sample<span class="sc">==</span><span class="st">"sco_test"</span>,]</span>
+<span id="cb40-2"><a href="#cb40-2"></a><span class="fu">ggplot</span>(datos, <span class="fu">aes</span>(ptr, MSR)) <span class="sc">+</span> </span>
+<span id="cb40-3"><a href="#cb40-3"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb40-4"><a href="#cb40-4"></a>    <span class="fu">labs</span>(<span class="at">x =</span><span class="st">"Proporción tamaño muestra entrenamiento"</span>, <span class="at">y =</span> <span class="st">"% Clasificación correcta"</span>) <span class="sc">+</span></span>
+<span id="cb40-5"><a href="#cb40-5"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span>ptr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="140_Boostingmodels_files/figure-html/boosting-023-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En este caso el porcentaje de clasificación correcta no deja de aumentar conforme aumenta la muestra de tamaño de entrenamiento. Esto puede significar un problema de sobreajuste ya que cuanto más aumentamos mejor resultado tenemos. Como en el banco de datos anterior podríamos utilizar un porcentaje del 70% o 80%.</p>
+</section>
+<section id="housing-in-california-1" class="level4" data-number="14.4.2.3">
+<h4 data-number="14.4.2.3" class="anchored" data-anchor-id="housing-in-california-1"><span class="header-section-number">14.4.2.3</span> Housing in California</h4>
+<p>Veamos ahora el análisis del modelo de regresión. En este caso consideramos los modelos <code>gbm</code>, <code>xgboost</code>, y <code>ligthgbm</code>. Comenzamos definiendo los modelos de aprendizaje.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="co"># Preprocesado</span></span>
+<span id="cb41-2"><a href="#cb41-2"></a>pp_housing <span class="ot">=</span> </span>
+<span id="cb41-3"><a href="#cb41-3"></a>   <span class="fu">po</span>(<span class="st">"scale"</span>, <span class="at">param_vals =</span> <span class="fu">list</span>(<span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;&gt;%</span></span>
+<span id="cb41-4"><a href="#cb41-4"></a>   <span class="fu">po</span>(<span class="st">"imputemedian"</span>, <span class="at">affect_columns =</span> <span class="fu">selector_type</span>(<span class="st">"numeric"</span>)) <span class="sc">%&gt;&gt;%</span></span>
+<span id="cb41-5"><a href="#cb41-5"></a>   <span class="fu">po</span>(<span class="st">"encode"</span>, <span class="at">param_vals =</span> <span class="fu">list</span>(<span class="at">method =</span> <span class="st">"one-hot"</span>))</span>
+<span id="cb41-6"><a href="#cb41-6"></a></span>
+<span id="cb41-7"><a href="#cb41-7"></a><span class="co"># Modelo de aprendizaje AdaBoost</span></span>
+<span id="cb41-8"><a href="#cb41-8"></a><span class="co"># ==============================</span></span>
+<span id="cb41-9"><a href="#cb41-9"></a>lrn1 <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"regr.gbm"</span>)</span>
+<span id="cb41-10"><a href="#cb41-10"></a>housing_gbm <span class="ot">=</span> <span class="fu">as_learner</span>(pp_housing <span class="sc">%&gt;&gt;%</span> lrn1)</span>
+<span id="cb41-11"><a href="#cb41-11"></a></span>
+<span id="cb41-12"><a href="#cb41-12"></a><span class="co"># Modelo de aprendizaje XGBoost</span></span>
+<span id="cb41-13"><a href="#cb41-13"></a><span class="co"># =======================================</span></span>
+<span id="cb41-14"><a href="#cb41-14"></a>lrn2 <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"regr.xgboost"</span>)</span>
+<span id="cb41-15"><a href="#cb41-15"></a>housing_xgboost <span class="ot">=</span> <span class="fu">as_learner</span>(pp_housing <span class="sc">%&gt;&gt;%</span> lrn2)</span>
+<span id="cb41-16"><a href="#cb41-16"></a></span>
+<span id="cb41-17"><a href="#cb41-17"></a><span class="co"># Modelo de aprendizaje lightGBM</span></span>
+<span id="cb41-18"><a href="#cb41-18"></a><span class="co"># =======================================</span></span>
+<span id="cb41-19"><a href="#cb41-19"></a>lrn3 <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"regr.lightgbm"</span>)</span>
+<span id="cb41-20"><a href="#cb41-20"></a>housing_lightgbm <span class="ot">=</span> <span class="fu">as_learner</span>(pp_housing <span class="sc">%&gt;&gt;%</span> lrn3)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Definimos el proceso de remuestreo necesario para la combinación de modelos y el proceso de combinación de todos los modelos definidos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a><span class="fu">set.seed</span>(<span class="dv">321</span>)</span>
+<span id="cb42-2"><a href="#cb42-2"></a><span class="co"># Remuestreo</span></span>
+<span id="cb42-3"><a href="#cb42-3"></a>remuestreo <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>)</span>
+<span id="cb42-4"><a href="#cb42-4"></a><span class="co"># Grid</span></span>
+<span id="cb42-5"><a href="#cb42-5"></a>design <span class="ot">=</span> <span class="fu">benchmark_grid</span>(tsk_housing, </span>
+<span id="cb42-6"><a href="#cb42-6"></a>                        <span class="fu">list</span>(housing_gbm, housing_xgboost, housing_lightgbm), </span>
+<span id="cb42-7"><a href="#cb42-7"></a>                        remuestreo)</span>
+<span id="cb42-8"><a href="#cb42-8"></a><span class="co"># Combinación de soluciones</span></span>
+<span id="cb42-9"><a href="#cb42-9"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(design)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos ver ahora los resultados obtenidos con cada algoritmo, utilizando el score <code>smape</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a><span class="fu">autoplot</span>(bmr, <span class="at">measure =</span> <span class="fu">msr</span>(<span class="st">"regr.smape"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="140_Boostingmodels_files/figure-html/boosting-026-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>El modelo con un menor valor de <code>smape</code> es <code>lightgbm</code>, seguido muy cerca por <code>gbm</code>. De nuevo, analizamos este modelo buscando el óptimo de la tasa de aprendizaje.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a>boost_regr_housing <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"regr.lightgbm"</span>, </span>
+<span id="cb44-2"><a href="#cb44-2"></a>                         <span class="at">learning_rate =</span> <span class="fu">to_tune</span>(<span class="fl">1e-04</span>, <span class="dv">10</span>, <span class="at">logscale =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb44-3"><a href="#cb44-3"></a>                         )</span>
+<span id="cb44-4"><a href="#cb44-4"></a>gr_housing <span class="ot">=</span>  <span class="fu">as_learner</span>(pp_housing <span class="sc">%&gt;&gt;%</span> boost_regr_housing)</span>
+<span id="cb44-5"><a href="#cb44-5"></a></span>
+<span id="cb44-6"><a href="#cb44-6"></a><span class="co"># Fijamos semilla para reproducibilidad del proceso</span></span>
+<span id="cb44-7"><a href="#cb44-7"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb44-8"><a href="#cb44-8"></a><span class="co"># Definimos instancia de optimización fijando el número de evaluaciones</span></span>
+<span id="cb44-9"><a href="#cb44-9"></a>instance <span class="ot">=</span> <span class="fu">tune</span>(</span>
+<span id="cb44-10"><a href="#cb44-10"></a>  <span class="at">tuner =</span> <span class="fu">tnr</span>(<span class="st">"random_search"</span>),</span>
+<span id="cb44-11"><a href="#cb44-11"></a>  <span class="at">task =</span> tsk_housing,</span>
+<span id="cb44-12"><a href="#cb44-12"></a>  <span class="at">learner =</span> gr_housing,</span>
+<span id="cb44-13"><a href="#cb44-13"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>),</span>
+<span id="cb44-14"><a href="#cb44-14"></a>  <span class="at">measures =</span> <span class="fu">msr</span>(<span class="st">"regr.smape"</span>),</span>
+<span id="cb44-15"><a href="#cb44-15"></a>  <span class="at">term_evals =</span> <span class="dv">50</span></span>
+<span id="cb44-16"><a href="#cb44-16"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos ver el resultado del proceso de optimización con:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a>instance<span class="sc">$</span>result<span class="sc">$</span>regr.smape</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1595812</code></pre>
+</div>
+</div>
+<p>El valor de <code>smape</code> obtenido es el más bajo de todos los modelos propuestos hasta ahora, por lo que vamos a estudiar con algo más de detalle este modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a><span class="co"># Modelo de aprendizaje</span></span>
+<span id="cb47-2"><a href="#cb47-2"></a>boost_regr_housing <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"regr.lightgbm"</span>, </span>
+<span id="cb47-3"><a href="#cb47-3"></a>                         <span class="at">learning_rate =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>regr.lightgbm.learning_rate</span>
+<span id="cb47-4"><a href="#cb47-4"></a>                         )</span>
+<span id="cb47-5"><a href="#cb47-5"></a>gr_housing <span class="ot">=</span>  <span class="fu">as_learner</span>(pp_housing <span class="sc">%&gt;&gt;%</span> boost_regr_housing)</span>
+<span id="cb47-6"><a href="#cb47-6"></a></span>
+<span id="cb47-7"><a href="#cb47-7"></a><span class="co"># División de muestras</span></span>
+<span id="cb47-8"><a href="#cb47-8"></a><span class="fu">set.seed</span>(<span class="dv">432</span>)</span>
+<span id="cb47-9"><a href="#cb47-9"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_housing, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb47-10"><a href="#cb47-10"></a>tsk_train_housing <span class="ot">=</span> tsk_housing<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb47-11"><a href="#cb47-11"></a>tsk_test_housing  <span class="ot">=</span> tsk_housing<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span>
+<span id="cb47-12"><a href="#cb47-12"></a></span>
+<span id="cb47-13"><a href="#cb47-13"></a><span class="co"># Entrenamiento del modelo</span></span>
+<span id="cb47-14"><a href="#cb47-14"></a>gr_housing<span class="sc">$</span><span class="fu">train</span>(tsk_train_housing)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Obtenemos ahora las predicciones del modelo y evaluamos los scores sobre la muestra de entrenamiento y validación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a><span class="co"># Predicción de la muestra de entrenamiento y validación</span></span>
+<span id="cb48-2"><a href="#cb48-2"></a>pred_train <span class="ot">=</span> gr_housing<span class="sc">$</span><span class="fu">predict</span>(tsk_train_housing)</span>
+<span id="cb48-3"><a href="#cb48-3"></a>pred_test <span class="ot">=</span> gr_housing<span class="sc">$</span><span class="fu">predict</span>(tsk_test_housing)</span>
+<span id="cb48-4"><a href="#cb48-4"></a><span class="co"># scores de validación</span></span>
+<span id="cb48-5"><a href="#cb48-5"></a>measures <span class="ot">=</span> <span class="fu">msr</span>(<span class="st">"regr.smape"</span>)</span>
+<span id="cb48-6"><a href="#cb48-6"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb48-7"><a href="#cb48-7"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>regr.smape 
+ 0.1305084 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb50-2"><a href="#cb50-2"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>regr.smape 
+ 0.1596983 </code></pre>
+</div>
+</div>
+<p>El resultado sigue siendo bastante bueno para la muestra de validación. Finalizamos con el análisis de validación y la representación de la curva de aprendizaje.</p>
+<p>Estudiamos la validez de la solución y la curva de aprendizaje.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1"></a><span class="co"># Fijamos semilla</span></span>
+<span id="cb52-2"><a href="#cb52-2"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb52-3"><a href="#cb52-3"></a><span class="co"># Definimos proceso de validación cruzada kfold con k=10</span></span>
+<span id="cb52-4"><a href="#cb52-4"></a>resamp <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>)</span>
+<span id="cb52-5"><a href="#cb52-5"></a><span class="co"># Remuestreo</span></span>
+<span id="cb52-6"><a href="#cb52-6"></a>rr <span class="ot">=</span> <span class="fu">resample</span>(tsk_housing, gr_housing, resamp, <span class="at">store_models=</span><span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [19:23:41.180] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 1/10)
+INFO  [19:23:41.859] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 2/10)
+INFO  [19:23:42.531] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 3/10)
+INFO  [19:23:43.213] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 4/10)
+INFO  [19:23:43.912] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 5/10)
+INFO  [19:23:44.603] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 6/10)
+INFO  [19:23:45.358] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 7/10)
+INFO  [19:23:46.090] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 8/10)
+INFO  [19:23:46.825] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 9/10)
+INFO  [19:23:47.579] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 10/10)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a><span class="co"># Análisis de los valores obtenidos con los scores definidos anteriormente</span></span>
+<span id="cb54-2"><a href="#cb54-2"></a><span class="fu">skim</span>(rr<span class="sc">$</span><span class="fu">score</span>(measures))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">rr$score(measures)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Key</td>
+<td style="text-align: left;">NULL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">list</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">task_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">learner_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">resampling_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: list</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 20%">
+<col style="width: 13%">
+<col style="width: 15%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">min_length</th>
+<th style="text-align: right;">max_length</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">task</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">48</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">learner</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">38</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">resampling</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">prediction</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">19</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 12%">
+<col style="width: 17%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">iteration</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5.50</td>
+<td style="text-align: right;">3.03</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3.25</td>
+<td style="text-align: right;">5.50</td>
+<td style="text-align: right;">7.75</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: left;">▇▇▇▇▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">regr.smape</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: left;">▇▂▅▂▇</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>El valor medio del <code>smape</code> se sitúa en el 0.157 con una desviación típica del 0.001. El rango de scores es muy estrecho indicando que la solución es muy estable. Por último representamos la curva de aprendizaje.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a>ptr <span class="ot">=</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span>)</span>
+<span id="cb55-2"><a href="#cb55-2"></a>lcurve <span class="ot">=</span> <span class="fu">learningcurve</span>(tsk_housing, gr_housing, <span class="st">"regr.smape"</span>, <span class="at">ptr =</span> ptr, <span class="at">rpeats =</span> <span class="dv">10</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [19:23:49.542] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 1/10)
+INFO  [19:23:50.601] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 2/10)
+INFO  [19:23:51.565] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 3/10)
+INFO  [19:23:52.545] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 4/10)
+INFO  [19:23:53.529] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 5/10)
+INFO  [19:23:54.517] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 6/10)
+INFO  [19:23:55.597] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 7/10)
+INFO  [19:23:56.672] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 8/10)
+INFO  [19:23:57.575] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 9/10)
+INFO  [19:23:58.531] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 10/10)
+INFO  [19:23:59.638] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 1/10)
+INFO  [19:24:00.548] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 2/10)
+INFO  [19:24:01.470] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 3/10)
+INFO  [19:24:02.773] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 4/10)
+INFO  [19:24:03.631] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 5/10)
+INFO  [19:24:04.479] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 6/10)
+INFO  [19:24:05.349] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 7/10)
+INFO  [19:24:06.190] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 8/10)
+INFO  [19:24:07.095] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 9/10)
+INFO  [19:24:07.944] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 10/10)
+INFO  [19:24:08.996] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 1/10)
+INFO  [19:24:09.859] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 2/10)
+INFO  [19:24:10.754] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 3/10)
+INFO  [19:24:11.626] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 4/10)
+INFO  [19:24:12.489] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 5/10)
+INFO  [19:24:13.389] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 6/10)
+INFO  [19:24:14.273] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 7/10)
+INFO  [19:24:15.152] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 8/10)
+INFO  [19:24:16.081] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 9/10)
+INFO  [19:24:16.988] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 10/10)
+INFO  [19:24:18.040] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 1/10)
+INFO  [19:24:18.986] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 2/10)
+INFO  [19:24:19.913] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 3/10)
+INFO  [19:24:20.875] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 4/10)
+INFO  [19:24:21.777] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 5/10)
+INFO  [19:24:22.730] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 6/10)
+INFO  [19:24:23.683] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 7/10)
+INFO  [19:24:24.621] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 8/10)
+INFO  [19:24:25.559] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 9/10)
+INFO  [19:24:26.500] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 10/10)
+INFO  [19:24:27.777] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 1/10)
+INFO  [19:24:28.734] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 2/10)
+INFO  [19:24:29.749] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 3/10)
+INFO  [19:24:30.715] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 4/10)
+INFO  [19:24:31.681] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 5/10)
+INFO  [19:24:32.680] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 6/10)
+INFO  [19:24:33.655] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 7/10)
+INFO  [19:24:34.662] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 8/10)
+INFO  [19:24:35.665] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 9/10)
+INFO  [19:24:36.683] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 10/10)
+INFO  [19:24:38.290] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 1/10)
+INFO  [19:24:39.285] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 2/10)
+INFO  [19:24:40.248] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 3/10)
+INFO  [19:24:41.258] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 4/10)
+INFO  [19:24:42.229] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 5/10)
+INFO  [19:24:43.224] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 6/10)
+INFO  [19:24:44.174] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 7/10)
+INFO  [19:24:45.168] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 8/10)
+INFO  [19:24:46.142] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 9/10)
+INFO  [19:24:47.182] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 10/10)
+INFO  [19:24:48.403] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 1/10)
+INFO  [19:24:49.430] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 2/10)
+INFO  [19:24:50.441] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 3/10)
+INFO  [19:24:51.473] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 4/10)
+INFO  [19:24:52.510] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 5/10)
+INFO  [19:24:53.544] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 6/10)
+INFO  [19:24:54.720] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 7/10)
+INFO  [19:24:55.903] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 8/10)
+INFO  [19:24:57.133] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 9/10)
+INFO  [19:24:58.273] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 10/10)
+INFO  [19:24:59.546] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 1/10)
+INFO  [19:25:00.685] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 2/10)
+INFO  [19:25:01.850] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 3/10)
+INFO  [19:25:03.380] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 4/10)
+INFO  [19:25:04.405] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 5/10)
+INFO  [19:25:05.457] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 6/10)
+INFO  [19:25:06.489] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 7/10)
+INFO  [19:25:07.568] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 8/10)
+INFO  [19:25:08.623] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 9/10)
+INFO  [19:25:09.687] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 10/10)
+INFO  [19:25:10.959] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 1/10)
+INFO  [19:25:12.098] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 2/10)
+INFO  [19:25:13.214] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 3/10)
+INFO  [19:25:14.314] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 4/10)
+INFO  [19:25:15.444] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 5/10)
+INFO  [19:25:16.564] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 6/10)
+INFO  [19:25:17.731] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 7/10)
+INFO  [19:25:18.834] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 8/10)
+INFO  [19:25:19.962] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 9/10)
+INFO  [19:25:21.107] [mlr3] Applying learner 'scale.imputemedian.encode.regr.lightgbm' on task 'housingCA' (iter 10/10)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a>datos <span class="ot">=</span> lcurve[lcurve<span class="sc">$</span>Sample<span class="sc">==</span><span class="st">"sco_test"</span>,]</span>
+<span id="cb57-2"><a href="#cb57-2"></a><span class="fu">ggplot</span>(datos, <span class="fu">aes</span>(ptr, MSR)) <span class="sc">+</span> </span>
+<span id="cb57-3"><a href="#cb57-3"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb57-4"><a href="#cb57-4"></a>    <span class="fu">labs</span>(<span class="at">x =</span><span class="st">"Proporción tamaño muestra entrenamiento"</span>, <span class="at">y =</span> <span class="st">"sMAPE"</span>) <span class="sc">+</span></span>
+<span id="cb57-5"><a href="#cb57-5"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span>ptr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="140_Boostingmodels_files/figure-html/boosting-032-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Como ocurría con el banco de datos anterior, el <code>smape</code> se reduce cuando incrementa el tamaño de muestra de entrenamiento. Podemos tener algún problema de sobreaprendizaje que deberíamos controlar para evitar resultados sesgados. Un tamaño del 70% parece una buena opción.</p>
+</section>
+</section>
+</section>
+<section id="sec-140.5" class="level2" data-number="14.5">
+<h2 data-number="14.5" class="anchored" data-anchor-id="sec-140.5"><span class="header-section-number">14.5</span> Ejercicios</h2>
+<ol type="1">
+<li>Ajustar un modelo de aprendizaje automático basado en bosques aleatorios para el banco de datos <code>Mushroom</code><a href="40_DataBases.html#sec-mushroom"><span>4.3.4</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en bosques aleatorios para el banco de datos <code>Hepatitis</code><a href="40_DataBases.html#sec-hepatitis"><span>4.3.9</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en bosques aleatorios para el banco de datos <code>Abalone</code><a href="40_DataBases.html#sec-abalone"><span>4.3.1</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en bosques aleatorios para el banco de datos <code>Us economic time series</code><a href="40_DataBases.html#sec-usaets"><span>4.2.7</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en bosques aleatorios para el banco de datos <code>QSAR</code><a href="40_DataBases.html#sec-qsar"><span>4.2.8</span></a>.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "¡Copiado!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "¡Copiado!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./130_Ensemblemodels.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Modelos de conjunto (Ensemble models)</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./04_NonSupervisedAA.html" class="pagination-link">
+        <span class="nav-page-text">Parte 4. Aprendizaje no supervisado</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MachineLearning - 10&nbsp; Modelo de los k vecinos más cercanos (kNN)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./110_SVMmodels.html" rel="next">
+<link href="./90_BayesianClassif.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos coincidentes",
+    "search-copy-link-title": "Copiar enlace para buscar",
+    "search-hide-matches-text": "Ocultar coincidencias adicionales",
+    "search-more-match-text": "más coincidencia en este documento",
+    "search-more-matches-text": "más coincidencias en este documento",
+    "search-clear-button-title": "Limpiar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Entregar"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MachineLearning</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Prefacio</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./01_IntroCourse.html" class="sidebar-item-text sidebar-link">Parte 1. Introducción</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_introAD.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_introAA.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./30_RandRstudio.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./40_DataBases.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./02_FirstStepsAA.html" class="sidebar-item-text sidebar-link">Parte 2. Primeros pasos</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./50_AED.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./03_SupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 3. Aprendizaje supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./60_RegressionModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regresión</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./70_LogisticModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelos de Regresión Logística</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./80_SurvivalModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./90_BayesianClassif.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./100_kNNmodels.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./110_SVMmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./120_DTmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./130_Ensemblemodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Modelos de conjunto (Ensemble models)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./140_Boostingmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Modelos Boosting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./04_NonSupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 4. Aprendizaje no supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./150_Discriminantmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análisis discriminante (AD)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./160_PrinCompmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./170_MDSmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./180_Clustermodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Análisis cluster</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">Referencias</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#sec-100.1" id="toc-sec-100.1" class="nav-link active" data-scroll-target="#sec-100.1"><span class="toc-section-number">10.1</span>  Etapas del algorirmo kNN</a></li>
+  <li><a href="#sec-100.2" id="toc-sec-100.2" class="nav-link" data-scroll-target="#sec-100.2"><span class="toc-section-number">10.2</span>  Métricas de distancia</a></li>
+  <li><a href="#sec-100.3" id="toc-sec-100.3" class="nav-link" data-scroll-target="#sec-100.3"><span class="toc-section-number">10.3</span>  Predictoras irrelevantes y problemas de escala</a></li>
+  <li><a href="#sec-100.4" id="toc-sec-100.4" class="nav-link" data-scroll-target="#sec-100.4"><span class="toc-section-number">10.4</span>  Seleccionando el número de vecinos</a></li>
+  <li><a href="#sec-100.5" id="toc-sec-100.5" class="nav-link" data-scroll-target="#sec-100.5"><span class="toc-section-number">10.5</span>  Ponderación de los vecinos más cercanos</a></li>
+  <li><a href="#sec-100.6" id="toc-sec-100.6" class="nav-link" data-scroll-target="#sec-100.6"><span class="toc-section-number">10.6</span>  Ventajas y desventajas de kNN</a></li>
+  <li><a href="#sec-100.7" id="toc-sec-100.7" class="nav-link" data-scroll-target="#sec-100.7"><span class="toc-section-number">10.7</span>  Bancos de datos</a>
+  <ul>
+  <li><a href="#sec-100.7.1" id="toc-sec-100.7.1" class="nav-link" data-scroll-target="#sec-100.7.1"><span class="toc-section-number">10.7.1</span>  Breast Cancer Wisconsin</a></li>
+  <li><a href="#sec-100.7.2" id="toc-sec-100.7.2" class="nav-link" data-scroll-target="#sec-100.7.2"><span class="toc-section-number">10.7.2</span>  Iris</a></li>
+  <li><a href="#sec-100.7.3" id="toc-sec-100.7.3" class="nav-link" data-scroll-target="#sec-100.7.3"><span class="toc-section-number">10.7.3</span>  Electricity</a></li>
+  <li><a href="#sec-100.7.4" id="toc-sec-100.7.4" class="nav-link" data-scroll-target="#sec-100.7.4"><span class="toc-section-number">10.7.4</span>  Diabetes</a></li>
+  </ul></li>
+  <li><a href="#sec-100.8" id="toc-sec-100.8" class="nav-link" data-scroll-target="#sec-100.8"><span class="toc-section-number">10.8</span>  Algoritmos kNN en mlr3</a></li>
+  <li><a href="#sec-100.9" id="toc-sec-100.9" class="nav-link" data-scroll-target="#sec-100.9"><span class="toc-section-number">10.9</span>  Nuestros primeros modelos</a>
+  <ul>
+  <li><a href="#sec-100.9.1" id="toc-sec-100.9.1" class="nav-link" data-scroll-target="#sec-100.9.1"><span class="toc-section-number">10.9.1</span>  Modelos por defecto</a>
+  <ul class="collapse">
+  <li><a href="#datos-breast-cancer" id="toc-datos-breast-cancer" class="nav-link" data-scroll-target="#datos-breast-cancer"><span class="toc-section-number">10.9.1.1</span>  Datos Breast Cancer</a></li>
+  <li><a href="#datos-iris" id="toc-datos-iris" class="nav-link" data-scroll-target="#datos-iris"><span class="toc-section-number">10.9.1.2</span>  Datos Iris</a></li>
+  <li><a href="#datos-electricity" id="toc-datos-electricity" class="nav-link" data-scroll-target="#datos-electricity"><span class="toc-section-number">10.9.1.3</span>  Datos Electricity</a></li>
+  <li><a href="#datos-diabetes" id="toc-datos-diabetes" class="nav-link" data-scroll-target="#datos-diabetes"><span class="toc-section-number">10.9.1.4</span>  Datos Diabetes</a></li>
+  </ul></li>
+  <li><a href="#sec-100.9.2" id="toc-sec-100.9.2" class="nav-link" data-scroll-target="#sec-100.9.2"><span class="toc-section-number">10.9.2</span>  Seleccionando predictoras</a>
+  <ul class="collapse">
+  <li><a href="#datos-breast-cancer-1" id="toc-datos-breast-cancer-1" class="nav-link" data-scroll-target="#datos-breast-cancer-1"><span class="toc-section-number">10.9.2.1</span>  Datos Breast Cancer</a></li>
+  <li><a href="#datos-iris-1" id="toc-datos-iris-1" class="nav-link" data-scroll-target="#datos-iris-1"><span class="toc-section-number">10.9.2.2</span>  Datos Iris</a></li>
+  <li><a href="#datos-electricity-1" id="toc-datos-electricity-1" class="nav-link" data-scroll-target="#datos-electricity-1"><span class="toc-section-number">10.9.2.3</span>  Datos Electricity</a></li>
+  <li><a href="#datos-diabetes-1" id="toc-datos-diabetes-1" class="nav-link" data-scroll-target="#datos-diabetes-1"><span class="toc-section-number">10.9.2.4</span>  Datos Diabetes</a></li>
+  </ul></li>
+  <li><a href="#sec-100.9.3" id="toc-sec-100.9.3" class="nav-link" data-scroll-target="#sec-100.9.3"><span class="toc-section-number">10.9.3</span>  Seleccionando k</a>
+  <ul class="collapse">
+  <li><a href="#datos-breast-cancer-2" id="toc-datos-breast-cancer-2" class="nav-link" data-scroll-target="#datos-breast-cancer-2"><span class="toc-section-number">10.9.3.1</span>  Datos breast Cancer</a></li>
+  <li><a href="#datos-iris-2" id="toc-datos-iris-2" class="nav-link" data-scroll-target="#datos-iris-2"><span class="toc-section-number">10.9.3.2</span>  Datos Iris</a></li>
+  <li><a href="#datos-electricity-2" id="toc-datos-electricity-2" class="nav-link" data-scroll-target="#datos-electricity-2"><span class="toc-section-number">10.9.3.3</span>  Datos Electricity</a></li>
+  <li><a href="#datos-diabetes-2" id="toc-datos-diabetes-2" class="nav-link" data-scroll-target="#datos-diabetes-2"><span class="toc-section-number">10.9.3.4</span>  Datos Diabetes</a></li>
+  </ul></li>
+  <li><a href="#sec-100.9.4" id="toc-sec-100.9.4" class="nav-link" data-scroll-target="#sec-100.9.4"><span class="toc-section-number">10.9.4</span>  Conclusiones finales sobre kNN</a></li>
+  </ul></li>
+  <li><a href="#sec-100.10" id="toc-sec-100.10" class="nav-link" data-scroll-target="#sec-100.10"><span class="toc-section-number">10.10</span>  Combinación de soluciones</a></li>
+  <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios"><span class="toc-section-number">10.11</span>  Ejercicios</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-100" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>El algoritmo de los k vecinos más cercanos (k-NN) es un algoritmo de aprendizaje automático que pertenece a los algoritmos de aprendizaje supervisado simples y fáciles de aplicar. Estos pueden ser utilizados para resolver problemas de clasificación y de regresión.</p>
+<p>Este algoritmo utiliza el concepto de proximidad para hacer clasificaciones o predicciones sobre un punto de la muestra de validación a partir de los k vecinos más cercanos de la muestra de entrenamiento. En los problemas de clasificación, el algoritmo k-NN calcula la probabilidad de que los datos de prueba pertenezcan a las clases de los ‘k’ datos de entrenamiento más cercanos y se asignará la clase que tenga la mayor probabilidad de ocurrencia. En el caso de la regresión, el valor utilizado es la media de los ‘k’ puntos de entrenamiento seleccionados.</p>
+<p>El aprendizaje del algoritmo es:</p>
+<ol type="1">
+<li><p>Aprendizaje basado en memoria: aquí no estimamos pesos a partir de los datos de entrenamiento para predecir la respuesta (como en los algoritmos basados en modelos) sino que utilizamos los valores completos de entrenamiento para predecir la salida de los datos de validación.</p></li>
+<li><p>Aprendizaje perezoso: el proceso de aprendizaje se pospone a un momento en el que se solicita la predicción sobre una nueva observación que se desea clasificar o predecir.</p></li>
+<li><p>No paramétrico: en k-NN, no hay una forma predefinida para obtener una función para la clasificación o regresión ya que esta depende de los datos de entrenamiento el valor de k seleccionado.</p></li>
+</ol>
+<p>Las mayores aplicaciones del k-NN son en sistemas de recomendación simples, reconocimiento de patrones, extracción de datos, predicciones del mercado financiero, detección de intrusos y más.</p>
+<p>Aunque nos vamos a centrar algo más en los problemas de clasificación a la hora de mostrar el funcionamiento del algoritmo kNN, trabajaremos posteriormente con problemas de regresión donde pueden ser utilizados. Para poder utilizar estos algoritmos es necesario instalar la librería <code>kknn</code>.</p>
+<p>En el código siguiente se cargan los paquetes y la configuración básica para este tipo de modelos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Paquetes anteriores</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(knitr) <span class="co"># para formatos de tablas</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">library</span>(DataExplorer)</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="fu">library</span>(cvms)</span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="fu">library</span>(kknn)</span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="fu">theme_set</span>(<span class="fu">theme_sjplot2</span>())</span>
+<span id="cb1-13"><a href="#cb1-13"></a></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co"># Paquetes AA</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="fu">library</span>(mlr3verse)</span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="fu">library</span>(mlr3tuning)</span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="fu">library</span>(mlr3tuningspaces)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="sec-100.1" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="sec-100.1"><span class="header-section-number">10.1</span> Etapas del algorirmo kNN</h2>
+<p>Imaginemos que tenemos una matriz de predictoras <span class="math inline">\(X\)</span> y un vector de respuestas <span class="math inline">\(y\)</span>, de tipo categórico para un problema de clasificación (o de tipo numérico para un problema de regresión), de forma que dividimos el conjunto de muestras en entrenamiento y validación:</p>
+<p><span class="math display">\[X = (X_e, X_v); \quad y = (y_e, y_v)\]</span></p>
+<p>La lógica de funcionamiento detrás del algoritmo k-NN es una de las más sencillas de todos los algoritmos de aprendizaje automático supervisados y se organiza a través de las etapas siguientes:</p>
+<ul>
+<li><p><strong>Etapa 1. Fijar valor de k.</strong> Establecer el número de k vecinos que vamos a utilizar.</p></li>
+<li><p><strong>Etapa 2. Obtención de distancias.</strong> Se establece una distancia <span class="math inline">\(d\)</span>, y se calcula la distancia de todos los elementos de la muestra de entrenamiento con respecto a cada uno de los elementos de la muestra de validación utilizando para ello las variables predictoras:</p></li>
+</ul>
+<p><span class="math display">\[d_v= d(X_e,X_v).\]</span></p>
+<p>donde <span class="math inline">\(d_v\)</span> es una matriz de dimensiones igual a muestras de entrenamiento por muestras de validación.</p>
+<ul>
+<li><p><strong>Etapa 3. Identificación de k vecinos.</strong> Para cada una de las muestras del conjunto de validación se deben seleccionar los k vecinos más cercanos (basado en las distancias de la etapa 2) de la muestra de entrenamiento. Debemos tomar los k elementos con menor valor de distancia para cada una de las columnas de <span class="math inline">\(d_v\)</span> e identificar dichas observaciones para seleccionar los correspondientes valores del vector <span class="math inline">\(y_e\)</span>.</p></li>
+<li><p><strong>Etapa 4. Predicción.</strong> Para un problema de clasificación se establece la etiqueta mayoritaria de la variable respuesta dentro de los k vecinos seleccionados para cada una de las muestras de validación, y se asigna como respuesta dicho valor, es decir, se calcula la frecuencia de cada valor de la respuesta para el conjunto de k vecinos de <span class="math inline">\(y_e\)</span> y se asigna como valor de predicción el mayoritario. En un problema de regresión para cada una de las muestras de validación se calcula la media de la variable respuesta del conjunto de k vecinos seleccionados dentro de <span class="math inline">\(y_e\)</span>, y se asigna dicho valor como predicción de la respuesta.</p></li>
+<li><p><strong>Etapa 5. Validación.</strong> Una vez obtenida la predicción con los k vecinos debemos validar la solución comparándola con los valores reales observados <span class="math inline">\(y_v\)</span>. Para ello se utilizan las métricas habituales en función de que el problema sea de clasificación o regresión.</p></li>
+</ul>
+<p>En la imagen siguiente se muestra un resumen de las etapas del k-NN para una tarea de clasificación usando los 4 vecinos más próximos.</p>
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/KNN001.png" width="550" height="450"></p>
+</section>
+<section id="sec-100.2" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="sec-100.2"><span class="header-section-number">10.2</span> Métricas de distancia</h2>
+<p>Para determinar qué elementos de la muestra de entrenamiento están más cerca de cada uno de los puntos de la muestra de validación, es necesario calcular la distancia entre ellos, a partir de alguna función de distancia.</p>
+<p>Si bien hay varias medidas de distancia entre las que puede elegir, se presentan a continuación las más habituales. Cualquier otra función que cumpla con los requisitos para ser distancia puede ser utilizada dentro de este algoritmo.</p>
+<p>En todos los casos consideramos que el conjunto de muestras de entrenamiento es <span class="math inline">\(n_e\)</span>, el conjunto de muestras de validación es <span class="math inline">\(n_v\)</span>, y el número de predictoras es <span class="math inline">\(p\)</span>.</p>
+<ul>
+<li><strong>Distancia euclídea</strong>: esta es la medida de distancia más utilizada y está limitada a variables predictoras de tipo numérico. Se define la distancia como:</li>
+</ul>
+<p><span class="math display">\[d(x_{e_i},x_{v_j}) = \sqrt{\sum_{l=1}^{p} (x_{v_l}-x_{e_l})^2}, \quad i=1,...,n_e, \quad j=1,...,n_v\]</span></p>
+<ul>
+<li><strong>Distancia Manhattan</strong>: esta es también otra métrica de distancia popular, que mide la distancia en términos del valor absoluto entre dos puntos. También se conoce como distancia de taxi o distancia de la ciudad, ya que comúnmente se visualiza con una cuadrícula, que ilustra cómo se puede navegar de una dirección a otra a través de las calles de la ciudad. Se define como:</li>
+</ul>
+<p><span class="math display">\[d(x_{e_i},x_{v_j}) = \sum_{l=1}^{p} |x_{v_l}-x_{e_l}|, \quad i=1,...,n_e, \quad j=1,...,n_v\]</span></p>
+<ul>
+<li><strong>Distancia Minkowski</strong>: esta medida de distancia es la forma generalizada de las métricas de distancia euclidiana y Manhattan. El parámetro, g, en la fórmula a continuación, permite la creación de otras métricas de distancia. La distancia euclidiana se representa mediante esta fórmula cuando g es igual a dos, y la distancia de Manhattan se denota con g igual a uno. Se define como:</li>
+</ul>
+<p><span class="math display">\[d(x_{e_i},x_{v_j}) = \left(\sum_{l=1}^{p} |x_{v_l}-x_{e_l}| \right)^{1/g}, \quad i=1,...,n_e, \quad j=1,...,n_v\]</span></p>
+<ul>
+<li><strong>Distancia Hamming</strong>: esta métrica se usa típicamente cuando las variables predictoras son de tipo booleano o de cadena, identificando los puntos donde los vectores no coinciden. Como resultado, también se la conoce como la métrica de superposición. Esto se puede representar con la siguiente fórmula:</li>
+</ul>
+<p><span class="math display">\[d(x_{e_i},x_{v_j}) = \left(\sum_{l=1}^{p} |x_{v_l}-x_{e_l}| \right), \quad i=1,...,n_e, \quad j=1,...,n_v, \quad \text{con}\]</span></p>
+<p><span class="math display">\[d = 0 \quad \text{ si } x_{v_l}=x_{e_l} \quad \text{ y } \quad d = 1 \quad \text{ si } x_{v_l}\neq x_{e_l}\]</span></p>
+<p>Si en el conjunto de predictoras disponemos tanto de variables numéricas como variables booleanas o de tipo cadena podemos utilizar una métrica que combina la distancia euclídea y la Hamming en una sola. Esta distancia se define como:</p>
+<p><span class="math display">\[d_M(x_{e_i},x_{v_j}) = \sqrt{\sum_{l=1}^{p} d(x_{v_l},x_{e_l})}\]</span></p>
+<p>donde <span class="math inline">\(d\)</span> se corresponde con la distancia euclídea cuando la predictora es numérica, y con Hamming cuando la predictora es booleana o cadena. Sin embargo, hay que tener cuidado con esta métrica cuando entre las predictoras tenemos una variable ordinal con más de dos categorías ya que la distancia Hamming no respeta el orden y asigna la misma diferencia entre los distintos niveles de la variable independientemente de lo cerca o lejos que estén dichas categorías.</p>
+</section>
+<section id="sec-100.3" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="sec-100.3"><span class="header-section-number">10.3</span> Predictoras irrelevantes y problemas de escala</h2>
+<p>Dos aspectos muy relevantes en la implementación del algoritmo k-NN son la utilización de variables predictoras que no aportan información suficiente para explicar el comportamiento de la respuesta, y los efectos de las escalas de medida en que cada una de las predictoras ha sido registrada, dado que la elección de los k-vecinos se realiza en términos de distancia y puede verse muy afectada por estas situaciones.</p>
+<p>En cuanto a la primera dificultad, la magnitud del efecto causado por las predictoras irrelevantes depende de cuántas de ellas se utilicen para realizar el entrenamiento del modelo. En un conjunto con cientos de predictoras, de las cuales sólo una es irrelevante, no hay motivos de preocupación ya que es poco probable que un solo culpable distorsione el valor de la distancia de forma significativa. Pero las cosas pueden cambiar a medida que aumenta el porcentaje de predictoras irrelevantes. Si la gran mayoría de ellas no tiene capacidad para explicar el comportamiento de la respuesta, entonces independientemente de la distancia utilizada esta carecerá prácticamente de sentido y el rendimiento del algoritmo será pésimo.</p>
+<p>Para solucionar este problema se puede utilizar el siguiente procedimiento:</p>
+<ol type="1">
+<li>Realizar un análisis previo del conjunto de predictoras para tratar de determinar un conjunto inicial mínimo de las que estén muy relacionadas con la respuesta que deseamos predecir.</li>
+<li>Ir añadiendo poco a poco el resto de predictoras al conjunto anterior e ir valorando la capacidad del algoritmo hasta que esta sea estable o disminuya.</li>
+</ol>
+<p>Para explicar cómo influye el efecto de escala en el cálculo de las distancias consideramos el ejemplo siguiente. Tenemos tres variables predictoras de forma que la primera es de tipo booleano (verdadero o falso), la segunda es una variable numérica con valores en el rango [0, 1], y la tercera es una variable numérica con valores en el rango [0, 1000], de forma que queremos evaluar la distancia entre dos muestras con vectores de datos dados por <span class="math inline">\(p_1= (V, 0.2, 254)\)</span> y <span class="math inline">\(p_2= (F, 0.1, 194)\)</span>. Utilizando la distancia <span class="math inline">\(d_M\)</span> tenemos que:</p>
+<p><span class="math display">\[d_M(p_1, p_2) = \sqrt{(1-0)^2 + (0.2-0.1)^2 + (254-194)^2}\]</span></p>
+<p>Al estudiar en detalle esta distancia observamos que la tercera predictora domina por completo el valor de la distancia, reduciendo las otras dos predictoras a una virtual insignificancia. No importa cómo modifiquemos sus valores dentro de sus rangos, la distancia apenas cambiará. Afortunadamente, la situación es fácil de rectificar. Si dividimos, en el conjunto de entrenamiento, todos los valores del tercer atributo por 1000, modificamos su escala de forma que, los impactos de las predictoras se volverán más equilibrados. Por tanto, la mejor forma de evitar los posibles problemas de escala es normalizar o estandarizar las variables para conseguir que todas ellas se encuentren en una misma escala y se afecte lo menos posible el comportamiento del algoritmo k-NN. Sin embargo, incluso en este caso es necesario estudiar con detalle la normalización o estandarización propuesta para evitar comportamientos erróneos del algoritmo k-NN.</p>
+</section>
+<section id="sec-100.4" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="sec-100.4"><span class="header-section-number">10.4</span> Seleccionando el número de vecinos</h2>
+<p>Uno de los aspectos más relevantes en la utilización del algoritmo k-NN es la selección de k. Para dicha elección se utiliza una estrategia de búsqueda basada en la capacidad del algoritmo de clasificar o predecir de forma más precisa.</p>
+<p>Para ello se establece un grid continuo de valores de k y se analiza la curva de evolución del porcentaje de clasificación erróneo (problema de clasificación) o del error cuadrático medio de predicción (problema de regresión). Una vez evaluado todo el grid de valores considerado se selecciona como posible valor de k aquel que proporciona el menor valor de la medida de eficiencia.</p>
+<p>En la práctica se suele utilizar una búsqueda automática del valor de k sin necesidad de especificar el grid correspondiente lo que facilita la programación del proceso de aprendizaje.</p>
+</section>
+<section id="sec-100.5" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="sec-100.5"><span class="header-section-number">10.5</span> Ponderación de los vecinos más cercanos</h2>
+<p>Como ya se ha comentado anteriormente la elección del número de vecinos es un aspecto muy relevante ya que la predicción para una nueva observación depende del conjunto de vecinos utilizado. Por ejemplo, imaginemos un problema de clasificación de dos grupos (en valor positivo o negativo) donde queremos predecir la clase de un nuevo elemento a partir de cinco vecinos a distancias 10/6, 10/7, 10, 10/2, y 10/3, donde los dos primeros tienen etiqueta positiva y los tres últimos tienen etiqueta negativa. En esta situación, el algoritmo estándar asignaría la etiqueta negativa ya que la mayoría de vecinos tienen esa etiqueta, ignorando el hecho de que los vecinos más cercanos tienen la etiqueta positiva.</p>
+<p>Para solucionar este hecho se puede modificar el algoritmo para que las observaciones más cercanas tengan un mayor impacto sobre la predicción final del modelo de aprendizaje. Para ello se considera la introducción de pesos sobre cada uno de los vecinos y se obtiene la predicción a partir de la suma de dichos pesos para cada una de las categorías consideradas. En la situación anterior podemos considerar como peso el inverso de las distancias de forma que tendríamos pesos 0.6 y 0.7 para los vecinos positivos y 0.1, 0.2, y 0.3 para los negativos. De esta forma la suma de los pesos positivos es de 1.3 y la de los pesos negativos 0.5, de forma que asignaríamos la etiqueta positiva a la nueva observación.</p>
+<p>Para mantener cierta objetividad en la elección de pesos se suele usar el procedimiento que pasamos a desarrollar. Supongamos que los k vecinos para una nueva observación se encuentran a distancias <span class="math inline">\(d_1,...,d_k\)</span>, ordenadas de menor a mayor, de forma que el peso del i-ésimo vecino <span class="math inline">\(w_i\)</span> se define como:</p>
+<p><span class="math display">\[w_i = \frac{d_k - d_i}{d_k - d_i} \quad { si}  \quad d_k = d_1 \text{ y 1 si } \quad d_k \neq d_1\]</span></p>
+<p>Evidentemente, los pesos así obtenidos irán de 0 para el vecino más lejano a 1 para el más cercano. Esto significa que el enfoque sólo tiene en cuenta a <span class="math inline">\(k-1\)</span> vecinos. Por supuesto, esto sólo tiene sentido para <span class="math inline">\(k &gt;3\)</span>. Si utilizáramos <span class="math inline">\(k = 3\)</span>, sólo participarían realmente dos vecinos, y el clasificador ponderado de 3-NN degeneraría en el clasificador de 1-NN.</p>
+<p>Podemos obtener la predicción a partir de la clase con mayor suma de los pesos obtenidos para cada una de las clases consideradas.</p>
+</section>
+<section id="sec-100.6" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="sec-100.6"><span class="header-section-number">10.6</span> Ventajas y desventajas de kNN</h2>
+<p>k-NN es uno de los algoritmos más simples de aprendizaje automático, y es muy implementado por los desarrolladores de sistemas basados en el aprendizaje, intuitivos e inteligentes para efectuar y tomar pequeñas decisiones solos. Sin embargo, como todos los algoritmos o modelos de aprendizaje automático dispone de ciertas ventajas respecto de otros modelos de clasificación pero también adolece de ciertas dificultades. Las ventajas de uso del algoritmo k-NN son:</p>
+<ul>
+<li>Es simple y fácil de aplicar.</li>
+<li>No es necesario crear un modelo, configurar varios parámetros o formular hipótesis suplementarias.</li>
+<li>A medida que se agregan nuevas muestras de entrenamiento, el algoritmo se ajusta para tener en cuenta cualquier dato nuevo, ya que todos los datos de entrenamiento se almacenan en la memoria.</li>
+<li>Es polivalente. Puede ser utilizado para la clasificación o la regresión, aunque su uso más generalizado es en problemas de clasificación.</li>
+</ul>
+<p>Entre las desventajas podemos destacar:</p>
+<ul>
+<li><p>El algoritmo se vuelve más lento a medida que el número de observaciones aumenta y las variables predictoras aumentan.</p></li>
+<li><p>Ocupa más memoria y almacenamiento de datos en comparación con otros clasificadores. Esto puede ser costoso desde una perspectiva de tiempo y dinero.</p></li>
+<li><p>Debido al efecto de la dimensionalidad k-NN también es más propenso al sobreajuste. Si bien se aprovechan las técnicas de selección de características y reducción de dimensionalidad para evitar que esto ocurra, el valor de k también puede afectar el comportamiento del algoritmo. Los valores más bajos de k pueden sobreajustar los datos, mientras que los valores más altos de k tienden a “suavizar” los valores de predicción, ya que están promediando los valores en un área o vecindario más grande. Sin embargo, si el valor de k es demasiado alto, entonces puede ajustarse mal a los datos.</p></li>
+</ul>
+</section>
+<section id="sec-100.7" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="sec-100.7"><span class="header-section-number">10.7</span> Bancos de datos</h2>
+<p>Para mostrar el funcionamiento del algoritmo kNN tanto en problemas de clasificación como de regresión vamos a utilizar los bancos de datos de temas anteriores. Como ya los hemos descrito y trabajado con ellos, en este punto únicamente creamos las tareas correspondientes.</p>
+<section id="sec-100.7.1" class="level3" data-number="10.7.1">
+<h3 data-number="10.7.1" class="anchored" data-anchor-id="sec-100.7.1"><span class="header-section-number">10.7.1</span> Breast Cancer Wisconsin</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Cargamos datos</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>breastcancer <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"breastcancer.rds"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="co"># Creación de task eliminando la columna que identifica os sujetos</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>tsk_cancer <span class="ot">=</span> <span class="fu">as_task_classif</span>(breastcancer[,<span class="sc">-</span><span class="dv">1</span>], <span class="at">target =</span> <span class="st">"diagnosis"</span>, <span class="at">positive =</span> <span class="st">"M"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5"></a>tsk_cancer</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;TaskClassif:breastcancer[, -1]&gt; (569 x 31)
+* Target: diagnosis
+* Properties: twoclass
+* Features (30):
+  - dbl (30): area_mean, area_se, area_worst, compactness_mean,
+    compactness_se, compactness_worst, concave_points_mean,
+    concave_points_se, concave_points_worst, concavity_mean,
+    concavity_se, concavity_worst, fractal_dimension_mean,
+    fractal_dimension_se, fractal_dimension_worst, perimeter_mean,
+    perimeter_se, perimeter_worst, radius_mean, radius_se,
+    radius_worst, smoothness_mean, smoothness_se, smoothness_worst,
+    symmetry_mean, symmetry_se, symmetry_worst, texture_mean,
+    texture_se, texture_worst</code></pre>
+</div>
+</div>
+</section>
+<section id="sec-100.7.2" class="level3" data-number="10.7.2">
+<h3 data-number="10.7.2" class="anchored" data-anchor-id="sec-100.7.2"><span class="header-section-number">10.7.2</span> Iris</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># Cargamos datos</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>iris <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"iris.rds"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="co"># Convertimos carácter en factor</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>iris<span class="sc">$</span>species <span class="ot">=</span> <span class="fu">as.factor</span>(iris<span class="sc">$</span>species)</span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="co"># creamos la tarea</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>tsk_iris <span class="ot">=</span> <span class="fu">as_task_classif</span>(iris, <span class="at">target =</span> <span class="st">"species"</span>)</span>
+<span id="cb4-7"><a href="#cb4-7"></a>tsk_iris</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;TaskClassif:iris&gt; (150 x 5)
+* Target: species
+* Properties: multiclass
+* Features (4):
+  - dbl (4): petal_length, petal_width, sepal_length, sepal_width</code></pre>
+</div>
+</div>
+</section>
+<section id="sec-100.7.3" class="level3" data-number="10.7.3">
+<h3 data-number="10.7.3" class="anchored" data-anchor-id="sec-100.7.3"><span class="header-section-number">10.7.3</span> Electricity</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># Carga de datos</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>electricity <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"electricity.rds"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="co"># Creación de task</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>tsk_electricity <span class="ot">=</span> <span class="fu">as_task_regr</span>(electricity, <span class="at">target =</span> <span class="st">"PE"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="co"># información de la tarea</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a>tsk_electricity</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;TaskRegr:electricity&gt; (9568 x 5)
+* Target: PE
+* Properties: -
+* Features (4):
+  - dbl (4): AP, AT, RH, V</code></pre>
+</div>
+</div>
+</section>
+<section id="sec-100.7.4" class="level3" data-number="10.7.4">
+<h3 data-number="10.7.4" class="anchored" data-anchor-id="sec-100.7.4"><span class="header-section-number">10.7.4</span> Diabetes</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># Carga de datos</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a>diabetes <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"diabetes.rds"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co"># Creación de task</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a>tsk_diabetes <span class="ot">=</span> <span class="fu">as_task_regr</span>(diabetes, <span class="at">target =</span> <span class="st">"Y"</span>)</span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="co"># información de la tarea</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a>tsk_diabetes</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;TaskRegr:diabetes&gt; (442 x 11)
+* Target: Y
+* Properties: -
+* Features (10):
+  - dbl (9): AGE, BMI, BP, S1, S2, S3, S4, S5, S6
+  - fct (1): SEX</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-100.8" class="level2" data-number="10.8">
+<h2 data-number="10.8" class="anchored" data-anchor-id="sec-100.8"><span class="header-section-number">10.8</span> Algoritmos kNN en mlr3</h2>
+<p>Para realizar el proceso de aprendizaje de un modelo basado en el algoritmo kNN podemos utilizar dos funciones:</p>
+<ul>
+<li><code>classif.kknn</code> para tareas de clasificación.</li>
+<li><code>regr.kknn</code> para tareas de regresión.</li>
+</ul>
+<p>Podemos cargar los algoritmos con el código siguiente:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># Learner tarea de clasificación</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>lknn_classif <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.kknn"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="co"># Learner tarea de regresión</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a>lknn_regr <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"regr.kknn"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Los hiperparámetros para ambos algoritmos son los mismos y los podemos consultar con este código:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co"># Hiperparámetros para árboles de clasificación</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>lknn_classif<span class="sc">$</span>param_set<span class="sc">$</span><span class="fu">ids</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "k"           "distance"    "kernel"      "scale"       "ykernel"    
+[6] "store_model"</code></pre>
+</div>
+</div>
+<p>donde cada uno de ellos se interpreta como:</p>
+<ul>
+<li><code>k</code>: número de vecinos considerados. El valor por defecto es <span class="math inline">\(k=7\)</span>.</li>
+<li><code>distance</code>: parámetro <span class="math inline">\(g\)</span> de la distancia de minkowski. Por defecto se utiliza el valor 2 que representa la distancia euclídea.</li>
+<li><code>kernel</code>: kernel a utilizar para la ponderación de distancias. Las opciones posibles son “rectangular” (que es el estándar no ponderado), “triangular”, “epanechnikov” (o beta(2,2)), “biweight” (o beta(3,3)), “triweight” (o beta(4,4)), “cos”, “inv”, “gaussiano”, “rango” y “óptimo”.</li>
+<li><code>scale</code>: valor lógico que indica si debemos escalar las variables para tener la misma desviación típica. Por defecto toma el valor “TRUE”.</li>
+<li><code>ykernel</code>: ancho de ventana de un kernel y, especialmente para predicción de clases ordinales.</li>
+<li><code>store_model</code>: para guardar los resultados del modelo.</li>
+</ul>
+</section>
+<section id="sec-100.9" class="level2" data-number="10.9">
+<h2 data-number="10.9" class="anchored" data-anchor-id="sec-100.9"><span class="header-section-number">10.9</span> Nuestros primeros modelos</h2>
+<p>Para comenzar nuestros análisis utilizaremos los parámetros por defecto del algoritmo, y más tarde plantearemos una búsqueda automática para su elección óptima.</p>
+<section id="sec-100.9.1" class="level3" data-number="10.9.1">
+<h3 data-number="10.9.1" class="anchored" data-anchor-id="sec-100.9.1"><span class="header-section-number">10.9.1</span> Modelos por defecto</h3>
+<p>Modelos por defecto para cada uno de los bancos de datos donde en principio consideramos todas las posibles predictoras.</p>
+<section id="datos-breast-cancer" class="level4" data-number="10.9.1.1">
+<h4 data-number="10.9.1.1" class="anchored" data-anchor-id="datos-breast-cancer"><span class="header-section-number">10.9.1.1</span> Datos Breast Cancer</h4>
+<p>Comenzamos nuestro análisis con el banco de datos breast cancer. Para ello debemos definir el grpahlearner asociado (prerprocesamiento y modelo). En este caso estandarizamos las predictoras con lo que no es necesario escalarlas en el algoritmo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># Definimos learner para predecir la probabilidad</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>lknn_classif <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.kknn"</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="co"># Preprocesado</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a>pp_cancer <span class="ot">=</span> <span class="fu">po</span>(<span class="st">"scale"</span>, <span class="at">param_vals =</span> <span class="fu">list</span>(<span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="co"># Graphlearner</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>gr <span class="ot">=</span> pp_cancer <span class="sc">%&gt;&gt;%</span> lknn_classif</span>
+<span id="cb13-7"><a href="#cb13-7"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para poder entrenar el modelo consideramos la división de muestras (80-20) y estratificamos según la variable <code>diagnosis</code> dado que los niveles no están equilibrados.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># Generamos variable de estrato</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a>tsk_cancer<span class="sc">$</span>col_roles<span class="sc">$</span>stratum <span class="ot">&lt;-</span> <span class="st">"diagnosis"</span></span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="co"># Fijamos semilla para asegurar la reproducibilidad del modelo</span></span>
+<span id="cb14-4"><a href="#cb14-4"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb14-5"><a href="#cb14-5"></a><span class="co"># Creamos la partición</span></span>
+<span id="cb14-6"><a href="#cb14-6"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_cancer, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb14-7"><a href="#cb14-7"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb14-8"><a href="#cb14-8"></a>tsk_train_cancer <span class="ot">=</span> tsk_cancer<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb14-9"><a href="#cb14-9"></a>tsk_test_cancer  <span class="ot">=</span> tsk_cancer<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos comenzar ahora con el entrenamiento del modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># Entrenamiento</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a>gr<span class="sc">$</span><span class="fu">train</span>(tsk_train_cancer)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para estudiar la bondad de la clasificación debemos obtener en primer lugar la predicción tanto para la muestra de entrenamiento como la de validación. A continuación estableces los scores de clasificación y obtenemos dichos valores.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="co"># Predicción de la muestra de entrenamiento y validación</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a>pred_train <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_train_cancer)</span>
+<span id="cb16-3"><a href="#cb16-3"></a>pred_test <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_test_cancer)</span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="co"># scores de validación</span></span>
+<span id="cb16-5"><a href="#cb16-5"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"classif.acc"</span>, <span class="st">"classif.bacc"</span>, <span class="st">"classif.bbrier"</span>, <span class="st">"classif.auc"</span>))</span>
+<span id="cb16-6"><a href="#cb16-6"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb16-7"><a href="#cb16-7"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc   classif.bacc classif.bbrier    classif.auc 
+    0.98245614     0.97647059     0.01129958     0.99987659 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc   classif.bacc classif.bbrier    classif.auc 
+    0.99115044     0.99295775     0.01739496     0.99849095 </code></pre>
+</div>
+</div>
+<p>El algoritmo proporciona porcentajes de clasificación correcta muy elevados para ambas muestras. Además tanto el score de Brier (valor bajo) como el valor de AUC (próximo a 1) indican que el modelo parece adecuado. De hecho estos resultados son mejores que los otros modelos de clasificación que hemos visto en temas anteriores. Veamos que ocurre con la matriz de confusión:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="co"># Cargamos la librería para representar la matriz de confusión</span></span>
+<span id="cb20-2"><a href="#cb20-2"></a>cm <span class="ot">=</span> <span class="fu">confusion_matrix</span>(pred_test<span class="sc">$</span>truth, pred_test<span class="sc">$</span>response)</span>
+<span id="cb20-3"><a href="#cb20-3"></a><span class="fu">plot_confusion_matrix</span>(cm<span class="sc">$</span><span class="st">`</span><span class="at">Confusion Matrix</span><span class="st">`</span>[[<span class="dv">1</span>]]) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="100_kNNmodels_files/figure-html/knn-012-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Tan sólo se observa un error (0.9% respecto del total de muestras) en la clasificación de las muestras de validación, indicando que el modelo propuesto parece funcionar bien. De todas formas como el número de predictoras es muy grande, más adelante veremos que ocurre cuando no las consideramos a todas ellas. Recordemos que considerar predictoras poco relevantes puede llevar a conclusiones erróneas con nuestros modelos kNN.</p>
+<p>El estudio de validación lo posponemos hasta encontrar el mejor modelo basado en kNN que veremos en el punto siguiente.</p>
+</section>
+<section id="datos-iris" class="level4" data-number="10.9.1.2">
+<h4 data-number="10.9.1.2" class="anchored" data-anchor-id="datos-iris"><span class="header-section-number">10.9.1.2</span> Datos Iris</h4>
+<p>Vemos ahora el análisis para el banco de datos iris. El modelo de aprendizaje es el miso que en el punto anterior y solo resulta necesario modificar el graphlearner.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="co"># Preprocesado</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a>pp_iris <span class="ot">=</span> <span class="fu">po</span>(<span class="st">"scale"</span>, <span class="at">param_vals =</span> <span class="fu">list</span>(<span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb21-3"><a href="#cb21-3"></a><span class="co"># Graphlearner</span></span>
+<span id="cb21-4"><a href="#cb21-4"></a>gr <span class="ot">=</span> pp_iris <span class="sc">%&gt;&gt;%</span> lknn_classif</span>
+<span id="cb21-5"><a href="#cb21-5"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Definimos las muestras de entrenamiento y validación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="co"># Generamos variable de estrato</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a>tsk_iris<span class="sc">$</span>col_roles<span class="sc">$</span>stratum <span class="ot">&lt;-</span> <span class="st">"species"</span></span>
+<span id="cb22-3"><a href="#cb22-3"></a><span class="co"># Fijamos semilla para asegurar la reproducibilidad del modelo</span></span>
+<span id="cb22-4"><a href="#cb22-4"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb22-5"><a href="#cb22-5"></a><span class="co"># Creamos la partición</span></span>
+<span id="cb22-6"><a href="#cb22-6"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_iris, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb22-7"><a href="#cb22-7"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb22-8"><a href="#cb22-8"></a>tsk_train_iris <span class="ot">=</span> tsk_iris<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb22-9"><a href="#cb22-9"></a>tsk_test_iris  <span class="ot">=</span> tsk_iris<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Entrenamos el modelo y evaluamos la calidad de la clasificación:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># Entrenamiento</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a>gr<span class="sc">$</span><span class="fu">train</span>(tsk_train_iris)</span>
+<span id="cb23-3"><a href="#cb23-3"></a><span class="co"># Predicción de la muestra de entrenamiento y validación</span></span>
+<span id="cb23-4"><a href="#cb23-4"></a>pred_train <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_train_iris)</span>
+<span id="cb23-5"><a href="#cb23-5"></a>pred_test <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_test_iris)</span>
+<span id="cb23-6"><a href="#cb23-6"></a><span class="co"># scores de validación</span></span>
+<span id="cb23-7"><a href="#cb23-7"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"classif.acc"</span>, <span class="st">"classif.mbrier"</span>))</span>
+<span id="cb23-8"><a href="#cb23-8"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb23-9"><a href="#cb23-9"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc classif.mbrier 
+    0.98333333     0.02790482 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb25-2"><a href="#cb25-2"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc classif.mbrier 
+     0.9333333      0.1473825 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="co"># Matriz de confusión</span></span>
+<span id="cb27-2"><a href="#cb27-2"></a>cm <span class="ot">=</span> <span class="fu">confusion_matrix</span>(pred_test<span class="sc">$</span>truth, pred_test<span class="sc">$</span>response)</span>
+<span id="cb27-3"><a href="#cb27-3"></a><span class="fu">plot_confusion_matrix</span>(cm<span class="sc">$</span><span class="st">`</span><span class="at">Confusion Matrix</span><span class="st">`</span>[[<span class="dv">1</span>]]) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="100_kNNmodels_files/figure-html/knn-015-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Los porcentaje de clasificación correcta vuelven a ser muy elevados en ambos conjuntos, mientras que el score de brier para la muestra de validación es bastante más grande que el de la muestra de test. Los resultados son similares a los de los moldeos de clasificación anteriores. En cuanto a la matriz de confusión podemos ver que tenemos un 6.6% de error concentrado en las especies iris-virginica e iris-versicolor. Esto puede indicar que al algoritmo le cuesta más diferenciar estas especies en términos de las predictoras consideradas.</p>
+</section>
+<section id="datos-electricity" class="level4" data-number="10.9.1.3">
+<h4 data-number="10.9.1.3" class="anchored" data-anchor-id="datos-electricity"><span class="header-section-number">10.9.1.3</span> Datos Electricity</h4>
+<p>Recordemos que estamos en un problema de regresión y debemos cambiar nuestro algoritmo de aprendizaje para resolver esta tarea:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a><span class="co"># Algoritmo de aprendizaje</span></span>
+<span id="cb28-2"><a href="#cb28-2"></a>lknn_regr <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"regr.kknn"</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb28-3"><a href="#cb28-3"></a><span class="co"># Preprocesado</span></span>
+<span id="cb28-4"><a href="#cb28-4"></a>pp_electricity <span class="ot">=</span> <span class="fu">po</span>(<span class="st">"scale"</span>, <span class="at">param_vals =</span> <span class="fu">list</span>(<span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb28-5"><a href="#cb28-5"></a><span class="co"># Graphlearner</span></span>
+<span id="cb28-6"><a href="#cb28-6"></a>gr <span class="ot">=</span> pp_electricity <span class="sc">%&gt;&gt;%</span> lknn_regr</span>
+<span id="cb28-7"><a href="#cb28-7"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Realizamos la división de muestras:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a><span class="co"># Fijamos semilla para asegurar la reproducibilidad del modelo</span></span>
+<span id="cb29-2"><a href="#cb29-2"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb29-3"><a href="#cb29-3"></a><span class="co"># Creamos la partición</span></span>
+<span id="cb29-4"><a href="#cb29-4"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_electricity, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb29-5"><a href="#cb29-5"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb29-6"><a href="#cb29-6"></a>tsk_train_electricity <span class="ot">=</span> tsk_electricity<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb29-7"><a href="#cb29-7"></a>tsk_test_electricity  <span class="ot">=</span> tsk_electricity<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora procedemos con el entrenamiento del modelo y valoramos su capacidad explicativa a partir de las predicciones de la muestra de entrenamiento y validación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a><span class="co"># Entrenamiento del modelo</span></span>
+<span id="cb30-2"><a href="#cb30-2"></a>gr<span class="sc">$</span><span class="fu">train</span>(tsk_train_electricity)</span>
+<span id="cb30-3"><a href="#cb30-3"></a><span class="co"># Predicción de la muestra de entrenamiento</span></span>
+<span id="cb30-4"><a href="#cb30-4"></a>pred_train <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_train_electricity)</span>
+<span id="cb30-5"><a href="#cb30-5"></a><span class="co"># Predicción de la muestra de validación</span></span>
+<span id="cb30-6"><a href="#cb30-6"></a>pred_test <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_test_electricity)</span>
+<span id="cb30-7"><a href="#cb30-7"></a><span class="co"># Scores de validación</span></span>
+<span id="cb30-8"><a href="#cb30-8"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"regr.rsq"</span>, <span class="st">"regr.mse"</span>, <span class="st">"regr.smape"</span>))</span>
+<span id="cb30-9"><a href="#cb30-9"></a><span class="co"># Valores de validación entrenamiento y validación</span></span>
+<span id="cb30-10"><a href="#cb30-10"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   regr.rsq    regr.mse  regr.smape 
+0.978454115 6.280417213 0.003899406 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    regr.rsq     regr.mse   regr.smape 
+ 0.951522672 14.072844253  0.005988903 </code></pre>
+</div>
+</div>
+<p>El <span class="math inline">\(R^2\)</span> para ambas muestras es bastante elevado lo que parece indicar una buena capacidad explicativa de las predictoras sobre la respuesta. Por otro lado, el MSE de validación es casi el doble que el de entrenamiento debido en gran parte a la gran cantidad de muestras con las que estamos trabajando. El SMAPE está muy próximo a 0 indicando un buen ajuste. De hecho tenemos porcentajes de error del 0.3% y 0.5% respectivamente para ambos conjuntos de muestras.</p>
+<p>Podemos ver la solución gráfica mediante el código siguiente:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb34-2"><a href="#cb34-2"></a>p1 <span class="ot">=</span> <span class="fu">autoplot</span>(pred_train, <span class="at">type =</span> <span class="st">"xy"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Observados vs predichos"</span>)</span>
+<span id="cb34-3"><a href="#cb34-3"></a>p2 <span class="ot">=</span> <span class="fu">autoplot</span>(pred_train, <span class="at">type =</span> <span class="st">"residual"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Observados vs residuos"</span>)</span>
+<span id="cb34-4"><a href="#cb34-4"></a>p3 <span class="ot">=</span> <span class="fu">autoplot</span>(pred_train, <span class="at">type =</span> <span class="st">"histogram"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histograma residuos"</span>)</span>
+<span id="cb34-5"><a href="#cb34-5"></a></span>
+<span id="cb34-6"><a href="#cb34-6"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb34-7"><a href="#cb34-7"></a>p4 <span class="ot">=</span> <span class="fu">autoplot</span>(pred_test, <span class="at">type =</span> <span class="st">"xy"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Observados vs predichos"</span>)</span>
+<span id="cb34-8"><a href="#cb34-8"></a>p5 <span class="ot">=</span> <span class="fu">autoplot</span>(pred_test, <span class="at">type =</span> <span class="st">"residual"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Observados vs residuos"</span>)</span>
+<span id="cb34-9"><a href="#cb34-9"></a>p6 <span class="ot">=</span> <span class="fu">autoplot</span>(pred_test, <span class="at">type =</span> <span class="st">"histogram"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histograma residuos"</span>)</span>
+<span id="cb34-10"><a href="#cb34-10"></a></span>
+<span id="cb34-11"><a href="#cb34-11"></a><span class="fu">ggarrange</span>(p1,p2,p3, p4, p5, p6, <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-knn-019" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="100_kNNmodels_files/figure-html/fig-knn-019-1.png" class="img-fluid figure-img" width="960"></p>
+<p></p><figcaption class="figure-caption">Figura&nbsp;10.1: Gráficos del modelo para muestras de entrenamiento y validación. Task Electricity.</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>La solución obtenida se parece bastante a la que pudimos ver con los modelos de regresión lineal.</p>
+</section>
+<section id="datos-diabetes" class="level4" data-number="10.9.1.4">
+<h4 data-number="10.9.1.4" class="anchored" data-anchor-id="datos-diabetes"><span class="header-section-number">10.9.1.4</span> Datos Diabetes</h4>
+<p>Este es el primer conjunto de datos donde en el conjunto de predictoras tenemos variables numéricas y factores. En este caso el algoritmo se adapta a esta situación para evaluar las distancias y seleccionar los vecinos. En primer lugar definimos el algoritmo de aprendizaje y seleccionamos las muestras de entrenamiento y validación. Vamos a establecer un estrato por sexo para repartir las observaciones en ambas muestras.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a><span class="co"># Algoritmo de aprendizaje</span></span>
+<span id="cb35-2"><a href="#cb35-2"></a>lknn_regr <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"regr.kknn"</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb35-3"><a href="#cb35-3"></a><span class="co"># Preprocesado</span></span>
+<span id="cb35-4"><a href="#cb35-4"></a>pp_diabetes <span class="ot">=</span> <span class="fu">po</span>(<span class="st">"scale"</span>, <span class="at">param_vals =</span> <span class="fu">list</span>(<span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>)) </span>
+<span id="cb35-5"><a href="#cb35-5"></a><span class="co"># Graphlearner</span></span>
+<span id="cb35-6"><a href="#cb35-6"></a>gr <span class="ot">=</span> pp_diabetes <span class="sc">%&gt;&gt;%</span> lknn_regr</span>
+<span id="cb35-7"><a href="#cb35-7"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span>
+<span id="cb35-8"><a href="#cb35-8"></a><span class="co"># Fijamos semilla para asegurar la reproducibilidad del modelo</span></span>
+<span id="cb35-9"><a href="#cb35-9"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb35-10"><a href="#cb35-10"></a><span class="co"># Creamos la partición</span></span>
+<span id="cb35-11"><a href="#cb35-11"></a><span class="co"># Generamos variable de estrato</span></span>
+<span id="cb35-12"><a href="#cb35-12"></a>tsk_diabetes<span class="sc">$</span>col_roles<span class="sc">$</span>stratum <span class="ot">&lt;-</span> <span class="st">"SEX"</span></span>
+<span id="cb35-13"><a href="#cb35-13"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_diabetes, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb35-14"><a href="#cb35-14"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb35-15"><a href="#cb35-15"></a>tsk_train_diabetes <span class="ot">=</span> tsk_diabetes<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb35-16"><a href="#cb35-16"></a>tsk_test_diabetes  <span class="ot">=</span> tsk_diabetes<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora procedemos con el entrenamiento del modelo y valoramos su capacidad explicativa a partir de las predicciones de la muestra de entrenamiento y validación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a><span class="co"># Entrenamiento del modelo</span></span>
+<span id="cb36-2"><a href="#cb36-2"></a>gr<span class="sc">$</span><span class="fu">train</span>(tsk_train_diabetes)</span>
+<span id="cb36-3"><a href="#cb36-3"></a><span class="co"># Predicción de la muestra de entrenamiento</span></span>
+<span id="cb36-4"><a href="#cb36-4"></a>pred_train <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_train_diabetes)</span>
+<span id="cb36-5"><a href="#cb36-5"></a><span class="co"># Predicción de la muestra de validación</span></span>
+<span id="cb36-6"><a href="#cb36-6"></a>pred_test <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_test_diabetes)</span>
+<span id="cb36-7"><a href="#cb36-7"></a><span class="co"># Scores de validación</span></span>
+<span id="cb36-8"><a href="#cb36-8"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"regr.rsq"</span>, <span class="st">"regr.mse"</span>, <span class="st">"regr.smape"</span>))</span>
+<span id="cb36-9"><a href="#cb36-9"></a><span class="co"># Valores de validación entrenamiento y validación</span></span>
+<span id="cb36-10"><a href="#cb36-10"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    regr.rsq     regr.mse   regr.smape 
+   0.7616309 1353.1423579    0.2176852 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    regr.rsq     regr.mse   regr.smape 
+   0.3670029 4378.6019286    0.3555997 </code></pre>
+</div>
+</div>
+<p>Como se aprecia en los resultados en modelo propuesto no parece funcionar muy bien. Tengamos en cuenta que en este caso no hemos considerado posibles interacciones entre predictores numéricas y el factor, como si hicimos en los modelos lineales. En este caso estamos explorando únicamente el funcionamiento de este algoritmo.</p>
+<p>Podemos ver la solución gráfica:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb40-2"><a href="#cb40-2"></a>p1 <span class="ot">=</span> <span class="fu">autoplot</span>(pred_train, <span class="at">type =</span> <span class="st">"xy"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Observados vs predichos"</span>)</span>
+<span id="cb40-3"><a href="#cb40-3"></a>p2 <span class="ot">=</span> <span class="fu">autoplot</span>(pred_train, <span class="at">type =</span> <span class="st">"residual"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Observados vs residuos"</span>)</span>
+<span id="cb40-4"><a href="#cb40-4"></a>p3 <span class="ot">=</span> <span class="fu">autoplot</span>(pred_train, <span class="at">type =</span> <span class="st">"histogram"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histograma residuos"</span>)</span>
+<span id="cb40-5"><a href="#cb40-5"></a></span>
+<span id="cb40-6"><a href="#cb40-6"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb40-7"><a href="#cb40-7"></a>p4 <span class="ot">=</span> <span class="fu">autoplot</span>(pred_test, <span class="at">type =</span> <span class="st">"xy"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Observados vs predichos"</span>)</span>
+<span id="cb40-8"><a href="#cb40-8"></a>p5 <span class="ot">=</span> <span class="fu">autoplot</span>(pred_test, <span class="at">type =</span> <span class="st">"residual"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Observados vs residuos"</span>)</span>
+<span id="cb40-9"><a href="#cb40-9"></a>p6 <span class="ot">=</span> <span class="fu">autoplot</span>(pred_test, <span class="at">type =</span> <span class="st">"histogram"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histograma residuos"</span>)</span>
+<span id="cb40-10"><a href="#cb40-10"></a></span>
+<span id="cb40-11"><a href="#cb40-11"></a><span class="fu">ggarrange</span>(p1,p2,p3, p4, p5, p6, <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-knn-022" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="100_kNNmodels_files/figure-html/fig-knn-022-1.png" class="img-fluid figure-img" width="960"></p>
+<p></p><figcaption class="figure-caption">Figura&nbsp;10.2: Gráficos del modelo para muestras de entrenamiento y validación. Task Electricity.</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Se aprecia claramente el mal comportamiento de los residuos del modelo para la muestra de validación. Es evidente que este modelo necesita mejoras.</p>
+</section>
+</section>
+<section id="sec-100.9.2" class="level3" data-number="10.9.2">
+<h3 data-number="10.9.2" class="anchored" data-anchor-id="sec-100.9.2"><span class="header-section-number">10.9.2</span> Seleccionando predictoras</h3>
+<p>Para seleccionar las variables de interés vamos a considerar un selector de predictoras como vimos en temas anteriores.</p>
+<section id="datos-breast-cancer-1" class="level4" data-number="10.9.2.1">
+<h4 data-number="10.9.2.1" class="anchored" data-anchor-id="datos-breast-cancer-1"><span class="header-section-number">10.9.2.1</span> Datos Breast Cancer</h4>
+<p>Definimos el selector para este banco de datos reproduciendo el que ya vimos en el tema de regresión logística.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="co"># Graphlearner</span></span>
+<span id="cb41-2"><a href="#cb41-2"></a>gr <span class="ot">=</span> pp_cancer <span class="sc">%&gt;&gt;%</span> lknn_classif</span>
+<span id="cb41-3"><a href="#cb41-3"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span>
+<span id="cb41-4"><a href="#cb41-4"></a></span>
+<span id="cb41-5"><a href="#cb41-5"></a><span class="fu">set.seed</span>(<span class="dv">321</span>)</span>
+<span id="cb41-6"><a href="#cb41-6"></a><span class="co"># Algoritmo de selección</span></span>
+<span id="cb41-7"><a href="#cb41-7"></a>instance <span class="ot">=</span> <span class="fu">fselect</span>(</span>
+<span id="cb41-8"><a href="#cb41-8"></a>  <span class="at">fselector =</span> <span class="fu">fs</span>(<span class="st">"sequential"</span>, <span class="at">strategy =</span> <span class="st">"sfs"</span>),</span>
+<span id="cb41-9"><a href="#cb41-9"></a>  <span class="at">task =</span> tsk_cancer,</span>
+<span id="cb41-10"><a href="#cb41-10"></a>  <span class="at">learner =</span> gr,</span>
+<span id="cb41-11"><a href="#cb41-11"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"holdout"</span>, <span class="at">ratio =</span> <span class="fl">0.8</span>),</span>
+<span id="cb41-12"><a href="#cb41-12"></a>  <span class="at">measure =</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>),</span>
+<span id="cb41-13"><a href="#cb41-13"></a>  <span class="at">term_evals =</span> <span class="dv">10</span></span>
+<span id="cb41-14"><a href="#cb41-14"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Veamos el resultado de este proceso</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a><span class="co"># Variables seleccionadas</span></span>
+<span id="cb42-2"><a href="#cb42-2"></a>instance<span class="sc">$</span>result_feature_set</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "concave_points_mean"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a><span class="co"># Score</span></span>
+<span id="cb44-2"><a href="#cb44-2"></a>instance<span class="sc">$</span>result_y</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>classif.bacc 
+   0.9502012 </code></pre>
+</div>
+</div>
+<p>Nos quedamos únicamente con la variable <code>concave_points_mean</code> con un porcentaje de clasificación correcta corregido bastante alto. Hemos reducido el número de variables considerablemente pero no hemos perdido un porcentaje de clasificación significativo.</p>
+</section>
+<section id="datos-iris-1" class="level4" data-number="10.9.2.2">
+<h4 data-number="10.9.2.2" class="anchored" data-anchor-id="datos-iris-1"><span class="header-section-number">10.9.2.2</span> Datos Iris</h4>
+<p>Definimos el selector para este banco de datos reproduciendo el que ya vimos en el tema de regresión logística.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a><span class="co"># Graphlearner</span></span>
+<span id="cb46-2"><a href="#cb46-2"></a>gr <span class="ot">=</span> pp_iris <span class="sc">%&gt;&gt;%</span> lknn_classif</span>
+<span id="cb46-3"><a href="#cb46-3"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span>
+<span id="cb46-4"><a href="#cb46-4"></a></span>
+<span id="cb46-5"><a href="#cb46-5"></a><span class="fu">set.seed</span>(<span class="dv">321</span>)</span>
+<span id="cb46-6"><a href="#cb46-6"></a><span class="co"># Algoritmo de selección</span></span>
+<span id="cb46-7"><a href="#cb46-7"></a>instance <span class="ot">=</span> <span class="fu">fselect</span>(</span>
+<span id="cb46-8"><a href="#cb46-8"></a>  <span class="at">fselector =</span> <span class="fu">fs</span>(<span class="st">"sequential"</span>, <span class="at">strategy =</span> <span class="st">"sfs"</span>),</span>
+<span id="cb46-9"><a href="#cb46-9"></a>  <span class="at">task =</span> tsk_iris,</span>
+<span id="cb46-10"><a href="#cb46-10"></a>  <span class="at">learner =</span> gr,</span>
+<span id="cb46-11"><a href="#cb46-11"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"holdout"</span>, <span class="at">ratio =</span> <span class="fl">0.8</span>),</span>
+<span id="cb46-12"><a href="#cb46-12"></a>  <span class="at">measure =</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>),</span>
+<span id="cb46-13"><a href="#cb46-13"></a>  <span class="at">term_evals =</span> <span class="dv">10</span></span>
+<span id="cb46-14"><a href="#cb46-14"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Veamos el resultado</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a><span class="co"># Variables seleccionadas</span></span>
+<span id="cb47-2"><a href="#cb47-2"></a>instance<span class="sc">$</span>result_feature_set</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "petal_length" "petal_width" </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1"></a><span class="co"># Score</span></span>
+<span id="cb49-2"><a href="#cb49-2"></a>instance<span class="sc">$</span>result_y</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>classif.bacc 
+   0.9333333 </code></pre>
+</div>
+</div>
+<p>En este caso se selecciona <code>petal_length</code> y <code>petal_width</code> con un porcentaje de clasificación correcta del 93.3%. Hemos reducido a la mitad las predictoras pero la pérdida de clasificación es inferior al 10%.</p>
+</section>
+<section id="datos-electricity-1" class="level4" data-number="10.9.2.3">
+<h4 data-number="10.9.2.3" class="anchored" data-anchor-id="datos-electricity-1"><span class="header-section-number">10.9.2.3</span> Datos Electricity</h4>
+<p>Definimos el selector para este banco de datos reproduciendo pero cambiamos el score utilizado para valorar el modelo. En este caso utilizamos el <code>SMAPE</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a><span class="co"># Graphlearner</span></span>
+<span id="cb51-2"><a href="#cb51-2"></a>gr <span class="ot">=</span> pp_electricity <span class="sc">%&gt;&gt;%</span> lknn_regr</span>
+<span id="cb51-3"><a href="#cb51-3"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span>
+<span id="cb51-4"><a href="#cb51-4"></a></span>
+<span id="cb51-5"><a href="#cb51-5"></a><span class="fu">set.seed</span>(<span class="dv">321</span>)</span>
+<span id="cb51-6"><a href="#cb51-6"></a><span class="co"># Algoritmo de selección</span></span>
+<span id="cb51-7"><a href="#cb51-7"></a>instance <span class="ot">=</span> <span class="fu">fselect</span>(</span>
+<span id="cb51-8"><a href="#cb51-8"></a>  <span class="at">fselector =</span> <span class="fu">fs</span>(<span class="st">"sequential"</span>, <span class="at">strategy =</span> <span class="st">"sfs"</span>),</span>
+<span id="cb51-9"><a href="#cb51-9"></a>  <span class="at">task =</span> tsk_electricity,</span>
+<span id="cb51-10"><a href="#cb51-10"></a>  <span class="at">learner =</span> gr,</span>
+<span id="cb51-11"><a href="#cb51-11"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"holdout"</span>, <span class="at">ratio =</span> <span class="fl">0.8</span>),</span>
+<span id="cb51-12"><a href="#cb51-12"></a>  <span class="at">measure =</span> <span class="fu">msr</span>(<span class="st">"regr.smape"</span>),</span>
+<span id="cb51-13"><a href="#cb51-13"></a>  <span class="at">term_evals =</span> <span class="dv">10</span></span>
+<span id="cb51-14"><a href="#cb51-14"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>cuyo resultado es:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1"></a><span class="co"># Variables seleccionadas</span></span>
+<span id="cb52-2"><a href="#cb52-2"></a>instance<span class="sc">$</span>result_feature_set</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "AP" "AT" "RH" "V" </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a><span class="co"># Score</span></span>
+<span id="cb54-2"><a href="#cb54-2"></a>instance<span class="sc">$</span>result_y</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> regr.smape 
+0.005919884 </code></pre>
+</div>
+</div>
+<p>En este caso no se prescinde de ninguna predictora.</p>
+</section>
+<section id="datos-diabetes-1" class="level4" data-number="10.9.2.4">
+<h4 data-number="10.9.2.4" class="anchored" data-anchor-id="datos-diabetes-1"><span class="header-section-number">10.9.2.4</span> Datos Diabetes</h4>
+<p>Definimos el selector de forma similar al banco de datos anterior.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1"></a><span class="co"># Graphlearner</span></span>
+<span id="cb56-2"><a href="#cb56-2"></a>gr <span class="ot">=</span> pp_diabetes <span class="sc">%&gt;&gt;%</span> lknn_regr</span>
+<span id="cb56-3"><a href="#cb56-3"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span>
+<span id="cb56-4"><a href="#cb56-4"></a></span>
+<span id="cb56-5"><a href="#cb56-5"></a><span class="fu">set.seed</span>(<span class="dv">321</span>)</span>
+<span id="cb56-6"><a href="#cb56-6"></a><span class="co"># Algoritmo de selección</span></span>
+<span id="cb56-7"><a href="#cb56-7"></a>instance <span class="ot">=</span> <span class="fu">fselect</span>(</span>
+<span id="cb56-8"><a href="#cb56-8"></a>  <span class="at">fselector =</span> <span class="fu">fs</span>(<span class="st">"sequential"</span>, <span class="at">strategy =</span> <span class="st">"sfs"</span>),</span>
+<span id="cb56-9"><a href="#cb56-9"></a>  <span class="at">task =</span> tsk_diabetes,</span>
+<span id="cb56-10"><a href="#cb56-10"></a>  <span class="at">learner =</span> gr,</span>
+<span id="cb56-11"><a href="#cb56-11"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"holdout"</span>, <span class="at">ratio =</span> <span class="fl">0.8</span>),</span>
+<span id="cb56-12"><a href="#cb56-12"></a>  <span class="at">measure =</span> <span class="fu">msr</span>(<span class="st">"regr.smape"</span>),</span>
+<span id="cb56-13"><a href="#cb56-13"></a>  <span class="at">term_evals =</span> <span class="dv">10</span></span>
+<span id="cb56-14"><a href="#cb56-14"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>El resultado obtenido es:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a><span class="co"># Variables seleccionadas</span></span>
+<span id="cb57-2"><a href="#cb57-2"></a>instance<span class="sc">$</span>result_feature_set</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "S5"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a><span class="co"># Score</span></span>
+<span id="cb59-2"><a href="#cb59-2"></a>instance<span class="sc">$</span>result_y</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>regr.smape 
+ 0.3605362 </code></pre>
+</div>
+</div>
+<p>En este caso nos quedamos únicamente con la variable <code>S5</code> pero el <code>SMAPE</code> sigue siendo bastante malo.</p>
+</section>
+</section>
+<section id="sec-100.9.3" class="level3" data-number="10.9.3">
+<h3 data-number="10.9.3" class="anchored" data-anchor-id="sec-100.9.3"><span class="header-section-number">10.9.3</span> Seleccionando k</h3>
+<p>En este punto utilizamos los modelos con todas las predictoras para realizar la selección óptima del número de vecinos en cada uno de los ejemplos. Para este proceso utilizamos un proceso de tuning similar al que presentamos en el apartado de búsqueda del <span class="math inline">\(\alpha\)</span> del tema <a href="60_RegressionModels.html"><span>6</span></a>. Las librerías necesarias ya las hemos cargado en la configuración inicial del cuaderno.</p>
+<section id="datos-breast-cancer-2" class="level4" data-number="10.9.3.1">
+<h4 data-number="10.9.3.1" class="anchored" data-anchor-id="datos-breast-cancer-2"><span class="header-section-number">10.9.3.1</span> Datos breast Cancer</h4>
+<p>Configuramos el proceso de optimización considerando el intervalo <span class="math inline">\([3, 50]\)</span> como posibles valores de <code>k</code>. A continuación se muestra los diferentes pasos en el proceso de optimización. En primer lugar definimos el learner correspondiente:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1"></a><span class="co"># Algoritmo de aprendizaje</span></span>
+<span id="cb61-2"><a href="#cb61-2"></a>lknn_classif <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.kknn"</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>, </span>
+<span id="cb61-3"><a href="#cb61-3"></a>              <span class="at">k =</span> <span class="fu">to_tune</span>(<span class="dv">3</span>, <span class="dv">50</span>))</span>
+<span id="cb61-4"><a href="#cb61-4"></a><span class="co"># Proceso de aprendizaje</span></span>
+<span id="cb61-5"><a href="#cb61-5"></a>gr <span class="ot">=</span>  pp_cancer <span class="sc">%&gt;&gt;%</span> lknn_classif</span>
+<span id="cb61-6"><a href="#cb61-6"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora configuramos el proceso de optimización utilizando la función <code>tune()</code> donde debemos establecer el terminador del proceso, el procedimiento de remuestreo, y el score para la tarea definida. En este caso utilizamos <code>grid_search</code> fijando una <code>resolution = 5</code> para establecer la resolución del grid de búsqueda.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1"></a><span class="co"># Fijamos semilla para reproducibilidad</span></span>
+<span id="cb62-2"><a href="#cb62-2"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb62-3"><a href="#cb62-3"></a><span class="co"># Definimos instancia</span></span>
+<span id="cb62-4"><a href="#cb62-4"></a>instance <span class="ot">=</span> <span class="fu">tune</span>(</span>
+<span id="cb62-5"><a href="#cb62-5"></a>  <span class="at">tuner =</span> <span class="fu">tnr</span>(<span class="st">"grid_search"</span>, <span class="at">resolution =</span> <span class="dv">5</span>),</span>
+<span id="cb62-6"><a href="#cb62-6"></a>  <span class="at">task =</span> tsk_cancer,</span>
+<span id="cb62-7"><a href="#cb62-7"></a>  <span class="at">learner =</span> gr,</span>
+<span id="cb62-8"><a href="#cb62-8"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">5</span>),</span>
+<span id="cb62-9"><a href="#cb62-9"></a>  <span class="at">measure =</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>)</span>
+<span id="cb62-10"><a href="#cb62-10"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos ver el resultado del proceso de optimización:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1"></a>instance<span class="sc">$</span>result</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.kknn.k learner_param_vals  x_domain classif.bacc
+1:             26          &lt;list[5]&gt; &lt;list[1]&gt;    0.9573356</code></pre>
+</div>
+</div>
+<p>El algoritmo de búsqueda selecciona el valor de <code>k = 26</code> con un porcentaje de clasificación correcta corregido del 95.73%. Podemos utilizar este valor para realizar el proceso de validación del modelo. Consideramos validación cruzada con 10 folds.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1"></a><span class="co"># Fijamos semilla</span></span>
+<span id="cb65-2"><a href="#cb65-2"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb65-3"><a href="#cb65-3"></a><span class="co"># Definimos proceso de validación cruzada kfold con k=10</span></span>
+<span id="cb65-4"><a href="#cb65-4"></a>resamp <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>)</span>
+<span id="cb65-5"><a href="#cb65-5"></a><span class="co"># Nuevo algoritmo de aprendizaje con k óptimo</span></span>
+<span id="cb65-6"><a href="#cb65-6"></a>lknn_classif <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.kknn"</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>, </span>
+<span id="cb65-7"><a href="#cb65-7"></a>              <span class="at">k =</span> instance<span class="sc">$</span>result<span class="sc">$</span>classif.kknn.k)</span>
+<span id="cb65-8"><a href="#cb65-8"></a><span class="co"># Proceso de aprendizaje</span></span>
+<span id="cb65-9"><a href="#cb65-9"></a>gr <span class="ot">=</span>  pp_cancer <span class="sc">%&gt;&gt;%</span> lknn_classif</span>
+<span id="cb65-10"><a href="#cb65-10"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span>
+<span id="cb65-11"><a href="#cb65-11"></a>measure <span class="ot">=</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>)</span>
+<span id="cb65-12"><a href="#cb65-12"></a><span class="co"># Remuestreo</span></span>
+<span id="cb65-13"><a href="#cb65-13"></a>rr <span class="ot">=</span> <span class="fu">resample</span>(tsk_cancer, gr, resamp, <span class="at">store_models=</span><span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [17:42:29.738] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 1/10)
+INFO  [17:42:30.027] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 2/10)
+INFO  [17:42:30.187] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 3/10)
+INFO  [17:42:30.354] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 4/10)
+INFO  [17:42:30.546] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 5/10)
+INFO  [17:42:30.812] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 6/10)
+INFO  [17:42:30.967] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 7/10)
+INFO  [17:42:31.130] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 8/10)
+INFO  [17:42:31.390] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 9/10)
+INFO  [17:42:31.643] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 10/10)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1"></a><span class="co"># Análisis de los valores obtenidos con los scores definidos anteriormente</span></span>
+<span id="cb67-2"><a href="#cb67-2"></a><span class="fu">skim</span>(rr<span class="sc">$</span><span class="fu">score</span>(measure)[,<span class="st">"classif.bacc"</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">rr$score(measure)[, “clas…</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Key</td>
+<td style="text-align: left;">NULL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 12%">
+<col style="width: 17%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">classif.bacc</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.96</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.93</td>
+<td style="text-align: right;">0.94</td>
+<td style="text-align: right;">0.97</td>
+<td style="text-align: right;">0.98</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">▇▅▁▅▇</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>El porcentaje de clasificación correcta ponderado se sitúa en el 96.44% con una desviación típica del 2.7%, lo que demuestra una gran estabilidad del clasificador.</p>
+</section>
+<section id="datos-iris-2" class="level4" data-number="10.9.3.2">
+<h4 data-number="10.9.3.2" class="anchored" data-anchor-id="datos-iris-2"><span class="header-section-number">10.9.3.2</span> Datos Iris</h4>
+<p>Vamos a configurar el optimizador de forma similar al ejemplo anterior.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1"></a><span class="co"># Algoritmo de aprendizaje</span></span>
+<span id="cb68-2"><a href="#cb68-2"></a>lknn_classif <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.kknn"</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>, </span>
+<span id="cb68-3"><a href="#cb68-3"></a>              <span class="at">k =</span> <span class="fu">to_tune</span>(<span class="dv">3</span>, <span class="dv">50</span>))</span>
+<span id="cb68-4"><a href="#cb68-4"></a><span class="co"># Proceso de aprendizaje</span></span>
+<span id="cb68-5"><a href="#cb68-5"></a>gr <span class="ot">=</span>  pp_iris <span class="sc">%&gt;&gt;%</span> lknn_classif</span>
+<span id="cb68-6"><a href="#cb68-6"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Optimizamos el modelo</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1"></a><span class="co"># Fijamos semilla para reproducibilidad</span></span>
+<span id="cb69-2"><a href="#cb69-2"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb69-3"><a href="#cb69-3"></a><span class="co"># Definimos instancia</span></span>
+<span id="cb69-4"><a href="#cb69-4"></a>instance <span class="ot">=</span> <span class="fu">tune</span>(</span>
+<span id="cb69-5"><a href="#cb69-5"></a>  <span class="at">tuner =</span> <span class="fu">tnr</span>(<span class="st">"grid_search"</span>, <span class="at">resolution =</span> <span class="dv">5</span>),</span>
+<span id="cb69-6"><a href="#cb69-6"></a>  <span class="at">task =</span> tsk_iris,</span>
+<span id="cb69-7"><a href="#cb69-7"></a>  <span class="at">learner =</span> gr,</span>
+<span id="cb69-8"><a href="#cb69-8"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>),</span>
+<span id="cb69-9"><a href="#cb69-9"></a>  <span class="at">measure =</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>)</span>
+<span id="cb69-10"><a href="#cb69-10"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos ver el resultado del proceso de optimización:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1"></a>instance<span class="sc">$</span>result</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.kknn.k learner_param_vals  x_domain classif.bacc
+1:             14          &lt;list[5]&gt; &lt;list[1]&gt;    0.9666667</code></pre>
+</div>
+</div>
+<p>La solución en este caso selecciona <code>k = 14</code> vecinos con un porcentaje de clasificación correcta del 96.67%.</p>
+</section>
+<section id="datos-electricity-2" class="level4" data-number="10.9.3.3">
+<h4 data-number="10.9.3.3" class="anchored" data-anchor-id="datos-electricity-2"><span class="header-section-number">10.9.3.3</span> Datos Electricity</h4>
+<p>El procedimiento en este caso es similar al de los dos anteriores salvo por el hecho que debemos cambiar la métrica de evaluación al tratarse de una tarea de regresión. Veamos el código necesario:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1"></a><span class="co"># Algoritmo de aprendizaje</span></span>
+<span id="cb72-2"><a href="#cb72-2"></a>lknn_regr <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"regr.kknn"</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>,  </span>
+<span id="cb72-3"><a href="#cb72-3"></a>              <span class="at">k =</span> <span class="fu">to_tune</span>(<span class="dv">3</span>, <span class="dv">50</span>))</span>
+<span id="cb72-4"><a href="#cb72-4"></a><span class="co"># Proceso de aprendizaje</span></span>
+<span id="cb72-5"><a href="#cb72-5"></a>gr <span class="ot">=</span>  pp_electricity <span class="sc">%&gt;&gt;%</span> lknn_regr</span>
+<span id="cb72-6"><a href="#cb72-6"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Optimizamos el modelo aumentando la resolución debido a la gran cantidad de datos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1"></a><span class="co"># Fijamos semilla para reproducibilidad</span></span>
+<span id="cb73-2"><a href="#cb73-2"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb73-3"><a href="#cb73-3"></a><span class="co"># Definimos instancia</span></span>
+<span id="cb73-4"><a href="#cb73-4"></a>instance <span class="ot">=</span> <span class="fu">tune</span>(</span>
+<span id="cb73-5"><a href="#cb73-5"></a>  <span class="at">tuner =</span> <span class="fu">tnr</span>(<span class="st">"grid_search"</span>, <span class="at">resolution =</span> <span class="dv">10</span>),</span>
+<span id="cb73-6"><a href="#cb73-6"></a>  <span class="at">task =</span> tsk_electricity,</span>
+<span id="cb73-7"><a href="#cb73-7"></a>  <span class="at">learner =</span> gr,</span>
+<span id="cb73-8"><a href="#cb73-8"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>),</span>
+<span id="cb73-9"><a href="#cb73-9"></a>  <span class="at">measure =</span> <span class="fu">msr</span>(<span class="st">"regr.smape"</span>)</span>
+<span id="cb73-10"><a href="#cb73-10"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Veamos la solución óptima</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1"></a>instance<span class="sc">$</span>result</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   regr.kknn.k learner_param_vals  x_domain  regr.smape
+1:           8          &lt;list[5]&gt; &lt;list[1]&gt; 0.005697392</code></pre>
+</div>
+</div>
+<p>La solución se corresponde con un valor de <code>k = 8</code> que proporciona un <code>SMAPE</code> del 0.0057, es decir un porcentaje de error del 0.57%.</p>
+</section>
+<section id="datos-diabetes-2" class="level4" data-number="10.9.3.4">
+<h4 data-number="10.9.3.4" class="anchored" data-anchor-id="datos-diabetes-2"><span class="header-section-number">10.9.3.4</span> Datos Diabetes</h4>
+<p>El procedimiento en este caso es similar al del apartado anterior:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1"></a><span class="co"># Algoritmo de aprendizaje</span></span>
+<span id="cb76-2"><a href="#cb76-2"></a>lknn_regr <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"regr.kknn"</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>,  </span>
+<span id="cb76-3"><a href="#cb76-3"></a>              <span class="at">k =</span> <span class="fu">to_tune</span>(<span class="dv">3</span>, <span class="dv">50</span>))</span>
+<span id="cb76-4"><a href="#cb76-4"></a><span class="co"># Proceso de aprendizaje</span></span>
+<span id="cb76-5"><a href="#cb76-5"></a>gr <span class="ot">=</span>  pp_diabetes <span class="sc">%&gt;&gt;%</span> lknn_regr</span>
+<span id="cb76-6"><a href="#cb76-6"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Optimizamos el modelo aumentando la resolución debido a la gran cantidad de datos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1"></a><span class="co"># Fijamos semilla para reproducibilidad</span></span>
+<span id="cb77-2"><a href="#cb77-2"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb77-3"><a href="#cb77-3"></a><span class="co"># Definimos instancia</span></span>
+<span id="cb77-4"><a href="#cb77-4"></a>instance <span class="ot">=</span> <span class="fu">tune</span>(</span>
+<span id="cb77-5"><a href="#cb77-5"></a>  <span class="at">tuner =</span> <span class="fu">tnr</span>(<span class="st">"grid_search"</span>, <span class="at">resolution =</span> <span class="dv">10</span>),</span>
+<span id="cb77-6"><a href="#cb77-6"></a>  <span class="at">task =</span> tsk_diabetes,</span>
+<span id="cb77-7"><a href="#cb77-7"></a>  <span class="at">learner =</span> gr,</span>
+<span id="cb77-8"><a href="#cb77-8"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>),</span>
+<span id="cb77-9"><a href="#cb77-9"></a>  <span class="at">measure =</span> <span class="fu">msr</span>(<span class="st">"regr.smape"</span>)</span>
+<span id="cb77-10"><a href="#cb77-10"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Veamos la solución óptima</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1"></a>instance<span class="sc">$</span>result</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   regr.kknn.k learner_param_vals  x_domain regr.smape
+1:          13          &lt;list[5]&gt; &lt;list[1]&gt;  0.3255004</code></pre>
+</div>
+</div>
+<p>En este caso el número de vecinos seleccionado es <code>k = 13</code> con un <code>SMAPE</code> del 32.5%.</p>
+</section>
+</section>
+<section id="sec-100.9.4" class="level3" data-number="10.9.4">
+<h3 data-number="10.9.4" class="anchored" data-anchor-id="sec-100.9.4"><span class="header-section-number">10.9.4</span> Conclusiones finales sobre kNN</h3>
+<p>Es evidente que para finalizar con el proceso de encontrar la solución óptima a cada tarea es necesario realizar una selección de variables a partir de la solución obtenida en este punto, o hacer una combinación de ambas tarea para encontrar en el mejor modelo. En este caso el impacto de este proceso será pequeño porque vemos pocas diferencias, pero en otras situaciones este proceso puede tener un gran impacto en la solución final. Lo que no está claro es cual es el orden para proceder: i) selección de predictoras y búsqueda de k o ii) búsqueda de k y selección de predictoras, por lo que en muchas ocasiones hay que hacer una combinación de ambos para encontrar la mejor solución.</p>
+<p>Una forma de evitar este proceso es considerar una solución inicial basada en la búsqueda del k óptimo, y compararla con la solución de otros algoritmos mediante un proceso de <code>benchmarking</code> para evitar tener que realizar un proceso refinado de búsqueda. En el punto siguiente utilizamos los algoritmos de clasificación estudiados para responder a la tarea de breast cancer.</p>
+</section>
+</section>
+<section id="sec-100.10" class="level2" data-number="10.10">
+<h2 data-number="10.10" class="anchored" data-anchor-id="sec-100.10"><span class="header-section-number">10.10</span> Combinación de soluciones</h2>
+<p>En este punto vemos obtener diferentes soluciones de forma única. En concreto utilizamos las soluciones de regresión logística, naïve Bayes y kNN para encontrar una solución única para la tarea de clasificación de breast cancer. Más adelante estudiaremos los detalles teóricos para la combinación de las soluciones de los algoritmos para obtener una única solución mediante la combinación de los resultados individuales.</p>
+<p>Para utilizar la función <code>benchmark()</code> primero llamamos a <code>benchmark_grid()</code>, que construye un diseño exhaustivo para describir todas las combinaciones de algoritmos, tareas y remuestreos que se utilizarán en un experimento de referencia, y crea instancias de las estrategias de remuestreo. En primer lugar definimos los tres algoritmos de aprendizaje que utilizaremos. En el de regresión logística usamos un modelo penalizado ridge</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1"></a><span class="co"># Learner regresión logística</span></span>
+<span id="cb80-2"><a href="#cb80-2"></a>lrn1 <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.glmnet"</span>, <span class="at">type.logistic =</span> <span class="st">"Newton"</span>, <span class="at">standardize =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb80-3"><a href="#cb80-3"></a>              <span class="at">alpha =</span> <span class="dv">0</span>)</span>
+<span id="cb80-4"><a href="#cb80-4"></a>gr1 <span class="ot">=</span> <span class="fu">as_learner</span>(pp_cancer <span class="sc">%&gt;&gt;%</span> lrn1)</span>
+<span id="cb80-5"><a href="#cb80-5"></a><span class="co"># Learner naïve Bayes</span></span>
+<span id="cb80-6"><a href="#cb80-6"></a>lrn2 <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.naive_bayes"</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb80-7"><a href="#cb80-7"></a>gr2 <span class="ot">=</span> <span class="fu">as_learner</span>(pp_cancer <span class="sc">%&gt;&gt;%</span> lrn2)</span>
+<span id="cb80-8"><a href="#cb80-8"></a><span class="co"># Learner kNN</span></span>
+<span id="cb80-9"><a href="#cb80-9"></a>lrn3 <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.kknn"</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>, <span class="at">k =</span> <span class="dv">26</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb80-10"><a href="#cb80-10"></a>gr3 <span class="ot">=</span> <span class="fu">as_learner</span>(pp_cancer <span class="sc">%&gt;&gt;%</span> lrn3)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A continuación definimos el objeto de remuestreo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1"></a><span class="co"># Remuestreo</span></span>
+<span id="cb81-2"><a href="#cb81-2"></a>remuestreo <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ya estamos en condiciones de definir el grid de modelos y podemos proceder con la combinación de soluciones:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1"></a><span class="co"># Grid</span></span>
+<span id="cb82-2"><a href="#cb82-2"></a>design <span class="ot">=</span> <span class="fu">benchmark_grid</span>(tsk_cancer, <span class="fu">list</span>(gr1, gr2, gr3), remuestreo)</span>
+<span id="cb82-3"><a href="#cb82-3"></a><span class="co"># Combinación de soluciones</span></span>
+<span id="cb82-4"><a href="#cb82-4"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(design)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos estudiar ahora las soluciones individuales de cada modelo-remuestreo, y la solución agregada para cada modelo. Para el análisis individual optamos por una solución gráfica que nos muestra la distribución de los valores de remuestreo para cada uno de los modelos de aprendizaje.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1"></a><span class="co"># Solución gráfica</span></span>
+<span id="cb83-2"><a href="#cb83-2"></a><span class="fu">autoplot</span>(bmr, <span class="at">measure =</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="100_kNNmodels_files/figure-html/knn-047-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">Diagrama de cajas modelo aprendizaje - remuestro del bacc</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Podemos ver que el modelo basado regresión logística penalizada es el que proporciona mejores valores del porcentaje de clasificación correcta ponderado, similares a los del algoritmo kNN, pero superiores a los de naïve Bayes. Por último vemos el valor agregado para cada algoritmo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1"></a><span class="co"># Solución agregada</span></span>
+<span id="cb84-2"><a href="#cb84-2"></a>bmr<span class="sc">$</span><span class="fu">aggregate</span>(<span class="fu">msr</span>(<span class="st">"classif.bacc"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   nr            task_id                learner_id resampling_id iters
+1:  1 breastcancer[, -1]      scale.classif.glmnet            cv    10
+2:  2 breastcancer[, -1] scale.classif.naive_bayes            cv    10
+3:  3 breastcancer[, -1]        scale.classif.kknn            cv    10
+   classif.bacc
+1:    0.9632900
+2:    0.9192605
+3:    0.9642821
+Hidden columns: resample_result</code></pre>
+</div>
+</div>
+<p>El resultado obtenido es el que se vislumbraba en el gráfico anterior, mostrando que el mejor modelo tiene una capacidad de clasificación correcta del 96.4%, mientras que el peor se queda en el 92.4%.</p>
+</section>
+<section id="ejercicios" class="level2" data-number="10.11">
+<h2 data-number="10.11" class="anchored" data-anchor-id="ejercicios"><span class="header-section-number">10.11</span> Ejercicios</h2>
+<ol type="1">
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo kNN para el banco de datos <code>Mushroom</code><a href="40_DataBases.html#sec-mushroom"><span>4.3.4</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo kNN para el banco de datos <code>Water potability</code><a href="40_DataBases.html#sec-waterpot"><span>4.3.7</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo kNN para el banco de datos <code>Hepatitis</code><a href="40_DataBases.html#sec-hepatitis"><span>4.3.9</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo kNN para el banco de datos <code>Abalone</code><a href="40_DataBases.html#sec-abalone"><span>4.3.1</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo kNN para el banco de datos <code>Penguins</code><a href="40_DataBases.html#sec-penguins"><span>4.2.6</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo kNN para el banco de datos <code>Us economic time series</code><a href="40_DataBases.html#sec-usaets"><span>4.2.7</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo kNN para el banco de datos <code>QSAR</code><a href="40_DataBases.html#sec-qsar"><span>4.2.8</span></a>.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "¡Copiado!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "¡Copiado!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./90_BayesianClassif.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./110_SVMmodels.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

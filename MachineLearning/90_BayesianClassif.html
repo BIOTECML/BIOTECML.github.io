@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MachineLearning - 9&nbsp; Modelos de clasificación Naïve Bayes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./100_kNNmodels.html" rel="next">
+<link href="./80_SurvivalModels.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos coincidentes",
+    "search-copy-link-title": "Copiar enlace para buscar",
+    "search-hide-matches-text": "Ocultar coincidencias adicionales",
+    "search-more-match-text": "más coincidencia en este documento",
+    "search-more-matches-text": "más coincidencias en este documento",
+    "search-clear-button-title": "Limpiar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Entregar"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MachineLearning</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Prefacio</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./01_IntroCourse.html" class="sidebar-item-text sidebar-link">Parte 1. Introducción</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_introAD.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_introAA.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./30_RandRstudio.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./40_DataBases.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./02_FirstStepsAA.html" class="sidebar-item-text sidebar-link">Parte 2. Primeros pasos</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./50_AED.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./03_SupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 3. Aprendizaje supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./60_RegressionModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regresión</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./70_LogisticModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelos de Regresión Logística</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./80_SurvivalModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./90_BayesianClassif.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./100_kNNmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./110_SVMmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./120_DTmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./130_Ensemblemodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Modelos de conjunto (Ensemble models)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./140_Boostingmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Modelos Boosting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./04_NonSupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 4. Aprendizaje no supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./150_Discriminantmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análisis discriminante (AD)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./160_PrinCompmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./170_MDSmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./180_Clustermodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Análisis cluster</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">Referencias</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#sec-90.1" id="toc-sec-90.1" class="nav-link active" data-scroll-target="#sec-90.1"><span class="toc-section-number">9.1</span>  Tipos de clasificadores Naïve Bayes</a>
+  <ul>
+  <li><a href="#sec-90.1.1" id="toc-sec-90.1.1" class="nav-link" data-scroll-target="#sec-90.1.1"><span class="toc-section-number">9.1.1</span>  Naïve Bayes Bernouilli</a></li>
+  <li><a href="#sec-90.1.2" id="toc-sec-90.1.2" class="nav-link" data-scroll-target="#sec-90.1.2"><span class="toc-section-number">9.1.2</span>  Naïve Bayes Multinomial</a></li>
+  <li><a href="#sec-90.1.3" id="toc-sec-90.1.3" class="nav-link" data-scroll-target="#sec-90.1.3"><span class="toc-section-number">9.1.3</span>  Naïve Bayes Gaussiano</a></li>
+  </ul></li>
+  <li><a href="#sec-80.2" id="toc-sec-80.2" class="nav-link" data-scroll-target="#sec-80.2"><span class="toc-section-number">9.2</span>  Ventajas e inconvenientes de los clasificadores Naïve Bayes</a></li>
+  <li><a href="#sec-90.3" id="toc-sec-90.3" class="nav-link" data-scroll-target="#sec-90.3"><span class="toc-section-number">9.3</span>  Bancos de datos</a>
+  <ul>
+  <li><a href="#breast-cancer-wisconsin" id="toc-breast-cancer-wisconsin" class="nav-link" data-scroll-target="#breast-cancer-wisconsin"><span class="toc-section-number">9.3.1</span>  Breast Cancer Wisconsin</a></li>
+  <li><a href="#iris" id="toc-iris" class="nav-link" data-scroll-target="#iris"><span class="toc-section-number">9.3.2</span>  Iris</a></li>
+  </ul></li>
+  <li><a href="#sec-90.4" id="toc-sec-90.4" class="nav-link" data-scroll-target="#sec-90.4"><span class="toc-section-number">9.4</span>  Clasificador naïve Bayes en mlr3</a>
+  <ul>
+  <li><a href="#sec-90.4.1" id="toc-sec-90.4.1" class="nav-link" data-scroll-target="#sec-90.4.1"><span class="toc-section-number">9.4.1</span>  Datos Breast Cancer</a></li>
+  <li><a href="#sec-90.4.2" id="toc-sec-90.4.2" class="nav-link" data-scroll-target="#sec-90.4.2"><span class="toc-section-number">9.4.2</span>  Datos iris</a></li>
+  </ul></li>
+  <li><a href="#sec-90.5" id="toc-sec-90.5" class="nav-link" data-scroll-target="#sec-90.5"><span class="toc-section-number">9.5</span>  Ejercicios</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-90" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Con este tema nos introducimos en el bloque específico de algoritmos de aprendizaje automático centrados en los problemas de clasificación. En un problema de clasificación tenemos disponible la información de <span class="math inline">\(n\)</span> muestras mediante:</p>
+<ul>
+<li><p>Una variable respuesta <span class="math inline">\(y\)</span> de tipo categórico con <span class="math inline">\(k\)</span> categorías o etiquetas (que es el nombre que reciben habitualmente dentro del aprendizaje automático) <span class="math inline">\(y_1,...,y_k\)</span>,</p></li>
+<li><p>Un conjunto de variables predictoras <span class="math inline">\(X=(X_1,...,X_p)\)</span> que pueden influir de forma distinta en cada una de las etiquetas de la respuesta.</p></li>
+</ul>
+<p>La estructura es muy similar a la de los problemas de regresión logística pero en este caso no disponemos de un modelo sino que tratamos de predecir directamente la probabilidad de cada etiqueta de la respuesta para una nueva muestra dada en función de las variables predictoras registradas.</p>
+<p>Los clasificadores Naïve Bayes son los primeros algoritmos de clasificación que vamos a estudiar, dado que se utilizan en muchas ocasiones como modelo de base o partida en los problemas de clasificación, ya que son extremadamente rápidos y sencillos y suelen ser adecuados para conjuntos de datos de muy alta dimensión.</p>
+<p>Los clasificadores Bayes se basan en el teorema de Bayes, que es una ecuación que describe la relación de las probabilidades condicionales entre dos conjuntos de sucesos. En nuestro caso estamos interesados en determinar la probabilidad de una clase, del conjunto posible, en función del conjunto de predictoras observadas <span class="math display">\[P(y_l|x_1,...,x_p)\]</span> para <span class="math inline">\(l=1,...,k\)</span>, donde <span class="math inline">\(x_1,...,x_p\)</span> son los valores observados de las predictoras para una muestra dada. Dicha probabilidad se puede escribir utilizando dicho teorema como:</p>
+<p><span class="math display">\[P(y_l|x_1,...,x_p) = \frac{P(x_1,...,x_p|y_l)P(y_l)}{P(x_1,...,x_p)}\]</span></p>
+<p>donde <span class="math inline">\(P(x_1,...,x_p|y_l)\)</span> es la verosimilitud para una etiqueta dada, <span class="math inline">\(P(y_l)\)</span> es la probabilidad previa de cada clase antes de la toma de datos, <span class="math inline">\(P(x_1,...,x_p)\)</span> es la información marginal aportada por los datos, y <span class="math inline">\(P(y_l|x_1,...,x_p)\)</span> es la distribución posterior de la clase <span class="math inline">\(l\)</span> dada la información recogida. La distribución posterior cuantifica la probabilidad de cada clase dado el conjunto de datos observado. Para evaluar dicho cociente los algoritmos Naïve Bayes asumen independencia entre las observaciones de forma que:</p>
+<p><span class="math display">\[P(x_1,x_2,...,x_p| y) = P(x_1|y)P(x_2|y)...P(x_p|y)=\prod_{i=1}^p P(x_i|y)\]</span></p>
+<p>Para la estimación de <span class="math inline">\(P(y)\)</span> utilizamos la proporción de cada clase en la muestra de entrenamiento.</p>
+<p>De esta forma, la regla de clasificación para determinar la clase <span class="math inline">\(l\)</span> a la que debemos asignar una muestra se obtiene evaluando la expresión:</p>
+<p><span class="math display">\[\underset{l}{max}\left[ P(y_l)\prod_{i=1}^p P(x_i|y_l)\right], \quad l=1,...,k\]</span> Por su sencillez, el algoritmo Naïve Bayes tiene muchas aplicaciones en diversos sectores, como la salud, la tecnología, el medio ambiente, etc. Estas son algunas de las más habituales:</p>
+<ul>
+<li><p>La aplicación más habitual es en la clasificación de textos. Por ejemplo, las noticias en la web están creciendo rápidamente y cada sitio de noticias tiene su propia disposición y categorización para agruparlas. Para conseguir mejores resultados de clasificación, aplicamos el clasificador Naïve Bayes para determinar el tipo de noticia basándonos en el contenido de las mismas, a partir de la extracción de palabras clave.</p></li>
+<li><p>Quizás la aplicación más antigua y que tiene que ver con el análisis de textos del punto anterior es el filtrado de spam en el correo electrónico. Los clasificadores de Naïve Bayes funcionan correlacionando el uso de “tokens” (normalmente palabras, o a veces otras cosas) que pueden ir asociados con correos que pueden ser clasificados como spam y los que no son, y luego utilizan el teorema de Bayes para calcular la probabilidad de que un correo electrónico sea o no spam.</p></li>
+<li><p>Es un algoritmo habitual dentro del ámbito de la salud donde para cada sujeto hay mucha información disponible, ya que el clasificador Naïve Bayes tiene en cuenta la evidencia de todos los atributos considerados para determinar la probabilidad de que el sujeto padezca o no cierta enfermedad, proporcionando una herramienta muy sencilla para la toma de decisiones.</p></li>
+<li><p>Otro ámbito de aplicación de estos algoritmos es en la predicción del tiempo en situaciones simples. Los algoritmos Naïve Bayes aprovechan la información pasada para predecir la situación climática (soleado, nuboso, lluvioso) en base a la probabilidad posterior de cada una de las situaciones posibles.</p></li>
+<li><p>Dos aplicaciones más modernas y de gran utilización en el ámbito del aprendizaje automático son el Análisis de Sentimientos y la construcción de Sistemas de Recomendación. El Análisis de Sentimientos se refiere a la identificación de los sentimientos positivos o negativos de un grupo objetivo a partir de la información recogida sobre ellos (opiniones respecto de un tema en particular). En este caso el análisis de reputación de las personas u organismos es un campo de aplicación habitual del Análisis de Sentimientos. Por otro lado, el denominado Filtrado Colaborativo y el algoritmo Naïve Bayes se complementan para los sistemas de recomendación que tratan de ofrecer al usuario de portales de internet una colección de productos o servicios en los que el usuario podría estar interesado. Estos algoritmos se usan por ejemplo en plataformas como Amazon o Netflix.</p></li>
+</ul>
+<p>En el código siguiente se cargan los paquetes y la configuración básica para este tipo de modelos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Paquetes anteriores</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(knitr) <span class="co"># para formatos de tablas</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">library</span>(DataExplorer)</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="fu">library</span>(cvms)</span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="fu">theme_set</span>(<span class="fu">theme_sjplot2</span>())</span>
+<span id="cb1-12"><a href="#cb1-12"></a></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co"># Paquetes AA</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="fu">library</span>(mlr3verse)</span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="fu">library</span>(mlr3tuning)</span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="fu">library</span>(mlr3tuningspaces)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="sec-90.1" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="sec-90.1"><span class="header-section-number">9.1</span> Tipos de clasificadores Naïve Bayes</h2>
+<p>Dentro de los clasificadores Naïve Bayes encontramos tres tipos principales en función de las características de la variable respuesta y las predictoras. Dichos tipos son: <strong>Naïve Bayes Bernouilli</strong>, <strong>Naïve Bayes Multinomial</strong>, y <strong>Naïve Bayes Gaussiano</strong>.</p>
+<section id="sec-90.1.1" class="level3" data-number="9.1.1">
+<h3 data-number="9.1.1" class="anchored" data-anchor-id="sec-90.1.1"><span class="header-section-number">9.1.1</span> Naïve Bayes Bernouilli</h3>
+<p>El algoritmo <strong>Naïve Bayes Bernouilli</strong> se utiliza cuando tanto la respuesta como las predictoras tienen únicamente dos etiquetas o categorías, es decir, son variables de tipo binario. En esta situación si la variable <span class="math inline">\(y\)</span> solo puede tomar los valores <span class="math inline">\(\{0,1\}\)</span>, la verosimilitud individual de cada predictora se expresa como:</p>
+<p><span class="math display">\[P(x_i|y) = P(y=1)x_i+(1-P(y=1))(1-x_i)\]</span></p>
+<p>con la que podemos obtener de forma muy rápida la regla de clasificación para este algoritmo ya que esta viene dada por elegir la clase 1 si:</p>
+<p><span class="math display">\[[P(y=1)^{q+1}] &gt; [P(y=0)^{p-q+1}]\]</span></p>
+<p>donde <span class="math inline">\(p\)</span> es el número de predictoras disponibles, <span class="math inline">\(q\)</span> el número de predictoras que toman el valor 1 para la muestra que tratamos de clasificar, y <span class="math inline">\(P(y=1)\)</span>, <span class="math inline">\(P(y=0)\)</span> se estiman a partir de los valores de la muestra de entrenamiento.</p>
+<p>Por lo tanto, este tipo de clasificador requiere que las muestras se representen como vectores de características de tipo binario. Es el algoritmo menos utilizado de los tres debido a sus restricciones de aplicación pero es el que proporciona una solución más rápida en este tipo de situaciones.</p>
+</section>
+<section id="sec-90.1.2" class="level3" data-number="9.1.2">
+<h3 data-number="9.1.2" class="anchored" data-anchor-id="sec-90.1.2"><span class="header-section-number">9.1.2</span> Naïve Bayes Multinomial</h3>
+<p>Se utiliza cuando la variable respuesta tiene dos o más etiquetas posibles, y las variables predictoras son de tipo categórico multinomial, es decir, con múltiples etiquetas en cada una de ellas. Es un algoritmo muy extendido que se ha utilizado en la clasificación de textos como por ejemplo la identificación de correo en Spam versus No Spam. Este algoritmo evalúa la probabilidad de cada etiqueta para una muestra determinada y devuelve la etiqueta con la mayor posibilidad.</p>
+<p>En este caso si <span class="math inline">\(\theta_{y_l}=(\theta_{y_l;1},...,\theta_{y_l;p})\)</span> representa el vector de probabilidades para la clase <span class="math inline">\(l\)</span> asociada con el conjunto de predictoras, podemos estimar dichos parámetros mediante la expresión:</p>
+<p><span class="math display">\[\hat{\theta}_{y_l;j} = \frac{N_{y_l;j} + \alpha}{N_{y_l} + \alpha n},\]</span></p>
+<p>donde <span class="math inline">\(N_{y_l;j}\)</span> es el número de predictoras de la muestra con valor 1 para la clase l, <span class="math inline">\(N_{y_l} = \sum_{j=1}^n N_{y_l;j}\)</span>, y <span class="math inline">\(\alpha\)</span> es el parámetro de suavizado que tiene en cuenta las clases que no están presentes en las muestras de aprendizaje y evitan las probabilidades nulas en los cálculos posteriores. El ajuste se denomina suavizado de Laplace cuando <span class="math inline">\(\alpha=1\)</span>, mientras que se denomina suavizado de Lidstone cuando <span class="math inline">\(\alpha &lt; 1\)</span>.</p>
+</section>
+<section id="sec-90.1.3" class="level3" data-number="9.1.3">
+<h3 data-number="9.1.3" class="anchored" data-anchor-id="sec-90.1.3"><span class="header-section-number">9.1.3</span> Naïve Bayes Gaussiano</h3>
+<p>Es una variante del Naïve Bayes Multinomial donde las variables predictoras son todas de tipo numérico. Todas ellas se distribuyen mediante una distribución Normal Multivariante. Este algoritmo hace uso de las medias y desviaciones estándar de las predictoras para obtener la probabilidad de clasificación de cada etiqueta de la respuesta. En este caso las verosimilitudes necesarias para la regla de clasificación se obtienen a partir de la función de densidad de la distribución normal como:</p>
+<p><span class="math display">\[P(x_i|y) = \frac{1}{\sqrt{2\pi\sigma_y^2}}exp\left(-\frac{(x_i-\mu_y)^2}{2\sigma_y^2}\right),\]</span></p>
+<p>donde los parámetros <span class="math inline">\(\mu_y\)</span> y <span class="math inline">\(\sigma_y^2\)</span> se estiman por máxima verosimilitud a partir de la información contenida en la muestra de entrenamiento, es decir, las medias y varianzas muestrales de cada predictora cuando estamos en la clase <span class="math inline">\(l\)</span>.</p>
+</section>
+</section>
+<section id="sec-80.2" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="sec-80.2"><span class="header-section-number">9.2</span> Ventajas e inconvenientes de los clasificadores Naïve Bayes</h2>
+<p>Los clasificadores Naïve Bayes tienden a funcionar especialmente bien en cualquiera de las siguientes situaciones:</p>
+<ul>
+<li>Cuando las clases de la respuesta están bien separadas, es decir, la distribución de probabilidad posterior de las clases en función de las predictoras son diferentes.</li>
+<li>Cuando disponemos de una gran cantidad de predictoras y la complejidad del modelo no es relevante.</li>
+</ul>
+<p>Estos dos puntos están relacionados ya que a medida que aumenta la dimensión de un conjunto de datos, es mucho menos probable que se descubran dos puntos cercanos entre sí. Esto significa que las agrupaciones en dimensiones altas tienden a estar más separadas que las agrupaciones en dimensiones bajas.</p>
+<p>El clasificador Naïve Bayes tiene además las siguientes ventajas computacionales:</p>
+<ul>
+<li>Es extremadamente rápido tanto para el entrenamiento como para la predicción, y por tanto tiene un coste de cálculo muy bajo.</li>
+<li>Proporciona una predicción probabilística directa.</li>
+<li>Puede trabajar eficazmente en un gran conjunto de datos.</li>
+<li>Cuando se cumple el supuesto de independencia (algo que en la práctica es bastante difícil), un clasificador Naïve Bayes funciona mejor en comparación con otros modelos como la regresión logística.</li>
+</ul>
+<p>Entre las desventajas de este algoritmo podemos mencionar:</p>
+<ul>
+<li><p>La hipótesis de la independencia condicional no siempre se cumple. En la mayoría de las situaciones, las variables predictoras muestran alguna forma de dependencia.</p></li>
+<li><p>El problema de la probabilidad cero hace referencia a las situaciones en las que en la muestra de test tenemos valores de la respuesta que no estaban en la muestra de entrenamiento. Esto provoca automáticamente que la probabilidad de esa clase sea siempre cero. Por ese motivo hay que tener cuidado y analizar con detalle la muestra de entrenamiento para asegurar de que se dispone de valores de todas las clases de la respuesta.</p></li>
+</ul>
+</section>
+<section id="sec-90.3" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="sec-90.3"><span class="header-section-number">9.3</span> Bancos de datos</h2>
+<p>Para mostrar el funcionamiento de los algoritmos de clasificación naïve Bayes utilizamos los mismos ejemplos del tema anterior, para poder comparar los resultados entre ambos algoritmos. Como ya hemos visto y trabajado con ambos bancos de datos, en este punto solo cargamos las tareas correspondientes.</p>
+<section id="breast-cancer-wisconsin" class="level3" data-number="9.3.1">
+<h3 data-number="9.3.1" class="anchored" data-anchor-id="breast-cancer-wisconsin"><span class="header-section-number">9.3.1</span> Breast Cancer Wisconsin</h3>
+<p>En esta base de datos se recoge información sobre los cánceres de mama en la ciudad de Wisconsin. Las características de la base de datos se calculan a partir de una imagen digitalizada de un aspiración de aguja fina (FNA) de una masa mamaria. Describen las características de los núcleos celulares presentes en la imagen y el objetivo que se persigue es clasificar un tumor como benigno o maligno en función de las variables predictoras. Como en este caso estamos interesados en saber que predictoras influyen más en el carácter maligno del cáncer, utilizaremos esa categoría como la de interés.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Cargamos datos</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>breastcancer <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"breastcancer.rds"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="co"># Creación de task eliminado la columna que identifica os sujetos</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>tsk_cancer <span class="ot">=</span> <span class="fu">as_task_classif</span>(breastcancer[,<span class="sc">-</span><span class="dv">1</span>], <span class="at">target =</span> <span class="st">"diagnosis"</span>, <span class="at">positive =</span> <span class="st">"M"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="iris" class="level3" data-number="9.3.2">
+<h3 data-number="9.3.2" class="anchored" data-anchor-id="iris"><span class="header-section-number">9.3.2</span> Iris</h3>
+<p>El banco de datos iris ya los presentamos en temas anteriores y aquí solo se presenta el código para crear la tarea de clasificación correspondiente.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Cargamos datos</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>iris <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"iris.rds"</span>) </span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co"># creamos la tarea</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>tsk_iris <span class="ot">=</span> <span class="fu">as_task_classif</span>(iris, <span class="at">target =</span> <span class="st">"species"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="sec-90.4" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="sec-90.4"><span class="header-section-number">9.4</span> Clasificador naïve Bayes en mlr3</h2>
+<p>Para realizar el proceso de aprendizaje de un modelo de clasificación de clasificación naïve Bayes debemos usar el learner <code>classif.naive_bayes</code> que permite obtener de forma automática el clasificador correspondiente a cada situación. Podemos cargar el clasificador con el código siguiente:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># Cargamos learner</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.naive_bayes"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Los hiperparámetros de este algoritmo son:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Hiperparámetros para árboles de clasificación</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>learner<span class="sc">$</span>param_set<span class="sc">$</span><span class="fu">ids</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "eps"       "laplace"   "threshold"</code></pre>
+</div>
+</div>
+<p>y se interpretan como:</p>
+<ul>
+<li><p><code>eps</code>: es un número para especificar un rango épsilon para aplicar el suavizado de Laplace, es decir, para reemplazar probabilidades cero o cercanas a cero por <code>theshold</code>.</p></li>
+<li><p><code>laplace</code>: Suavizado de Laplace de doble control que se específica con un valor positivo. El valor predeterminado (0) desactiva el suavizado de Laplace.</p></li>
+<li><p><code>threshold</code>: valor con el que se reemplazan probabilidades dentro del rango dado por <code>eps</code>.</p></li>
+</ul>
+<p>En primer lugar obtenemos el clasificador naïve Bayes por defecto para cada banco de datos, lo que nos permitirá tener un modelo de base para comparación. El análisis de estos modelos es similar al de los problemas de clasificación de la regresión logística en cuanto a términos de evaluación y validación de la solución obtenida. A continuación mostramos los resultados obtenidos para las muestras de validación en los modelos de regresión lógistica para poder comparar los resultados.</p>
+<table class="table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 28%">
+<col style="width: 38%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Datos</th>
+<th>Modelo</th>
+<th>% Clasificación correcta</th>
+<th>Score de Brier</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Cáncer</td>
+<td><code>classif.log_reg</code></td>
+<td>97.34</td>
+<td>0.0265</td>
+</tr>
+<tr class="even">
+<td>Cáncer</td>
+<td><code>classif.glmnet</code></td>
+<td>96.70</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Iris</td>
+<td><code>classif.multinom</code></td>
+<td>96.66</td>
+<td>0.0667</td>
+</tr>
+<tr class="even">
+<td>Iris</td>
+<td><code>classif.glmnet</code></td>
+<td>85.50</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<section id="sec-90.4.1" class="level3" data-number="9.4.1">
+<h3 data-number="9.4.1" class="anchored" data-anchor-id="sec-90.4.1"><span class="header-section-number">9.4.1</span> Datos Breast Cancer</h3>
+<p>Comenzamos nuestro análisis con el banco de datos breast cancer. Para ello debemos definir el grpahlearner asociado (prerprocesamiento y modelo):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Definimos learner para predecir la probabilidad</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.naive_bayes"</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="co"># Preprocesado</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>pp_cancer <span class="ot">=</span> <span class="fu">po</span>(<span class="st">"scale"</span>, <span class="at">param_vals =</span> <span class="fu">list</span>(<span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="co"># Graphlearner</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a>gr <span class="ot">=</span> pp_cancer <span class="sc">%&gt;&gt;%</span> learner</span>
+<span id="cb7-7"><a href="#cb7-7"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para poder entrenar el modelo consideramos la división de muestras (80-20) y estratificamos según la variable <code>diagnosis</code> dado que los niveles no están equilibrados (ver tema de regresión logística).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># Generamos variable de estrato</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a>tsk_cancer<span class="sc">$</span>col_roles<span class="sc">$</span>stratum <span class="ot">&lt;-</span> <span class="st">"diagnosis"</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co"># Fijamos semilla para asegurar la reproducibilidad del modelo</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="co"># Creamos la partición</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_cancer, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a>tsk_train_cancer <span class="ot">=</span> tsk_cancer<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb8-9"><a href="#cb8-9"></a>tsk_test_cancer  <span class="ot">=</span> tsk_cancer<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos comenzar ahora con el entrenamiento del modelo y su interpretación:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># Entrenamiento</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>gr<span class="sc">$</span><span class="fu">train</span>(tsk_train_cancer)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>El entrenamiento de este modelo proporciona dos resultados:</p>
+<ul>
+<li><code>apriori</code>: probabilidades a priori de cada una de los niveles del factor utilizados en el proceso de clasificación.</li>
+<li><code>tables</code>: Una lista de tablas, una para cada variable predictiva. Para cada variable categórica, una tabla que proporciona, para cada nivel de atributo, las probabilidades condicionales dada la clase objetivo. Para cada variable numérica, una tabla que proporciona, para cada clase objetivo, la media y la desviación estándar de la (sub)variable.</li>
+</ul>
+<p>Veamos el resultado para este modelo donde todas las predictoras son de tipo numérico:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># Tablas</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>modelo <span class="ot">=</span> gr<span class="sc">$</span>model<span class="sc">$</span>classif.naive_bayes<span class="sc">$</span>model<span class="sc">$</span>tables</span>
+<span id="cb10-3"><a href="#cb10-3"></a>modelo</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$area_mean
+   area_mean
+y         [,1]      [,2]
+  M  0.9136272 1.0262682
+  B -0.5430651 0.4220094
+
+$area_se
+   area_se
+y         [,1]     [,2]
+  M  0.7251339 1.330193
+  B -0.4310236 0.217210
+
+$area_worst
+   area_worst
+y         [,1]      [,2]
+  M  0.9436145 1.0483184
+  B -0.5608897 0.3130474
+
+$compactness_mean
+   compactness_mean
+y         [,1]      [,2]
+  M  0.7633525 1.0244019
+  B -0.4537410 0.6480995
+
+$compactness_se
+   compactness_se
+y         [,1]      [,2]
+  M  0.3551035 1.0293835
+  B -0.2110755 0.9209903
+
+$compactness_worst
+   compactness_worst
+y         [,1]      [,2]
+  M  0.7544960 1.0866349
+  B -0.4484766 0.5957466
+
+$concave_points_mean
+   concave_points_mean
+y         [,1]      [,2]
+  M  1.0005673 0.8713090
+  B -0.5947428 0.4406619
+
+$concave_points_se
+   concave_points_se
+y         [,1]      [,2]
+  M  0.4888882 0.8801630
+  B -0.2905979 0.9538363
+
+$concave_points_worst
+   concave_points_worst
+y         [,1]      [,2]
+  M  1.0196676 0.6939235
+  B -0.6060962 0.5675614
+
+$concavity_mean
+   concavity_mean
+y         [,1]      [,2]
+  M  0.8824299 0.9271187
+  B -0.5245213 0.5884118
+
+$concavity_se
+   concavity_se
+y         [,1]      [,2]
+  M  0.2891704 0.6909921
+  B -0.1718845 1.1107806
+
+$concavity_worst
+   concavity_worst
+y         [,1]      [,2]
+  M  0.8293056 0.8670979
+  B -0.4929439 0.7046776
+
+$fractal_dimension_mean
+   fractal_dimension_mean
+y           [,1]     [,2]
+  M  0.007241941 1.054936
+  B -0.004304650 0.967738
+
+$fractal_dimension_se
+   fractal_dimension_se
+y          [,1]      [,2]
+  M  0.09314092 0.7653912
+  B -0.05536349 1.1139378
+
+$fractal_dimension_worst
+   fractal_dimension_worst
+y         [,1]      [,2]
+  M  0.4250828 1.1807233
+  B -0.2526716 0.7732786
+
+$perimeter_mean
+   perimeter_mean
+y         [,1]      [,2]
+  M  0.9503260 0.8836812
+  B -0.5648791 0.5239512
+
+$perimeter_se
+   perimeter_se
+y         [,1]      [,2]
+  M  0.7203788 1.2528486
+  B -0.4281972 0.4149526
+
+$perimeter_worst
+   perimeter_worst
+y         [,1]      [,2]
+  M  1.0014746 0.8772335
+  B -0.5952821 0.4316392
+
+$radius_mean
+   radius_mean
+y         [,1]      [,2]
+  M  0.9325751 0.8930061
+  B -0.5543278 0.5445070
+
+$radius_se
+   radius_se
+y         [,1]      [,2]
+  M  0.7345592 1.2239759
+  B -0.4366261 0.4415538
+
+$radius_worst
+   radius_worst
+y         [,1]      [,2]
+  M  0.9956696 0.8820899
+  B -0.5918316 0.4384883
+
+$smoothness_mean
+   smoothness_mean
+y         [,1]      [,2]
+  M  0.4580643 0.8947329
+  B -0.2722760 0.9603276
+
+$smoothness_se
+   smoothness_se
+y          [,1]      [,2]
+  M -0.10941078 0.9633435
+  B  0.06503438 1.0172515
+
+$smoothness_worst
+   smoothness_worst
+y         [,1]      [,2]
+  M  0.5416746 0.9584092
+  B -0.3219744 0.8790675
+
+$symmetry_mean
+   symmetry_mean
+y         [,1]      [,2]
+  M  0.4395975 0.9661733
+  B -0.2612992 0.9269095
+
+$symmetry_se
+   symmetry_se
+y           [,1]      [,2]
+  M  0.004624306 1.2092047
+  B -0.002748713 0.8540645
+
+$symmetry_worst
+   symmetry_worst
+y         [,1]      [,2]
+  M  0.5812294 1.1792987
+  B -0.3454860 0.6712026
+
+$texture_mean
+   texture_mean
+y         [,1]      [,2]
+  M  0.5351311 0.8394401
+  B -0.3180849 0.9519942
+
+$texture_se
+   texture_se
+y          [,1]     [,2]
+  M -0.01687734 0.878520
+  B  0.01003198 1.067032
+
+$texture_worst
+   texture_worst
+y         [,1]      [,2]
+  M  0.6031754 0.8540254
+  B -0.3585308 0.9044240</code></pre>
+</div>
+</div>
+<p>Para cada variable se presenta en la primera columna las medias y en la segunda las desviaciones estándar. Podemos ver los resultados para <code>area_mean</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>modelo<span class="sc">$</span>area_mean</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   area_mean
+y         [,1]      [,2]
+  M  0.9136272 1.0262682
+  B -0.5430651 0.4220094</code></pre>
+</div>
+</div>
+<p>Podemos ver como los valores más altos de <code>area_men</code> están vinculados con los tumores clasificados como malignos, mientras que los valores más bajos están vinculados a los tumores benignos. Estudiamos ahora la clasificación proporcionada por el algoritmo. En primer lugar calculamos las predicciones tanto para la muestra de entrenamiento como la de validación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># Predicción de la muestra de entrenamiento y validación</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a>pred_train <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_train_cancer)</span>
+<span id="cb14-3"><a href="#cb14-3"></a>pred_test <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_test_cancer)</span>
+<span id="cb14-4"><a href="#cb14-4"></a><span class="co"># Visualizamos las primeras predicciones de la muestra de validación</span></span>
+<span id="cb14-5"><a href="#cb14-5"></a>pred_test</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;PredictionClassif&gt; for 113 observations:
+    row_ids truth response       prob.M        prob.B
+         12     M        M 1.000000e+00  2.388608e-21
+         21     B        B 4.558006e-12  1.000000e+00
+         26     M        M 1.000000e+00  7.027807e-84
+---                                                  
+        550     B        B 2.575166e-14  1.000000e+00
+        565     M        M 1.000000e+00 2.574139e-138
+        567     M        M 1.000000e+00  1.758746e-10</code></pre>
+</div>
+</div>
+<p>Consideramos ahora diferentes métricas de evaluación y obtenemos sus valores para las muestras de predicción:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="co"># scores de validación</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"classif.acc"</span>, <span class="st">"classif.bacc"</span>, <span class="st">"classif.bbrier"</span>, <span class="st">"classif.auc"</span>))</span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc   classif.bacc classif.bbrier    classif.auc 
+    0.93201754     0.92194570     0.06090643     0.98679556 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc   classif.bacc classif.bbrier    classif.auc 
+     0.9734513      0.9691482      0.0255175      0.9979879 </code></pre>
+</div>
+</div>
+<p>El porcentaje de clasificación correcta para la muestra de validación es del 97.34%, que es igual al mejor que obteníamos para el modelo de regresión logística. Tanto el score de brier como el AUC proporcionan valores que indican que el algoritmo utilizado proporciona una buena clasificación. Podemos ver la tabla de confusión para ver donde se concentran los errores de clasificación cometidos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb20-2"><a href="#cb20-2"></a>pred_test<span class="sc">$</span>confusion</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        truth
+response  M  B
+       M 40  1
+       B  2 70</code></pre>
+</div>
+</div>
+<p>En este caso tenemos dos muestras que originalmente correspondían a un tumor maligno pero que el modelo clasifica como benigno. Por contra, hay 1 que originalmente era benigno y que el modelo clasifica como maligno. Representamos gráficamente la matriz de confusión.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="co"># Cargamos la librería para representar la matriz de confusión</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a>cm <span class="ot">=</span> <span class="fu">confusion_matrix</span>(pred_test<span class="sc">$</span>truth, pred_test<span class="sc">$</span>response)</span>
+<span id="cb22-3"><a href="#cb22-3"></a><span class="fu">plot_confusion_matrix</span>(cm<span class="sc">$</span><span class="st">`</span><span class="at">Confusion Matrix</span><span class="st">`</span>[[<span class="dv">1</span>]]) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="90_BayesianClassif_files/figure-html/nbayes-0132-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Procedemos ahora con el estudio de validación de la solución mediante un análisis de validación cruzada con 10 folds.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># Fijamos semilla</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb23-3"><a href="#cb23-3"></a><span class="co"># Definimos proceso de validación cruzada kfold con k=10</span></span>
+<span id="cb23-4"><a href="#cb23-4"></a>resamp <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>)</span>
+<span id="cb23-5"><a href="#cb23-5"></a><span class="co"># Remuestreo</span></span>
+<span id="cb23-6"><a href="#cb23-6"></a>rr <span class="ot">=</span> <span class="fu">resample</span>(tsk_cancer, gr, resamp, <span class="at">store_models=</span><span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [17:40:45.324] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 1/10)
+INFO  [17:40:45.547] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 2/10)
+INFO  [17:40:45.772] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 3/10)
+INFO  [17:40:46.473] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 4/10)
+INFO  [17:40:46.673] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 5/10)
+INFO  [17:40:46.834] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 6/10)
+INFO  [17:40:46.979] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 7/10)
+INFO  [17:40:47.146] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 8/10)
+INFO  [17:40:47.293] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 9/10)
+INFO  [17:40:47.459] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 10/10)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="co"># Resumen Scores individuales</span></span>
+<span id="cb25-2"><a href="#cb25-2"></a>scores <span class="ot">=</span> rr<span class="sc">$</span><span class="fu">score</span>(measures)<span class="sc">$</span>classif.acc</span>
+<span id="cb25-3"><a href="#cb25-3"></a><span class="fu">skim</span>(scores)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">scores</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 12%">
+<col style="width: 17%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">data</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.93</td>
+<td style="text-align: right;">0.04</td>
+<td style="text-align: right;">0.88</td>
+<td style="text-align: right;">0.89</td>
+<td style="text-align: right;">0.95</td>
+<td style="text-align: right;">0.96</td>
+<td style="text-align: right;">0.97</td>
+<td style="text-align: left;">▅▁▂▂▇</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Podemos ver como el promedio del porcentaje de clasificación correcta se sitúa en el 92.95% con una desviación del 3%, lo que indica que tenemos bastante precisión en la solución obtenida. Sin embargo, como la diferencia entre la mediana y la media es de casi un 2% la distribución de los resultados es algo asimétrica lo que puede indicar cierta dependencia de los resultados con respecto a la muestra de entrenamiento utilizada. Analizamos la curva de aprendizaje asociada cargando en primer lugar las funciones correspondientes.</p>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="fu">plot_learningcurve</span>(tsk_cancer, gr, <span class="st">"classif.acc"</span>, <span class="at">ptr =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span>), <span class="at">rpeats =</span> <span class="dv">10</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [17:40:48.062] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 1/10)
+INFO  [17:40:48.601] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 2/10)
+INFO  [17:40:49.106] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 3/10)
+INFO  [17:40:49.579] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 4/10)
+INFO  [17:40:50.106] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 5/10)
+INFO  [17:40:50.610] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 6/10)
+INFO  [17:40:51.109] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 7/10)
+INFO  [17:40:51.586] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 8/10)
+INFO  [17:40:52.050] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 9/10)
+INFO  [17:40:52.486] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 10/10)
+INFO  [17:40:53.050] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 1/10)
+INFO  [17:40:53.526] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 2/10)
+INFO  [17:40:53.997] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 3/10)
+INFO  [17:40:54.438] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 4/10)
+INFO  [17:40:54.877] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 5/10)
+INFO  [17:40:55.324] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 6/10)
+INFO  [17:40:55.761] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 7/10)
+INFO  [17:40:56.252] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 8/10)
+INFO  [17:40:56.695] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 9/10)
+INFO  [17:40:57.127] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 10/10)
+INFO  [17:40:57.642] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 1/10)
+INFO  [17:40:58.082] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 2/10)
+INFO  [17:40:58.565] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 3/10)
+INFO  [17:40:59.025] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 4/10)
+INFO  [17:40:59.485] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 5/10)
+INFO  [17:40:59.916] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 6/10)
+INFO  [17:41:00.366] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 7/10)
+INFO  [17:41:00.801] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 8/10)
+INFO  [17:41:01.236] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 9/10)
+INFO  [17:41:01.678] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 10/10)
+INFO  [17:41:02.216] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 1/10)
+INFO  [17:41:02.666] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 2/10)
+INFO  [17:41:03.132] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 3/10)
+INFO  [17:41:03.574] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 4/10)
+INFO  [17:41:04.007] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 5/10)
+INFO  [17:41:04.459] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 6/10)
+INFO  [17:41:04.909] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 7/10)
+INFO  [17:41:05.353] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 8/10)
+INFO  [17:41:05.792] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 9/10)
+INFO  [17:41:06.238] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 10/10)
+INFO  [17:41:06.782] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 1/10)
+INFO  [17:41:07.223] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 2/10)
+INFO  [17:41:07.684] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 3/10)
+INFO  [17:41:08.127] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 4/10)
+INFO  [17:41:08.920] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 5/10)
+INFO  [17:41:09.345] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 6/10)
+INFO  [17:41:09.773] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 7/10)
+INFO  [17:41:10.206] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 8/10)
+INFO  [17:41:10.646] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 9/10)
+INFO  [17:41:11.065] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 10/10)
+INFO  [17:41:11.572] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 1/10)
+INFO  [17:41:12.013] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 2/10)
+INFO  [17:41:12.449] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 3/10)
+INFO  [17:41:12.881] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 4/10)
+INFO  [17:41:13.321] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 5/10)
+INFO  [17:41:13.760] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 6/10)
+INFO  [17:41:14.177] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 7/10)
+INFO  [17:41:14.615] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 8/10)
+INFO  [17:41:15.046] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 9/10)
+INFO  [17:41:15.483] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 10/10)
+INFO  [17:41:15.994] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 1/10)
+INFO  [17:41:16.435] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 2/10)
+INFO  [17:41:16.871] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 3/10)
+INFO  [17:41:17.292] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 4/10)
+INFO  [17:41:17.735] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 5/10)
+INFO  [17:41:18.167] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 6/10)
+INFO  [17:41:18.638] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 7/10)
+INFO  [17:41:19.069] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 8/10)
+INFO  [17:41:19.538] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 9/10)
+INFO  [17:41:19.974] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 10/10)
+INFO  [17:41:20.481] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 1/10)
+INFO  [17:41:20.914] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 2/10)
+INFO  [17:41:21.375] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 3/10)
+INFO  [17:41:21.809] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 4/10)
+INFO  [17:41:22.255] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 5/10)
+INFO  [17:41:22.698] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 6/10)
+INFO  [17:41:23.121] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 7/10)
+INFO  [17:41:23.565] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 8/10)
+INFO  [17:41:23.999] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 9/10)
+INFO  [17:41:24.443] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 10/10)
+INFO  [17:41:24.957] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 1/10)
+INFO  [17:41:25.403] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 2/10)
+INFO  [17:41:25.845] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 3/10)
+INFO  [17:41:26.269] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 4/10)
+INFO  [17:41:26.713] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 5/10)
+INFO  [17:41:27.146] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 6/10)
+INFO  [17:41:27.583] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 7/10)
+INFO  [17:41:28.017] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 8/10)
+INFO  [17:41:28.459] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 9/10)
+INFO  [17:41:28.964] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'breastcancer[, -1]' (iter 10/10)</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="90_BayesianClassif_files/figure-html/nbayes-017-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">Curva dea rpendixaje modelo naïve Bayes. task Breast Cancer</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Podemos ver cierta irregularidad en ambas curvas indicando que en este caso no aprece existir una tamaño mejor que otro. De hecho, los valores se mueven entre el 92% y el 95% cualquiera que sea el tamaño de la muestra de entrenamiento.</p>
+</section>
+<section id="sec-90.4.2" class="level3" data-number="9.4.2">
+<h3 data-number="9.4.2" class="anchored" data-anchor-id="sec-90.4.2"><span class="header-section-number">9.4.2</span> Datos iris</h3>
+<p>Vemos ahora el análisis para el banco de datos iris que recordemos tiene tres niveles en su variable respuesta. Comenzamos definiendo la estructura del algoritmo de aprendizaje.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a><span class="co"># Definimos learner para predecir la probabilidad</span></span>
+<span id="cb28-2"><a href="#cb28-2"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.naive_bayes"</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb28-3"><a href="#cb28-3"></a><span class="co"># Preprocesado</span></span>
+<span id="cb28-4"><a href="#cb28-4"></a>pp_iris <span class="ot">=</span> <span class="fu">po</span>(<span class="st">"scale"</span>, <span class="at">param_vals =</span> <span class="fu">list</span>(<span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb28-5"><a href="#cb28-5"></a><span class="co"># Graphlearner</span></span>
+<span id="cb28-6"><a href="#cb28-6"></a>gr <span class="ot">=</span> pp_iris <span class="sc">%&gt;&gt;%</span> learner</span>
+<span id="cb28-7"><a href="#cb28-7"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Definimos las muestras de entrenamiento y validación</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a><span class="co"># Generamos variable de estrato</span></span>
+<span id="cb29-2"><a href="#cb29-2"></a>tsk_iris<span class="sc">$</span>col_roles<span class="sc">$</span>stratum <span class="ot">&lt;-</span> <span class="st">"species"</span></span>
+<span id="cb29-3"><a href="#cb29-3"></a><span class="co"># Fijamos semilla para asegurar la reproducibilidad del modelo</span></span>
+<span id="cb29-4"><a href="#cb29-4"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb29-5"><a href="#cb29-5"></a><span class="co"># Creamos la partición</span></span>
+<span id="cb29-6"><a href="#cb29-6"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_iris, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb29-7"><a href="#cb29-7"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb29-8"><a href="#cb29-8"></a>tsk_train_iris <span class="ot">=</span> tsk_iris<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb29-9"><a href="#cb29-9"></a>tsk_test_iris  <span class="ot">=</span> tsk_iris<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora podemos comenzar el proceso de aprendizaje asociado con este modelo.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a><span class="co"># Entrenamiento</span></span>
+<span id="cb30-2"><a href="#cb30-2"></a>gr<span class="sc">$</span><span class="fu">train</span>(tsk_train_iris)</span>
+<span id="cb30-3"><a href="#cb30-3"></a><span class="co"># Tablas</span></span>
+<span id="cb30-4"><a href="#cb30-4"></a>modelo <span class="ot">=</span> gr<span class="sc">$</span>model<span class="sc">$</span>classif.naive_bayes<span class="sc">$</span>model</span>
+<span id="cb30-5"><a href="#cb30-5"></a>modelo</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Naive Bayes Classifier for Discrete Predictors
+
+Call:
+naiveBayes.default(x = x, y = y)
+
+A-priori probabilities:
+y
+    Iris-setosa Iris-versicolor  Iris-virginica 
+      0.3333333       0.3333333       0.3333333 
+
+Conditional probabilities:
+                 petal_length
+y                       [,1]       [,2]
+  Iris-setosa     -1.3021518 0.08463312
+  Iris-versicolor  0.2826886 0.22953367
+  Iris-virginica   1.0194633 0.32317365
+
+                 petal_width
+y                       [,1]      [,2]
+  Iris-setosa     -1.2515277 0.1432356
+  Iris-versicolor  0.1572487 0.2527098
+  Iris-virginica   1.0942790 0.3269682
+
+                 sepal_length
+y                       [,1]      [,2]
+  Iris-setosa     -1.0430969 0.3914919
+  Iris-versicolor  0.1402483 0.5633032
+  Iris-virginica   0.9028485 0.7800932
+
+                 sepal_width
+y                        [,1]      [,2]
+  Iris-setosa      0.76933531 0.8388127
+  Iris-versicolor -0.68141128 0.7906397
+  Iris-virginica  -0.08792404 0.7945786</code></pre>
+</div>
+</div>
+<p>Estudiamos la capacidad explicativa del modelo propuesto. Calculamos las predicciones:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a><span class="co"># Predicción de la muestra de entrenamiento y validación</span></span>
+<span id="cb32-2"><a href="#cb32-2"></a>pred_train <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_train_iris)</span>
+<span id="cb32-3"><a href="#cb32-3"></a>pred_test <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_test_iris)</span>
+<span id="cb32-4"><a href="#cb32-4"></a><span class="co"># Visualizamos las primeras predicciones de la muestra de validación</span></span>
+<span id="cb32-5"><a href="#cb32-5"></a>pred_test</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;PredictionClassif&gt; for 30 observations:
+    row_ids          truth       response prob.Iris-setosa prob.Iris-versicolor
+         15    Iris-setosa    Iris-setosa     1.000000e+00         7.418733e-22
+         16    Iris-setosa    Iris-setosa     1.000000e+00         4.068547e-19
+         18    Iris-setosa    Iris-setosa     1.000000e+00         2.819040e-20
+---                                                                            
+        147 Iris-virginica Iris-virginica    1.038232e-171         3.935583e-02
+        148 Iris-virginica Iris-virginica    2.036225e-192         3.474621e-04
+        150 Iris-virginica Iris-virginica    2.942447e-170         6.339116e-02
+    prob.Iris-virginica
+           4.864661e-26
+           1.792012e-23
+           1.425085e-25
+---                    
+           9.606442e-01
+           9.996525e-01
+           9.366088e-01</code></pre>
+</div>
+</div>
+<p>Obtenemos la matriz de confusión para la muestra de validación:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a><span class="co"># matriz de confusión</span></span>
+<span id="cb34-2"><a href="#cb34-2"></a>pred_test<span class="sc">$</span>confusion</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 truth
+response          Iris-setosa Iris-versicolor Iris-virginica
+  Iris-setosa              10               0              0
+  Iris-versicolor           0              10              2
+  Iris-virginica            0               0              8</code></pre>
+</div>
+</div>
+<p>El modelo clasifica correctamente todas las muestras de las dos primeras clases, pero no lo hace para la última clase. En ese caso dos muestras que originalmente eran Iris-virginica se clasifican como Iris versicolor. Vemos la solución gráfica:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a><span class="co"># Cargamos la librería para representar la matriz de confusión</span></span>
+<span id="cb36-2"><a href="#cb36-2"></a>cm <span class="ot">=</span> <span class="fu">confusion_matrix</span>(pred_test<span class="sc">$</span>truth, pred_test<span class="sc">$</span>response)</span>
+<span id="cb36-3"><a href="#cb36-3"></a><span class="fu">plot_confusion_matrix</span>(cm<span class="sc">$</span><span class="st">`</span><span class="at">Confusion Matrix</span><span class="st">`</span>[[<span class="dv">1</span>]]) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="90_BayesianClassif_files/figure-html/nbayes-0312-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>A continuación vemos los scores de clasificación para este problema:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a><span class="co"># scores de validación</span></span>
+<span id="cb37-2"><a href="#cb37-2"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"classif.acc"</span>, <span class="st">"classif.mbrier"</span>))</span>
+<span id="cb37-3"><a href="#cb37-3"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb37-4"><a href="#cb37-4"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc classif.mbrier 
+    0.96666667     0.05841196 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb39-2"><a href="#cb39-2"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc classif.mbrier 
+    0.93333333     0.09138642 </code></pre>
+</div>
+</div>
+<p>Obtenemos un porcentaje de clasificación correcta para la muestra de validación del 93.33% lo que demuestra que el modelo de aprendizaje propuesto funciona adecuadamente. El resultado es consistente con el proporcionado por el modelo de regresión logística. El score de brier es bastante bajo y similar al del modelo de regresión logística. Procedemos ahora con el estudio de validación de la solución mediante un análisis de validación cruzada con 10 folds.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="co"># Fijamos semilla</span></span>
+<span id="cb41-2"><a href="#cb41-2"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb41-3"><a href="#cb41-3"></a><span class="co"># Definimos proceso de validación cruzada kfold con k=10</span></span>
+<span id="cb41-4"><a href="#cb41-4"></a>resamp <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>)</span>
+<span id="cb41-5"><a href="#cb41-5"></a><span class="co"># Remuestreo</span></span>
+<span id="cb41-6"><a href="#cb41-6"></a>rr <span class="ot">=</span> <span class="fu">resample</span>(tsk_iris, gr, resamp, <span class="at">store_models=</span><span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [17:41:30.659] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 1/10)
+INFO  [17:41:30.803] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 2/10)
+INFO  [17:41:31.016] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 3/10)
+INFO  [17:41:31.169] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 4/10)
+INFO  [17:41:31.276] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 5/10)
+INFO  [17:41:31.386] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 6/10)
+INFO  [17:41:31.511] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 7/10)
+INFO  [17:41:31.616] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 8/10)
+INFO  [17:41:31.731] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 9/10)
+INFO  [17:41:31.891] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 10/10)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a><span class="co"># Resumen Scores individuales</span></span>
+<span id="cb43-2"><a href="#cb43-2"></a>scores <span class="ot">=</span> rr<span class="sc">$</span><span class="fu">score</span>(measures)<span class="sc">$</span>classif.acc</span>
+<span id="cb43-3"><a href="#cb43-3"></a><span class="fu">skim</span>(scores)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">scores</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 12%">
+<col style="width: 18%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">data</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.96</td>
+<td style="text-align: right;">0.06</td>
+<td style="text-align: right;">0.87</td>
+<td style="text-align: right;">0.93</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">▂▁▂▁▇</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Podemos ver como el promedio del porcentaje de clasificación correcta se sitúa en el 96% con una desviación del 5%, lo que indica que tenemos bastante precisión en la solución obtenida. Analizamos la curva de aprendizaje asociada cargando en primer lugar las funciones correspondientes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a><span class="fu">plot_learningcurve</span>(tsk_iris, gr, <span class="st">"classif.acc"</span>, <span class="at">ptr =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span>), <span class="at">rpeats =</span> <span class="dv">10</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [17:41:32.339] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 1/10)
+INFO  [17:41:32.577] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 2/10)
+INFO  [17:41:32.767] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 3/10)
+INFO  [17:41:32.960] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 4/10)
+INFO  [17:41:33.167] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 5/10)
+INFO  [17:41:33.348] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 6/10)
+INFO  [17:41:33.562] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 7/10)
+INFO  [17:41:33.743] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 8/10)
+INFO  [17:41:33.943] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 9/10)
+INFO  [17:41:34.106] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 10/10)
+INFO  [17:41:34.372] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 1/10)
+INFO  [17:41:34.543] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 2/10)
+INFO  [17:41:34.726] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 3/10)
+INFO  [17:41:34.901] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 4/10)
+INFO  [17:41:35.073] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 5/10)
+INFO  [17:41:35.251] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 6/10)
+INFO  [17:41:35.423] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 7/10)
+INFO  [17:41:35.602] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 8/10)
+INFO  [17:41:35.791] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 9/10)
+INFO  [17:41:35.996] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 10/10)
+INFO  [17:41:36.264] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 1/10)
+INFO  [17:41:36.467] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 2/10)
+INFO  [17:41:36.646] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 3/10)
+INFO  [17:41:36.845] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 4/10)
+INFO  [17:41:37.008] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 5/10)
+INFO  [17:41:37.224] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 6/10)
+INFO  [17:41:37.390] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 7/10)
+INFO  [17:41:37.584] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 8/10)
+INFO  [17:41:37.745] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 9/10)
+INFO  [17:41:37.936] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 10/10)
+INFO  [17:41:38.177] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 1/10)
+INFO  [17:41:38.378] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 2/10)
+INFO  [17:41:38.540] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 3/10)
+INFO  [17:41:38.719] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 4/10)
+INFO  [17:41:38.930] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 5/10)
+INFO  [17:41:39.096] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 6/10)
+INFO  [17:41:39.281] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 7/10)
+INFO  [17:41:39.453] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 8/10)
+INFO  [17:41:39.641] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 9/10)
+INFO  [17:41:39.802] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 10/10)
+INFO  [17:41:40.069] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 1/10)
+INFO  [17:41:40.235] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 2/10)
+INFO  [17:41:40.475] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 3/10)
+INFO  [17:41:40.665] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 4/10)
+INFO  [17:41:40.852] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 5/10)
+INFO  [17:41:41.021] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 6/10)
+INFO  [17:41:41.186] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 7/10)
+INFO  [17:41:41.378] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 8/10)
+INFO  [17:41:41.549] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 9/10)
+INFO  [17:41:41.740] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 10/10)
+INFO  [17:41:41.992] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 1/10)
+INFO  [17:41:42.180] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 2/10)
+INFO  [17:41:42.350] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 3/10)
+INFO  [17:41:42.551] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 4/10)
+INFO  [17:41:42.715] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 5/10)
+INFO  [17:41:42.905] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 6/10)
+INFO  [17:41:43.073] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 7/10)
+INFO  [17:41:43.264] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 8/10)
+INFO  [17:41:43.434] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 9/10)
+INFO  [17:41:43.624] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 10/10)
+INFO  [17:41:43.869] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 1/10)
+INFO  [17:41:44.057] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 2/10)
+INFO  [17:41:44.224] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 3/10)
+INFO  [17:41:44.417] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 4/10)
+INFO  [17:41:44.584] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 5/10)
+INFO  [17:41:44.792] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 6/10)
+INFO  [17:41:44.993] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 7/10)
+INFO  [17:41:45.199] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 8/10)
+INFO  [17:41:45.383] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 9/10)
+INFO  [17:41:45.587] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 10/10)
+INFO  [17:41:45.898] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 1/10)
+INFO  [17:41:46.100] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 2/10)
+INFO  [17:41:46.267] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 3/10)
+INFO  [17:41:46.462] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 4/10)
+INFO  [17:41:46.639] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 5/10)
+INFO  [17:41:46.820] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 6/10)
+INFO  [17:41:46.998] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 7/10)
+INFO  [17:41:47.165] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 8/10)
+INFO  [17:41:47.361] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 9/10)
+INFO  [17:41:47.540] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 10/10)
+INFO  [17:41:47.814] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 1/10)
+INFO  [17:41:48.003] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 2/10)
+INFO  [17:41:48.176] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 3/10)
+INFO  [17:41:48.360] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 4/10)
+INFO  [17:41:48.543] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 5/10)
+INFO  [17:41:49.092] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 6/10)
+INFO  [17:41:49.249] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 7/10)
+INFO  [17:41:49.414] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 8/10)
+INFO  [17:41:49.575] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 9/10)
+INFO  [17:41:49.735] [mlr3] Applying learner 'scale.classif.naive_bayes' on task 'iris' (iter 10/10)</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="90_BayesianClassif_files/figure-html/nbayes-035-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">Curva de aprendizaje modelo naïve Bayes. Task Iris</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-90.5" class="level2" data-number="9.5">
+<h2 data-number="9.5" class="anchored" data-anchor-id="sec-90.5"><span class="header-section-number">9.5</span> Ejercicios</h2>
+<ol type="1">
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo de clasificación naïve Bayes para el banco de datos <code>Mushroom</code><a href="40_DataBases.html#sec-mushroom"><span>4.3.4</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo de clasificación naïve Bayes para el banco de datos <code>Water potability</code><a href="40_DataBases.html#sec-waterpot"><span>4.3.7</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo de clasificación naïve Bayes para el banco de datos <code>Hepatitis</code><a href="40_DataBases.html#sec-hepatitis"><span>4.3.9</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo de clasificación naïve Bayes para el banco de datos <code>Abalone</code><a href="40_DataBases.html#sec-abalone"><span>4.3.1</span></a>.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "¡Copiado!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "¡Copiado!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./80_SurvivalModels.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./100_kNNmodels.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

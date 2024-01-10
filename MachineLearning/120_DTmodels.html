@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MachineLearning - 12&nbsp; Árboles de decisiónn (DT)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./130_Ensemblemodels.html" rel="next">
+<link href="./110_SVMmodels.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos coincidentes",
+    "search-copy-link-title": "Copiar enlace para buscar",
+    "search-hide-matches-text": "Ocultar coincidencias adicionales",
+    "search-more-match-text": "más coincidencia en este documento",
+    "search-more-matches-text": "más coincidencias en este documento",
+    "search-clear-button-title": "Limpiar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Entregar"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MachineLearning</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Prefacio</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./01_IntroCourse.html" class="sidebar-item-text sidebar-link">Parte 1. Introducción</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_introAD.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_introAA.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./30_RandRstudio.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./40_DataBases.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./02_FirstStepsAA.html" class="sidebar-item-text sidebar-link">Parte 2. Primeros pasos</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./50_AED.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./03_SupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 3. Aprendizaje supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./60_RegressionModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regresión</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./70_LogisticModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelos de Regresión Logística</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./80_SurvivalModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./90_BayesianClassif.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./100_kNNmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./110_SVMmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./120_DTmodels.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./130_Ensemblemodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Modelos de conjunto (Ensemble models)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./140_Boostingmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Modelos Boosting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./04_NonSupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 4. Aprendizaje no supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./150_Discriminantmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análisis discriminante (AD)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./160_PrinCompmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./170_MDSmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./180_Clustermodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Análisis cluster</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">Referencias</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#sec-120.1" id="toc-sec-120.1" class="nav-link active" data-scroll-target="#sec-120.1"><span class="toc-section-number">12.1</span>  Árboles de decisión en tareas de clasificación</a>
+  <ul>
+  <li><a href="#sec-120.1.1" id="toc-sec-120.1.1" class="nav-link" data-scroll-target="#sec-120.1.1"><span class="toc-section-number">12.1.1</span>  Medidas de impureza</a></li>
+  <li><a href="#sec-120.1.2" id="toc-sec-120.1.2" class="nav-link" data-scroll-target="#sec-120.1.2"><span class="toc-section-number">12.1.2</span>  El algortmo CART</a></li>
+  <li><a href="#sec-120.1.3" id="toc-sec-120.1.3" class="nav-link" data-scroll-target="#sec-120.1.3"><span class="toc-section-number">12.1.3</span>  Tratamiento de sobreajuste</a></li>
+  <li><a href="#sec-120.1.4" id="toc-sec-120.1.4" class="nav-link" data-scroll-target="#sec-120.1.4"><span class="toc-section-number">12.1.4</span>  Predicción y evaluación del modelo</a></li>
+  </ul></li>
+  <li><a href="#sec-120.2" id="toc-sec-120.2" class="nav-link" data-scroll-target="#sec-120.2"><span class="toc-section-number">12.2</span>  Árboles de decisión en tareas de regresión</a>
+  <ul>
+  <li><a href="#sec-120.2.1" id="toc-sec-120.2.1" class="nav-link" data-scroll-target="#sec-120.2.1"><span class="toc-section-number">12.2.1</span>  Medidas de impureza</a></li>
+  <li><a href="#sec-120.2.2" id="toc-sec-120.2.2" class="nav-link" data-scroll-target="#sec-120.2.2"><span class="toc-section-number">12.2.2</span>  Algoritmo CART para problemas de regresión</a></li>
+  <li><a href="#sec-120.2.3" id="toc-sec-120.2.3" class="nav-link" data-scroll-target="#sec-120.2.3"><span class="toc-section-number">12.2.3</span>  Tratamiento del sobreajuste</a></li>
+  <li><a href="#sec-120.2.4" id="toc-sec-120.2.4" class="nav-link" data-scroll-target="#sec-120.2.4"><span class="toc-section-number">12.2.4</span>  Predicción y evaluación del modelo</a></li>
+  </ul></li>
+  <li><a href="#sec-120.3" id="toc-sec-120.3" class="nav-link" data-scroll-target="#sec-120.3"><span class="toc-section-number">12.3</span>  Ventajas y desventajas de los árboles de decisión</a></li>
+  <li><a href="#sec-120.4" id="toc-sec-120.4" class="nav-link" data-scroll-target="#sec-120.4"><span class="toc-section-number">12.4</span>  Árboles de decisión en mlr3</a></li>
+  <li><a href="#sec-120.5" id="toc-sec-120.5" class="nav-link" data-scroll-target="#sec-120.5"><span class="toc-section-number">12.5</span>  Bancos de datos</a>
+  <ul>
+  <li><a href="#sec-120.5.1" id="toc-sec-120.5.1" class="nav-link" data-scroll-target="#sec-120.5.1"><span class="toc-section-number">12.5.1</span>  Stroke</a></li>
+  <li><a href="#sec-120.5.2" id="toc-sec-120.5.2" class="nav-link" data-scroll-target="#sec-120.5.2"><span class="toc-section-number">12.5.2</span>  Penguins</a></li>
+  <li><a href="#sec-120.5.3" id="toc-sec-120.5.3" class="nav-link" data-scroll-target="#sec-120.5.3"><span class="toc-section-number">12.5.3</span>  Electricity</a></li>
+  </ul></li>
+  <li><a href="#sec-120.6" id="toc-sec-120.6" class="nav-link" data-scroll-target="#sec-120.6"><span class="toc-section-number">12.6</span>  Nuestros primeros modelos</a>
+  <ul>
+  <li><a href="#sec-120.6.1" id="toc-sec-120.6.1" class="nav-link" data-scroll-target="#sec-120.6.1"><span class="toc-section-number">12.6.1</span>  Stroke</a></li>
+  <li><a href="#sec-120.6.2" id="toc-sec-120.6.2" class="nav-link" data-scroll-target="#sec-120.6.2"><span class="toc-section-number">12.6.2</span>  Penguins</a></li>
+  <li><a href="#sec-120.6.3" id="toc-sec-120.6.3" class="nav-link" data-scroll-target="#sec-120.6.3"><span class="toc-section-number">12.6.3</span>  Electricity</a></li>
+  </ul></li>
+  <li><a href="#sec-120.7" id="toc-sec-120.7" class="nav-link" data-scroll-target="#sec-120.7"><span class="toc-section-number">12.7</span>  Optimizando los modelos</a>
+  <ul>
+  <li><a href="#sec-120.7.1" id="toc-sec-120.7.1" class="nav-link" data-scroll-target="#sec-120.7.1"><span class="toc-section-number">12.7.1</span>  Stroke</a></li>
+  <li><a href="#sec-120.7.2" id="toc-sec-120.7.2" class="nav-link" data-scroll-target="#sec-120.7.2"><span class="toc-section-number">12.7.2</span>  Penguins</a></li>
+  <li><a href="#sec-120.7.3" id="toc-sec-120.7.3" class="nav-link" data-scroll-target="#sec-120.7.3"><span class="toc-section-number">12.7.3</span>  Electricity</a></li>
+  </ul></li>
+  <li><a href="#otros-modelos-de-áboles-en-mlr3" id="toc-otros-modelos-de-áboles-en-mlr3" class="nav-link" data-scroll-target="#otros-modelos-de-áboles-en-mlr3"><span class="toc-section-number">12.8</span>  Otros modelos de áboles en mlr3</a></li>
+  <li><a href="#sec-120.8" id="toc-sec-120.8" class="nav-link" data-scroll-target="#sec-120.8"><span class="toc-section-number">12.9</span>  Ejercicios</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-120" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Los árboles de decisión son modelos predictivos, englobados dentro de los algoritmos de aprendizaje supervisado no paramétrico, basados en reglas binarias con las que se consiguen repartir las observaciones en función de sus características y predecir así el valor de la variable respuesta bien sea numérica o categórica.</p>
+<p>Muchos métodos predictivos generan modelos globales en los que una única ecuación se aplica a todo el espacio muestral. En situaciones prácticas que implican múltiples predictores, que interaccionan entre ellos de forma compleja y no lineal, es muy difícil encontrar un único modelo global que sea capaz de reflejar la relación entre las variables. Con los modelos basados en árboles de decisión resulta más sencillo manejar las interacciones y situaciones con muchos predictores. Es esta característica la que les proporciona gran parte de su potencial.</p>
+<p>A lo largo de este documento se explora la forma en que se construyen y predicen los árboles de decisión para problemas de clasificación, que además resultan elementos fundamentales de modelos predictivos más complejos como <em>Random Forest</em> y <em>Gradient Boosting Machine</em>.</p>
+<p>Como su propio nombre indica, los árboles de decisión se estructuran en forma de árbol, en la que cada rama representa una decisión sobre una de las variables predictoras proporcionando dos sub-ramas para cada una de las soluciones de la regla binaria asociada a dicha rama. A continuación se presentan algunas de las terminologías más importantes relacionadas con un Árbol de Decisión:</p>
+<ul>
+<li><strong>Nodo raíz:</strong> generalmente representa toda la muestra y es el nodo superior del árbol de decisión (raíz del árbol).</li>
+<li><strong>Separación:</strong> proceso de división de un nodo en dos o más subnodos.</li>
+<li><strong>Nodo de decisión:</strong> es un nodo o subnodo que divide los datos en otros subnodos.</li>
+<li><strong>Nodo terminal:</strong> los nodos que no se dividen se denominan nodos terminales; son las salidas finales del árbol de decisión.</li>
+<li><strong>Poda:</strong> lo contrario de la separación. Cuando se elimina un subnúcleo de un nodo de decisión, el proceso se denomina poda.</li>
+<li><strong>Subárbol:</strong> una subsección de todo el árbol se denomina rama o subárbol.</li>
+<li><strong>Nodo padre:</strong> un nodo dividido en subnodos se denomina nodo padre.</li>
+<li><strong>Nodo hijo:</strong> cualquier subnodo de un nodo padre se llama nodo hijo.</li>
+</ul>
+<p>A continuación se muestra gráficamente la estructura de un árbol de decisión.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/decisiontree.png" width="550" height="400" class="figure-img"></p>
+</figure>
+</div>
+<p>En todo el documento iremos detallando la construcción teórica de los árboles de decisión tanto para tareas de clasificación como regresión.</p>
+<section id="sec-120.1" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="sec-120.1"><span class="header-section-number">12.1</span> Árboles de decisión en tareas de clasificación</h2>
+<p>Para construir un árbol de clasificación, se emplea un método de división binaria recursiva en cuyo proceso es necesario tener en cuenta que:</p>
+<ul>
+<li><p>Todo el conjunto de datos se considera como parte del nodo raíz al comienzo del proceso de división.</p></li>
+<li><p>Dado que se producen divisiones de tipo binario a cada paso del algoritmo se prefieren los valores de características categóricas en el proceso de construcción. Si los valores son continuos, deben discretizarse antes de construir el modelo.</p></li>
+<li><p>Las muestras se distribuyen recursivamente en función de las reglas de decisión establecidas con respecto a la predictora considerada en cada paso del algoritmo.</p></li>
+<li><p>El proceso de división se debe realizar mediante un enfoque estadístico estableciendo una función de pérdida o ganancia que es necesario optimizar.</p></li>
+</ul>
+<p>Antes de presentar el algoritmo completo para la creación del árbol de decisión se presenta el enfoque estadístico para la construcción de las reglas de decisión óptimas.</p>
+<section id="sec-120.1.1" class="level3" data-number="12.1.1">
+<h3 data-number="12.1.1" class="anchored" data-anchor-id="sec-120.1.1"><span class="header-section-number">12.1.1</span> Medidas de impureza</h3>
+<p>A la hora de establecer los criterios estadísticos a tener en cuenta en la construcción del árbol de decisión existen varias alternativas, todas ellas con el objetivo de encontrar nodos lo más puros/homogéneos posibles. Antes de presentar las medidas más habituales introducimos el concepto de entropía que está directamente relacionado con la construcción del árbol.</p>
+<p>La incertidumbre en nuestro conjunto de datos o la medida del desorden se llama entropía. Su valor describe el grado de aleatoriedad de un nodo concreto, de forma que, cuanto mayor es la entropía, mayor será la aleatoriedad en el conjunto de datos, y por tanto menos influencia tiene la predictora considerada en la división del árbol. La fórmula general de la entropía en un conjunto de datos categóricos con k clases viene dada por:</p>
+<p><span class="math display">\[H = \sum_{i=1}^{k} -p_ilog(p_i)\]</span></p>
+<p>donde <span class="math inline">\(p_i\)</span> es la proporción de observaciones de la categoría <span class="math inline">\(i\)</span> en el conjunto de datos considerado.</p>
+<p>Los métodos de medidas más empleadas son:</p>
+<ul>
+<li><strong>Ratio de error de clasificación.</strong> Se define como la proporción de observaciones que no pertenecen a la clase mayoritaria del nodo, definida como:</li>
+</ul>
+<p><span class="math display">\[E_m = 1- \underset{k}{max} \text{ } \hat{p}_{mk}\]</span></p>
+<blockquote class="blockquote">
+<p>donde <span class="math inline">\(\hat{p}_{mk}\)</span> representa la proporción de observaciones del nodo <span class="math inline">\(𝑚\)</span> que pertenecen a la clase <span class="math inline">\(𝑘\)</span>. A pesar de la sencillez de esta medida, no es suficientemente sensible para crear buenos árboles, por lo que, en la práctica, no suele emplearse.</p>
+</blockquote>
+<ul>
+<li><strong>Ganancia de información.</strong> La ganancia de información ayuda a determinar el orden en que las predictoras consideradas deben ser utilizadas para dividir un nodo o no. Es simplemente una medida de los cambios en la entropía tras la segmentación de un conjunto de datos basado en una predictora específica. Calcula cuánta información nos proporciona una característica sobre una clase. En función del valor de la ganancia de información, dividimos los nodos y construimos un árbol de decisión. El nodo/atributo con mayor ganancia de información se divide primero en una estructura de árbol, que siempre maximiza el valor de la ganancia de información. La expresión para dicha medida viene dada por:</li>
+</ul>
+<p><span class="math display">\[D = - \sum_{k=1}^{K} \hat{p}_{mk} log(\hat{p}_{mk}).\]</span></p>
+<blockquote class="blockquote">
+<p>Los conocidos como algortimos C4.5 y C5.0 utilizan este criterio para la construcción del árbol.</p>
+</blockquote>
+<ul>
+<li><strong>Índice de Gini.</strong> El índice de Gini, también conocido como impureza de Gini o coeficiente de Gini, mide la probabilidad de que un nuevo valor de una variable aleatoria se clasifique incorrectamente si se clasificara al azar utilizando la distribución de etiquetas de clase del conjunto de datos. Técnicamente cuantifica la varianza total en el conjunto de las <span class="math inline">\(𝐾\)</span> clases del nodo <span class="math inline">\(𝑚\)</span>, es decir, mide la pureza del nodo mediante la expresión:</li>
+</ul>
+<p><span class="math display">\[G_m = \sum_{k=1}^{K} \hat{p}_{mk} (1-\hat{p}_{mk}).\]</span></p>
+<blockquote class="blockquote">
+<p>Cuando <span class="math inline">\(\hat{p}_{mk}\)</span> es cercano a 0 o a 1 (el nodo contiene mayoritariamente observaciones de una sola clase), el término correspondiente es muy pequeño. Como consecuencia, cuanto mayor sea la pureza del nodo, menor el valor del índice Gini.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>El algoritmo CART (<em>Classification and Regression Tree</em>) utiliza este criterio para la construcción del árbol.</p>
+</blockquote>
+<ul>
+<li><strong>Ji-cuadrado.</strong> Esta aproximación consiste en identificar si existe una diferencia significativa entre los nodos hijos y el nodo parental, es decir, si hay evidencias de que la división consigue una mejora. Para ello, se aplica un test estadístico ji-cuadrado de bondad de ajuste empleando como distribución esperada <span class="math inline">\(𝐻_0\)</span> la frecuencia de cada clase en el nodo parental. Cuanto mayor el estadístico <span class="math inline">\(𝜒^2\)</span> , mayor es la evidencia estadística de que existe una diferencia. Los árboles generados con este criterio de división reciben el nombre de CHAID (<em>Chi-square Automatic Interaction Detector</em>).</li>
+</ul>
+<p>Independientemente de la medida empleada como criterio de selección de las divisiones, el proceso de construcción del árbol siempre es el mismo:</p>
+<ol type="1">
+<li>Para cada posible división se calcula el valor de la medida considerada en cada uno de los dos nodos resultantes.</li>
+<li>Se suman los dos valores, ponderando cada uno por la fracción de observaciones que contiene cada nodo. Este paso es muy importante, ya que no es lo mismo dos nodos puros con 2 observaciones, que dos nodos puros con 100 observaciones. Si consideramos como <span class="math inline">\(n_A\)</span> y <span class="math inline">\(n_B\)</span> el número de observaciones en los nodos A y B resultantes de la división con <span class="math inline">\(n=n_A+n_B\)</span>, y por <span class="math inline">\(p_A\)</span> y <span class="math inline">\(p_B\)</span> las medidas de pureza calculadas para cada uno de ellos el criterio de división se basa en:</li>
+</ol>
+<p><span class="math display">\[\frac{n_a}{n}p_A + \frac{n_b}{n}p_B\]</span></p>
+<ol start="3" type="1">
+<li>La división con menor o mayor valor (dependiendo de la medida empleada) se selecciona como punto de corte óptimo.</li>
+</ol>
+</section>
+<section id="sec-120.1.2" class="level3" data-number="12.1.2">
+<h3 data-number="12.1.2" class="anchored" data-anchor-id="sec-120.1.2"><span class="header-section-number">12.1.2</span> El algortmo CART</h3>
+<p>El algoritmo CART es uno de los más extendidos en la construcción de árboles de decisión. Este funciona dividiendo primero el conjunto de entrenamiento por características <span class="math inline">\(k\)</span> y umbrales <span class="math inline">\(t_k\)</span>. Más concretamente, de entre todos los pares <span class="math inline">\((k, t_k)\)</span> se eligen los que producen los subconjuntos más puros ponderados por su tamaño.</p>
+<p>La función de pérdida en la que se basa el funcionamiento del algoritmo viene dada por:</p>
+<p><span class="math display">\[J(k, t_k)=\frac{n_a}{n}G_A + \frac{n_B}{n}G_B\]</span></p>
+<p>donde <span class="math inline">\(G_A\)</span> y <span class="math inline">\(G_B\)</span> son respectivamente las medidas de impureza asociadas con cada uno de los nodos resultantes, que en este caso es el índice de Gini.</p>
+<p>Una vez que el algoritmo CART divide con éxito los datos de entrenamiento iniciales en dos subconjuntos, hace lo mismo con ambos subconjuntos. El algoritmo se detiene cuando no puede encontrar una división que reduzca la impureza.</p>
+<p>Al algoritmo CART no le importa si su división actual conduce a una hoja óptima en la parte inferior. Sólo le importa encontrar la mejor división posible en la hoja actual. En este sentido, no necesariamente da lugar a una solución óptima. Por desgracia, se sabe que encontrar el árbol óptimo es un problema NP-Completo con una complejidad de <span class="math inline">\(O(exp(n))\)</span>.</p>
+</section>
+<section id="sec-120.1.3" class="level3" data-number="12.1.3">
+<h3 data-number="12.1.3" class="anchored" data-anchor-id="sec-120.1.3"><span class="header-section-number">12.1.3</span> Tratamiento de sobreajuste</h3>
+<p>El proceso de construcción de árboles tiende a reducir rápidamente el error de entrenamiento, es decir, el modelo se ajusta muy bien a las observaciones empleadas como entrenamiento. Como consecuencia, se genera un sobreajuste que reduce su capacidad predictiva al aplicarlo a nuevos datos. La razón de este comportamiento radica en la facilidad con la que los árboles se ramifican adquiriendo estructuras complejas. De hecho, si no se limitan las divisiones, todo árbol termina ajustándose perfectamente a las observaciones de entrenamiento creando un nodo terminal por observación. Las dos estrategias más habituales para prevenir este problema es limitar el tamaño del árbol (parada temprana) y el proceso de podado (<em>pruning</em>).</p>
+<p><strong>Parada temprana</strong></p>
+<p>El tamaño final que adquiere un árbol puede controlarse mediante reglas de parada que detengan la división de los nodos dependiendo de si se cumplen o no determinadas condiciones. El nombre de estas condiciones puede variar dependiendo del software o librería empleada, pero suelen estar presentes en todos ellos.</p>
+<ul>
+<li><p><em>Observaciones mínimas para división:</em> define el número mínimo de observaciones que debe tener un nodo para poder ser dividido. Cuanto mayor el valor, menos flexible es el modelo.</p></li>
+<li><p><em>Observaciones mínimas de nodo terminal:</em> define el número mínimo de observaciones que deben tener los nodos terminales. Su efecto es muy similar al de observaciones mínimas para división.</p></li>
+<li><p><em>Profundidad máxima del árbol:</em> define la profundidad máxima del árbol, entendiendo por profundidad máxima el número de divisiones de la rama más larga (en sentido descendente) del árbol. Cuanto menor el valor, menos flexible es el modelo.</p></li>
+<li><p><em>Número máximo de nodos terminales:</em> define el número máximo de nodos terminales que puede tener el árbol. Una vez alcanzado el límite, se detienen las divisiones. Su efecto es similar al de controlar la profundidad máxima del árbol.</p></li>
+<li><p><em>Reducción mínima de error:</em> define la reducción mínima de error que tiene que conseguir una división para que se lleve a cabo.</p></li>
+</ul>
+<p>Todos estos parámetros son lo que se conoce como hiperparámetros porque no se aprenden durante el entrenamiento del modelo. Su valor tiene que ser especificado por el usuario en base a su conocimiento del problema y mediante el uso de estrategias de validación.</p>
+<p><strong>Podado del árbol</strong></p>
+<p>La estrategia de controlar el tamaño del árbol mediante reglas de parada tiene un inconveniente, el árbol crece seleccionando la mejor división en cada momento. Al evaluar las divisiones sin tener en cuenta las que vendrán después, nunca se elige la opción que resulta en el mejor árbol final, a no ser que también sea la que genera en ese momento la mejor división. A este tipo de estrategias se les conoce como <em>greedy</em>.</p>
+<p>Una alternativa no <em>greedy</em> que consigue evitar el sobreajuste consiste en generar los árboles más grandes posibles, sin establecer condiciones de parada más allá de las necesarias por las limitaciones computacionales, y después podarlos (<em>pruning</em>), mantener la estructura que consigue un test error bajo. La selección del sub-árbol óptimo puede hacerse mediante validación cruzada, sin embargo, dado que los árboles crecen lo máximo posible (tienen muchos nodos terminales) no suele ser viable estimar el test error de todas las posibles sub-estructuras que se pueden generar. En su lugar, se recurre a la “poda de complejidad de costes” o “poda del eslabón más débil”.</p>
+<p>La poda de complejidad por costes es un método de penalización de tipo “coste” mas “penalización”, similar al empleado en <em>Ridge Regression</em> o <em>Lasso</em>. En este caso, se busca el sub-árbol <span class="math inline">\(𝑇\)</span> que minimiza la ecuación:</p>
+<p><span class="math display">\[\text{coste} + \alpha|T|\]</span></p>
+<p>donde <span class="math inline">\(|T|\)</span> es el número de nodos terminales del árbol. El término de penalización, evalúa los modelos en función del número de nodos terminales (a mayor número, mayor penalización). El grado de penalización se determina mediante el parámetro de ajuste <span class="math inline">\(\alpha\)</span>. Cuando <span class="math inline">\(\alpha=0\)</span>, la penalización es nula y el árbol resultante es equivalente al árbol original. A medida que se incrementa dicho parámetro, la penalización es mayor y, como consecuencia, los árboles resultantes son de menor tamaño. El valor óptimo de <span class="math inline">\(\alpha\)</span> puede identificarse mediante validación cruzada.</p>
+</section>
+<section id="sec-120.1.4" class="level3" data-number="12.1.4">
+<h3 data-number="12.1.4" class="anchored" data-anchor-id="sec-120.1.4"><span class="header-section-number">12.1.4</span> Predicción y evaluación del modelo</h3>
+<p>Tras la creación de un árbol, las observaciones de entrenamiento quedan agrupadas en los nodos terminales. Para predecir una nueva observación se recorre el árbol en función del valor de sus predictores hasta llegar a uno de los nodos terminales. En el caso de clasificación, suele emplearse la moda de la variable respuesta de los elementos que aparecen en el nodo terminal como valor de predicción. Lo habitual además es acompañar dicho valor con el porcentaje de cada clase en el nodo terminal, lo que aporta información sobre la confianza de la predicción, en caso de que los porcentajes de las diferentes clases se encuentren muy próximos.</p>
+</section>
+</section>
+<section id="sec-120.2" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="sec-120.2"><span class="header-section-number">12.2</span> Árboles de decisión en tareas de regresión</h2>
+<p>Los árboles de regresión son el subtipo de árboles de predicción que se aplica cuando la variable respuesta es continua. En términos generales, en el entrenamiento de un árbol de regresión, las observaciones se van distribuyendo por bifurcaciones (nodos) generando la estructura del árbol hasta alcanzar un nodo terminal.</p>
+<p>El proceso de entrenamiento de un árbol de decisión para problemas de regresión es similar al del proceso de clasificación donde se produce una división sucesiva del espacio de los predictores generando regiones no solapantes (nodos terminales) <span class="math inline">\(𝑅_1\)</span> , <span class="math inline">\(𝑅_2\)</span> , <span class="math inline">\(𝑅_3\)</span> , …, <span class="math inline">\(𝑅_𝑗\)</span> . Aunque, desde el punto de vista teórico las regiones podrían tener cualquier forma, si se limitan a regiones rectangulares (de múltiples dimensiones), se simplifica en gran medida el proceso de construcción y se facilita la interpretación.</p>
+<section id="sec-120.2.1" class="level3" data-number="12.2.1">
+<h3 data-number="12.2.1" class="anchored" data-anchor-id="sec-120.2.1"><span class="header-section-number">12.2.1</span> Medidas de impureza</h3>
+<p>En los árboles de regresión, el criterio empleado con más frecuencia para identificar las divisiones es la suma de cuadrados residual (SCE). El objetivo es encontrar las <span class="math inline">\(𝐽\)</span> regiones <span class="math inline">\((𝑅_1 ,..., 𝑅_𝑗)\)</span> que minimizan la suma de cuadrados del error total:</p>
+<p><span class="math display">\[SCE = \sum_{j=1}^J \sum_{i \in R_j} (𝑦_𝑖−\hat{y}_{R_j})^2,\]</span></p>
+<p>donde <span class="math inline">\(\hat{y}_{R_j}\)</span> es la media de la variable respuesta en la región <span class="math inline">\(𝑅_𝑗\)</span> . Una descripción menos técnica equivale a decir que se busca una distribución de regiones tal que, el sumatorio de las desviaciones al cuadrado entre las observaciones y la media de la región a la que pertenecen sea lo menor posible.</p>
+<p>Desafortunadamente, no es posible considerar todas las posibles particiones del espacio de los predictores. Por esta razón, se recurre a lo que se conoce como división binaria recursiva. Esta solución sigue la misma idea que la selección de predictores <em>stepwise</em> (<em>backward</em> o <em>fordward</em>) en regresión lineal múltiple, no evalúa todas las posibles regiones pero, alcanza un buen balance computación-resultado.</p>
+</section>
+<section id="sec-120.2.2" class="level3" data-number="12.2.2">
+<h3 data-number="12.2.2" class="anchored" data-anchor-id="sec-120.2.2"><span class="header-section-number">12.2.2</span> Algoritmo CART para problemas de regresión</h3>
+<p>EL algoritmo CART para problemas de regresión se basa en el método de división binaria recursiva cuyo objetivo es encontrar, en cada iteración, el predictor <span class="math inline">\(𝑋_𝑗\)</span> y el punto de corte (umbral) <span class="math inline">\(𝑠\)</span> tal que, si se distribuyen las observaciones en las regiones <span class="math inline">\({𝑋|𝑋𝑗&lt;𝑠}\)</span> y <span class="math inline">\({𝑋|𝑋𝑗≥𝑠}\)</span> , se consigue la mayor reducción posible en la suma de cuadrados de los residuos (SCE). El algoritmo seguido es:</p>
+<ol type="1">
+<li><p>El proceso se inicia en lo más alto del árbol, donde todas las observaciones pertenecen a la misma región.</p></li>
+<li><p>Se identifican todos los posibles puntos de corte <span class="math inline">\(𝑠\)</span> para cada uno de los predictores <span class="math inline">\((𝑋_1, 𝑋_2 ,..., 𝑋_𝑝)\)</span>. En el caso de predictores cualitativos, los posibles puntos de corte son cada uno de sus niveles. Para predictores continuos, se ordenan de menor a mayor sus valores, empleándose el punto intermedio entre cada par de valores como punto de corte.</p></li>
+<li><p>Se calcula la SCR total que se consigue con cada posible división identificada en el paso 2:</p></li>
+</ol>
+<p><span class="math display">\[\sum_{i: x_i \in R_1(j,s)} (y_i-\hat{y}_{R_1})^2 +\sum_{i: x_i \in R_2(j,s)} (y_i-\hat{y}_{R_2})^2\]</span></p>
+<blockquote class="blockquote">
+<p>donde el primer término es la SCE de la región 1 y el segundo término es la SCE de la región 2, siendo cada una de las regiones el resultado de separar las observaciones acorde al predictor <span class="math inline">\(𝑗\)</span> y valor <span class="math inline">\(𝑠\)</span>.</p>
+</blockquote>
+<ol start="4" type="1">
+<li><p>Se selecciona el predictor <span class="math inline">\(𝑋_𝑗\)</span> y el punto de corte <span class="math inline">\(s\)</span> que resulta en la menor SCE total, es decir, que da lugar a las divisiones más homogéneas posibles. Si existen dos o más divisiones que consiguen la misma mejora, la elección entre ellas es aleatoria.</p></li>
+<li><p>Se repiten de forma iterativa los pasos 1 a 4 para cada una de las regiones que se han creado en la iteración anterior hasta que se alcanza alguna norma de parada. Algunas de las más empleadas son: alcanzar una profundidad máxima, que ninguna región contenga menos de n observaciones, que el árbol tenga un máximo de nodos terminales o que la incorporación del más nodos no reduzca el error en al menos un % mínimo.</p></li>
+</ol>
+<p>Para mejorar el funcionamiento de este algoritmo se suelen incorporar estrategias para evitar evaluar todos los posibles puntos de corte. Por ejemplo, para predictores continuos, primero se crea un histograma que agrupa los valores y luego se evalúan los puntos de corte de cada región del histograma.</p>
+</section>
+<section id="sec-120.2.3" class="level3" data-number="12.2.3">
+<h3 data-number="12.2.3" class="anchored" data-anchor-id="sec-120.2.3"><span class="header-section-number">12.2.3</span> Tratamiento del sobreajuste</h3>
+<p>El tratamiento del sobreajuste utiliza los mismos procedimientos que en el caso de los árboles de decisión para clasificación. Leer el cuaderno anterior para conocer todos los detalles.</p>
+</section>
+<section id="sec-120.2.4" class="level3" data-number="12.2.4">
+<h3 data-number="12.2.4" class="anchored" data-anchor-id="sec-120.2.4"><span class="header-section-number">12.2.4</span> Predicción y evaluación del modelo</h3>
+<p>Tras la creación de un árbol, las observaciones de entrenamiento quedan agrupadas en los nodos terminales. Para predecir una nueva observación, se recorre el árbol en función de los valores que tienen sus predictores hasta llegar a uno de los nodos terminales. En el caso de regresión, el valor predicho suele ser la media de la variable respuesta de las observaciones de entrenamiento que están en ese mismo nodo. Si bien la media es el valor más empleado, se puede utilizar cualquier otro (mediana, cuantil…).</p>
+<p>Sin embargo, la predicción de un árbol de decisión para regresión puede verse como una variante de vecinos cercanos en la que, solo las observaciones que forman parte del mismo nodo terminal que la observación predicha, tienen influencia. Siguiendo esta aproximación, la predicción del árbol se define como la media ponderada de todas las observaciones de entrenamiento, donde el peso de cada observación depende únicamente de si forma parte o no del mismo nodo terminal.</p>
+<p>Imaginemos que tenemos un árbol con cuatro nodos terminales con observaciones y valores de la respuesta para la muestra de entrenamiento:</p>
+<ul>
+<li>nodo 1: 1 (10), 3 (24), 7 (16)</li>
+<li>nodo 2: 4 (8), 10 (14)</li>
+<li>nodo 3: 2 (18), 3 (24), 5 (2), 9 (20)</li>
+<li>nodo 4: 6 (9), 8 (10)</li>
+</ul>
+<p>de forma que realizamos la predicción de una nueva observación y esta cae en el nodo tres. La predicción viene dada entonces por la media ponderada del número de observaciones:</p>
+<p><span class="math display">\[\hat{\mu} = 0.25*18 + 0.25*24 + 0.25*2 + 0.25*20 = 16\]</span></p>
+</section>
+</section>
+<section id="sec-120.3" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="sec-120.3"><span class="header-section-number">12.3</span> Ventajas y desventajas de los árboles de decisión</h2>
+<p>Entre las ventajas y desventajas del uso de árboles de decisión podemos considerar:</p>
+<p><strong>Ventajas</strong></p>
+<ul>
+<li><p>Los árboles son fáciles de interpretar aún cuando las relaciones entre predictores son complejas.</p></li>
+<li><p>Los modelos basados en un solo árbol (no es el caso de <em>random forest</em>, <em>boosting</em>) se pueden representar gráficamente aún cuando el número de predictores es mayor de 3.</p></li>
+<li><p>Los árboles pueden, en teoría, manejar tanto predictores numéricos como categóricos sin tener que crear variables <em>dummy</em> o <em>one-hot-encoding</em>. En la práctica, esto depende de la implementación del algoritmo que tenga cada librería.</p></li>
+<li><p>Al tratarse de métodos no paramétricos, no es necesario que se cumpla ningún tipo de distribución específica.</p></li>
+<li><p>Por lo general, requieren mucha menos limpieza y preprocesado de los datos en comparación con otros métodos de aprendizaje estadístico (por ejemplo, no requieren estandarización).</p></li>
+<li><p>No se ven muy influenciados por observaciones anómalas.</p></li>
+<li><p>Si para alguna observación el valor de un predictor no está disponible, a pesar de no poder llegar a ningún nodo terminal, se puede conseguir una predicción empleando todas las observaciones que pertenecen al último nodo alcanzado. La precisión de la predicción se verá reducida pero al menos podrá obtenerse.</p></li>
+<li><p>Son muy útiles en la exploración de datos, ya que permiten identificar de forma rápida y eficiente las variables (predictores) más importantes.</p></li>
+<li><p>Son capaces de seleccionar predictores de forma automática.</p></li>
+</ul>
+<p><strong>Desventajas</strong></p>
+<ul>
+<li><p>La capacidad predictiva de los modelos basados en un único árbol es bastante inferior a la conseguida con otros modelos. Esto es debido a su tendencia al sobreajuste y a la alta varianza. Sin embargo, existen técnicas más complejas que, haciendo uso de la combinación de múltiples árboles (<em>bagging</em>, <em>random forest</em>, <em>boosting</em>), consiguen mejorar en gran medida este problema.</p></li>
+<li><p>Son sensibles a datos de entrenamiento desbalanceados (una de las clases domina sobre las demás).</p></li>
+<li><p>Cuando tratan con predictores continuos, pierden parte de su información al categorizarlos en el momento de la división de los nodos.</p></li>
+<li><p>Los predictores continuos tienen mayor probabilidad de contener, solo por azar, algún punto de corte óptimo, por lo que suelen verse favorecidos en la creación de los árboles.</p></li>
+<li><p>No son capaces de extrapolar fuera del rango valores observados para los predictores en los datos de entrenamiento.</p></li>
+</ul>
+</section>
+<section id="sec-120.4" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="sec-120.4"><span class="header-section-number">12.4</span> Árboles de decisión en mlr3</h2>
+<p>Antes de comenzar con la implementación de los DT en <code>mlr3</code> vamos a cargar las librerías necesarias:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Paquetes anteriores</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(knitr) <span class="co"># para formatos de tablas</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">library</span>(DataExplorer)</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="fu">library</span>(cvms)</span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="fu">library</span>(kknn)</span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="fu">theme_set</span>(<span class="fu">theme_sjplot2</span>())</span>
+<span id="cb1-13"><a href="#cb1-13"></a></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co"># Paquetes AA</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="fu">library</span>(mlr3verse)</span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="fu">library</span>(mlr3tuning)</span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="fu">library</span>(mlr3tuningspaces)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para implementar los árboles de decisión en el paquete <code>mlr3</code> disponemos de varias funciones tanto para las tareas de clasificación como de regresión, pero nosotros nos centraremos en los algoritmos más básicos:</p>
+<ul>
+<li><code>classif.rpart</code> para la obtención de árboles de decisión en tareas de clasificación.</li>
+<li><code>regr.rpart</code> para la obtención de árboles de decisión en tareas de regresión.</li>
+</ul>
+<p>que utilizan como base las funciones definidas en la librería <code>rpart</code>.</p>
+<p>Podemos cargar los algoritmos con su hiperparámetros por defecto con el código siguiente:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Learner tarea de clasificación</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>ldt_classif <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.rpart"</span>, <span class="at">keep_model =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="co"># Learner tarea de regresión</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>ldt_regr <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"regr.rpart"</span>, <span class="at">keep_model =</span> <span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En este caso los hiperparámetros de ambos algoritmos son los mismos. A continuación se muestran todos ellos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Hiperparámetros para DT clasificación</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>ldt_classif<span class="sc">$</span>param_set<span class="sc">$</span><span class="fu">ids</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "cp"             "keep_model"     "maxcompete"     "maxdepth"      
+ [5] "maxsurrogate"   "minbucket"      "minsplit"       "surrogatestyle"
+ [9] "usesurrogate"   "xval"          </code></pre>
+</div>
+</div>
+<p>Los parámetros más relevantes son:</p>
+<ul>
+<li><code>cp</code>: parámetro de complejidad. Cualquier división que no disminuya la falta general de ajuste en un factor de cp no es tenida en cuenta. Por ejemplo, con la división de anova, esto significa que el R cuadrado general debe aumentar en cp en cada paso. El papel principal de este parámetro es para ahorrar tiempo de cálculo eliminando divisiones que obviamente no valen la pena. Básicamente, el usuario informa al programa que cualquier división que no mejora el ajuste por cp probablemente será eliminado mediante validación cruzada, y que por lo tanto el programa no necesita perseguirlo. La opción por defecto es 0.01 y puede tomar cualquier valor en el rango <span class="math inline">\([0, 1]\)</span>.</li>
+<li><code>maxcompete</code>: el número de divisiones de competidores retenidas en la salida. Es útil saber no solo qué división se eligió, pero qué variable quedó en segundo, tercer lugar, etc. La opción por defecto es 4 con valores en el intervalo <span class="math inline">\([0, \infty]\)</span>.</li>
+<li><code>maxdepth</code>: Establece la profundidad máxima de cualquier nodo del árbol final, con el nodo raíz contado como profundidad 0. Los valores superiores a 30 rpart darán resultados sin sentido en máquinas de 32 bits. Por defecto se utiliza el valor 30 con un rango de valores posibles en el intervalo <span class="math inline">\([1, 30]\)</span>.</li>
+<li><code>maxsurrogate</code>: número de divisiones sustitutas retenidas en la salida. Si se establece en cero, el tiempo de cálculo se reducirá, ya que aproximadamente la mitad del tiempo de cálculo (aparte del de configuración) se utiliza en la búsqueda de divisiones sustitutas. Por defecto se utiliza el valor de 5 con un rango de valores posibles en el intervalo <span class="math inline">\([0, \infty]\)</span>.</li>
+<li><code>minbucket</code>: el número mínimo de observaciones en cualquier nodo terminal. Si solo se especifica uno de minbucket o minsplit, el código establece minsplit en minbucket*3 o minbucket en minsplit/3, según corresponda. No tiene valor por defecto pero el rango de valores posibles en el intervalo <span class="math inline">\([1, \infty]\)</span>.</li>
+<li><code>minsplit</code>: el número mínimo de observaciones que deben existir en un nodo para que se intente una división. El valor por defecto es 20 con una rango de valores posibles en el intervalo <span class="math inline">\([1, \infty]\)</span>.</li>
+<li><code>surrogatestyle</code>: controla la selección de la mejor sustituto. Si se establece en 0 (predeterminado), el programa usa el número total de clasificaciones correctas para una posible variable sustituta; si se establece en 1, usa el porcentaje correcto, calculado sobre los valores no faltantes del sustituto. La primera opción penaliza más severamente las covariables con una gran cantidad de valores faltantes. El valor por defecto es 0 con valores posibles en el rango <span class="math inline">\([0, 1]\)</span>.</li>
+<li><code>usesurrogate</code>: cómo utilizar sustitutos en el proceso de división. 0 significa solo visualización; una observación con un valor faltante para la regla de división principal no se envía más abajo en el árbol. 1 significa utilizar sustitutos, en orden, para dividir a los sujetos a los que les falta la variable principal; si faltan todos los sustitutos, la observación no se divide. Para el valor 2, si faltan todos los sustitutos, envíe la observación en la dirección mayoritaria. Un valor de 0 corresponde a la acción del árbol, y 2 a las recomendaciones de Breiman y otros (1984). El valor por defecto es 2 con valores en el intervalo <span class="math inline">\([0, 2]\)</span>.</li>
+<li><code>xval</code>: número de validaciones cruzadas. El valor por defecto es 10 con valores en el rango <span class="math inline">\([0, \infty]\)</span>.</li>
+</ul>
+</section>
+<section id="sec-120.5" class="level2" data-number="12.5">
+<h2 data-number="12.5" class="anchored" data-anchor-id="sec-120.5"><span class="header-section-number">12.5</span> Bancos de datos</h2>
+<p>Para ejemplificar el uso de estos algoritmos vamos a utilizar los bancos de datos <code>stroke</code>, <code>penguins</code> para tareas de clasificación, y <code>electricity</code> para tareas de regresión. Dado que los algoritmos DT permiten trabajar con factores, y predictores sin escalar no resulta necesario realizar dicha tarea de preprocesamiento. Lo que si resulta necesaria es imputar los valores perdidos como veremos en el punto siguiente.</p>
+<section id="sec-120.5.1" class="level3" data-number="12.5.1">
+<h3 data-number="12.5.1" class="anchored" data-anchor-id="sec-120.5.1"><span class="header-section-number">12.5.1</span> Stroke</h3>
+<p>Cargamos los datos y definimos la tarea correspondiente</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Leemos datos</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>stroke <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"stroke.rds"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co"># Eliminamos la variable id</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>stroke <span class="ot">=</span> stroke <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>id)</span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="co"># creamos la tarea</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a>tsk_stroke <span class="ot">=</span> <span class="fu">as_task_classif</span>(stroke, <span class="at">target =</span> <span class="st">"stroke"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Creamos ahora la división de muestras:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># Generamos variable de estrato</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>tsk_stroke<span class="sc">$</span>col_roles<span class="sc">$</span>stratum <span class="ot">&lt;-</span> <span class="st">"stroke"</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="co"># Fijamos semilla para asegurar la reproducibilidad del modelo</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="fu">set.seed</span>(<span class="dv">432</span>)</span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="co"># Creamos la partición</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_stroke, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>tsk_train_stroke <span class="ot">=</span> tsk_stroke<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb6-9"><a href="#cb6-9"></a>tsk_test_stroke  <span class="ot">=</span> tsk_stroke<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-120.5.2" class="level3" data-number="12.5.2">
+<h3 data-number="12.5.2" class="anchored" data-anchor-id="sec-120.5.2"><span class="header-section-number">12.5.2</span> Penguins</h3>
+<p>El banco de datos ya ha sido descrito en detalle en temas anteriores pero en este caso vamos a utilizar el que se encuentra disponible en la librería <code>mlr3</code>. Definimos la tarea.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># creamos la tarea</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>tsk_penguins <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"penguins"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Creamos ahora las muestras de entrenamiento y validación:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># Generamos variable de estrato</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a>tsk_penguins<span class="sc">$</span>col_roles<span class="sc">$</span>stratum <span class="ot">&lt;-</span> <span class="st">"sex"</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co"># Fijamos semilla para asegurar la reproducibilidad del modelo</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="fu">set.seed</span>(<span class="dv">432</span>)</span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="co"># Creamos la partición</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_penguins, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a>tsk_train_penguins <span class="ot">=</span> tsk_penguins<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb8-9"><a href="#cb8-9"></a>tsk_test_penguins  <span class="ot">=</span> tsk_penguins<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-120.5.3" class="level3" data-number="12.5.3">
+<h3 data-number="12.5.3" class="anchored" data-anchor-id="sec-120.5.3"><span class="header-section-number">12.5.3</span> Electricity</h3>
+<p>Cargamos los datos y generamos las muestras de entrenamiento y validación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># Carga de datos</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>electricity <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"electricity.rds"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="co"># Creación de task</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a>tsk_electricity <span class="ot">=</span> <span class="fu">as_task_regr</span>(electricity, <span class="at">target =</span> <span class="st">"PE"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora la división de muestras:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># Fijamos semilla para asegurar la reproducibilidad del modelo</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="fu">set.seed</span>(<span class="dv">432</span>)</span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="co"># Creamos la partición</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_electricity, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a>tsk_train_electricity <span class="ot">=</span> tsk_electricity<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb10-7"><a href="#cb10-7"></a>tsk_test_electricity  <span class="ot">=</span> tsk_electricity<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="sec-120.6" class="level2" data-number="12.6">
+<h2 data-number="12.6" class="anchored" data-anchor-id="sec-120.6"><span class="header-section-number">12.6</span> Nuestros primeros modelos</h2>
+<p>En primer lugar consideramos modelos básicos de DT para los dos bancos de datos presentados. Trabajaremos con las opciones por defecto para poder comparar los resultados con el modelo optimizado que veremos posteriormente. También compararemos los resultados con otros modelos de clasificación de los estudiados hasta ahora.</p>
+<section id="sec-120.6.1" class="level3" data-number="12.6.1">
+<h3 data-number="12.6.1" class="anchored" data-anchor-id="sec-120.6.1"><span class="header-section-number">12.6.1</span> Stroke</h3>
+<p>En primer lugar generamos el algoritmo DT para este banco de datos y entrenamos el modelo. Dado que los datos preprocesados se generan a través de un graphlearner no podemos representar directamente la solución del árbol de decisión. Después de ver la solución habitual veremos como completar los datos para tener que definir únicamente un learner y poder representar la solución mediante la función <code>autoplot</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co"># Preprocesamiento</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>pp_stroke <span class="ot">=</span>  <span class="fu">po</span>(<span class="st">"imputemedian"</span>, <span class="at">affect_columns =</span> <span class="fu">selector_type</span>(<span class="st">"numeric"</span>))</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="co"># Modelo de aprendizaje combinando preprocesado y algoritmo</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a>ldt_classif_stroke <span class="ot">=</span> <span class="fu">as_learner</span>(pp_stroke <span class="sc">%&gt;&gt;%</span> <span class="fu">lrn</span>(<span class="st">"classif.rpart"</span>, <span class="at">keep_model =</span> <span class="cn">TRUE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>))</span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="co"># Entrenamiento del modelo</span></span>
+<span id="cb11-6"><a href="#cb11-6"></a>ldt_classif_stroke<span class="sc">$</span><span class="fu">train</span>(tsk_train_stroke)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos ver el funcionamiento del algoritmo obteniendo el árbol de clasificación proporcionado en la fase de entrenamiento.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>ldt_classif_stroke<span class="sc">$</span>model<span class="sc">$</span>classif.rpart<span class="sc">$</span>model</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>n= 4088 
+
+node), split, n, loss, yval, (yprob)
+      * denotes terminal node
+
+1) root 4088 199 No (0.95132094 0.04867906) *</code></pre>
+</div>
+</div>
+<p>Como se puede ver el algoritmo no es capaz de realizar ninguna división. Esto se puede deber a dos motivos: i) este algoritmo no funciona bien para este banco de datos, ii) hay que modificar los hiperparámetros del modelo porque resultan muy restrictivos. En el segundo caso podemos buscar una solución óptima y ver que tipo de árbol de decisión resulta.</p>
+</section>
+<section id="sec-120.6.2" class="level3" data-number="12.6.2">
+<h3 data-number="12.6.2" class="anchored" data-anchor-id="sec-120.6.2"><span class="header-section-number">12.6.2</span> Penguins</h3>
+<p>Procedemos directamente con el modelo ya que los datos han sido preparados. Al cargar directamente el <code>learner</code> podemos utilizar la función <code>autoplot</code> para representar la solución.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># Modelo de aprendizaje </span></span>
+<span id="cb14-2"><a href="#cb14-2"></a>ldt_classif_penguins <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.rpart"</span>, <span class="at">keep_model =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="co"># Entrenamiento del modelo</span></span>
+<span id="cb14-4"><a href="#cb14-4"></a>ldt_classif_penguins<span class="sc">$</span><span class="fu">train</span>(tsk_train_penguins)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Vemos el árbol obtenido:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>ldt_classif_penguins<span class="sc">$</span>model</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>n= 274 
+
+node), split, n, loss, yval, (yprob)
+      * denotes terminal node
+
+1) root 274 153 Adelie (0.44160584 0.19708029 0.36131387)  
+  2) flipper_length&lt; 207.5 170  51 Adelie (0.70000000 0.30000000 0.00000000)  
+    4) bill_length&lt; 43.35 120   4 Adelie (0.96666667 0.03333333 0.00000000) *
+    5) bill_length&gt;=43.35 50   3 Chinstrap (0.06000000 0.94000000 0.00000000) *
+  3) flipper_length&gt;=207.5 104   5 Gentoo (0.01923077 0.02884615 0.95192308) *</code></pre>
+</div>
+</div>
+<p>Aunque seguramente resultará más fácil mediante un gráfico:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="fu">autoplot</span>(ldt_classif_penguins)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="120_DTmodels_files/figure-html/dt-018-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>El modelo proporciona tres nodos terminales con 120, 50, y 104 casos respectivamente. Cada uno de los nodos terminales viene determinado principalmente por una especie en particular. El árbol selecciona en primer lugar como predictor la variable <code>flipper_length</code> con valor de corte 207.5, y posteriormente los menores a ese valor se subdividen de acuerdo a <code>bill_length</code> con valor de corte 43.35. De esta forma podemos establecer que:</p>
+<ul>
+<li>La especie <code>Adelie</code> se caracteriza principalmente por <code>flipper_length</code> menor a 207.5 y <code>bill_length</code> menor a 43.35.</li>
+<li>La especie <code>Chinstrap</code> se caracteriza principalmente por <code>flipper_length</code> menor a 207.5 y <code>bill_length</code> mayo o igual a 43.35.</li>
+<li>La especie <code>Gentoo</code> se caracteriza principalmente por <code>flipper_length</code> mayor o igual a 207.5.</li>
+</ul>
+<p>Sin embargo, la clasificación no es perfecta porque podemos ver que los nodos terminales combinan resultados de diferentes especies. Podemos ver los porcentajes de cada especie en cada nodo terminal con:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>ldt_classif_penguins<span class="sc">$</span>model</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>n= 274 
+
+node), split, n, loss, yval, (yprob)
+      * denotes terminal node
+
+1) root 274 153 Adelie (0.44160584 0.19708029 0.36131387)  
+  2) flipper_length&lt; 207.5 170  51 Adelie (0.70000000 0.30000000 0.00000000)  
+    4) bill_length&lt; 43.35 120   4 Adelie (0.96666667 0.03333333 0.00000000) *
+    5) bill_length&gt;=43.35 50   3 Chinstrap (0.06000000 0.94000000 0.00000000) *
+  3) flipper_length&gt;=207.5 104   5 Gentoo (0.01923077 0.02884615 0.95192308) *</code></pre>
+</div>
+</div>
+<p>donde podemos ver que el nodo terminal identificado como 4) tiene un 96.67% de muestras de Adelie, un 3.33% Chinstrap y un 0% de Gentoo. Los * indican los nodos terminales del árbol obtenido. Antes de valorar la clasificación obtenida vamos a estudiar la relevancia de cada predictora en la construcción del árbol. Para ello utilizamos el método <code>importance()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>ldt_classif_penguins<span class="sc">$</span><span class="fu">importance</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>flipper_length    bill_length     bill_depth      body_mass         island 
+     102.07243       99.79389       77.64481       71.39752       58.01049 </code></pre>
+</div>
+</div>
+<p>La tabla proporciona el orden de importancia de las variables en la construcción del árbol de decisión. De las cinco predictoras disponibles la solución solo considera dos de ellas. Podemos identificar las predictoras seleccionadas con el código:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>ldt_classif_penguins<span class="sc">$</span><span class="fu">selected_features</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "flipper_length" "bill_length"   </code></pre>
+</div>
+</div>
+<p>Ahora podemos estudiar la capacidad explicativa del modelo. Como no he os solicitado predecir la probabilidad no podemos obtener los scores asociados (<code>bbrier</code> y <code>auc</code>):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="co"># Predicción de la muestra de entrenamiento y validación</span></span>
+<span id="cb24-2"><a href="#cb24-2"></a>pred_train <span class="ot">=</span> ldt_classif_penguins<span class="sc">$</span><span class="fu">predict</span>(tsk_train_penguins)</span>
+<span id="cb24-3"><a href="#cb24-3"></a>pred_test <span class="ot">=</span> ldt_classif_penguins<span class="sc">$</span><span class="fu">predict</span>(tsk_test_penguins)</span>
+<span id="cb24-4"><a href="#cb24-4"></a><span class="co"># scores de validación</span></span>
+<span id="cb24-5"><a href="#cb24-5"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"classif.acc"</span>, <span class="st">"classif.bacc"</span>, <span class="st">"classif.bbrier"</span>, <span class="st">"classif.auc"</span>))</span>
+<span id="cb24-6"><a href="#cb24-6"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb24-7"><a href="#cb24-7"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc   classif.bacc classif.bbrier    classif.auc 
+     0.9562044      0.9430160            NaN            NaN </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb26-2"><a href="#cb26-2"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc   classif.bacc classif.bbrier    classif.auc 
+     0.9285714      0.9149616            NaN            NaN </code></pre>
+</div>
+</div>
+<p>El algoritmo se comporta bastante bien ya que alcanzamos un porcentaje de clasificación correcta del 91.5% (similar al de modelos anteriores para estos datos). Podemos estudiar la matriz de confusión:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a><span class="co"># Cargamos la librería para representar la matriz de confusión</span></span>
+<span id="cb28-2"><a href="#cb28-2"></a>cm <span class="ot">=</span> <span class="fu">confusion_matrix</span>(pred_test<span class="sc">$</span>truth, pred_test<span class="sc">$</span>response)</span>
+<span id="cb28-3"><a href="#cb28-3"></a><span class="fu">plot_confusion_matrix</span>(cm<span class="sc">$</span><span class="st">`</span><span class="at">Confusion Matrix</span><span class="st">`</span>[[<span class="dv">1</span>]]) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="120_DTmodels_files/figure-html/dt-023-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Podemos ver que los errores de clasificación en cada especie son a lo sumo de dos ejemplares, lo que indica que con tan solo esas dos predictoras somos capaces de construir un modelo con una gran capacidad de clasificación/predicción.</p>
+</section>
+<section id="sec-120.6.3" class="level3" data-number="12.6.3">
+<h3 data-number="12.6.3" class="anchored" data-anchor-id="sec-120.6.3"><span class="header-section-number">12.6.3</span> Electricity</h3>
+<p>Para finalizar este apartado de modelos iniciales vamos a finalizar con el primer árbol de decisión para un modelo de regresión. En este caso no tenemos valore perdidos por lo que podemos implementar directamente el algoritmo de aprendizaje.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a><span class="co"># Modelo de aprendizaje </span></span>
+<span id="cb29-2"><a href="#cb29-2"></a>ldt_regr_electricity <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"regr.rpart"</span>, <span class="at">keep_model =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-3"><a href="#cb29-3"></a><span class="co"># Entrenamiento del modelo</span></span>
+<span id="cb29-4"><a href="#cb29-4"></a>ldt_regr_electricity<span class="sc">$</span><span class="fu">train</span>(tsk_train_electricity)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Veamos la solución gráfica del árbol:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a><span class="fu">autoplot</span>(ldt_regr_electricity)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="120_DTmodels_files/figure-html/dt-025-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Para este conjunto de datos el árbol de decisión obtenido es bastante más complejo con 7 nodos terminales. Lo que puede resultar más curioso es que se utiliza la misma variable en diferentes niveles del árbol. El algoritmo determina en función de las subdivisiones que va realizando si una variable ya utilizada debe utilizarse de nuevo con unos puntos de corte distintos aunque siempre consistentes con lo decidido en las ramas superiores). De hecho, en los diagramas de caja podemos observar que el nodo terminal con mayores valores de <code>PE</code> se corresponde con la regla de decisión <code>AT</code> menor que 8.725, que es una combinación de los resultados de las divisiones anteriores. Por otro lado, el nodo terminal con menores valores de <code>PE</code> se corresponde con la regla de decisión <code>AT</code> mayor o igual a 23.055 y <code>V</code> mayor o igual a 66. Podemos ver la relevancia de las predictoras con:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>ldt_regr_electricity<span class="sc">$</span><span class="fu">importance</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       AT         V        AP        RH 
+1968642.4 1401070.5  620869.4  442538.7 </code></pre>
+</div>
+</div>
+<p>A partir de dichos valores podemos valorar la importancia relativa en términos de porcentaje mediante el código:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a>importancia <span class="ot">=</span> ldt_regr_electricity<span class="sc">$</span><span class="fu">importance</span>()</span>
+<span id="cb33-2"><a href="#cb33-2"></a><span class="dv">100</span><span class="sc">*</span>importancia<span class="sc">/</span><span class="fu">sum</span>(importancia)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       AT         V        AP        RH 
+44.407595 31.604609 14.005243  9.982554 </code></pre>
+</div>
+</div>
+<p>Podemos ver que <code>AT</code> tiene una importancia relativa del 44.40%. Además podemos conocer el valor medio estimado de la respuesta para cada nodo sin más que ver el modelo ajustado.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a>ldt_regr_electricity<span class="sc">$</span>model</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>n= 7655 
+
+node), split, n, deviance, yval
+      * denotes terminal node
+
+ 1) root 7655 2222770.00 454.3762  
+   2) AT&gt;=18.225 4398  320007.40 441.9419  
+     4) AT&gt;=23.055 2959  113057.40 437.9514  
+       8) V&gt;=66.21 1759   38622.84 434.6881 *
+       9) V&lt; 66.21 1200   28243.12 442.7350 *
+     5) AT&lt; 23.055 1439   62944.99 450.1473 *
+   3) AT&lt; 18.225 3257  304572.80 471.1666  
+     6) AT&gt;=11.905 1812   71524.42 464.7302  
+      12) AT&gt;=15.545 656   18707.28 459.8600 *
+      13) AT&lt; 15.545 1156   28428.50 467.4939 *
+     7) AT&lt; 11.905 1445   63851.74 479.2377  
+      14) AT&gt;=8.725 832   21797.93 475.8558 *
+      15) AT&lt; 8.725 613   19622.58 483.8278 *</code></pre>
+</div>
+</div>
+<p>En la última columna aparecen los valores estimados de la respuesta <code>PE</code> dentro de cada nodo del árbol. podemos estudiar ahora las precisiones de las estimaciones con el análisis de las predicciones tanto para la muestra de entrenamiento como la de validación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a><span class="co"># Predicción de la muestra de entrenamiento</span></span>
+<span id="cb37-2"><a href="#cb37-2"></a>pred_train <span class="ot">=</span> ldt_regr_electricity<span class="sc">$</span><span class="fu">predict</span>(tsk_train_electricity)</span>
+<span id="cb37-3"><a href="#cb37-3"></a><span class="co"># Predicción de la muestra de validación</span></span>
+<span id="cb37-4"><a href="#cb37-4"></a>pred_test <span class="ot">=</span> ldt_regr_electricity<span class="sc">$</span><span class="fu">predict</span>(tsk_test_electricity)</span>
+<span id="cb37-5"><a href="#cb37-5"></a><span class="co"># Scores de validación</span></span>
+<span id="cb37-6"><a href="#cb37-6"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"regr.rsq"</span>, <span class="st">"regr.mse"</span>, <span class="st">"regr.smape"</span>))</span>
+<span id="cb37-7"><a href="#cb37-7"></a><span class="co"># Valores de validación entrenamiento y validación</span></span>
+<span id="cb37-8"><a href="#cb37-8"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    regr.rsq     regr.mse   regr.smape 
+ 0.901758942 28.526091659  0.009117687 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    regr.rsq     regr.mse   regr.smape 
+ 0.902015151 28.884458772  0.009251825 </code></pre>
+</div>
+</div>
+<p>Los resultados son muy buenos, incluso mejorando los que vimos para este mismo conjunto de datos con otros algoritmos. La ventaja principal es que la selección de predictoras se hace automáticamente con la construcción del árbol. Por último analizamos los gráficos de predicción (más concretamente el de valores observados versus valores predichos) para comprender de forma más precisa el proceso de predicción en los modelos de árboles. Para ello realizamos los gráficos siguientes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb41-2"><a href="#cb41-2"></a>p1 <span class="ot">=</span> <span class="fu">autoplot</span>(pred_train, <span class="at">type =</span> <span class="st">"xy"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Observados vs predichos"</span>)</span>
+<span id="cb41-3"><a href="#cb41-3"></a></span>
+<span id="cb41-4"><a href="#cb41-4"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb41-5"><a href="#cb41-5"></a>p2 <span class="ot">=</span> <span class="fu">autoplot</span>(pred_test, <span class="at">type =</span> <span class="st">"xy"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Observados vs predichos"</span>)</span>
+<span id="cb41-6"><a href="#cb41-6"></a></span>
+<span id="cb41-7"><a href="#cb41-7"></a><span class="fu">ggarrange</span>(p1, p2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="120_DTmodels_files/figure-html/dt-030-1.png" class="img-fluid figure-img" width="960"></p>
+<p></p><figcaption class="figure-caption">Gráficos del modelo para muestras de entrenamiento y validación. Task Electricity.</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Como se puede ver tanto el gráfico de la muestra de entrenamiento como de validación la predicción no representa una nube de untos como en modelos anteriores de regresión, sino que únicamente se predice un valor por cada nodo terminal presenten el modelo. En este caso hay 7 nodos terminales y por eso solo tenemos 7 valores predichos, o que provoca que aparezcan 7 columnas de predicción y no una nube de puntos. Este efecto en la predicción es debida a que no tenemos una ecuación que nos proporcione valores, sino únicamente nodos donde todas las observaciones alojadas en él se les asigna el mismo valor de predicción, que en este caso es el valor medio de la respuesta para todas las observaciones en ese nodo.</p>
+<p>En el punto siguiente tratamos de mejorar los modelos obtenidos en este bloque mediante un búsqueda óptima de los hiperparámetros del modelo.</p>
+</section>
+</section>
+<section id="sec-120.7" class="level2" data-number="12.7">
+<h2 data-number="12.7" class="anchored" data-anchor-id="sec-120.7"><span class="header-section-number">12.7</span> Optimizando los modelos</h2>
+<p>Para el proceso de optimización de los modelos vamos a considerar únicamente los parámetros <code>cp</code>, <code>minsplit</code> y <code>maxdepth</code>. Aunque este algoritmo permite configurar muchos hiperparámetros nos centramos en estos para buscar una mejora sobre los modelos básicos aunque esta sea mínimo. No buscamos mejorar en exceso el modelo sino ver como funciona la selección de hiperparámetros en este modelo de aprendizaje.</p>
+<section id="sec-120.7.1" class="level3" data-number="12.7.1">
+<h3 data-number="12.7.1" class="anchored" data-anchor-id="sec-120.7.1"><span class="header-section-number">12.7.1</span> Stroke</h3>
+<p>A continuación se muestra el código de optimización para el banco de datos <code>Stroke</code>. Recordemos que con las opciones por defecto no resulta posible obtener ningún árbol de decisión. Para el parámetro <code>cp</code> utilizaremos la escala logaritmo para la búsqueda del óptimo. Para la profundidad máxima del árbol consideramos el intervalo <span class="math inline">\([3, 8]\)</span> para evitar tener un árbol demasiado pequeño o demasiado grande. Por último, consideramos que el tamaño mínimo de los nodos terminales debe estar en el intervalo <span class="math inline">\([5, 50]\)</span>. Consideramos una evaluación de 30 iteraciones debido al tamaño de la base de datos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>ldt_classif_stroke <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.rpart"</span>, <span class="at">keep_model =</span> <span class="cn">TRUE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>,</span>
+<span id="cb42-2"><a href="#cb42-2"></a>                         <span class="at">cp =</span> <span class="fu">to_tune</span>(<span class="fl">1e-04</span>, <span class="dv">1</span>, <span class="at">logscale =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb42-3"><a href="#cb42-3"></a>                         <span class="at">maxdepth =</span> <span class="fu">to_tune</span>(<span class="dv">3</span>, <span class="dv">8</span>),</span>
+<span id="cb42-4"><a href="#cb42-4"></a>                         <span class="at">minsplit =</span> <span class="fu">to_tune</span>(<span class="dv">5</span>, <span class="dv">50</span>)</span>
+<span id="cb42-5"><a href="#cb42-5"></a>                         )</span>
+<span id="cb42-6"><a href="#cb42-6"></a>gr_stroke <span class="ot">=</span>  pp_stroke <span class="sc">%&gt;&gt;%</span> ldt_classif_stroke</span>
+<span id="cb42-7"><a href="#cb42-7"></a>gr_stroke <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr_stroke)</span>
+<span id="cb42-8"><a href="#cb42-8"></a></span>
+<span id="cb42-9"><a href="#cb42-9"></a><span class="co"># Fijamos semilla para reproducibilidad del proceso</span></span>
+<span id="cb42-10"><a href="#cb42-10"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb42-11"><a href="#cb42-11"></a><span class="co"># Definimos instancia de optimización fijando el número de evaluaciones</span></span>
+<span id="cb42-12"><a href="#cb42-12"></a>instance <span class="ot">=</span> <span class="fu">tune</span>(</span>
+<span id="cb42-13"><a href="#cb42-13"></a>  <span class="at">tuner =</span> <span class="fu">tnr</span>(<span class="st">"random_search"</span>),</span>
+<span id="cb42-14"><a href="#cb42-14"></a>  <span class="at">task =</span> tsk_stroke,</span>
+<span id="cb42-15"><a href="#cb42-15"></a>  <span class="at">learner =</span> gr_stroke,</span>
+<span id="cb42-16"><a href="#cb42-16"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">5</span>),</span>
+<span id="cb42-17"><a href="#cb42-17"></a>  <span class="at">measures =</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>),</span>
+<span id="cb42-18"><a href="#cb42-18"></a>  <span class="at">term_evals =</span> <span class="dv">30</span></span>
+<span id="cb42-19"><a href="#cb42-19"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Veamos los resultados obtenidos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a><span class="co"># Veamos si converge el algoritmo</span></span>
+<span id="cb43-2"><a href="#cb43-2"></a>instance<span class="sc">$</span>is_terminated</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a><span class="co"># Resultados del proceso de optimización</span></span>
+<span id="cb45-2"><a href="#cb45-2"></a>instance<span class="sc">$</span>result_learner_param_vals</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$imputemedian.affect_columns
+selector_type("numeric")
+
+$classif.rpart.keep_model
+[1] TRUE
+
+$classif.rpart.xval
+[1] 0
+
+$classif.rpart.cp
+[1] 0.0003562633
+
+$classif.rpart.maxdepth
+[1] 6
+
+$classif.rpart.minsplit
+[1] 10</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a><span class="co"># Valor de la métrica para resultado óptimo</span></span>
+<span id="cb47-2"><a href="#cb47-2"></a>instance<span class="sc">$</span>result_y</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>classif.bacc 
+   0.5099052 </code></pre>
+</div>
+</div>
+<p>El proceso de optimización ha finalizado encontrando los valores óptimos de <code>cp</code> igual a 0.0003562633, <code>minsplit</code> igual 10, y <code>maxdepth</code> igual a 6. El porcentaje de clasificación correcta ponderada es del 50.9% mejorando los resultados del modelo por defecto, pero no mucho los de otros modelos de clasificación vistos anteriormente. El modelo sigue siendo bastante pobre en términos predictivos. Utilizamos los valores obtenidos para establecer un nuevo árbol de decisión:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1"></a><span class="co"># Nuevo modelo</span></span>
+<span id="cb49-2"><a href="#cb49-2"></a>ldt_classif_stroke <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.rpart"</span>, <span class="at">keep_model =</span> <span class="cn">TRUE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>,</span>
+<span id="cb49-3"><a href="#cb49-3"></a>                         <span class="at">cp =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>classif.rpart.cp,</span>
+<span id="cb49-4"><a href="#cb49-4"></a>                         <span class="at">maxdepth =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>classif.rpart.maxdepth,</span>
+<span id="cb49-5"><a href="#cb49-5"></a>                         <span class="at">minsplit =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>classif.rpart.minsplit</span>
+<span id="cb49-6"><a href="#cb49-6"></a>                         )</span>
+<span id="cb49-7"><a href="#cb49-7"></a>gr_stroke <span class="ot">=</span>  pp_stroke <span class="sc">%&gt;&gt;%</span> ldt_classif_stroke</span>
+<span id="cb49-8"><a href="#cb49-8"></a>gr_stroke <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr_stroke)</span>
+<span id="cb49-9"><a href="#cb49-9"></a><span class="co"># Entrenamiento del modelo</span></span>
+<span id="cb49-10"><a href="#cb49-10"></a>gr_stroke<span class="sc">$</span><span class="fu">train</span>(tsk_train_stroke)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para representar la solución utilizamos la librería <code>rpart.plot</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a>modelo <span class="ot">=</span> gr_stroke<span class="sc">$</span>model<span class="sc">$</span>classif.rpart<span class="sc">$</span>model</span>
+<span id="cb50-2"><a href="#cb50-2"></a><span class="fu">library</span>(rpart.plot)</span>
+<span id="cb50-3"><a href="#cb50-3"></a><span class="fu">rpart.plot</span>(modelo, <span class="at">type =</span> <span class="dv">5</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="120_DTmodels_files/figure-html/dt-034-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En el caso de árboles de clasificación binaria la información presentada en los nodos terminales es:</p>
+<ul>
+<li>La categoría predicha para ese nodo</li>
+<li>La probabilidad predicha de la clase de interés (en este caso <code>Yes</code>).</li>
+<li>El porcentaje de observaciones en el nodo.</li>
+</ul>
+<p>Dado que los sujetos que sufren un ictus (249) es muy bajo en comparación con los que no (4861) es lógico que los porcentaje de observaciones en los nodos terminales identificados con <code>Yes</code> sean muy bajos. Podemos ver las reglas de clasificación:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a><span class="fu">rpart.rules</span>(modelo)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> stroke                                                                                                                                                                                                    
+   0.00 when age is 57 to 68 &amp; avg_glucose_level is 110 to 121                       &amp; smoking_status is                              never smoked                                                         
+   0.01 when age &lt;  57                                                                                                                                                                                     
+   0.04 when age &gt;=       68 &amp; avg_glucose_level &lt;  251        &amp; ever_married is  No                                                                                      &amp; hypertension is  No &amp; bmi &gt;= 29
+   0.05 when age is 57 to 68 &amp; avg_glucose_level &lt;  110                                                                                                                                                    
+   0.09 when age is 57 to 68 &amp; avg_glucose_level &gt;=        121                                                                                     &amp; heart_disease is  No                                  
+   0.11 when age &gt;=       68 &amp; avg_glucose_level is  94 to 251 &amp; ever_married is  No                                                                                      &amp; hypertension is  No &amp; bmi &lt;  29
+   0.13 when age &gt;=       68 &amp; avg_glucose_level &lt;  166        &amp; ever_married is Yes                                                                                                                       
+   0.15 when age is 57 to 68 &amp; avg_glucose_level &gt;=        121                       &amp; smoking_status is formerly smoked or never smoked or smokes &amp; heart_disease is Yes                                  
+   0.17 when age &gt;=       68 &amp; avg_glucose_level is 200 to 251 &amp; ever_married is Yes                                                                                                                       
+   0.33 when age &gt;=       68 &amp; avg_glucose_level &lt;  251        &amp; ever_married is  No &amp; smoking_status is      formerly smoked or smokes or Unknown                        &amp; hypertension is Yes            
+   0.35 when age is 57 to 68 &amp; avg_glucose_level is 110 to 121                       &amp; smoking_status is      formerly smoked or smokes or Unknown &amp; heart_disease is  No                                  
+   0.37 when age &gt;=       68 &amp; avg_glucose_level is 166 to 199 &amp; ever_married is Yes                                                                                                                       
+   0.55 when age &gt;=       68 &amp; avg_glucose_level &lt;   94        &amp; ever_married is  No                                                                                      &amp; hypertension is  No &amp; bmi &lt;  29
+   0.62 when age &gt;=       68 &amp; avg_glucose_level &gt;=        251                                                                                                                                             
+   0.73 when age &gt;=       68 &amp; avg_glucose_level &lt;  251        &amp; ever_married is  No &amp; smoking_status is                              never smoked                        &amp; hypertension is Yes            
+   1.00 when age is 57 to 68 &amp; avg_glucose_level &gt;=        121                       &amp; smoking_status is                                   Unknown &amp; heart_disease is Yes                                  
+   1.00 when age is 57 to 68 &amp; avg_glucose_level is 110 to 121                       &amp; smoking_status is      formerly smoked or smokes or Unknown &amp; heart_disease is Yes                                  
+   1.00 when age &gt;=       68 &amp; avg_glucose_level is 199 to 200 &amp; ever_married is Yes                                                                                                                       </code></pre>
+</div>
+</div>
+<p>Las reglas viene ordenadas de menor a mayor porcentaje de respuesta de sujetos que ha sufrido un ictus dentro de cada nodo terminal. Los tres últimos contienen sólo sujetos con ictus y podemos ver sus indicadores de clasificación con detalle. Analizamos ahora la importancia de las predictoras en este modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a>importancia <span class="ot">=</span> gr_stroke<span class="sc">$</span>model<span class="sc">$</span>classif.rpart<span class="sc">$</span>model<span class="sc">$</span>variable.importance</span>
+<span id="cb53-2"><a href="#cb53-2"></a><span class="dv">100</span><span class="sc">*</span>importancia<span class="sc">/</span><span class="fu">sum</span>(importancia)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              age avg_glucose_level    smoking_status     heart_disease 
+       40.8966541        24.6690537         9.8401508         8.0895283 
+              bmi      hypertension      ever_married    Residence_type 
+        6.3282122         4.9963743         4.1564304         0.5119157 
+        work_type 
+        0.5116804 </code></pre>
+</div>
+</div>
+<p>En la tabla anterior observamos que <code>age</code> y <code>avg_glucose_level</code> son las predictoras más importantes, seguidas de <code>smoking_status</code> y <code>heart_disease</code>. Estas variables marcan el perfil de los sujetos con mayor probabilidad de ictus, Podemos buscar en las reglas de clasificación para encontrar los pintos de corte de cada una de ellas. Para ver el comportamiento del modelo obtenemos la matriz de confusión:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a><span class="co"># Predicción de la muestra de entrenamiento y validacion</span></span>
+<span id="cb55-2"><a href="#cb55-2"></a>pred_train <span class="ot">=</span> gr_stroke<span class="sc">$</span><span class="fu">predict</span>(tsk_train_stroke)</span>
+<span id="cb55-3"><a href="#cb55-3"></a>pred_test <span class="ot">=</span> gr_stroke<span class="sc">$</span><span class="fu">predict</span>(tsk_test_stroke)</span>
+<span id="cb55-4"><a href="#cb55-4"></a><span class="co"># scores de validación</span></span>
+<span id="cb55-5"><a href="#cb55-5"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"classif.acc"</span>, <span class="st">"classif.bacc"</span>, <span class="st">"classif.bbrier"</span>, <span class="st">"classif.auc"</span>))</span>
+<span id="cb55-6"><a href="#cb55-6"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb55-7"><a href="#cb55-7"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc   classif.bacc classif.bbrier    classif.auc 
+    0.95572407     0.57145008     0.03784596     0.83016458 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb57-2"><a href="#cb57-2"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc   classif.bacc classif.bbrier    classif.auc 
+    0.94227006     0.50485597     0.04845108     0.78057613 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a><span class="co"># Matriz de confusión</span></span>
+<span id="cb59-2"><a href="#cb59-2"></a>cm <span class="ot">=</span> <span class="fu">confusion_matrix</span>(pred_test<span class="sc">$</span>truth, pred_test<span class="sc">$</span>response)</span>
+<span id="cb59-3"><a href="#cb59-3"></a><span class="fu">plot_confusion_matrix</span>(cm<span class="sc">$</span><span class="st">`</span><span class="at">Confusion Matrix</span><span class="st">`</span>[[<span class="dv">1</span>]]) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="120_DTmodels_files/figure-html/dt-037-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Podemos ver que en este caso la matriz de confusión si reparte observaciones entre todas las combinaciones, aunque el mayor error se comete de nuevo al clasificar casi todas observaciones originales con ictus como sanas.</p>
+<p>El proceso de optimización nos ha permitido construir un árbol de decisión pero su poder de clasificación real para distinguir individuos sanos de enfermos es muy bajo. Para analizar la estabilidad de la solución planteamos una análisis de validación cruzada y el análisis de la curva de aprendizaje.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1"></a><span class="co"># Fijamos semilla</span></span>
+<span id="cb60-2"><a href="#cb60-2"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb60-3"><a href="#cb60-3"></a><span class="co"># Definimos proceso de validación cruzada kfold con k=10</span></span>
+<span id="cb60-4"><a href="#cb60-4"></a>resamp <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>)</span>
+<span id="cb60-5"><a href="#cb60-5"></a><span class="co"># Remuestreo</span></span>
+<span id="cb60-6"><a href="#cb60-6"></a>rr <span class="ot">=</span> <span class="fu">resample</span>(tsk_stroke, gr_stroke, resamp, <span class="at">store_models=</span><span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [17:54:41.051] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 1/10)
+INFO  [17:54:41.192] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 2/10)
+INFO  [17:54:41.325] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 3/10)
+INFO  [17:54:41.463] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 4/10)
+INFO  [17:54:41.651] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 5/10)
+INFO  [17:54:41.817] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 6/10)
+INFO  [17:54:41.979] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 7/10)
+INFO  [17:54:42.129] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 8/10)
+INFO  [17:54:42.277] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 9/10)
+INFO  [17:54:42.466] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 10/10)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1"></a>measure <span class="ot">=</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>)</span>
+<span id="cb62-2"><a href="#cb62-2"></a><span class="co"># Resumen Scores individuales</span></span>
+<span id="cb62-3"><a href="#cb62-3"></a>scores <span class="ot">=</span> rr<span class="sc">$</span><span class="fu">score</span>(measure)</span>
+<span id="cb62-4"><a href="#cb62-4"></a><span class="fu">skim</span>(scores)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">scores</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Key</td>
+<td style="text-align: left;">NULL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">list</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">task_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">learner_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">resampling_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: list</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 20%">
+<col style="width: 13%">
+<col style="width: 15%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">min_length</th>
+<th style="text-align: right;">max_length</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">task</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">51</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">learner</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">38</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">resampling</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">prediction</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 12%">
+<col style="width: 17%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">iteration</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5.50</td>
+<td style="text-align: right;">3.03</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3.25</td>
+<td style="text-align: right;">5.50</td>
+<td style="text-align: right;">7.75</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: left;">▇▇▇▇▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">classif.bacc</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.52</td>
+<td style="text-align: right;">0.02</td>
+<td style="text-align: right;">0.49</td>
+<td style="text-align: right;">0.50</td>
+<td style="text-align: right;">0.51</td>
+<td style="text-align: right;">0.52</td>
+<td style="text-align: right;">0.56</td>
+<td style="text-align: left;">▇▇▅▂▂</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>El valor estimado del porcentaje de clasificación ponderado se sitúa en el 51.59% con una desviación del 1.89%. Para finalizar analizamos la curva de aprendizaje:</p>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1"></a>ptr <span class="ot">=</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span>)</span>
+<span id="cb63-2"><a href="#cb63-2"></a>lcurve <span class="ot">=</span> <span class="fu">learningcurve</span>(tsk_stroke, gr_stroke, <span class="st">"classif.bacc"</span>, <span class="at">ptr =</span> ptr, <span class="at">rpeats =</span> <span class="dv">10</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [17:54:43.150] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 1/10)
+INFO  [17:54:43.352] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 2/10)
+INFO  [17:54:43.586] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 3/10)
+INFO  [17:54:43.823] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 4/10)
+INFO  [17:54:44.007] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 5/10)
+INFO  [17:54:44.210] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 6/10)
+INFO  [17:54:44.430] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 7/10)
+INFO  [17:54:44.677] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 8/10)
+INFO  [17:54:44.881] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 9/10)
+INFO  [17:54:45.073] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 10/10)
+INFO  [17:54:45.406] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 1/10)
+INFO  [17:54:45.611] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 2/10)
+INFO  [17:54:45.804] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 3/10)
+INFO  [17:54:46.017] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 4/10)
+INFO  [17:54:46.228] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 5/10)
+INFO  [17:54:46.424] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 6/10)
+INFO  [17:54:46.693] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 7/10)
+INFO  [17:54:46.908] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 8/10)
+INFO  [17:54:47.142] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 9/10)
+INFO  [17:54:47.364] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 10/10)
+INFO  [17:54:47.721] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 1/10)
+INFO  [17:54:47.920] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 2/10)
+INFO  [17:54:48.506] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 3/10)
+INFO  [17:54:48.684] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 4/10)
+INFO  [17:54:48.868] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 5/10)
+INFO  [17:54:49.060] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 6/10)
+INFO  [17:54:49.247] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 7/10)
+INFO  [17:54:49.661] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 8/10)
+INFO  [17:54:49.903] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 9/10)
+INFO  [17:54:50.128] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 10/10)
+INFO  [17:54:50.419] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 1/10)
+INFO  [17:54:50.606] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 2/10)
+INFO  [17:54:50.799] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 3/10)
+INFO  [17:54:50.981] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 4/10)
+INFO  [17:54:51.166] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 5/10)
+INFO  [17:54:51.362] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 6/10)
+INFO  [17:54:51.571] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 7/10)
+INFO  [17:54:51.766] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 8/10)
+INFO  [17:54:51.951] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 9/10)
+INFO  [17:54:52.133] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 10/10)
+INFO  [17:54:52.430] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 1/10)
+INFO  [17:54:52.623] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 2/10)
+INFO  [17:54:52.806] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 3/10)
+INFO  [17:54:52.990] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 4/10)
+INFO  [17:54:53.189] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 5/10)
+INFO  [17:54:53.371] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 6/10)
+INFO  [17:54:53.575] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 7/10)
+INFO  [17:54:53.760] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 8/10)
+INFO  [17:54:53.954] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 9/10)
+INFO  [17:54:54.140] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 10/10)
+INFO  [17:54:54.433] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 1/10)
+INFO  [17:54:54.629] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 2/10)
+INFO  [17:54:54.815] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 3/10)
+INFO  [17:54:55.018] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 4/10)
+INFO  [17:54:55.207] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 5/10)
+INFO  [17:54:55.402] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 6/10)
+INFO  [17:54:55.595] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 7/10)
+INFO  [17:54:55.793] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 8/10)
+INFO  [17:54:55.984] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 9/10)
+INFO  [17:54:56.181] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 10/10)
+INFO  [17:54:56.506] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 1/10)
+INFO  [17:54:56.707] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 2/10)
+INFO  [17:54:56.895] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 3/10)
+INFO  [17:54:57.097] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 4/10)
+INFO  [17:54:57.305] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 5/10)
+INFO  [17:54:57.505] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 6/10)
+INFO  [17:54:57.760] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 7/10)
+INFO  [17:54:57.948] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 8/10)
+INFO  [17:54:58.190] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 9/10)
+INFO  [17:54:58.376] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 10/10)
+INFO  [17:54:58.705] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 1/10)
+INFO  [17:54:58.898] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 2/10)
+INFO  [17:54:59.107] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 3/10)
+INFO  [17:54:59.295] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 4/10)
+INFO  [17:54:59.515] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 5/10)
+INFO  [17:54:59.703] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 6/10)
+INFO  [17:54:59.913] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 7/10)
+INFO  [17:55:00.110] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 8/10)
+INFO  [17:55:00.321] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 9/10)
+INFO  [17:55:00.518] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 10/10)
+INFO  [17:55:00.824] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 1/10)
+INFO  [17:55:01.031] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 2/10)
+INFO  [17:55:01.233] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 3/10)
+INFO  [17:55:01.437] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 4/10)
+INFO  [17:55:01.652] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 5/10)
+INFO  [17:55:01.901] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 6/10)
+INFO  [17:55:02.102] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 7/10)
+INFO  [17:55:02.317] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 8/10)
+INFO  [17:55:02.524] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 9/10)
+INFO  [17:55:02.740] [mlr3] Applying learner 'imputemedian.classif.rpart' on task 'stroke' (iter 10/10)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1"></a><span class="co"># Gráfico</span></span>
+<span id="cb65-2"><a href="#cb65-2"></a><span class="fu">ggplot</span>(lcurve, <span class="fu">aes</span>(ptr, BACC, <span class="at">color =</span> Sample)) <span class="sc">+</span> </span>
+<span id="cb65-3"><a href="#cb65-3"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb65-4"><a href="#cb65-4"></a>    <span class="fu">labs</span>(<span class="at">x =</span><span class="st">"Proporción tamaño muestra entrenamiento"</span>, <span class="at">y =</span> <span class="st">"BACC"</span>,<span class="at">color =</span> <span class="st">"Muestra"</span>) <span class="sc">+</span></span>
+<span id="cb65-5"><a href="#cb65-5"></a>    <span class="fu">scale_color_hue</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Validación"</span>, <span class="st">"Entrenamiento"</span>)) <span class="sc">+</span></span>
+<span id="cb65-6"><a href="#cb65-6"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span>ptr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="120_DTmodels_files/figure-html/dt-041-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">Curva de aprendizaje</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El porcentaje de clasificación correcta ponderado para la muestra de validación se mantiene bastante estable cuando variamos el tamaño de la muestra de entrenamiento.</p>
+</section>
+<section id="sec-120.7.2" class="level3" data-number="12.7.2">
+<h3 data-number="12.7.2" class="anchored" data-anchor-id="sec-120.7.2"><span class="header-section-number">12.7.2</span> Penguins</h3>
+<p>Planteamos ahora el proceso de optimización del árbol de decisión para el banco de datos <code>Penguins</code>. Recordemos que el porcentaje de clasificación correcta ponderado es del 94.3%. Para este proceso consideramos una configuración de hiperparámetros similar al del ejemplo anterior.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1"></a>ldt_classif_penguins <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.rpart"</span>, <span class="at">keep_model =</span> <span class="cn">TRUE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>,</span>
+<span id="cb66-2"><a href="#cb66-2"></a>                         <span class="at">cp =</span> <span class="fu">to_tune</span>(<span class="fl">1e-04</span>, <span class="dv">1</span>, <span class="at">logscale =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb66-3"><a href="#cb66-3"></a>                         <span class="at">maxdepth =</span> <span class="fu">to_tune</span>(<span class="dv">3</span>, <span class="dv">8</span>),</span>
+<span id="cb66-4"><a href="#cb66-4"></a>                         <span class="at">minsplit =</span> <span class="fu">to_tune</span>(<span class="dv">5</span>, <span class="dv">50</span>)</span>
+<span id="cb66-5"><a href="#cb66-5"></a>                         )</span>
+<span id="cb66-6"><a href="#cb66-6"></a></span>
+<span id="cb66-7"><a href="#cb66-7"></a><span class="co"># Fijamos semilla para reproducibilidad del proceso</span></span>
+<span id="cb66-8"><a href="#cb66-8"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb66-9"><a href="#cb66-9"></a><span class="co"># Definimos instancia de optimización fijando el número de evaluaciones</span></span>
+<span id="cb66-10"><a href="#cb66-10"></a>instance <span class="ot">=</span> <span class="fu">tune</span>(</span>
+<span id="cb66-11"><a href="#cb66-11"></a>  <span class="at">tuner =</span> <span class="fu">tnr</span>(<span class="st">"random_search"</span>),</span>
+<span id="cb66-12"><a href="#cb66-12"></a>  <span class="at">task =</span> tsk_penguins,</span>
+<span id="cb66-13"><a href="#cb66-13"></a>  <span class="at">learner =</span> ldt_classif_penguins,</span>
+<span id="cb66-14"><a href="#cb66-14"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">5</span>),</span>
+<span id="cb66-15"><a href="#cb66-15"></a>  <span class="at">measures =</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>),</span>
+<span id="cb66-16"><a href="#cb66-16"></a>  <span class="at">term_evals =</span> <span class="dv">30</span></span>
+<span id="cb66-17"><a href="#cb66-17"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Veamos los resultados obtenidos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1"></a><span class="co"># Veamos si converge el algoritmo</span></span>
+<span id="cb67-2"><a href="#cb67-2"></a>instance<span class="sc">$</span>is_terminated</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1"></a><span class="co"># Resultados del proceso de optimización</span></span>
+<span id="cb69-2"><a href="#cb69-2"></a>instance<span class="sc">$</span>result_learner_param_vals</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$xval
+[1] 0
+
+$keep_model
+[1] TRUE
+
+$cp
+[1] 0.006139712
+
+$maxdepth
+[1] 7
+
+$minsplit
+[1] 6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1"></a><span class="co"># Valor de la métrica para resultado óptimo</span></span>
+<span id="cb71-2"><a href="#cb71-2"></a>instance<span class="sc">$</span>result_y</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>classif.bacc 
+   0.9625707 </code></pre>
+</div>
+</div>
+<p>A simple vista ya podemos ver que hemos mejorado un 2% (alcanzamos el 96.6%) nuestro porcentaje de clasificación. Utilizamos los valore obtenidos para generar el nuevo árbol de decisión.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1"></a><span class="co"># Nuevo modelo</span></span>
+<span id="cb73-2"><a href="#cb73-2"></a>ldt_classif_penguins <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.rpart"</span>, <span class="at">keep_model =</span> <span class="cn">TRUE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>,</span>
+<span id="cb73-3"><a href="#cb73-3"></a>                         <span class="at">cp =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>cp,</span>
+<span id="cb73-4"><a href="#cb73-4"></a>                         <span class="at">maxdepth =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>maxdepth,</span>
+<span id="cb73-5"><a href="#cb73-5"></a>                         <span class="at">minsplit =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>minsplit</span>
+<span id="cb73-6"><a href="#cb73-6"></a>                         )</span>
+<span id="cb73-7"><a href="#cb73-7"></a><span class="co"># Entrenamiento del modelo</span></span>
+<span id="cb73-8"><a href="#cb73-8"></a>ldt_classif_penguins<span class="sc">$</span><span class="fu">train</span>(tsk_train_penguins)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Representamos la solución:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1"></a>modelo <span class="ot">=</span> ldt_classif_penguins<span class="sc">$</span>model</span>
+<span id="cb74-2"><a href="#cb74-2"></a><span class="fu">rpart.plot</span>(modelo, <span class="at">type =</span> <span class="dv">5</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="120_DTmodels_files/figure-html/dt-045-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En este caso la información proporcionada en los nodos terminales es:</p>
+<ul>
+<li>Clase mayoritaria del nodo terminal, es decir, predicción proporciona por el modelo para esa rama del árbol.</li>
+<li>Los porcentajes de cada una de las clases en ese nodo terminal.</li>
+<li>Porcentaje de observaciones en ese nodo respecto del total de muestras.</li>
+</ul>
+<p>Podemos ver claramente cuales son los nodos más relevantes mirando los porcentaje de observaciones y extraer las reglas de clasificación correspondientes (recordemos que las variables están estandarizadas:</p>
+<ul>
+<li>El nodo clasificado con <code>Adelie</code> que contiene el 41% de las muestras se caracterizan por <code>flipper_length</code> menor a 0.47 y <code>bill_length</code> menor a -0.31.</li>
+<li>El nodo clasificado con <code>Chinstrap</code> que contiene el 18% de las muestras se caracterizan por <code>flipper_length</code> menor a 0.47 y <code>bill_length</code> mayor o igual a -0.13, e <code>island</code> igual a <code>Dream</code>.</li>
+<li>El nodo clasificado con <code>Gentoo</code> que contiene el 36% de las muestras se caracterizan por <code>flipper_length</code> mayor o igual a 0.47 e <code>island</code> igual a <code>Biscoe</code>.</li>
+</ul>
+<p>Las reglas de clasificación completas se encuentran en la tabla siguiente:</p>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1"></a><span class="fu">rpart.rules</span>(modelo)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>species Adel Chin Gent<br>
+Adelie [ .99 .01 .00] when flipper_length &lt; 208 &amp; bill_length &lt; 42<br>
+Adelie [1.00 .00 .00] when flipper_length &lt; 208 &amp; bill_length is 42 to 43 &amp; bill_depth &gt;= 17<br>
+Adelie [1.00 .00 .00] when flipper_length &lt; 208 &amp; bill_length &gt;= 43 &amp; island is Biscoe or Torgersen Chinstrap [ .40 .60 .00] when flipper_length &gt;= 208 &amp; bill_depth &gt;= 18<br>
+Chinstrap [ .02 .98 .00] when flipper_length &lt; 208 &amp; bill_length &gt;= 43 &amp; island is Dream Chinstrap [ .00 1.00 .00] when flipper_length &lt; 208 &amp; bill_length is 42 to 43 &amp; bill_depth &lt; 17<br>
+Gentoo [ .00 .00 1.00] when flipper_length &gt;= 208 &amp; bill_depth &lt; 18</p>
+<p>Para finalizar analizamos la matriz de confusión asociada con el nuevo modelo.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1"></a><span class="co"># Predicción de la muestra de entrenamiento y validación</span></span>
+<span id="cb76-2"><a href="#cb76-2"></a>pred_train <span class="ot">=</span> ldt_classif_penguins<span class="sc">$</span><span class="fu">predict</span>(tsk_train_penguins)</span>
+<span id="cb76-3"><a href="#cb76-3"></a>pred_test <span class="ot">=</span> ldt_classif_penguins<span class="sc">$</span><span class="fu">predict</span>(tsk_test_penguins)</span>
+<span id="cb76-4"><a href="#cb76-4"></a><span class="co"># scores de validación</span></span>
+<span id="cb76-5"><a href="#cb76-5"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"classif.acc"</span>, <span class="st">"classif.bacc"</span>))</span>
+<span id="cb76-6"><a href="#cb76-6"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb76-7"><a href="#cb76-7"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> classif.acc classif.bacc 
+   0.9854015    0.9855627 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb78-2"><a href="#cb78-2"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> classif.acc classif.bacc 
+   0.9714286    0.9733333 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1"></a><span class="co"># Matriz de confusión</span></span>
+<span id="cb80-2"><a href="#cb80-2"></a>cm <span class="ot">=</span> <span class="fu">confusion_matrix</span>(pred_test<span class="sc">$</span>truth, pred_test<span class="sc">$</span>response)</span>
+<span id="cb80-3"><a href="#cb80-3"></a><span class="fu">plot_confusion_matrix</span>(cm<span class="sc">$</span><span class="st">`</span><span class="at">Confusion Matrix</span><span class="st">`</span>[[<span class="dv">1</span>]]) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="120_DTmodels_files/figure-html/dt-047-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Todos los errores de clasificación (2.9%) están asociados con la especie <code>Gentoo</code> original, ya que el modelo obtenido clasifica esas muestras como pertenecientes a la especie <code>Adelie</code>.</p>
+<p>Se puede finalizar el análisis mediante el estudio de validación y la construcción de la curva de aprendizaje.</p>
+</section>
+<section id="sec-120.7.3" class="level3" data-number="12.7.3">
+<h3 data-number="12.7.3" class="anchored" data-anchor-id="sec-120.7.3"><span class="header-section-number">12.7.3</span> Electricity</h3>
+<p>Finalizamos con la optimización para el banco de datos <code>Electricity</code>. Recordemos que el <code>sMAPE</code> para la muestra de validación obtenido era del 0.00925. Empezamos definiendo la configuración del proceso de optimización cambiando algunos de los parámetros dado que el número de predictoras en este caso es muy bajo y no podemos considerar árboles muy profundos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1"></a>ldt_regr_electricity <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"regr.rpart"</span>, <span class="at">keep_model =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb81-2"><a href="#cb81-2"></a>                         <span class="at">cp =</span> <span class="fu">to_tune</span>(<span class="fl">1e-03</span>, <span class="dv">1</span>, <span class="at">logscale =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb81-3"><a href="#cb81-3"></a>                         <span class="at">maxdepth =</span> <span class="fu">to_tune</span>(<span class="dv">2</span>, <span class="dv">4</span>),</span>
+<span id="cb81-4"><a href="#cb81-4"></a>                         <span class="at">minsplit =</span> <span class="fu">to_tune</span>(<span class="dv">5</span>, <span class="dv">50</span>)</span>
+<span id="cb81-5"><a href="#cb81-5"></a>                         )</span>
+<span id="cb81-6"><a href="#cb81-6"></a></span>
+<span id="cb81-7"><a href="#cb81-7"></a><span class="co"># Fijamos semilla para reproducibilidad del proceso</span></span>
+<span id="cb81-8"><a href="#cb81-8"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb81-9"><a href="#cb81-9"></a><span class="co"># Definimos instancia de optimización fijando el número de evaluaciones</span></span>
+<span id="cb81-10"><a href="#cb81-10"></a>instance <span class="ot">=</span> <span class="fu">tune</span>(</span>
+<span id="cb81-11"><a href="#cb81-11"></a>  <span class="at">tuner =</span> <span class="fu">tnr</span>(<span class="st">"random_search"</span>),</span>
+<span id="cb81-12"><a href="#cb81-12"></a>  <span class="at">task =</span> tsk_electricity,</span>
+<span id="cb81-13"><a href="#cb81-13"></a>  <span class="at">learner =</span> ldt_regr_electricity,</span>
+<span id="cb81-14"><a href="#cb81-14"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">5</span>),</span>
+<span id="cb81-15"><a href="#cb81-15"></a>  <span class="at">measures =</span> <span class="fu">msr</span>(<span class="st">"regr.smape"</span>),</span>
+<span id="cb81-16"><a href="#cb81-16"></a>  <span class="at">term_evals =</span> <span class="dv">30</span></span>
+<span id="cb81-17"><a href="#cb81-17"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Veamos los resultados obtenidos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1"></a><span class="co"># Veamos si converge el algoritmo</span></span>
+<span id="cb82-2"><a href="#cb82-2"></a>instance<span class="sc">$</span>is_terminated</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1"></a><span class="co"># Resultados del proceso de optimización</span></span>
+<span id="cb84-2"><a href="#cb84-2"></a>instance<span class="sc">$</span>result_learner_param_vals</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$xval
+[1] 0
+
+$keep_model
+[1] TRUE
+
+$cp
+[1] 0.001742492
+
+$maxdepth
+[1] 4
+
+$minsplit
+[1] 6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1"></a><span class="co"># Valor de la métrica para resultado óptimo</span></span>
+<span id="cb86-2"><a href="#cb86-2"></a>instance<span class="sc">$</span>result_y</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> regr.smape 
+0.008232575 </code></pre>
+</div>
+</div>
+<p>El modelo optimizado reduce el <code>sMAPE</code> hasta el valor 0.0082. Analizamos ahora e árbol obtenido con dichos valores.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1"></a><span class="co"># Nuevo modelo</span></span>
+<span id="cb88-2"><a href="#cb88-2"></a>ldt_regr_electricity <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"regr.rpart"</span>, <span class="at">keep_model =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb88-3"><a href="#cb88-3"></a>                         <span class="at">cp =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>cp,</span>
+<span id="cb88-4"><a href="#cb88-4"></a>                         <span class="at">maxdepth =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>maxdepth,</span>
+<span id="cb88-5"><a href="#cb88-5"></a>                         <span class="at">minsplit =</span> instance<span class="sc">$</span>result_x_domain<span class="sc">$</span>minsplit</span>
+<span id="cb88-6"><a href="#cb88-6"></a>                         )</span>
+<span id="cb88-7"><a href="#cb88-7"></a><span class="co"># Entrenamiento del modelo</span></span>
+<span id="cb88-8"><a href="#cb88-8"></a>ldt_regr_electricity<span class="sc">$</span><span class="fu">train</span>(tsk_train_electricity)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Representamos la solución:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1"></a>modelo <span class="ot">=</span> ldt_regr_electricity<span class="sc">$</span>model</span>
+<span id="cb89-2"><a href="#cb89-2"></a><span class="fu">rpart.plot</span>(modelo, <span class="at">type =</span> <span class="dv">5</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="120_DTmodels_files/figure-html/dt-051-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En este caso la información de los nodos terminales es:</p>
+<ul>
+<li>Predicción de la respuesta en el nodo terminal.</li>
+<li>Porcentaje de muestras en el nodo terminal con respecto del total de muestras.</li>
+</ul>
+<p>Podemos ver además que las ramas del árbol hacen uso recursivo de las mismas predictores con diferentes scores de división.</p>
+<p>Para finalizar realizamos un estudio de validación cruzada de la solución obtenida.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1"></a><span class="co"># Fijamos semilla</span></span>
+<span id="cb90-2"><a href="#cb90-2"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb90-3"><a href="#cb90-3"></a><span class="co"># Definimos proceso de validación cruzada kfold con k=10</span></span>
+<span id="cb90-4"><a href="#cb90-4"></a>resamp <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>)</span>
+<span id="cb90-5"><a href="#cb90-5"></a><span class="co"># Remuestreo</span></span>
+<span id="cb90-6"><a href="#cb90-6"></a>rr <span class="ot">=</span> <span class="fu">resample</span>(tsk_electricity, ldt_regr_electricity, resamp, <span class="at">store_models=</span><span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [17:55:18.036] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 1/10)
+INFO  [17:55:18.068] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 2/10)
+INFO  [17:55:18.105] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 3/10)
+INFO  [17:55:18.133] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 4/10)
+INFO  [17:55:18.161] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 5/10)
+INFO  [17:55:18.193] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 6/10)
+INFO  [17:55:18.232] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 7/10)
+INFO  [17:55:18.275] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 8/10)
+INFO  [17:55:18.302] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 9/10)
+INFO  [17:55:18.333] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 10/10)</code></pre>
+</div>
+</div>
+<p>Analizamos los resultados obtenidos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1"></a>measure <span class="ot">=</span> <span class="fu">msr</span>(<span class="st">"regr.smape"</span>)</span>
+<span id="cb92-2"><a href="#cb92-2"></a><span class="co"># Resumen Scores individuales</span></span>
+<span id="cb92-3"><a href="#cb92-3"></a>scores <span class="ot">=</span> rr<span class="sc">$</span><span class="fu">score</span>(measure)</span>
+<span id="cb92-4"><a href="#cb92-4"></a><span class="fu">skim</span>(scores)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">scores</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Key</td>
+<td style="text-align: left;">NULL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">list</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">task_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">learner_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">resampling_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: list</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 20%">
+<col style="width: 13%">
+<col style="width: 15%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">min_length</th>
+<th style="text-align: right;">max_length</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">task</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">48</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">learner</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">38</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">resampling</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">prediction</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">19</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 12%">
+<col style="width: 17%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">iteration</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5.50</td>
+<td style="text-align: right;">3.03</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3.25</td>
+<td style="text-align: right;">5.50</td>
+<td style="text-align: right;">7.75</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: left;">▇▇▇▇▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">regr.smape</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.01</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.01</td>
+<td style="text-align: right;">0.01</td>
+<td style="text-align: right;">0.01</td>
+<td style="text-align: right;">0.01</td>
+<td style="text-align: right;">0.01</td>
+<td style="text-align: left;">▅▇▇▁▅</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>El valor estimado del <code>sMAPE</code> se sitúa en el 0.0082 con una desviación del 0.0001. Para finalizar analizamos la curva de aprendizaje:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1"></a>ptr <span class="ot">=</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span>)</span>
+<span id="cb93-2"><a href="#cb93-2"></a>lcurve <span class="ot">=</span> <span class="fu">learningcurve</span>(tsk_electricity, ldt_regr_electricity, <span class="st">"regr.smape"</span>, <span class="at">ptr =</span> ptr, <span class="at">rpeats =</span> <span class="dv">10</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [17:55:18.703] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 1/10)
+INFO  [17:55:18.731] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 2/10)
+INFO  [17:55:18.763] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 3/10)
+INFO  [17:55:18.802] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 4/10)
+INFO  [17:55:18.830] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 5/10)
+INFO  [17:55:18.858] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 6/10)
+INFO  [17:55:18.884] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 7/10)
+INFO  [17:55:18.913] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 8/10)
+INFO  [17:55:18.940] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 9/10)
+INFO  [17:55:18.967] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 10/10)
+INFO  [17:55:19.098] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 1/10)
+INFO  [17:55:19.129] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 2/10)
+INFO  [17:55:19.162] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 3/10)
+INFO  [17:55:19.191] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 4/10)
+INFO  [17:55:19.218] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 5/10)
+INFO  [17:55:19.246] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 6/10)
+INFO  [17:55:19.279] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 7/10)
+INFO  [17:55:19.308] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 8/10)
+INFO  [17:55:19.335] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 9/10)
+INFO  [17:55:19.362] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 10/10)
+INFO  [17:55:19.486] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 1/10)
+INFO  [17:55:19.515] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 2/10)
+INFO  [17:55:19.544] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 3/10)
+INFO  [17:55:19.572] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 4/10)
+INFO  [17:55:19.601] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 5/10)
+INFO  [17:55:19.628] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 6/10)
+INFO  [17:55:19.657] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 7/10)
+INFO  [17:55:19.685] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 8/10)
+INFO  [17:55:19.718] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 9/10)
+INFO  [17:55:19.756] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 10/10)
+INFO  [17:55:19.911] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 1/10)
+INFO  [17:55:19.944] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 2/10)
+INFO  [17:55:19.977] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 3/10)
+INFO  [17:55:20.010] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 4/10)
+INFO  [17:55:20.042] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 5/10)
+INFO  [17:55:20.120] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 6/10)
+INFO  [17:55:20.153] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 7/10)
+INFO  [17:55:20.185] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 8/10)
+INFO  [17:55:20.219] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 9/10)
+INFO  [17:55:20.254] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 10/10)
+INFO  [17:55:20.371] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 1/10)
+INFO  [17:55:20.407] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 2/10)
+INFO  [17:55:20.445] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 3/10)
+INFO  [17:55:20.479] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 4/10)
+INFO  [17:55:20.512] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 5/10)
+INFO  [17:55:20.563] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 6/10)
+INFO  [17:55:20.598] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 7/10)
+INFO  [17:55:20.631] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 8/10)
+INFO  [17:55:20.664] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 9/10)
+INFO  [17:55:20.698] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 10/10)
+INFO  [17:55:20.835] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 1/10)
+INFO  [17:55:20.866] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 2/10)
+INFO  [17:55:20.898] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 3/10)
+INFO  [17:55:20.945] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 4/10)
+INFO  [17:55:20.978] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 5/10)
+INFO  [17:55:21.010] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 6/10)
+INFO  [17:55:21.042] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 7/10)
+INFO  [17:55:21.073] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 8/10)
+INFO  [17:55:21.104] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 9/10)
+INFO  [17:55:21.135] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 10/10)
+INFO  [17:55:21.267] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 1/10)
+INFO  [17:55:21.299] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 2/10)
+INFO  [17:55:21.331] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 3/10)
+INFO  [17:55:21.363] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 4/10)
+INFO  [17:55:21.397] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 5/10)
+INFO  [17:55:21.434] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 6/10)
+INFO  [17:55:21.467] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 7/10)
+INFO  [17:55:21.506] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 8/10)
+INFO  [17:55:21.555] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 9/10)
+INFO  [17:55:21.587] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 10/10)
+INFO  [17:55:21.704] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 1/10)
+INFO  [17:55:21.750] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 2/10)
+INFO  [17:55:21.795] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 3/10)
+INFO  [17:55:21.828] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 4/10)
+INFO  [17:55:21.863] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 5/10)
+INFO  [17:55:21.899] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 6/10)
+INFO  [17:55:21.933] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 7/10)
+INFO  [17:55:21.988] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 8/10)
+INFO  [17:55:22.022] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 9/10)
+INFO  [17:55:22.056] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 10/10)
+INFO  [17:55:22.180] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 1/10)
+INFO  [17:55:22.214] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 2/10)
+INFO  [17:55:22.249] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 3/10)
+INFO  [17:55:22.283] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 4/10)
+INFO  [17:55:22.334] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 5/10)
+INFO  [17:55:22.371] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 6/10)
+INFO  [17:55:22.410] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 7/10)
+INFO  [17:55:22.447] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 8/10)
+INFO  [17:55:22.481] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 9/10)
+INFO  [17:55:22.515] [mlr3] Applying learner 'regr.rpart' on task 'electricity' (iter 10/10)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1"></a><span class="co"># Gráfico</span></span>
+<span id="cb95-2"><a href="#cb95-2"></a><span class="fu">ggplot</span>(lcurve, <span class="fu">aes</span>(ptr, BACC, <span class="at">color =</span> Sample)) <span class="sc">+</span> </span>
+<span id="cb95-3"><a href="#cb95-3"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb95-4"><a href="#cb95-4"></a>    <span class="fu">labs</span>(<span class="at">x =</span><span class="st">"Proporción tamaño muestra entrenamiento"</span>, <span class="at">y =</span> <span class="st">"sMAPE"</span>,<span class="at">color =</span> <span class="st">"Muestra"</span>) <span class="sc">+</span></span>
+<span id="cb95-5"><a href="#cb95-5"></a>    <span class="fu">scale_color_hue</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Validación"</span>, <span class="st">"Entrenamiento"</span>)) <span class="sc">+</span></span>
+<span id="cb95-6"><a href="#cb95-6"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span>ptr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="120_DTmodels_files/figure-html/dt-054-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">Curva de aprendizaje</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Se aprecia como el <code>sMAPE</code> disminuye cuando aumentamos el tamaño de la muestra de entrenamiento. El valor óptimo se sitúa en un tamaño del 60%.</p>
+</section>
+</section>
+<section id="otros-modelos-de-áboles-en-mlr3" class="level2" data-number="12.8">
+<h2 data-number="12.8" class="anchored" data-anchor-id="otros-modelos-de-áboles-en-mlr3"><span class="header-section-number">12.8</span> Otros modelos de áboles en mlr3</h2>
+<p>En <code>mlr3</code> existen otro algoritmos para la obtención de árboles de decisión:</p>
+<ul>
+<li><code>classif.C50</code>, para construir árboles de decisión en problemas de clasificación utilizando el criterio de ganancia de información.</li>
+<li><code>classif.ctree</code>, para construir árboles de decisión en problemas de clasificación donde se utiliza un test de comparación para encontrar la división de cada rama.</li>
+<li><code>regr.ctree</code>, para construir árboles de decisión en problemas de regresión donde se utiliza un test de comparación para encontrar la división de cada rama.</li>
+</ul>
+</section>
+<section id="sec-120.8" class="level2" data-number="12.9">
+<h2 data-number="12.9" class="anchored" data-anchor-id="sec-120.8"><span class="header-section-number">12.9</span> Ejercicios</h2>
+<ol type="1">
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo de árbol de decisión para el banco de datos <code>Mushroom</code><a href="40_DataBases.html#sec-mushroom"><span>4.3.4</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo de árbol de decisión para el banco de datos <code>Water potability</code><a href="40_DataBases.html#sec-waterpot"><span>4.3.7</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo de árbol de decisión para el banco de datos <code>Hepatitis</code><a href="40_DataBases.html#sec-hepatitis"><span>4.3.9</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo de árbol de decisión para el banco de datos <code>Abalone</code><a href="40_DataBases.html#sec-abalone"><span>4.3.1</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo de árbol de decisión para el banco de datos <code>Us economic time series</code><a href="40_DataBases.html#sec-usaets"><span>4.2.7</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo de árbol de decisión para el banco de datos <code>QSAR</code><a href="40_DataBases.html#sec-qsar"><span>4.2.8</span></a>.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "¡Copiado!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "¡Copiado!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./110_SVMmodels.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./130_Ensemblemodels.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Modelos de conjunto (Ensemble models)</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MachineLearning - 11&nbsp; Máquinas de Vector Soporte (SVM)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./120_DTmodels.html" rel="next">
+<link href="./100_kNNmodels.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos coincidentes",
+    "search-copy-link-title": "Copiar enlace para buscar",
+    "search-hide-matches-text": "Ocultar coincidencias adicionales",
+    "search-more-match-text": "más coincidencia en este documento",
+    "search-more-matches-text": "más coincidencias en este documento",
+    "search-clear-button-title": "Limpiar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Entregar"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MachineLearning</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Prefacio</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./01_IntroCourse.html" class="sidebar-item-text sidebar-link">Parte 1. Introducción</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_introAD.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_introAA.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./30_RandRstudio.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./40_DataBases.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./02_FirstStepsAA.html" class="sidebar-item-text sidebar-link">Parte 2. Primeros pasos</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./50_AED.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./03_SupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 3. Aprendizaje supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./60_RegressionModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regresión</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./70_LogisticModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelos de Regresión Logística</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./80_SurvivalModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./90_BayesianClassif.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./100_kNNmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./110_SVMmodels.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./120_DTmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./130_Ensemblemodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Modelos de conjunto (Ensemble models)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./140_Boostingmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Modelos Boosting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./04_NonSupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 4. Aprendizaje no supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./150_Discriminantmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análisis discriminante (AD)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./160_PrinCompmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./170_MDSmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./180_Clustermodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Análisis cluster</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">Referencias</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#sec-110.1" id="toc-sec-110.1" class="nav-link active" data-scroll-target="#sec-110.1"><span class="toc-section-number">11.1</span>  Clasificadores de vector soporte</a>
+  <ul>
+  <li><a href="#sec-110.1.1" id="toc-sec-110.1.1" class="nav-link" data-scroll-target="#sec-110.1.1"><span class="toc-section-number">11.1.1</span>  Casos separables linealmente</a></li>
+  <li><a href="#sec-110.1.2" id="toc-sec-110.1.2" class="nav-link" data-scroll-target="#sec-110.1.2"><span class="toc-section-number">11.1.2</span>  Casos no separables linealmente</a></li>
+  <li><a href="#sec-110.1.3" id="toc-sec-110.1.3" class="nav-link" data-scroll-target="#sec-110.1.3"><span class="toc-section-number">11.1.3</span>  Soft margin SVM</a></li>
+  <li><a href="#sec-110.1.4" id="toc-sec-110.1.4" class="nav-link" data-scroll-target="#sec-110.1.4"><span class="toc-section-number">11.1.4</span>  Límites de separación no lineales</a></li>
+  </ul></li>
+  <li><a href="#sec-110.2" id="toc-sec-110.2" class="nav-link" data-scroll-target="#sec-110.2"><span class="toc-section-number">11.2</span>  Máquinas de vector soporte</a>
+  <ul>
+  <li><a href="#sec-110.2.1" id="toc-sec-110.2.1" class="nav-link" data-scroll-target="#sec-110.2.1"><span class="toc-section-number">11.2.1</span>  Kernel lineal</a></li>
+  <li><a href="#sec-110.2.2" id="toc-sec-110.2.2" class="nav-link" data-scroll-target="#sec-110.2.2"><span class="toc-section-number">11.2.2</span>  Kernel polinómico</a></li>
+  <li><a href="#sec-110.2.3" id="toc-sec-110.2.3" class="nav-link" data-scroll-target="#sec-110.2.3"><span class="toc-section-number">11.2.3</span>  Kernel Gaussiano (RBF)</a></li>
+  <li><a href="#sec-110.2.4" id="toc-sec-110.2.4" class="nav-link" data-scroll-target="#sec-110.2.4"><span class="toc-section-number">11.2.4</span>  Kernel sigmoidal</a></li>
+  <li><a href="#sec-110.2.5" id="toc-sec-110.2.5" class="nav-link" data-scroll-target="#sec-110.2.5"><span class="toc-section-number">11.2.5</span>  SVM en problemas de regresión</a></li>
+  </ul></li>
+  <li><a href="#sec-110.3" id="toc-sec-110.3" class="nav-link" data-scroll-target="#sec-110.3"><span class="toc-section-number">11.3</span>  Máquinas de vector soporte en mlr3</a></li>
+  <li><a href="#sec-110.4" id="toc-sec-110.4" class="nav-link" data-scroll-target="#sec-110.4"><span class="toc-section-number">11.4</span>  Bancos de datos</a>
+  <ul>
+  <li><a href="#sec-110.4.1" id="toc-sec-110.4.1" class="nav-link" data-scroll-target="#sec-110.4.1"><span class="toc-section-number">11.4.1</span>  Stroke</a></li>
+  <li><a href="#penguins" id="toc-penguins" class="nav-link" data-scroll-target="#penguins"><span class="toc-section-number">11.4.2</span>  Penguins</a></li>
+  </ul></li>
+  <li><a href="#sec-110.5" id="toc-sec-110.5" class="nav-link" data-scroll-target="#sec-110.5"><span class="toc-section-number">11.5</span>  Nuestros primeros modelos</a>
+  <ul>
+  <li><a href="#sec-110.5.1" id="toc-sec-110.5.1" class="nav-link" data-scroll-target="#sec-110.5.1"><span class="toc-section-number">11.5.1</span>  Stroke</a></li>
+  <li><a href="#sec-110.5.2" id="toc-sec-110.5.2" class="nav-link" data-scroll-target="#sec-110.5.2"><span class="toc-section-number">11.5.2</span>  Penguins</a></li>
+  </ul></li>
+  <li><a href="#sec-110.6" id="toc-sec-110.6" class="nav-link" data-scroll-target="#sec-110.6"><span class="toc-section-number">11.6</span>  Optimizando los modelos</a>
+  <ul>
+  <li><a href="#sec-110.6.1" id="toc-sec-110.6.1" class="nav-link" data-scroll-target="#sec-110.6.1"><span class="toc-section-number">11.6.1</span>  Stroke</a></li>
+  <li><a href="#sec-110.6.2" id="toc-sec-110.6.2" class="nav-link" data-scroll-target="#sec-110.6.2"><span class="toc-section-number">11.6.2</span>  Penguins</a></li>
+  </ul></li>
+  <li><a href="#sec-110.7" id="toc-sec-110.7" class="nav-link" data-scroll-target="#sec-110.7"><span class="toc-section-number">11.7</span>  SVM para tareas de regresión</a></li>
+  <li><a href="#sec-110.8" id="toc-sec-110.8" class="nav-link" data-scroll-target="#sec-110.8"><span class="toc-section-number">11.8</span>  Ejercicios</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-110" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Las Máquinas de Vector Soporte (<em>Support Vector Machines</em>, SVMs) es un algoritmo de clasificación y regresión desarrollado en la década de los 90. Aunque inicialmente se desarrolló como un método de clasificación binaria, su aplicación se ha extendido a problemas de clasificación múltiple y regresión. SVMs ha resultado ser uno de los mejores clasificadores para un amplio abanico de situaciones, por lo que se considera uno de los referentes dentro del ámbito del aprendizaje automático.</p>
+<p>Las Máquinas de Vector Soporte se fundamentan en los clasificadores marginales maximales que se obtienen a partir del concepto matemático de hiperplano. Por ese motivo, para comprender el funcionamiento de los SVM se requieren conocimientos más profundos de álgebra lineal y optimización de los utilizados hasta ahora. En este tema no estamos interesados en los aspectos formales más matemáticos y por ello se recomienda el libro <a href="https://www.syncfusion.com/succinctly-free-ebooks/support-vector-machines-succinctly">Support Vector Machines Succinctly</a> by Alexandre Kowalczyk para indagar más.</p>
+<p>Para entender mejor el funcionamiento de este algoritmo utilizaremos como ejemplos principales aquellos dedicados a tareas de clasificación.</p>
+<section id="sec-110.1" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="sec-110.1"><span class="header-section-number">11.1</span> Clasificadores de vector soporte</h2>
+<p>En un espacio p-dimensional, un hiperplano se define como un subespacio plano y afín de dimensiones <span class="math inline">\(𝑝−1\)</span> . El término afín significa que el subespacio no tiene por qué pasar por el origen. En un espacio de dos dimensiones, el hiperplano es un subespacio de una dimensión, es decir, una recta. En un espacio tridimensional, un hiperplano es un subespacio de dos dimensiones, un plano convencional. Para dimensiones <span class="math inline">\(𝑝&gt;3\)</span> no es intuitivo visualizar un hiperplano, pero el concepto de subespacio con <span class="math inline">\(𝑝−1\)</span> dimensiones se mantiene.</p>
+<p>Para mostrar el uso de los hiperplanos tomamos un ejemplo muy sencillo de un problema de clasificación con dos clases en dos dimensiones cuyos puntos vienen dados por:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/svm001.png" width="400" height="300" class="figure-img"></p>
+</figure>
+</div>
+<section id="sec-110.1.1" class="level3" data-number="11.1.1">
+<h3 data-number="11.1.1" class="anchored" data-anchor-id="sec-110.1.1"><span class="header-section-number">11.1.1</span> Casos separables linealmente</h3>
+<p>Si la distribución de las observaciones es tal que se pueden separar linealmente de forma perfecta en las dos clases, entonces, la definición matemática de un hiperplano es bastante simple. En el caso de dos dimensiones, el hiperplano se describe acorde a la ecuación de una recta:</p>
+<p><span class="math display">\[\beta_0+\beta_1𝑥_1+\beta_2𝑥_2=0\]</span></p>
+<p>Dados los parámetros <span class="math inline">\(\beta_0\)</span> , <span class="math inline">\(\beta_1\)</span> y <span class="math inline">\(\beta_2\)</span>, todos los pares de valores <span class="math inline">\(𝐱=(𝑥_1,𝑥_2)\)</span> para los que se cumple la igualdad son puntos del hiperplano. Esta ecuación puede generalizarse para p-dimensiones:</p>
+<p><span class="math display">\[\beta_0+\beta_1𝑥_1+\beta_2𝑥_2 +...+\beta_px_p=0\]</span></p>
+<p>y de igual manera, todos los puntos definidos por el vector <span class="math inline">\((𝐱=𝑥_1,𝑥_2,...,𝑥_𝑝)\)</span> que cumplen la ecuación pertenecen al hiperplano.</p>
+<p>Cuando <span class="math inline">\(𝐱\)</span> no satisface la ecuación:</p>
+<p><span class="math display">\[\beta_0+\beta_1𝑥_1+\beta_2𝑥_2 +...+\beta_px_p &lt; 0\]</span></p>
+<p>o bien</p>
+<p><span class="math display">\[\beta_0+\beta_1𝑥_1+\beta_2𝑥_2 +...+\beta_px_p &gt; 0\]</span></p>
+<p>el punto <span class="math inline">\(𝐱\)</span> cae a un lado o al otro del hiperplano. Así pues, se puede entender que un hiperplano divide un espacio p-dimensional en dos mitades. Para saber en qué lado del hiperplano se encuentra un determinado punto <span class="math inline">\(𝐱\)</span>, solo hay que calcular el signo de la ecuación.</p>
+<p>La definición de hiperplano para casos perfectamente separables linealmente resulta en un número infinito de posibles hiperplanos, lo que hace necesario un método que permita seleccionar uno de ellos como clasificador óptimo. En este problema podemos considerar diferentes hiperplanos (en este caso rectas) que nos permiten clasificar la muestra de datos de forma adecuada como podemos ver en el gráfico siguiente:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/svm002.png" width="400" height="300" class="figure-img"></p>
+</figure>
+</div>
+<p>Tenemos tres rectas y posibles soluciones al problema planteado. La solución a este problema consiste en seleccionar como clasificador óptimo el hiperplano que se encuentra más alejado de todas las observaciones de entrenamiento. A este se le conoce como <em>maximal margin hyperplane</em> o hiperplano óptimo de separación. Para identificarlo, se tiene que calcular la distancia perpendicular de cada observación a un determinado hiperplano. La menor de estas distancias (conocida como margen) determina cuán alejado está el hiperplano de las observaciones de entrenamiento. Así pues, el <em>maximal margin hyperplane</em> se define como el hiperplano que consigue un mayor margen, es decir, que la distancia mínima entre el hiperplano y las observaciones es lo más grande posible. Aunque esta idea suena razonable, no es posible aplicarla, ya que habría infinitos hiperplanos contra los que medir las distancias. En la imagen siguiente se muestra la solución gráfica del algoritmo SVM para este problema:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/svm003.png" width="400" height="300" class="figure-img"></p>
+</figure>
+</div>
+<p>La imagen anterior muestra el <em>maximal margin hyperplane</em>, formado por el hiperplano (línea negra continua y su margen, las dos líneas discontinuas). Las tres observaciones equidistantes respecto al <em>maximal margin hyperplane</em> que se encuentran a lo largo de las líneas discontinuas se les conoce como vectores de soporte, ya que son vectores en un espacio p-dimensional y soportan (definen) el <em>maximal margin hyperplane</em>. Cualquier modificación en estas observaciones (vectores soporte) conlleva cambios en el <em>maximal margin hyperplane</em>. Sin embargo, modificaciones en observaciones que no son vector soporte no tienen impacto alguno en el hiperplano.</p>
+</section>
+<section id="sec-110.1.2" class="level3" data-number="11.1.2">
+<h3 data-number="11.1.2" class="anchored" data-anchor-id="sec-110.1.2"><span class="header-section-number">11.1.2</span> Casos no separables linealmente</h3>
+<p>El <em>maximal margin hyperplane</em> descrito en el apartado anterior es una forma muy simple y natural de clasificación siempre y cuando exista un hiperplano de separación. En la gran mayoría de casos reales, los datos no se pueden separar linealmente de forma perfecta, por lo que no existe un hiperplano de separación y no puede obtenerse un <em>maximal margin hyperplane</em>. Para el siguiente ejemplo se emplea un set de datos publicado en el libro <em>Elements of Statistical Learning</em> que contiene observaciones simuladas con una función no lineal en un espacio de dos dimensiones (2 predictores). El objetivo es entrenar un modelo SVM capaz de clasificar las observaciones.</p>
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/svm004.png" data-fig-align="center" width="400" height="300"> Para solucionar estas situaciones, se puede extender el concepto de <em>maximal margin hyperplane</em> para obtener un hiperplano que “casi” separe las clases, pero permitiendo que se cometan unos pocos errores. A este tipo de hiperplano se le conoce como <em>Support Vector Classifier</em> o <em>Soft Margin</em>.</p>
+</section>
+<section id="sec-110.1.3" class="level3" data-number="11.1.3">
+<h3 data-number="11.1.3" class="anchored" data-anchor-id="sec-110.1.3"><span class="header-section-number">11.1.3</span> Soft margin SVM</h3>
+<p>El <em>Maximal Margin Classifier</em> descrito en la sección anterior tiene poca aplicación práctica, ya que rara vez se encuentran casos en los que las clases sean perfecta y linealmente separables. De hecho, incluso cumpliéndose estas condiciones ideales, en las que exista un hiperplano capaz de separar perfectamente las observaciones en dos clases, esta aproximación sigue presentando dos inconvenientes:</p>
+<ul>
+<li><p>Dado que el hiperplano tiene que separar perfectamente las observaciones, es muy sensible a variaciones en los datos. Incluir una nueva observación puede suponer cambios muy grandes en el hiperplano de separación (poca robustez).</p></li>
+<li><p>Que el <em>maximal margin hyperplane</em> se ajuste perfectamente a las observaciones de entrenamiento para separarlas todas correctamente suele conllevar problemas de <em>overfitting</em>.</p></li>
+</ul>
+<p>Por estas razones, es preferible crear un clasificador basado en un hiperplano que, aunque no separe perfectamente las dos clases, sea más robusto y tenga mayor capacidad predictiva al aplicarlo a nuevas observaciones (menos problemas de <em>overfitting</em>). Esto es exactamente lo que consiguen los clasificadores de vector soporte, también conocidos como <em>soft margin classifiers</em> o <em>Support Vector Classifiers</em>. Para lograrlo, en lugar de buscar el margen de clasificación más ancho posible que consigue que las observaciones estén en el lado correcto del margen; se permite que ciertas observaciones estén en el lado incorrecto del margen o incluso del hiperplano.</p>
+<p>La identificación del hiperplano que clasifique correctamente la mayoría de las observaciones a excepción de unas pocas, es un problema de optimización convexa. Si bien la demostración matemática queda fuera del objetivo de esta introducción, es importante mencionar que el proceso incluye un hiperparámetro llamado 𝐶. 𝐶 controla el número y severidad de las violaciones del margen (y del hiperplano) que se toleran en el proceso de ajuste. Si 𝐶=∞ , no se permite ninguna violación del margen y por lo tanto, el resultado es equivalente al <em>Maximal Margin Classifier</em> (teniendo en cuenta que esta solución solo es posible si las clases son perfectamente separables). Cuando más se aproxima 𝐶 a cero, menos se penalizan los errores y más observaciones pueden estar en el lado incorrecto del margen o incluso del hiperplano. 𝐶 es, a fin de cuentas, el hiperparámetro encargado de controlar el balance entre sesgo y varianza del modelo. En la práctica, su valor óptimo se identifica mediante validación cruzada.</p>
+<p>El proceso de optimización tiene la peculiaridad de que solo las observaciones que se encuentran justo en el margen o que lo violan influyen sobre el hiperplano. A estas observaciones se les conoce como vectores soporte y son las que definen el clasificador obtenido. Esta es la razón por la que el parámetro 𝐶 controla el balance entre sesgo y varianza. Cuando el valor de 𝐶 es pequeño, el margen es más ancho, y más observaciones violan el margen, convirtiéndose en vectores soporte. El hiperplano está, por lo tanto, sustentado por más observaciones, lo que aumenta el sesgo pero reduce la varianza. Cuando mayor es el valor de 𝐶, menor el margen, menos observaciones son vectores soporte y el clasificador resultante tiene menor sesgo pero mayor varianza.</p>
+<p>Otra propiedad importante que deriva de que el hiperplano dependa únicamente de una pequeña proporción de observaciones (vectores soporte), es su robustez frente a observaciones muy alejadas del hiperplano.</p>
+</section>
+<section id="sec-110.1.4" class="level3" data-number="11.1.4">
+<h3 data-number="11.1.4" class="anchored" data-anchor-id="sec-110.1.4"><span class="header-section-number">11.1.4</span> Límites de separación no lineales</h3>
+<p>El <em>Support Vector Classifier</em> descrito en el apartado anterior consigue buenos resultados cuando el límite de separación entre clases es aproximadamente lineal. Si no lo es, su capacidad decae drásticamente. Una estrategia para enfrentarse a escenarios en los que la separación de los grupos es de tipo no lineal consiste en expandir las dimensiones del espacio original.</p>
+<p>El hecho de que los grupos no sean linealmente separables en el espacio original no significa que no lo sean en un espacio de mayores dimensiones. Las imágenes siguientes muestran dos grupos cuya separación en dos dimensiones no es lineal, pero sí lo es al añadir una tercera dimensión.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/svm005.png" width="400" height="400" class="figure-img"></p>
+</figure>
+</div>
+<p>El método de Máquinas Vector Soporte (SVM) se puede considerar como una extensión del <em>Support Vector Classifier</em> obtenida al aumentar la dimensión de los datos. Los límites de separación lineales generados en el espacio aumentado se convierten en límites de separación no lineales al proyectarlos en el espacio original. Este algoritmo se estudiará con detalle en el cuaderno siguiente, ya que por el momento nos centramos en la aplicación del <em>Support Vector Classifier</em> en problemas de clasificación y regresión.</p>
+</section>
+</section>
+<section id="sec-110.2" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="sec-110.2"><span class="header-section-number">11.2</span> Máquinas de vector soporte</h2>
+<p>Como hemos visto en la última imagen es necesario expandir las dimensiones del problema en cuestión para poder obtener clasificadores basados en hiperplanos lineales. A continuación, estudiamos los aspectos teóricos correspondientes a las máquinas de vector de soporte en este tipo de situaciones.</p>
+<p>La pregunta que nos queda por responder es ¿cómo aumentamos la dimensión del espacio y cual es la dimensión correcta que debemos utilizar? La dimensión de un conjunto de datos puede transformarse combinando o modificando cualquiera de sus dimensiones. Por ejemplo, se puede transformar un espacio de dos dimensiones en uno de tres aplicando la siguiente función:</p>
+<p><span class="math display">\[𝑓(𝑥_1,𝑥_2)=(𝑥_1^2,2\sqrt{x_1 x_2},𝑥_2^2)\]</span></p>
+<p>Esta es solo una de las infinitas transformaciones posibles, ¿cómo saber cuál es la adecuada? Es aquí donde el concepto de kernel entra en juego. Un kernel (K) es una función que devuelve el resultado del producto escalar entre dos vectores realizado en un nuevo espacio dimensional distinto al espacio original en el que se encuentran los vectores. Aunque no se ha entrado en detalle en las fórmulas matemáticas empleadas para resolver el problema de optimización, esta contiene un producto escalar. Si se sustituye este producto escalar por un kernel, se obtienen directamente los vectores soporte (y el hiperplano) en la dimensión correspondiente al kernel. A esto se le suele conocer como <em>kernel trick</em> porque, con solo una ligera modificación del problema original, se puede obtener el resultado para cualquier dimensión. A continuación se muestran los más utilizados. De ahora en adelante:</p>
+<p><span class="math display">\[&lt;x_i, x_j&gt; = x_i^t x_j\]</span></p>
+<p>representa el producto escalar entre <span class="math inline">\(x_i\)</span> y <span class="math inline">\(x_j\)</span>.</p>
+<section id="sec-110.2.1" class="level3" data-number="11.2.1">
+<h3 data-number="11.2.1" class="anchored" data-anchor-id="sec-110.2.1"><span class="header-section-number">11.2.1</span> Kernel lineal</h3>
+<p>El kernel viene definido por la expresión:</p>
+<p><span class="math display">\[k(x_i, x_j) = x^t_i x_j,\]</span></p>
+<p>que es simplemente el producto escalar del vector de características. Si se emplea un Kernel lineal, el clasificador que obtenemos es idéntico al que obteníamos en el cuaderno anterior sin el aumento de dimensiones.</p>
+</section>
+<section id="sec-110.2.2" class="level3" data-number="11.2.2">
+<h3 data-number="11.2.2" class="anchored" data-anchor-id="sec-110.2.2"><span class="header-section-number">11.2.2</span> Kernel polinómico</h3>
+<p>El kernel viene definido por la expresión:</p>
+<p><span class="math display">\[k(x_i, x_j) = (\gamma x^t_i x_j + \tau)^d.\]</span></p>
+<p>Cuando se emplea <span class="math inline">\(𝑑=1\)</span> y <span class="math inline">\(\tau = 0\)</span>, el resultado es el mismo que el de un kernel lineal. Si <span class="math inline">\(𝑑&gt;1\)</span> , se generan límites de decisión no lineales, aumentando la no linealidad a medida que aumenta <span class="math inline">\(𝑑\)</span>. No suele ser recomendable emplear valores de <span class="math inline">\(𝑑\)</span> mayores a 5 por problemas de sobreajuste. El valor de <span class="math inline">\(\gamma\)</span> controla el comportamiento del kernel.</p>
+</section>
+<section id="sec-110.2.3" class="level3" data-number="11.2.3">
+<h3 data-number="11.2.3" class="anchored" data-anchor-id="sec-110.2.3"><span class="header-section-number">11.2.3</span> Kernel Gaussiano (RBF)</h3>
+<p>El kernel viene definido por la expresión:</p>
+<p><span class="math display">\[k(x_i, x_j) = exp(-\gamma||x-x^t||^2), \quad \gamma &gt;0.\]</span></p>
+<p>El valor de <span class="math inline">\(\gamma\)</span> controla el comportamiento del kernel, cuando es muy pequeño, el modelo final es equivalente al obtenido con un kernel lineal. A medida que aumenta su valor, también lo hace la flexibilidad del modelo.</p>
+</section>
+<section id="sec-110.2.4" class="level3" data-number="11.2.4">
+<h3 data-number="11.2.4" class="anchored" data-anchor-id="sec-110.2.4"><span class="header-section-number">11.2.4</span> Kernel sigmoidal</h3>
+<p>El kernel viene definido por la expresión:</p>
+<p><span class="math display">\[k(x_i, x_j) = tanh(\gamma x^t_i x_j + \tau).\]</span></p>
+<p>Los kernels descritos son solo unos pocos de los muchos que existen. Cada uno tiene una serie de hiperparámetros cuyo valor óptimo puede encontrarse mediante validación cruzada. No puede decirse que haya un kernel que supere al resto, depende en gran medida de la naturaleza del problema que se esté tratando. Ahora bien, tal como indican los autores de A Practical Guide to Support Vector Classification, es muy recomendable probar el kernel RBF. Este kernel tiene dos ventajas: que solo tiene dos hiperparámetros que optimizar (𝛾y la penalización 𝐶 común a todos los SVM) y que su flexibilidad puede ir desde un clasificador lineal a uno muy complejo.</p>
+</section>
+<section id="sec-110.2.5" class="level3" data-number="11.2.5">
+<h3 data-number="11.2.5" class="anchored" data-anchor-id="sec-110.2.5"><span class="header-section-number">11.2.5</span> SVM en problemas de regresión</h3>
+<p>Las máquinas de vectores soporte (SVM) son bien conocidas en problemas de clasificación. Sin embargo, el uso de SVM en regresión no está tan bien documentado. Este tipo de modelos se conoce como regresión de vectores de soporte (SVR).</p>
+<p>En la mayoría de los modelos de regresión lineal, el objetivo es minimizar la suma de errores al cuadrado. Tomemos como ejemplo los mínimos cuadrados ordinarios (MCO). La función objetivo para MCO con un predictor (característica) es la siguiente:</p>
+<p><span class="math display">\[\underset{\beta}{min} \sum_{i=1}^n (y_i-\beta x_i)^2.\]</span></p>
+<p>Lasso, Ridge y ElasticNet son extensiones de esta sencilla ecuación, con un parámetro de penalización adicional que pretende minimizar la complejidad y/o reducir el número de características utilizadas en el modelo final. En cualquier caso, el objetivo -como ocurre con muchos modelos- es reducir el error del conjunto de pruebas.</p>
+<p>Sin embargo, ¿qué ocurre si sólo nos preocupa reducir el error hasta cierto punto? ¿Y si no nos importa lo grandes que sean nuestros errores, siempre que estén dentro de un rango aceptable?</p>
+<p>SVR nos da la flexibilidad de definir cuánto error es aceptable en nuestro modelo y encontrar una línea adecuada (o hiperplano en dimensiones superiores) para ajustarse a los datos.</p>
+<p>En contraste con OLS, la función objetivo de SVR se encarga de minimizar los coeficientes - más específicamente, la norma l2 del vector de coeficientes - no el error al cuadrado. El término de error se maneja en las restricciones, donde se establece el error absoluto menor o igual a un margen especificado, llamado el error máximo, <span class="math inline">\(\epsilon\)</span>. Podemos ajustar epsilon para obtener la precisión deseada de nuestro modelo. Nuestra nueva función objetivo y las restricciones son las siguientes:</p>
+<p><span class="math display">\[\text{Función: }\underset{\beta}{min} \quad \frac{1}{2} ||\mathbf{\beta}||^2 \]</span></p>
+<p><span class="math display">\[\text{Restricción: } |y_i-\beta x_i| \leq \epsilon\]</span> <img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/svm006.png" data-fig-align="center" width="400" height="400"> Este algoritmo no está exento de problemas ya que aunque se resuelve la función objetivo algunos de los puntos siguen quedando fuera de los márgenes establecidos. Como tal, tenemos que tener en cuenta la posibilidad de errores que sean mayores que <span class="math inline">\(\epsilon\)</span>. Esto se hace introduciendo variables de holgura.</p>
+<p>El concepto de variables de holgura es sencillo: para cualquier valor que quede fuera de <span class="math inline">\(\epsilon\)</span>, podemos denotar su desviación del margen como <span class="math inline">\(\xi\)</span>. Sabemos que estas desviaciones pueden existir, pero aun así nos gustaría minimizarlas en la medida de lo posible. Por lo tanto, podemos añadir estas desviaciones a la función objetivo:</p>
+<p><span class="math display">\[\text{Función: }\underset{\beta}{min} \quad \frac{1}{2} ||\mathbf{\beta}||^2 + C \sum_{i=1}^n |\xi|\]</span></p>
+<p><span class="math display">\[\text{Restricción: } |y_i-\beta x_i| \leq \epsilon + |\xi|\]</span> <img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/svm007.png" data-fig-align="center" width="400" height="400"> Ahora tenemos un hiperparámetro adicional, C, que podemos ajustar. A medida que C aumenta, nuestra tolerancia para los puntos fuera de ϵ también aumenta. A medida que C se acerca a 0, la tolerancia se aproxima a 0 y la ecuación colapsa en la simplificada (aunque a veces inviable).</p>
+<p>Antes de comenzar con la implementación de las SVM en <code>mlr3</code> vamos a cargar las librarías necesarias:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Paquetes anteriores</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(knitr) <span class="co"># para formatos de tablas</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">library</span>(DataExplorer)</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="fu">library</span>(cvms)</span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="fu">library</span>(kknn)</span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="fu">theme_set</span>(<span class="fu">theme_sjplot2</span>())</span>
+<span id="cb1-13"><a href="#cb1-13"></a></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co"># Paquetes AA</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="fu">library</span>(mlr3verse)</span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="fu">library</span>(mlr3tuning)</span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="fu">library</span>(mlr3tuningspaces)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="sec-110.3" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="sec-110.3"><span class="header-section-number">11.3</span> Máquinas de vector soporte en mlr3</h2>
+<p>Para implementar las máquinas de vector soporte en el paquete <code>mlr3</code> disponemos de dos funciones:</p>
+<ul>
+<li><code>regr.svm</code> para tareas de regresión.</li>
+<li><code>classif.svm</code> para tareas de clasificación</li>
+</ul>
+<p>que utilizan como base las funciones definidas en la librería <code>e1071</code>.</p>
+<p>Podemos cargar los algoritmos con el código siguiente:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Learner tarea de clasificación</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>lsvm_classif <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.svm"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="co"># Learner tarea de regresión</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>lsvm_regr <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"regr.svm"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En este caso los hiperparámetros de ambos algoritmos no son los mismos aunque coinciden en la mayoría. A continuación se muestran todos ellos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Hiperparámetros para SVM clasificación</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>lsvm_classif<span class="sc">$</span>param_set<span class="sc">$</span><span class="fu">ids</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "cachesize"       "class.weights"   "coef0"           "cost"           
+ [5] "cross"           "decision.values" "degree"          "epsilon"        
+ [9] "fitted"          "gamma"           "kernel"          "nu"             
+[13] "scale"           "shrinking"       "tolerance"       "type"           </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Hiperparámetros para SVM regresión</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>lsvm_regr<span class="sc">$</span>param_set<span class="sc">$</span><span class="fu">ids</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "cachesize" "coef0"     "cost"      "cross"     "degree"    "epsilon"  
+ [7] "fitted"    "gamma"     "kernel"    "nu"        "scale"     "shrinking"
+[13] "tolerance" "type"     </code></pre>
+</div>
+</div>
+<p>Los parámetros más relevantes son:</p>
+<ul>
+<li><code>scale</code>: valor lógico que indica si debemos estandarizar las variables.</li>
+<li><code>kernel</code>: que indica el kernel a utilizar (<code>linear</code>, <code>polynomial</code>, <code>radial</code> o rbf, y <code>sigmoid</code>). Por defecto se usa el <code>radial</code>.</li>
+<li><code>degree</code>: parámetro <span class="math inline">\(d\)</span> del kernel polinómico. Por defecto se utiliza el valor 3.</li>
+<li><code>gamma</code>: parámetro <span class="math inline">\(\gamma\)</span> de todos los kernel salvo el lineal. Por defecto toma el valor <span class="math inline">\(1/muestras\)</span>.</li>
+<li><code>coef0</code>: parámetro <span class="math inline">\(\tau\)</span> de los kernel polinomial y sigmoidal. Por defecto toma el valor 0.</li>
+<li><code>cost</code>: parámetro <span class="math inline">\(C\)</span> que representa el coste establecido por la violación del contraste. Por defecto toma el valor 1.</li>
+<li><code>tolerance</code>: tolerancia para la finalización del algoritmo. Valor por defecto igual a 0.001.</li>
+<li><code>epsilon</code>: epsilon en la función de pérdida. Por defecto toma el valor 0.1</li>
+</ul>
+</section>
+<section id="sec-110.4" class="level2" data-number="11.4">
+<h2 data-number="11.4" class="anchored" data-anchor-id="sec-110.4"><span class="header-section-number">11.4</span> Bancos de datos</h2>
+<p>Para ejemplificar el uso de estos algoritmos vamos a introducir los bancos de datos <code>stroke</code> y <code>penguins</code>. En este caso vamos a modificar el objetivo del banco de datos <code>penguins</code>, ya que cambiamos a una tarea de clasificación donde estamos interesados en determinar el sexo del sujeto en función del resto de predictoras. Vamos a cargar los datos y prepararlos para el análisis definiendo las tareas correspondientes y el código de preprocesado. Como estos algoritmos no permiten trabajar directamente con predictoras de tipo factor es necesario hacer una codificación en el preprocesamiento.</p>
+<section id="sec-110.4.1" class="level3" data-number="11.4.1">
+<h3 data-number="11.4.1" class="anchored" data-anchor-id="sec-110.4.1"><span class="header-section-number">11.4.1</span> Stroke</h3>
+<p>Según la Organización Mundial de la Salud (OMS), el ictus es la segunda causa de muerte en el mundo, responsable de aproximadamente el 11% del total de fallecimientos. El banco de datos Stroke se utiliza para predecir si es probable que un paciente sufra un ictus en función de los parámetros de entrada como el sexo, la edad, diversas enfermedades y estatus de fumador. Cada fila de los datos proporciona información relevante sobre el paciente. El objetivo se encuentra en la variable <code>stroke</code> que puede tomar dos valores posibles. Hay valores perdidos en la variable <code>bmi</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Leemos datos</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>stroke <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"stroke.rds"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="co"># creamos la tarea</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>tsk_stroke <span class="ot">=</span> <span class="fu">as_task_classif</span>(stroke, <span class="at">target =</span> <span class="st">"stroke"</span>)</span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="co"># información de la tarea</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="fu">print</span>(tsk_stroke)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;TaskClassif:stroke&gt; (5110 x 12)
+* Target: stroke
+* Properties: twoclass
+* Features (11):
+  - fct (7): Residence_type, ever_married, gender, heart_disease,
+    hypertension, smoking_status, work_type
+  - dbl (4): age, avg_glucose_level, bmi, id</code></pre>
+</div>
+</div>
+<p>Representamos la información contenida en la tarea</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">autoplot</span>(tsk_stroke, <span class="at">type =</span><span class="st">"duo"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="110_SVMmodels_files/figure-html/svm-005-1.png" class="img-fluid figure-img" width="960"></p>
+<p></p><figcaption class="figure-caption">Representación gráfica tarea stroke</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Generamos ahora el código para el preprocesado de los datos. En este caso tenemos imputación, estandarización y codificación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>pp_stroke <span class="ot">=</span> </span>
+<span id="cb10-2"><a href="#cb10-2"></a>   <span class="fu">po</span>(<span class="st">"scale"</span>, <span class="at">param_vals =</span> <span class="fu">list</span>(<span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a>   <span class="fu">po</span>(<span class="st">"imputemedian"</span>, <span class="at">affect_columns =</span> <span class="fu">selector_type</span>(<span class="st">"numeric"</span>)) <span class="sc">%&gt;&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a>   <span class="fu">po</span>(<span class="st">"encode"</span>, <span class="at">param_vals =</span> <span class="fu">list</span>(<span class="at">method =</span> <span class="st">"one-hot"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Por último creamos la división de muestras:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co"># Generamos variable de estrato</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>tsk_stroke<span class="sc">$</span>col_roles<span class="sc">$</span>stratum <span class="ot">&lt;-</span> <span class="st">"stroke"</span></span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="co"># Fijamos semilla para asegurar la reproducibilidad del modelo</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="co"># Creamos la partición</span></span>
+<span id="cb11-6"><a href="#cb11-6"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_stroke, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb11-7"><a href="#cb11-7"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb11-8"><a href="#cb11-8"></a>tsk_train_stroke <span class="ot">=</span> tsk_stroke<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb11-9"><a href="#cb11-9"></a>tsk_test_stroke  <span class="ot">=</span> tsk_stroke<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="penguins" class="level3" data-number="11.4.2">
+<h3 data-number="11.4.2" class="anchored" data-anchor-id="penguins"><span class="header-section-number">11.4.2</span> Penguins</h3>
+<p>El banco de datos ya ha sido descrito en detalle en temas anteriores, salvo por el hecho de que cambiamos a una tarea de clasificación. En este caso tenemos valores perdidos en la respuesta y debemos eliminar dichas muestras.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># Leemos datos</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>penguins <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"penguins.rds"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="co"># Seleccionamos observaciones missing</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a>ids <span class="ot">=</span> <span class="fu">which</span>(<span class="fu">is.na</span>(penguins<span class="sc">$</span>sex) <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb12-5"><a href="#cb12-5"></a>data_penguins <span class="ot">=</span> penguins[<span class="sc">-</span>ids,]</span>
+<span id="cb12-6"><a href="#cb12-6"></a><span class="co"># creamos la tarea</span></span>
+<span id="cb12-7"><a href="#cb12-7"></a>tsk_penguins <span class="ot">=</span> <span class="fu">as_task_classif</span>(data_penguins, <span class="at">target =</span> <span class="st">"sex"</span>)</span>
+<span id="cb12-8"><a href="#cb12-8"></a><span class="co"># información de la tarea</span></span>
+<span id="cb12-9"><a href="#cb12-9"></a><span class="fu">print</span>(tsk_penguins)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;TaskClassif:data_penguins&gt; (333 x 9)
+* Target: sex
+* Properties: twoclass
+* Features (8):
+  - dbl (6): Id, bill_depth_mm, bill_length_mm, body_mass_g,
+    flipper_length_mm, year
+  - fct (2): island, species</code></pre>
+</div>
+</div>
+<p>Representamos la información contenida en la tarea</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="fu">autoplot</span>(tsk_penguins, <span class="at">type =</span><span class="st">"duo"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="110_SVMmodels_files/figure-html/svm-009-1.png" class="img-fluid figure-img" width="960"></p>
+<p></p><figcaption class="figure-caption">Representación gráfica tarea penguins</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Generamos ahora el código para el preprocesado de los datos. En este caso tenemos estandarización y codificación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>pp_penguins <span class="ot">=</span> </span>
+<span id="cb15-2"><a href="#cb15-2"></a>   <span class="fu">po</span>(<span class="st">"scale"</span>, <span class="at">param_vals =</span> <span class="fu">list</span>(<span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3"></a>   <span class="fu">po</span>(<span class="st">"encode"</span>, <span class="at">param_vals =</span> <span class="fu">list</span>(<span class="at">method =</span> <span class="st">"one-hot"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Por último creamos la división de muestras:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="co"># Generamos variable de estrato</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a>tsk_penguins<span class="sc">$</span>col_roles<span class="sc">$</span>stratum <span class="ot">&lt;-</span> <span class="st">"sex"</span></span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="co"># Fijamos semilla para asegurar la reproducibilidad del modelo</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="fu">set.seed</span>(<span class="dv">135</span>)</span>
+<span id="cb16-5"><a href="#cb16-5"></a><span class="co"># Creamos la partición</span></span>
+<span id="cb16-6"><a href="#cb16-6"></a>splits <span class="ot">=</span> mlr3<span class="sc">::</span><span class="fu">partition</span>(tsk_penguins, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb16-7"><a href="#cb16-7"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb16-8"><a href="#cb16-8"></a>tsk_train_penguins <span class="ot">=</span> tsk_penguins<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>train)</span>
+<span id="cb16-9"><a href="#cb16-9"></a>tsk_test_penguins  <span class="ot">=</span> tsk_penguins<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(splits<span class="sc">$</span>test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="sec-110.5" class="level2" data-number="11.5">
+<h2 data-number="11.5" class="anchored" data-anchor-id="sec-110.5"><span class="header-section-number">11.5</span> Nuestros primeros modelos</h2>
+<p>En primer lugar consideramos modelos básicos de SVM para los dos bancos de datos presentados. Trabajaremos con las opciones por defecto para poder comparar los resultados con el modelo optimizado que veremos posteriormente. También compararemos los resultados con otros modelos de clasificación de los estudiados hasta ahora.</p>
+<section id="sec-110.5.1" class="level3" data-number="11.5.1">
+<h3 data-number="11.5.1" class="anchored" data-anchor-id="sec-110.5.1"><span class="header-section-number">11.5.1</span> Stroke</h3>
+<p>En primer lugar generamos el graphlearner correspondiente a este banco de datos y entrenamos el algoritmo. Como ya estandarizamos los datos ponemos como false al parámetro <code>scale</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># Definimos learner para predecir la probabilidad</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a>lsvm_classif <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.svm"</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb17-3"><a href="#cb17-3"></a><span class="co"># Graphlearner</span></span>
+<span id="cb17-4"><a href="#cb17-4"></a>gr <span class="ot">=</span> pp_stroke <span class="sc">%&gt;&gt;%</span> lsvm_classif</span>
+<span id="cb17-5"><a href="#cb17-5"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span>
+<span id="cb17-6"><a href="#cb17-6"></a><span class="co"># Entrenamiento</span></span>
+<span id="cb17-7"><a href="#cb17-7"></a>gr<span class="sc">$</span><span class="fu">train</span>(tsk_train_stroke)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos estudiar el funcionamiento del algoritmo una vez obtenidas las predicciones tanto para la muestra de entrenamiento y validación. En este caso consideramos diferentes métricas para valorar la clasificación obtenida.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="co"># Predicción de la muestra de entrenamiento y validación</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a>pred_train <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_train_stroke)</span>
+<span id="cb18-3"><a href="#cb18-3"></a>pred_test <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_test_stroke)</span>
+<span id="cb18-4"><a href="#cb18-4"></a><span class="co"># scores de validación</span></span>
+<span id="cb18-5"><a href="#cb18-5"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"classif.acc"</span>, <span class="st">"classif.bacc"</span>, <span class="st">"classif.bbrier"</span>, <span class="st">"classif.auc"</span>))</span>
+<span id="cb18-6"><a href="#cb18-6"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb18-7"><a href="#cb18-7"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc   classif.bacc classif.bbrier    classif.auc 
+    0.95181018     0.50502513     0.04156817     0.92280766 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb20-2"><a href="#cb20-2"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc   classif.bacc classif.bbrier    classif.auc 
+    0.95107632     0.50000000     0.04521452     0.66539095 </code></pre>
+</div>
+</div>
+<p>Centrándonos en la muestra de validación, el porcentaje de clasificación correcta parece indicar que el modelo propuesto es muy adecuado, sin embargo el porcentaje de clasificación correcta ponderado nos indica que solo el 50% de los casos (ponderarlos por su peso en el banco de datos) ha sido clasificado correctamente. Esto ocurre en ocasiones cuando una de las categorías de la respuesta está muy desequilibrada con respecto a la otra. De hecho, un efecto similar ocurre con le valor de AUC. Podemos estudiar con más detalle este efecto mediante la matriz de confusión.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="co"># Cargamos la librería para representar la matriz de confusión</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a>cm <span class="ot">=</span> <span class="fu">confusion_matrix</span>(pred_test<span class="sc">$</span>truth, pred_test<span class="sc">$</span>response)</span>
+<span id="cb22-3"><a href="#cb22-3"></a><span class="fu">plot_confusion_matrix</span>(cm<span class="sc">$</span><span class="st">`</span><span class="at">Confusion Matrix</span><span class="st">`</span>[[<span class="dv">1</span>]]) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="110_SVMmodels_files/figure-html/svm-014-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En la tabla se aprecia claramente el efecto comentado anteriormente. Ninguna de las observaciones originales clasificadas con ictus es clasifica de forma correcta por el modelo (lo que provoca u porcentaje de clasificación correcta ponderado del 50%). De hecho, podemos ver que le porcentaje de clasificación correcta del 95.1% se corresponde únicamente con las observaciones originales que no habían padecido ictus. Este porcentaje es así de alto por la diferencia de muestras en ambos grupos (972 para los que no han sufrido ictus, frente a los 50 que si lo han sufrido). Podemos concluir que el modelo no resulta efectivo ya que no es capaz de clasificar ninguna observación del grupo de los que han sufrido ictus.</p>
+<p>En los puntos siguientes vernos si podemos modificar el algoritmo para mejorar nuestros resultados. De momento vamos a compara los resultados con otros algoritmos de clasificación como el clasificador Bayes y el algoritmo kNN con sus opciones por defecto. Para ello establecemos los modelos de aprendizaje y evaluamos el porcentaje de clasificación correcta ponderada en ambas situaciones.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># Learner naïve Bayes</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a>lrn_nb <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.naive_bayes"</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb23-3"><a href="#cb23-3"></a>gr_nb <span class="ot">=</span> <span class="fu">as_learner</span>(pp_stroke <span class="sc">%&gt;&gt;%</span> lrn_nb)</span>
+<span id="cb23-4"><a href="#cb23-4"></a><span class="co"># Learner kNN</span></span>
+<span id="cb23-5"><a href="#cb23-5"></a>lrn_knn <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.kknn"</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb23-6"><a href="#cb23-6"></a>gr_knn <span class="ot">=</span> <span class="fu">as_learner</span>(pp_stroke <span class="sc">%&gt;&gt;%</span> lrn_knn)</span>
+<span id="cb23-7"><a href="#cb23-7"></a><span class="co"># Definimos modelo de remuestreo</span></span>
+<span id="cb23-8"><a href="#cb23-8"></a>remuestreo <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>)</span>
+<span id="cb23-9"><a href="#cb23-9"></a><span class="co"># Grid de comparación de modelos</span></span>
+<span id="cb23-10"><a href="#cb23-10"></a>design <span class="ot">=</span> <span class="fu">benchmark_grid</span>(tsk_stroke, <span class="fu">list</span>(gr, gr_nb, gr_knn), remuestreo)</span>
+<span id="cb23-11"><a href="#cb23-11"></a><span class="co"># Combinación de soluciones</span></span>
+<span id="cb23-12"><a href="#cb23-12"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(design)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [17:43:59.963] [mlr3] Running benchmark with 30 resampling iterations
+INFO  [17:44:00.049] [mlr3] Applying learner 'scale.imputemedian.encode.classif.svm' on task 'stroke' (iter 1/10)
+INFO  [17:44:04.430] [mlr3] Applying learner 'scale.imputemedian.encode.classif.svm' on task 'stroke' (iter 2/10)
+INFO  [17:44:07.807] [mlr3] Applying learner 'scale.imputemedian.encode.classif.svm' on task 'stroke' (iter 3/10)
+INFO  [17:44:11.167] [mlr3] Applying learner 'scale.imputemedian.encode.classif.svm' on task 'stroke' (iter 4/10)
+INFO  [17:44:14.495] [mlr3] Applying learner 'scale.imputemedian.encode.classif.svm' on task 'stroke' (iter 5/10)
+INFO  [17:44:17.437] [mlr3] Applying learner 'scale.imputemedian.encode.classif.svm' on task 'stroke' (iter 6/10)
+INFO  [17:44:20.242] [mlr3] Applying learner 'scale.imputemedian.encode.classif.svm' on task 'stroke' (iter 7/10)
+INFO  [17:44:22.961] [mlr3] Applying learner 'scale.imputemedian.encode.classif.svm' on task 'stroke' (iter 8/10)
+INFO  [17:44:26.258] [mlr3] Applying learner 'scale.imputemedian.encode.classif.svm' on task 'stroke' (iter 9/10)
+INFO  [17:44:29.278] [mlr3] Applying learner 'scale.imputemedian.encode.classif.svm' on task 'stroke' (iter 10/10)
+INFO  [17:44:32.043] [mlr3] Applying learner 'scale.imputemedian.encode.classif.naive_bayes' on task 'stroke' (iter 1/10)
+INFO  [17:44:32.580] [mlr3] Applying learner 'scale.imputemedian.encode.classif.naive_bayes' on task 'stroke' (iter 2/10)
+INFO  [17:44:33.130] [mlr3] Applying learner 'scale.imputemedian.encode.classif.naive_bayes' on task 'stroke' (iter 3/10)
+INFO  [17:44:33.665] [mlr3] Applying learner 'scale.imputemedian.encode.classif.naive_bayes' on task 'stroke' (iter 4/10)
+INFO  [17:44:34.190] [mlr3] Applying learner 'scale.imputemedian.encode.classif.naive_bayes' on task 'stroke' (iter 5/10)
+INFO  [17:44:34.713] [mlr3] Applying learner 'scale.imputemedian.encode.classif.naive_bayes' on task 'stroke' (iter 6/10)
+INFO  [17:44:35.242] [mlr3] Applying learner 'scale.imputemedian.encode.classif.naive_bayes' on task 'stroke' (iter 7/10)
+INFO  [17:44:35.777] [mlr3] Applying learner 'scale.imputemedian.encode.classif.naive_bayes' on task 'stroke' (iter 8/10)
+INFO  [17:44:36.319] [mlr3] Applying learner 'scale.imputemedian.encode.classif.naive_bayes' on task 'stroke' (iter 9/10)
+INFO  [17:44:36.857] [mlr3] Applying learner 'scale.imputemedian.encode.classif.naive_bayes' on task 'stroke' (iter 10/10)
+INFO  [17:44:37.442] [mlr3] Applying learner 'scale.imputemedian.encode.classif.kknn' on task 'stroke' (iter 1/10)
+INFO  [17:44:37.850] [mlr3] Applying learner 'scale.imputemedian.encode.classif.kknn' on task 'stroke' (iter 2/10)
+INFO  [17:44:38.329] [mlr3] Applying learner 'scale.imputemedian.encode.classif.kknn' on task 'stroke' (iter 3/10)
+INFO  [17:44:38.768] [mlr3] Applying learner 'scale.imputemedian.encode.classif.kknn' on task 'stroke' (iter 4/10)
+INFO  [17:44:39.172] [mlr3] Applying learner 'scale.imputemedian.encode.classif.kknn' on task 'stroke' (iter 5/10)
+INFO  [17:44:39.582] [mlr3] Applying learner 'scale.imputemedian.encode.classif.kknn' on task 'stroke' (iter 6/10)
+INFO  [17:44:40.050] [mlr3] Applying learner 'scale.imputemedian.encode.classif.kknn' on task 'stroke' (iter 7/10)
+INFO  [17:44:40.531] [mlr3] Applying learner 'scale.imputemedian.encode.classif.kknn' on task 'stroke' (iter 8/10)
+INFO  [17:44:40.995] [mlr3] Applying learner 'scale.imputemedian.encode.classif.kknn' on task 'stroke' (iter 9/10)
+INFO  [17:44:41.480] [mlr3] Applying learner 'scale.imputemedian.encode.classif.kknn' on task 'stroke' (iter 10/10)
+INFO  [17:44:41.956] [mlr3] Finished benchmark</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="co"># Solución agregada del criterio de validación</span></span>
+<span id="cb25-2"><a href="#cb25-2"></a>bmr<span class="sc">$</span><span class="fu">aggregate</span>(<span class="fu">msr</span>(<span class="st">"classif.bacc"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   nr task_id                                    learner_id resampling_id iters
+1:  1  stroke         scale.imputemedian.encode.classif.svm            cv    10
+2:  2  stroke scale.imputemedian.encode.classif.naive_bayes            cv    10
+3:  3  stroke        scale.imputemedian.encode.classif.kknn            cv    10
+   classif.bacc
+1:    0.5016916
+2:    0.6755137
+3:    0.5056038
+Hidden columns: resample_result</code></pre>
+</div>
+</div>
+<p>Aunque con le clasificador naïve bayes alcanzamos un 66% de clasificación correcta, también es cierto que con el kNN por defecto alcanzamos un valor similar que con SVM. Esto refuerza el hecho de que es necesario mejorar nuestro modelo, si es posible, ya que tenemos otro algoritmo con le que alcanzamos resultados mucho mejores.</p>
+</section>
+<section id="sec-110.5.2" class="level3" data-number="11.5.2">
+<h3 data-number="11.5.2" class="anchored" data-anchor-id="sec-110.5.2"><span class="header-section-number">11.5.2</span> Penguins</h3>
+<p>Analizamos ahora el banco de datos <code>penguins</code> comenzando por definir el graphlearner asociado.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="co"># Definimos learner para predecir la probabilidad</span></span>
+<span id="cb27-2"><a href="#cb27-2"></a>lsvm_classif <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.svm"</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb27-3"><a href="#cb27-3"></a><span class="co"># Graphlearner</span></span>
+<span id="cb27-4"><a href="#cb27-4"></a>gr <span class="ot">=</span> pp_penguins <span class="sc">%&gt;&gt;%</span> lsvm_classif</span>
+<span id="cb27-5"><a href="#cb27-5"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span>
+<span id="cb27-6"><a href="#cb27-6"></a><span class="co"># Entrenamiento</span></span>
+<span id="cb27-7"><a href="#cb27-7"></a>gr<span class="sc">$</span><span class="fu">train</span>(tsk_train_penguins)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Analizamos ahora la validez el modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a><span class="co"># Predicción de la muestra de entrenamiento y validación</span></span>
+<span id="cb28-2"><a href="#cb28-2"></a>pred_train <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_train_penguins)</span>
+<span id="cb28-3"><a href="#cb28-3"></a>pred_test <span class="ot">=</span> gr<span class="sc">$</span><span class="fu">predict</span>(tsk_test_penguins)</span>
+<span id="cb28-4"><a href="#cb28-4"></a><span class="co"># scores de validación</span></span>
+<span id="cb28-5"><a href="#cb28-5"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"classif.acc"</span>, <span class="st">"classif.bacc"</span>, <span class="st">"classif.bbrier"</span>, <span class="st">"classif.auc"</span>))</span>
+<span id="cb28-6"><a href="#cb28-6"></a><span class="co"># Muestra de entrenamiento</span></span>
+<span id="cb28-7"><a href="#cb28-7"></a>pred_train<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc   classif.bacc classif.bbrier    classif.auc 
+    0.92481203     0.92480778     0.05423681     0.97840344 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a><span class="co"># Muestra de validación</span></span>
+<span id="cb30-2"><a href="#cb30-2"></a>pred_test<span class="sc">$</span><span class="fu">score</span>(measures)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   classif.acc   classif.bacc classif.bbrier    classif.auc 
+    0.92537313     0.92557932     0.04704015     0.98752228 </code></pre>
+</div>
+</div>
+<p>En este caso tanto el porcentaje de clasificación correcta como el ponderado son muy similares y superiores al 90% indicando que el modelo funciona relativamente bien para clasificar las posibles respuestas en función de las predictoras consideradas. tanto el score de brier como e AUC proporcionan resultados satisfactorios. Veamos por último la matriz de confusión:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a><span class="co"># Cargamos la librería para representar la matriz de confusión</span></span>
+<span id="cb32-2"><a href="#cb32-2"></a>cm <span class="ot">=</span> <span class="fu">confusion_matrix</span>(pred_test<span class="sc">$</span>truth, pred_test<span class="sc">$</span>response)</span>
+<span id="cb32-3"><a href="#cb32-3"></a><span class="fu">plot_confusion_matrix</span>(cm<span class="sc">$</span><span class="st">`</span><span class="at">Confusion Matrix</span><span class="st">`</span>[[<span class="dv">1</span>]]) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="110_SVMmodels_files/figure-html/svm-018-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En este caso tenemos un 7.5% de porcentaje de error de clasificación par la muestra de validación, pero no tenemos el efecto inadecuado del modelo como en el banco de datos <code>stroke</code>.</p>
+<p>Como en el caso anterior vamos a comparar los resultados de este algoritmo con otros utilizados anteriormente.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a><span class="co"># Learner naïve Bayes</span></span>
+<span id="cb33-2"><a href="#cb33-2"></a>lrn_nb <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.naive_bayes"</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb33-3"><a href="#cb33-3"></a>gr_nb <span class="ot">=</span> <span class="fu">as_learner</span>(pp_penguins <span class="sc">%&gt;&gt;%</span> lrn_nb)</span>
+<span id="cb33-4"><a href="#cb33-4"></a><span class="co"># Learner kNN</span></span>
+<span id="cb33-5"><a href="#cb33-5"></a>lrn_knn <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.kknn"</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb33-6"><a href="#cb33-6"></a>gr_knn <span class="ot">=</span> <span class="fu">as_learner</span>(pp_penguins <span class="sc">%&gt;&gt;%</span> lrn_knn)</span>
+<span id="cb33-7"><a href="#cb33-7"></a><span class="co"># Definimos modelo de remuestreo</span></span>
+<span id="cb33-8"><a href="#cb33-8"></a>remuestreo <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>)</span>
+<span id="cb33-9"><a href="#cb33-9"></a><span class="co"># Grid de comparación de modelos</span></span>
+<span id="cb33-10"><a href="#cb33-10"></a>design <span class="ot">=</span> <span class="fu">benchmark_grid</span>(tsk_penguins, <span class="fu">list</span>(gr, gr_nb, gr_knn), remuestreo)</span>
+<span id="cb33-11"><a href="#cb33-11"></a><span class="co"># Combinación de soluciones</span></span>
+<span id="cb33-12"><a href="#cb33-12"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(design)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [17:44:43.708] [mlr3] Running benchmark with 30 resampling iterations
+INFO  [17:44:43.714] [mlr3] Applying learner 'scale.encode.classif.svm' on task 'data_penguins' (iter 1/10)
+INFO  [17:44:43.975] [mlr3] Applying learner 'scale.encode.classif.svm' on task 'data_penguins' (iter 2/10)
+INFO  [17:44:44.232] [mlr3] Applying learner 'scale.encode.classif.svm' on task 'data_penguins' (iter 3/10)
+INFO  [17:44:44.510] [mlr3] Applying learner 'scale.encode.classif.svm' on task 'data_penguins' (iter 4/10)
+INFO  [17:44:44.750] [mlr3] Applying learner 'scale.encode.classif.svm' on task 'data_penguins' (iter 5/10)
+INFO  [17:44:44.949] [mlr3] Applying learner 'scale.encode.classif.svm' on task 'data_penguins' (iter 6/10)
+INFO  [17:44:45.163] [mlr3] Applying learner 'scale.encode.classif.svm' on task 'data_penguins' (iter 7/10)
+INFO  [17:44:45.486] [mlr3] Applying learner 'scale.encode.classif.svm' on task 'data_penguins' (iter 8/10)
+INFO  [17:44:45.737] [mlr3] Applying learner 'scale.encode.classif.svm' on task 'data_penguins' (iter 9/10)
+INFO  [17:44:45.962] [mlr3] Applying learner 'scale.encode.classif.svm' on task 'data_penguins' (iter 10/10)
+INFO  [17:44:46.297] [mlr3] Applying learner 'scale.encode.classif.naive_bayes' on task 'data_penguins' (iter 1/10)
+INFO  [17:44:46.591] [mlr3] Applying learner 'scale.encode.classif.naive_bayes' on task 'data_penguins' (iter 2/10)
+INFO  [17:44:46.797] [mlr3] Applying learner 'scale.encode.classif.naive_bayes' on task 'data_penguins' (iter 3/10)
+INFO  [17:44:47.053] [mlr3] Applying learner 'scale.encode.classif.naive_bayes' on task 'data_penguins' (iter 4/10)
+INFO  [17:44:47.263] [mlr3] Applying learner 'scale.encode.classif.naive_bayes' on task 'data_penguins' (iter 5/10)
+INFO  [17:44:47.971] [mlr3] Applying learner 'scale.encode.classif.naive_bayes' on task 'data_penguins' (iter 6/10)
+INFO  [17:44:48.236] [mlr3] Applying learner 'scale.encode.classif.naive_bayes' on task 'data_penguins' (iter 7/10)
+INFO  [17:44:48.580] [mlr3] Applying learner 'scale.encode.classif.naive_bayes' on task 'data_penguins' (iter 8/10)
+INFO  [17:44:48.909] [mlr3] Applying learner 'scale.encode.classif.naive_bayes' on task 'data_penguins' (iter 9/10)
+INFO  [17:44:49.254] [mlr3] Applying learner 'scale.encode.classif.naive_bayes' on task 'data_penguins' (iter 10/10)
+INFO  [17:44:49.500] [mlr3] Applying learner 'scale.encode.classif.kknn' on task 'data_penguins' (iter 1/10)
+INFO  [17:44:49.690] [mlr3] Applying learner 'scale.encode.classif.kknn' on task 'data_penguins' (iter 2/10)
+INFO  [17:44:49.868] [mlr3] Applying learner 'scale.encode.classif.kknn' on task 'data_penguins' (iter 3/10)
+INFO  [17:44:50.106] [mlr3] Applying learner 'scale.encode.classif.kknn' on task 'data_penguins' (iter 4/10)
+INFO  [17:44:50.304] [mlr3] Applying learner 'scale.encode.classif.kknn' on task 'data_penguins' (iter 5/10)
+INFO  [17:44:50.484] [mlr3] Applying learner 'scale.encode.classif.kknn' on task 'data_penguins' (iter 6/10)
+INFO  [17:44:50.892] [mlr3] Applying learner 'scale.encode.classif.kknn' on task 'data_penguins' (iter 7/10)
+INFO  [17:44:51.271] [mlr3] Applying learner 'scale.encode.classif.kknn' on task 'data_penguins' (iter 8/10)
+INFO  [17:44:51.501] [mlr3] Applying learner 'scale.encode.classif.kknn' on task 'data_penguins' (iter 9/10)
+INFO  [17:44:51.739] [mlr3] Applying learner 'scale.encode.classif.kknn' on task 'data_penguins' (iter 10/10)
+INFO  [17:44:52.026] [mlr3] Finished benchmark</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a><span class="co"># Solución agregada del criterio de validación</span></span>
+<span id="cb35-2"><a href="#cb35-2"></a>bmr<span class="sc">$</span><span class="fu">aggregate</span>(<span class="fu">msr</span>(<span class="st">"classif.bacc"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   nr       task_id                       learner_id resampling_id iters
+1:  1 data_penguins         scale.encode.classif.svm            cv    10
+2:  2 data_penguins scale.encode.classif.naive_bayes            cv    10
+3:  3 data_penguins        scale.encode.classif.kknn            cv    10
+   classif.bacc
+1:    0.9130515
+2:    0.6965074
+3:    0.8979779
+Hidden columns: resample_result</code></pre>
+</div>
+</div>
+<p>En este caso el resultado obtenido con el algoritmo SVM es superior a los otros dos algoritmos. Con el kNN hay una diferencia de un 2%, pero con respecto a Naïve Bayes hay una mejora del 22% en el porcentaje de clasificación correcta. El algoritmo funciona bien y tan solo nos queda afinarlo un poco para tratar de mejorar si es posible dicho porcentaje.</p>
+</section>
+</section>
+<section id="sec-110.6" class="level2" data-number="11.6">
+<h2 data-number="11.6" class="anchored" data-anchor-id="sec-110.6"><span class="header-section-number">11.6</span> Optimizando los modelos</h2>
+<p>Para el proceso de optimización de los modelos vamos a considerar únicamente los parámetros <code>cost</code> y <code>gamma</code>, ya que fijaremos el kernel de tipo <code>radial</code>. Para favorecer la convergencia del algoritmo de optimización consideramos la transformación de los parámetros numéricos mediante la función logaritmo, ya que de esta forma se reduce el espacio de búsqueda. Además indicamos <code>type = "C-classification"</code> para indicar al proceso de optimización que estamos en un problema de clasificación.</p>
+<section id="sec-110.6.1" class="level3" data-number="11.6.1">
+<h3 data-number="11.6.1" class="anchored" data-anchor-id="sec-110.6.1"><span class="header-section-number">11.6.1</span> Stroke</h3>
+<p>Recuperamos y adaptamos el código que ya estudiamos en el tema <a href="60_RegressionModels.html"><span>6</span></a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a><span class="co"># Algoritmo de aprendizaje definiendo el espacio de búsqueda</span></span>
+<span id="cb37-2"><a href="#cb37-2"></a>lsvm_classif <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.svm"</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>,</span>
+<span id="cb37-3"><a href="#cb37-3"></a>                    <span class="at">kernel =</span> <span class="st">"radial"</span>,</span>
+<span id="cb37-4"><a href="#cb37-4"></a>                    <span class="at">gamma =</span> <span class="fu">to_tune</span>(<span class="fl">1e-04</span>, <span class="dv">10000</span>, <span class="at">logscale =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb37-5"><a href="#cb37-5"></a>                    <span class="at">cost =</span> <span class="fu">to_tune</span>(<span class="fl">1e-04</span>, <span class="dv">10000</span>, <span class="at">logscale =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb37-6"><a href="#cb37-6"></a>                    <span class="at">type =</span> <span class="st">"C-classification"</span>)</span>
+<span id="cb37-7"><a href="#cb37-7"></a><span class="co"># Proceso de aprendizaje</span></span>
+<span id="cb37-8"><a href="#cb37-8"></a>gr <span class="ot">=</span>  pp_stroke <span class="sc">%&gt;&gt;%</span> lsvm_classif</span>
+<span id="cb37-9"><a href="#cb37-9"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span>
+<span id="cb37-10"><a href="#cb37-10"></a></span>
+<span id="cb37-11"><a href="#cb37-11"></a><span class="co"># Fijamos semilla para reproducibilidad del proceso</span></span>
+<span id="cb37-12"><a href="#cb37-12"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb37-13"><a href="#cb37-13"></a><span class="co"># Definimos instancia de optimización fijando el número de evaluaciones</span></span>
+<span id="cb37-14"><a href="#cb37-14"></a>instance <span class="ot">=</span> <span class="fu">tune</span>(</span>
+<span id="cb37-15"><a href="#cb37-15"></a>  <span class="at">tuner =</span> <span class="fu">tnr</span>(<span class="st">"random_search"</span>),</span>
+<span id="cb37-16"><a href="#cb37-16"></a>  <span class="at">task =</span> tsk_stroke,</span>
+<span id="cb37-17"><a href="#cb37-17"></a>  <span class="at">learner =</span> gr,</span>
+<span id="cb37-18"><a href="#cb37-18"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">5</span>),</span>
+<span id="cb37-19"><a href="#cb37-19"></a>  <span class="at">measures =</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>),</span>
+<span id="cb37-20"><a href="#cb37-20"></a>  <span class="at">term_evals =</span> <span class="dv">15</span></span>
+<span id="cb37-21"><a href="#cb37-21"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Veamos los resultados obtenidos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a><span class="co"># Veamos si converge el algoritmo</span></span>
+<span id="cb38-2"><a href="#cb38-2"></a>instance<span class="sc">$</span>is_terminated</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a><span class="co"># Resultados del proceso de optimización</span></span>
+<span id="cb40-2"><a href="#cb40-2"></a>instance<span class="sc">$</span>result_learner_param_vals[<span class="fu">c</span>(<span class="st">"classif.svm.gamma"</span>, <span class="st">"classif.svm.cost"</span>)]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$classif.svm.gamma
+[1] 0.06846151
+
+$classif.svm.cost
+[1] 0.8649166</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a><span class="co"># Valor de la métrica para resultado óptimo</span></span>
+<span id="cb42-2"><a href="#cb42-2"></a>instance<span class="sc">$</span>result_y</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>classif.bacc 
+   0.5018971 </code></pre>
+</div>
+</div>
+<p>El proceso de optimización ha finalizado encontrando los valores óptimos de <code>gamma</code> y <code>cost</code>, pero sin embargo el porcentaje de clasificación ponderado sigue siendo del 50%. Esto muestra que este algoritmo no resulta válido para resolver este problema de clasificación.</p>
+</section>
+<section id="sec-110.6.2" class="level3" data-number="11.6.2">
+<h3 data-number="11.6.2" class="anchored" data-anchor-id="sec-110.6.2"><span class="header-section-number">11.6.2</span> Penguins</h3>
+<p>Procedemos ahora con el banco de datos penguins. Tomamos las mismas opciones de configuración que en el problema anterior.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a><span class="co"># Algoritmo de aprendizaje definiendo el espacio de búsqueda</span></span>
+<span id="cb44-2"><a href="#cb44-2"></a>lsvm_classif <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.svm"</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>, <span class="at">predict_type =</span> <span class="st">"prob"</span>,</span>
+<span id="cb44-3"><a href="#cb44-3"></a>                    <span class="at">kernel =</span> <span class="st">"radial"</span>,</span>
+<span id="cb44-4"><a href="#cb44-4"></a>                    <span class="at">gamma =</span> <span class="fu">to_tune</span>(<span class="fl">1e-04</span>, <span class="dv">10000</span>, <span class="at">logscale =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb44-5"><a href="#cb44-5"></a>                    <span class="at">cost =</span> <span class="fu">to_tune</span>(<span class="fl">1e-04</span>, <span class="dv">10000</span>, <span class="at">logscale =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb44-6"><a href="#cb44-6"></a>                    <span class="at">type =</span> <span class="st">"C-classification"</span>)</span>
+<span id="cb44-7"><a href="#cb44-7"></a><span class="co"># Proceso de aprendizaje</span></span>
+<span id="cb44-8"><a href="#cb44-8"></a>gr <span class="ot">=</span>  pp_penguins <span class="sc">%&gt;&gt;%</span> lsvm_classif</span>
+<span id="cb44-9"><a href="#cb44-9"></a>gr <span class="ot">=</span> GraphLearner<span class="sc">$</span><span class="fu">new</span>(gr)</span>
+<span id="cb44-10"><a href="#cb44-10"></a></span>
+<span id="cb44-11"><a href="#cb44-11"></a><span class="co"># Fijamos semilla para reproducibilidad del proceso</span></span>
+<span id="cb44-12"><a href="#cb44-12"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb44-13"><a href="#cb44-13"></a><span class="co"># Definimos instancia de optimización fijando el número de evaluaciones</span></span>
+<span id="cb44-14"><a href="#cb44-14"></a>instance <span class="ot">=</span> <span class="fu">tune</span>(</span>
+<span id="cb44-15"><a href="#cb44-15"></a>  <span class="at">tuner =</span> <span class="fu">tnr</span>(<span class="st">"random_search"</span>),</span>
+<span id="cb44-16"><a href="#cb44-16"></a>  <span class="at">task =</span> tsk_penguins,</span>
+<span id="cb44-17"><a href="#cb44-17"></a>  <span class="at">learner =</span> gr,</span>
+<span id="cb44-18"><a href="#cb44-18"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">10</span>),</span>
+<span id="cb44-19"><a href="#cb44-19"></a>  <span class="at">measures =</span> <span class="fu">msr</span>(<span class="st">"classif.bacc"</span>),</span>
+<span id="cb44-20"><a href="#cb44-20"></a>  <span class="at">term_evals =</span> <span class="dv">20</span></span>
+<span id="cb44-21"><a href="#cb44-21"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Veamos los resultados obtenidos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a><span class="co"># Veamos si converge el algoritmo</span></span>
+<span id="cb45-2"><a href="#cb45-2"></a>instance<span class="sc">$</span>is_terminated</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a><span class="co"># Resultados del proceso de optimización</span></span>
+<span id="cb47-2"><a href="#cb47-2"></a>instance<span class="sc">$</span>result_learner_param_vals[<span class="fu">c</span>(<span class="st">"classif.svm.gamma"</span>, <span class="st">"classif.svm.cost"</span>)]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$classif.svm.gamma
+[1] 0.000240813
+
+$classif.svm.cost
+[1] 2721.482</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1"></a><span class="co"># Valor de la métrica para resultado óptimo</span></span>
+<span id="cb49-2"><a href="#cb49-2"></a>instance<span class="sc">$</span>result_y</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>classif.bacc 
+   0.9224265 </code></pre>
+</div>
+</div>
+<p>De nuevo el porcentaje de clasificación ponderado para la configuración óptima de hiperparámetros es del 92% (similar a la configuración por defecto), lo que demuestra que el algoritmo es bastante robusto frente a cambios en dichos valores y resulta adecuado para este problema.</p>
+</section>
+</section>
+<section id="sec-110.7" class="level2" data-number="11.7">
+<h2 data-number="11.7" class="anchored" data-anchor-id="sec-110.7"><span class="header-section-number">11.7</span> SVM para tareas de regresión</h2>
+<p>Aunque el algoritmo SVM se puede utilizar para resolver tareas de regresión no es los habitual. Si se desea utilizar este algoritmo con búsqueda óptima tan solo hay que modificar el parámetro <code>type</code> con el valor <code>eps-regression</code>.</p>
+</section>
+<section id="sec-110.8" class="level2" data-number="11.8">
+<h2 data-number="11.8" class="anchored" data-anchor-id="sec-110.8"><span class="header-section-number">11.8</span> Ejercicios</h2>
+<ol type="1">
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo SVM para el banco de datos <code>Mushroom</code><a href="40_DataBases.html#sec-mushroom"><span>4.3.4</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo SVM para el banco de datos <code>Water potability</code><a href="40_DataBases.html#sec-waterpot"><span>4.3.7</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo SVM para el banco de datos <code>Hepatitis</code><a href="40_DataBases.html#sec-hepatitis"><span>4.3.9</span></a>.</li>
+<li>Ajustar un modelo de aprendizaje automático basado en un modelo SVM para el banco de datos <code>Abalone</code><a href="40_DataBases.html#sec-abalone"><span>4.3.1</span></a>.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "¡Copiado!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "¡Copiado!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./100_kNNmodels.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./120_DTmodels.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

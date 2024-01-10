@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="IA4legos UMH">
+<meta name="dcterms.date" content="2023-07-25">
+
+<title>MachineLearning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./01_IntroCourse.html" rel="next">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos coincidentes",
+    "search-copy-link-title": "Copiar enlace para buscar",
+    "search-hide-matches-text": "Ocultar coincidencias adicionales",
+    "search-more-match-text": "más coincidencia en este documento",
+    "search-more-matches-text": "más coincidencias en este documento",
+    "search-clear-button-title": "Limpiar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Entregar"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">MachineLearning</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MachineLearning</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link active">Prefacio</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./01_IntroCourse.html" class="sidebar-item-text sidebar-link">Parte 1. Introducción</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_introAD.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_introAA.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./30_RandRstudio.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./40_DataBases.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./02_FirstStepsAA.html" class="sidebar-item-text sidebar-link">Parte 2. Primeros pasos</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./50_AED.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./03_SupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 3. Aprendizaje supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./60_RegressionModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regresión</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./70_LogisticModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelos de Regresión Logística</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./80_SurvivalModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./90_BayesianClassif.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./100_kNNmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./110_SVMmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./120_DTmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./130_Ensemblemodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Modelos de conjunto (Ensemble models)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./140_Boostingmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Modelos Boosting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./04_NonSupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 4. Aprendizaje no supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./150_Discriminantmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análisis discriminante (AD)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./160_PrinCompmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./170_MDSmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./180_Clustermodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Análisis cluster</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">Referencias</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#prefacio" id="toc-prefacio" class="nav-link active" data-scroll-target="#prefacio">Prefacio</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">MachineLearning</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Autor</div>
+    <div class="quarto-title-meta-contents">
+             <p>IA4legos UMH </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Publicado</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">July 25, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+
+<section id="prefacio" class="level1 unnumbered">
+<p><img src="IA4LEGOS.png" title="MachineLearning" class="quarto-cover-image img-fluid"></p><h1 class="unnumbered">Prefacio</h1>
+<p>Este compendio de materiales es una introducción a los problemas con los que se enfrenta todo analista de datos, científico de datos o bioinformático. Los materiales están orientados en un sentido muy practico dejando los conceptos teóricos más avanzados para otro tipo de cursos más teóricos.</p>
+<p>Entre los muchos materiales referidos al aprendizaje automático recomendar el libro de <span class="citation" data-cites="MohriRostamizadehTalwalkar18">Mohri, Rostamizadeh, and Talwalkar (<a href="references.html#ref-MohriRostamizadehTalwalkar18" role="doc-biblioref">2018</a>)</span>.</p>
+<p>La comunidad de aprendizaje automático es muy dinámica y en continua evolución, y ha generado (y sigue generando) infinidad de recursos de aprendizaje. A continuación destacamos una lista de cursos online sobre aprendizaje automático, que han obtenido altas calificaciones en la comunidad, así como un listado de libros recomendados.</p>
+<p><strong>Cursos</strong></p>
+<ul>
+<li><p><a href="https://colab.research.google.com/corgiredirector?site=https%3A%2F%2Fwww.coursera.org%2Fspecializations%2Fmachine-learning-introduction&amp;link_redirector=1">Machine Learning, por Andrew Ng en Coursera</a>. Es uno de los cursos introductorios de aprendizaje automático más populares, con más de 4 millones de usuarios. El curso se centra más en los fundamentos de las técnicas y algoritmos de aprendizaje automático y es gratuito en Coursera.</p></li>
+<li><p><a href="https://colab.research.google.com/corgiredirector?site=https%3A%2F%2Fwww.coursera.org%2Fspecializations%2Fmachine-learning-engineering-for-production-mlops&amp;link_redirector=1">Especialización en ingeniería de aprendizaje automático para la producción (MLOps), impartido por Andrew Ng, Laurence Moroney y Robert Crowe en Coursera</a>. Es uno de los mejores cursos de ingeniería de Machine Learning. Enseña cómo diseñar sistemas de producción de aprendizaje automático de extremo a extremo, construyendo pipelines de datos y de modelado eficientes, y desplegando modelos en producción.</p></li>
+</ul>
+<p><strong>Libros</strong></p>
+<ul>
+<li><p><a href="https://colab.research.google.com/corgiredirector?site=https%3A%2F%2Fwww.amazon.es%2FHundred-Page-Machine-Learning-Book-espa%25C3%25B1ol%2Fdp%2F1999579593&amp;link_redirector=1">El Libro de Aprendizaje Automático de Cien Páginas</a>, escrito por Andriy Burkov, es uno de los libros más cortos pero concisos y bien escritos que encontrarás en Internet.</p></li>
+<li><p><a href="https://colab.research.google.com/corgiredirector?site=https%3A%2F%2Fwww.amazon.es%2FMachine-Learning-Engineering-English-Andriy-ebook%2Fdp%2FB09Q18725P%2F&amp;link_redirector=1">Machine Learning Engineering</a>, también escrito por Andriy Burkov, es otro gran libro de Machine Learning que descubre cada paso del flujo de trabajo en este tipo de análisis.</p></li>
+<li><p><a href="https://colab.research.google.com/corgiredirector?site=https%3A%2F%2Fwww.oreilly.com%2Flibrary%2Fview%2Fhands-on-machine-learning%2F9781098125967%2F&amp;link_redirector=1">Hands-on Machine Learning with Scikit-Learn, Keras, and TensorFlow</a>, escrito por Aurelion Geron, es uno de los mejores libros de aprendizaje automático. Está escrito con claridad y repleto de ideas y ejemplos.</p></li>
+</ul>
+<p>A continuación se listan diferentes contenidos (texto y videos) de diferentes cursos sobre conceptos matemáticos, probabilidad y aprendizaje autmático que pueden complementar la formación de estos cuadernos (listado obtenido del <a href="https://github.com/ahmedbahaaeldin/From-0-to-Research-Scientist-resources-guide">enlace</a>). Se indica la dificultad de los materiales y su relevancia sore los modelos de aprendizaje automático. la dificultad de los contenidos viene representada mediante tres niveles.</p>
+<p>A continuación se listan diferentes contenidos (texto y videos) de diferentes cursos sobre conceptos matemáticos, probabilidad y aprendizaje autmático que pueden complementar la formación de estos cuadernos (listado obtenido del <a href="https://github.com/ahmedbahaaeldin/From-0-to-Research-Scientist-resources-guide">enlace</a>).</p>
+<p><strong>Álgebra Lineal</strong></p>
+<p>Esta rama de las matemáticas es crucial para comprender el mecanismo de las técnicas de aprendizaje automático en cuanto al tratamiento y procesamiento de conjuntos de datos en estructura matricial.</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=QVKj3LADCnA&amp;list=PL49CF3715CB9EF31D">MIT Gilbert Strang 2005 Linear Algebra</a></li>
+<li><a href="https://mml-book.github.io/book/mml-book.pdf">Mathematics for Machine Learning Book: Chapter 2</a></li>
+<li><a href="https://www.youtube.com/watch?v=fNk_zzaMoSs&amp;list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab">3Blue1Brown Essence of Linear Algebra</a></li>
+<li><a href="https://www.youtube.com/watch?v=T73ldK46JqE&amp;list=PLiiljHvN6z1_o1ztXTKWPrShrMrBLo5P3">Mathematics For Machine Learning Specialization: Linear Algebra</a></li>
+<li><a href="https://www.youtube.com/watch?v=Cx5Z-OslNWE&amp;list=PLUl4u3cNGP63oMNUHXqIUcrkS2PivhN3k">Matrix Methods for Linear Algebra for Gilber Strang UPDATED!</a></li>
+</ul>
+<p><strong>Probabilidad</strong></p>
+<p>La mayoría de los algoritmos de aprendizaje automático se basan en la teoría de la probabilidad. Así que esta rama es extremadamente importante para comprender cómo funcionan.</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=KbB0FjPg0mw&amp;list=PL2SOU6wwxB0uwwH80KTQ6ht66KWxbzTIo">Joe Blitzstein Harvard Probability and Statistics Course</a></li>
+<li><a href="https://www.youtube.com/watch?v=j9WZyLZCBzs&amp;list=PLUl4u3cNGP61MdtwGTqZA0MreSaDybji8">MIT Probability Course 2011 Lecture videos</a></li>
+<li><a href="https://www.youtube.com/watch?v=1uW3qMFA9Ho&amp;list=PLUl4u3cNGP60hI9ATjSFgLZpbNJ7myAg6">MIT Probability Course 2018 short videos UPDATED!</a></li>
+<li><a href="https://mml-book.github.io/book/mml-book.pdf">Mathematics for Machine Learning Book: Chapter 6</a></li>
+<li><a href="https://www.youtube.com/watch?v=oqvdH_8lmCA&amp;list=PLoZgVqqHOumTqxIhcdcpOAJOOimrRCGZn">Probalistic Graphical Models CMU Advanced</a></li>
+<li><a href="https://www.youtube.com/watch?v=GqMzbbaN6T4&amp;list=PLzERW_Obpmv-_TkPEmCyzaJUGHtl7S01i">Probalistic Graphical Models Stanford Daphne Advanced</a></li>
+<li><a href="http://www.seyedkalali.com/wp-content/uploads/2016/11/A-First-Course-in-Probability-8th-ed.-Sheldon-Ross.pdf">A First Course In Probability Book by Ross</a></li>
+</ul>
+<p><strong>Cálculo y Optimización</strong></p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=WUvTyaaNkzM&amp;list=PL0-GT3co4r2wlh6UHTUeQsrf3mlS2lk6x">Essence of Calculus by 3Blue1Brown</a></li>
+<li><a href="https://www.youtube.com/watch?v=7K1sB05pE0A&amp;list=PL590CCC2BC5AF3BC1">Single Variable Calculus MIT 2007</a></li>
+<li><a href="https://mml-book.github.io/book/mml-book.pdf">Mathematics for Machine Learning Book: Chapter 5</a></li>
+<li><a href="https://www.youtube.com/watch?v=Di9f47LAzHQ&amp;list=PLRPU00LaonXQ27RBcq6jFJnyIbGw5azOI">CMU optimization course 2018</a></li>
+<li><a href="https://www.youtube.com/watch?v=yBO4E1FARaA&amp;list=PLjTcdlvIS6cjdA8WVXNIk56X_SjICxt0d">CMU Advanced optimization course</a></li>
+<li><a href="https://www.youtube.com/watch?v=McLq1hEq3UY&amp;list=PL3940DD956CDF0622">Stanford Famous optimization course</a></li>
+<li><a href="https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf">Boyd Convex Optimization Book</a></li>
+</ul>
+<p><strong>Aprendizaje Automático</strong></p>
+<ul>
+<li><a href="https://mml-book.github.io/">Mathematics for Machine Learning Part 2</a></li>
+<li><a href="http://users.isr.ist.utl.pt/~wurmd/Livros/school/Bishop%20-%20Pattern%20Recognition%20And%20Machine%20Learning%20-%20Springer%20%202006.pdf">Pattern Recognition and Machine Leanring</a></li>
+<li><a href="https://hastie.su.domains/Papers/ESLII.pdf">Elements of Statistical Learning</a></li>
+<li><a href="http://noiselab.ucsd.edu/ECE228/Murphy_Machine_Learning.pdf">Machine Learning: A Probalisitic Perspective</a></li>
+<li><a href="https://inst.eecs.berkeley.edu/~cs188/fa18/">Berkley CS188 Introduction to AI course</a></li>
+<li><a href="https://ocw.mit.edu/courses/6-034-artificial-intelligence-fall-2010/resources/lecture-1-introduction-and-scope/">MIT Classic AI course taught by Prof.&nbsp;Patrick H. Winston</a></li>
+<li><a href="https://www.youtube.com/playlist?list=PLoROMvodv4rO1NB9TD4iUZ3qghGEGtqNX">Stanford AI course 2018</a></li>
+<li><a href="https://work.caltech.edu/lectures.html">California Instuite of Technology Learning from Data course</a></li>
+<li><a href="http://www.cs.cmu.edu/~ninamf/courses/601sp15/lectures.shtml">CMU Machine Learning 2015 10-601</a></li>
+<li><a href="https://www.youtube.com/playlist?list=PLjbUi5mgii6BWEUZf7He6nowWvGne_Y8r">CMU Statistical Machine Learning 10-702</a></li>
+<li><a href="http://videolectures.net/course_information_theory_pattern_recognition/">Information Theory, Pattern Recognition ML course 2012</a></li>
+<li><a href="https://video-archive.fields.utoronto.ca/view/2800">Large Scale Machine Learning Toronto University 2015</a></li>
+<li><a href="https://www.youtube.com/playlist?list=PLB3sDpSRdrOvI1hYXNsa6Lety7K8FhPpx">Algorithmic Aspects of Machine Learning MIT</a></li>
+<li><a href="https://www.youtube.com/playlist?list=PLyGKBDfnk-iDj3FBd0Avr_dLbrU8VG73O">MIT Course 9.520 - Statistical Learning Theory and Applications, Fall 2015</a></li>
+<li><a href="https://www.youtube.com/watch?v=w2OtwL5T1ow&amp;list=PLE6Wd9FR--EdyJ5lbFl8UuGjecvVw66F6">Undergraduate Machine Learning Course University of British Columbia 2013</a></li>
+</ul>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography" style="display: none">
+<div id="ref-MohriRostamizadehTalwalkar18" class="csl-entry" role="doc-biblioentry">
+Mohri, Mehryar, Afshin Rostamizadeh, and Ameet Talwalkar. 2018. <em>Foundations of Machine Learning</em>. 2nd ed. Adaptive Computation and Machine Learning. Cambridge, MA: MIT Press.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "¡Copiado!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "¡Copiado!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./01_IntroCourse.html" class="pagination-link">
+        <span class="nav-page-text">Parte 1. Introducción</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

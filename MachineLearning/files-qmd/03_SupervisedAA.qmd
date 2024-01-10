@@ -1,0 +1,35 @@
+# Parte 3. Aprendizaje supervisado {#part03}
+
+El aprendizaje supervisado, en el que tenemos una variable respuesta u objetivo (*target*), se refiere a dos problemas básicos a resolver sobre un conjunto de datos, clasificación y regresión, en los que en base a ciertas características observadas se pretende predecir una respuesta categórica (clasificación) o numérica (regresión). En este apartado estudiaremos los modelos y algoritmos básicos en este tipo de aprendizaje automático.
+
+## Modelos de regresión
+
+Los modelos de regresión más habituales son:
+
+-   **Regresión lineal** donde se resuelve la estimación de los parámetros o coeficientes que relacionan de modo lineal las características disponibles con la respuesta de tipo numérico. Los resultados -coeficientes estimados- explican el grado en que cada una de las variables predictoras contribuye a explicar la respuesta, o lo que es lo mismo, el grado de asociación lineal con ella. Los modelos de regresión son más rápidos de entrenar que otros modelos de aprendizaje automático, si bien son sensibles a valores atípicos, no dan buenos resultados si la relación entre predictores y respuesta no es de tipo lineal, y las predicciones no son buenas cuando hay pocos datos y muchos predictores. Aplicaciones populares de este tipo de modelo son la predicción del precio de la vivienda, la estatura de un adulto, la esperanza de vida, ..., si bien se utiliza en infinidad de contextos.
+
+-   **Regresión logística**. Se modela una relación lineal entre los predictores o entradas y una transformación logit de la probabilidad de clasificar a un sujeto de la muestra en una de dos categorías posibles (identificadas 0/1), para predecir dicha probabilidad. Es interpretable, en la medida en que los parámetros o coeficientes estimados explican el peso que tiene cada característica sobre la probabilidad de clasificación. Se puede generalizar a modelos de clasificación con más categorías de respuesta. Como desventajas tiene las mismas que el modelo de regresión lineal: falla cuando falta linealidad con los predictores y con bancos de datos con pocas muestras y muchos predictores.
+
+Otros modelos de regresión que mejoran ciertas deficiencias de los anteriores son la **regresión ridge** y la **regresión lasso**.
+
+## Modelos de clasificación
+
+Son modelos específicos de clasificación el modelo Naïve Bayes, muy utilizado en aplicaciones reales, y el modelo de K vecinos más cercanos.
+
+-   Los **clasificadores Naïve Bayes** son los primeros algoritmos de clasificación que se estudian habitualmente, puesto que se utilizan en muchas ocasiones como modelo de base o partida en los problemas de clasificación, dado que son extremadamente rápidos y sencillos y suelen ser adecuados para conjuntos de datos de muy alta dimensión.
+
+-   El **algoritmo de K vecinos más cercanos** o *(K-Nearest Neighbors (KNN))* es un clasificador que utiliza la proximidad entre las observaciones en las variables disponibles, para hacer clasificaciones o predecir agrupaciones de datos. Se caracteriza por ser fácil de aplicar sin necesidad de crear un modelo, configurar parámetros o formular hipótesis suplementarias. Como desventajas destacamos que el algoritmo se ralentiza cuando aumenta el número de datos y/o el de variables.
+
+## Modelos de clasificación y regresión
+
+Las técnicas que se pueden aplicar tanto en tareas de clasificación como de regresión son:
+
+-   Las **máquinas de vectores de soporte** o *Support Vector Machines (SVM)* construyen un hiperplano en un espacio multidimensional para separar las observaciones en distintas clases, de modo que el hiperplano maximiza el margen entre los puntos en clases distintas. Genera también dimensiones adicionales a través de núcleos o *kernels*. Ofrecen una buena precisión y realizan predicciones más rápidas que el algorimo Naïve Bayes, y también utilizan menos memoria. Son muy versátiles para un buen número de problemas diversos, y en espacios dimensionales elevados (con muchas variables). No propociona buenos resultados sin embargo para grandes conjuntos de datos, tampoco con clases superpuestas, y es sensible al tipo de núcleo utilizado.
+
+-   Los **árboles de decisión** *(Decision Trees)* están basados en aplicar secuencialmente reglas de decisión sobre las características disponibles, para seccionar categorías o segmentos y producir predicciones. Entre las ventajas encontramos que el resultado es explicable e interpretable y que se puede utilizar con valores faltantes. Como desventajas destacamos que es sensible a los valores atípicos y que es propenso al sobreajuste. Aplicaciones de esta técnica son la creación de perfiles de clientes, predicción de pérdidas en carteras de seguros, etc.
+
+-   **Modelos de conjunto** *(Ensemble models)* combinan múltiples modelos en uno nuevo con el objetivo de lograr un equilibro entre sesgo y varianza, tratando de obtener mejores predicciones o clasificaciones que cualquiera de los modelos individuales originales. En la práctica existen dos metodologías para la obtención de modelo de conjunto:
+
+    -   **Método a partir de modelos individuales independientes.** Es la conocida como metodología ***Bagging***, y en ella se ajustan múltiples modelos, cada uno con un subconjunto distinto de los datos de entrenamiento. En esta situación los modelos que forman el agregado participan aportando de forma individual su predicción o clasificación. Como valor final, se toma la media de todas las predicciones de los modelos individuales si estamos en un problema de regresión o la clase más frecuente del conjunto de soluciones aportadas por todos los clasificadores individuales. Los algoritmos más habituales dentro de este grupo son los de **voto por mayoría**, **bosques aleatorios**, y **clasificadores *Bagging***.
+
+    -   **Método a partir de modelos secuenciales.** El *boosting* es una técnica de modelado de conjunto que intenta construir un *strong learner* a partir de un número de *weak learner* secuenciales, todos basados en el mismo algoritmo de predicción o clasificación. El proceso de construcción del *strong learner* comienza fijando un modelo inicial sobre los datos de entrenamiento y obteniendo los errores de dicho modelo (errores de predicción o clasificación). A continuación, se construye un segundo modelo que intenta corregir los errores presentes en el primer modelo mediante la asignación de pesos a todos los datos de entrenamiento en función del error cometido en la primera etapa. Este procedimiento continúa y se añaden modelos hasta que se predice correctamente todo el conjunto de datos de entrenamiento o se añade el máximo número de modelos. Finalmente se combinan los resultados de los diferentes modelos secuenciales para obtener el modelo final. Los métodos de *boosting* más empleados son ***AdaBoost***, ***Gradient Boosting***, ***XGBoost*** y ***LightGBM***. Casi todos ellos toman como *weak learner* basado en árboles de decisión, pero en teoría se pueden utilizar con otro tipo de algoritmos de aprendizaje automático.

@@ -1,0 +1,1151 @@
+# Análisis cluster {#sec-180}
+
+Los modelos de agrupación o *cluster* hacen referencia a un amplio abanico de algoritmos cuya finalidad es encontrar patrones o grupos (*clusters*) dentro de un conjunto de muestras. Las particiones se establecen de forma que, las observaciones que están dentro de un mismo grupo, son similares entre ellas y distintas a las observaciones de otros grupos. Se trata de un método de aprendizaje no supervisado, ya que el proceso no tiene en cuenta a qué grupo pertenece realmente cada observación (si es que existe tal información). Esta característica es la que diferencia al *clustering* de los métodos de clasificación en los que se emplea la verdadera clasificación durante su entrenamiento.
+
+Dada la utilidad del *clustering* en disciplinas muy distintas (genómica, marketing...), se han desarrollado multitud de variantes y adaptaciones de sus métodos y algoritmos. Podemos distinguir tres grupos:
+
+-   *Agrupación jerárquica*: este tipo de algoritmos no requieren que el usuario especifique de antemano el número de grupos.
+
+-   *Agrupación partitiva*: este tipo de algoritmos requieren que el usuario especifique de antemano el número de *clusters* que se van a crear.
+
+-   *Métodos combinados*: algoritmos que combinan los dos grupos anteriores.
+
+Todos los modelos de agrupación se basan en el establecimiento de una métrica de divergencia o similitud entre las muestras, a partir de la información contenida en las características de las predictoras consideradas, que es utilizada para construir las agrupaciones. Todo algoritmo de agrupación se organiza en cuatro etapas:
+
+-   Identificación del tipo de características (numéricas, categóricas, o lógicas)
+-   Elección de la métrica entre muestras.
+-   Elección del modelo de agrupación.
+-   Validación de los resultados.
+
+Para facilitar la comprensión de los algoritmos, y dado que es lo más habitual, consideramos únicamente situaciones donde todas las características son de tipo numérico. De hecho, en muchas situaciones los modelos de agrupación se utilizan como complemento a otras técnicas de aprendizaje automático. Es muy habitual que con las puntuaciones obtenidas mediante un análisis de componentes principales o escalado multidimensional se proceda con un modelo de agrupación para establecer patrones de comportamiento.
+
+En este tema veremos diferentes situaciones relacionadas con estos procedimientos.
+
+## Definición de métricas {#sec-180.1}
+
+Para proceder con cualquier proceso de agrupación es necesario establecer el concepto de métrica (divergencia o similitud) para un conjunto de muestras sobre las que se ha medido un conjunto de $k$ características. El uso de un tipo de métrica u otro dependerá del tipo de características medidas sobre las muestras. En primer lugar definimos los conceptos de distancia y/o similitud y posteriormente veremos los tipos más habituales.
+
+### Distancia {#sec-180.1.1}
+
+Una función $d$ se denomina distancia si para tres muestras $x$, $y$, $z$ se verifica que:
+
+-   $d(x,y) \geq 0$
+-   $d(x,y) = 0 \Leftrightarrow x=y$
+-   $d(x,y)=d(y,x)$
+-   $d(x,z) \leq d(x,y) + d(y,z)$
+
+Las métricas de distancia se utilizan principalmente para medir la cercanía o lejanía entre muestras que se han medido sobre características de tipo numérico.
+
+#### Tipos de distancias
+
+A continuación se presentan las medidas de distancia más habituales. En adelante consideramos dos muestras $x=(x_1,...,x_k)$ e $y=(y_1,...,y_k)$ medidas sobre $k$ características.
+
+**Distancia euclídea o distancia l2.** La distancia euclídea entre dos muestras se define como la longitud del segmento que une ambos puntos, es decir,
+
+$$d(x,y) = \sqrt{\sum_{i=1}^k (x_i-y_i)^2}$$
+
+**Distancia de Minkowski.** La distancia de Minkowski de orden $q$ se define como
+
+$$d(x,y) = \left(\sum_{i=1}^k |x_i-y_i|^q\right)^{1/q}$$
+
+**Distancia de Manhattan (ciudad) o distancia l1.** La distancia de Manhattan se define como
+
+$$d(x,y) = \sum_{i=1}^k |x_i-y_i|$$
+
+**Distancia de Tchebychev.** La distancia de Tchebychev se define como
+
+$$d(x,y) = \underset{i}{max} |x_i-y_i|$$
+
+**Distancia de Mahalanobis.** La distancia de Mahalanobis se define como
+
+$$d(x,y) = \sqrt{(x-y)^t S^{-1}(x-y)}, $$ con $S$ la matriz de varianzas-covarianzas entre $x$ e $y$.
+
+**Distancia correlación.** Se define la distancia correlación, a partir de la correlación entre $x$ e $y$ ($\rho_{xy}$), como
+
+$$d(x,y)=1-\rho_{xy}$$ \### Similitud {#sec-180.1.2}
+
+Una función $s$ se denomina similitud si para tres muestras $x$, $y$, $z$ y un valor real finito arbitrario $s_0$ se verifica que:
+
+-   $s(x,y) \leq s_0$
+-   $s(x,x) = s_0$
+-   $s(x,y) = s(y,x)$
+
+#### Tipos de similitudes
+
+Las métricas de similitud se utilizan principalmente para establecer la cercanía o lejanía entre muestras que se han medido sobre características de tipo binario codificadas como 0-1. Dadas dos muestras de este tipo tenemos la tabla de asociación:
+
+|  x\y  |  1  |  0  |   Total   |
+|:-----:|:---:|:---:|:---------:|
+|   1   |  a  |  b  |    a+b    |
+|   0   |  c  |  d  |    c+d    |
+| Total | a+c | b+d | t=a+b+c+d |
+
+**Coeficiente de adecuación simple (*simple matching coefficient*).** El coeficiente de adecuación simple se define como
+
+$$SMC = \frac{a+d}{m}$$
+
+**Índice de Jaccard.** El índice de Jaccard se define como
+
+$$J=\frac{a}{c+b+a}$$
+
+## Modelos de agrupación jerárquica {#sec-180.2}
+
+Este procedimiento intenta identificar grupos relativamente homogéneos de casos (o de variables) basándose en las características seleccionadas, mediante un algoritmo que comienza con cada caso (o cada variable) en un *cluster* diferente y combina los *clusters* hasta que sólo queda uno. Es posible analizar las variables brutas pero en el caso de variables de tipo numérico se suelen estandarizar.
+
+Los pasos a seguir con este algoritmo son:
+
+1.  Elegir distancia o similitud entre muestras y la elección del modelo de agrupación o distancia entre los diferentes *clusters* que se van formando.
+2.  Calcular la distancia o similitud elegida entre cada par de muestras.
+3.  Comenzar el proceso de agrupación utilizando el modelo de agrupación o de distancia entre grupos prefijado hasta que todas las muestras se encuentren en un único grupo o *cluster*.
+
+En primer lugar se presentan los procesos de agrupación de *clusters* más habituales.
+
+### Distancias entre grupos {#sec-180.2.1}
+
+Aunque existe una gran variedad de definiciones de distancia entre grupos, aquí se presentan los más habituales. En adelante consideramos $A$ y $B$ dos grupos o *clusters*.
+
+**Vecino más cercano (*Single linkage*):** se calcula la distancia entre todos los posibles pares formados por una observación del *cluster* A y una del *cluster* B. La menor de todas ellas se selecciona como la distancia entre los dos *clusters*. Se trata de la medida menos conservadora (*minimal intercluster dissimilarity*). Tenemos entonces que:
+
+$$d(A,B) = \underset{i\in A;j\in B}{min} d(i,j)$$
+
+Este modelo proporciona *clusters* más alargados.
+
+**Vecino más lejano (*Complete linkage*):** se calcula la distancia entre todos los posibles pares formados por una observación del *cluster* A y una del *cluster* B. La menor de todas ellas se selecciona como la distancia entre los dos *clusters*. Se trata de la medida menos conservadora (*minimal intercluster dissimilarity*). Tenemos entonces que:
+
+$$d(A,B) = \underset{i\in A;j\in B}{max} d(i,j)$$
+
+Este modelo proporciona *clusters* más esféricos.
+
+**Promedio de grupo (*Average linkage*):** se calcula la distancia entre todos los posibles pares formados por una observación del *cluster* A y una del *cluster* B. El valor promedio de todas ellas se selecciona como la distancia entre los dos *clusters* (*mean intercluster dissimilarity*). Si $n_A$ y $n_B$ son el número de muestras en los *clusters* $A$ y $B$ respectivamente, tenemos que:
+
+$$d(A,B) = \frac{1}{n_a n_b}\sum_{i\in A;j\in B} d(i,j)$$
+
+Este modelo proporciona *clusters* más robustos.
+
+**Centroide (*Centroid linkage*):** se calcula el centroide de cada uno de los *clusters* y se selecciona la distancia entre ellos como la distancia entre los dos *clusters*. Si $\bar{x}_A$ y $\bar{x}_B$ son el vector promedio de las muestras en los *clusters* $A$ y $B$ respectivamente, tenemos que:
+
+$$d(A,B) = d(\bar{x}_A,\bar{x}_B)$$
+
+Este modelo proporciona *clusters* más robustos.
+
+**Ward (*Ward linkage*):** se trata de un método general. La selección del par de *clusters* que se combinan en cada paso del *agglomerative hierarchical clustering* se basa en el valor óptimo de una función objetivo, pudiendo ser esta última cualquier función definida por el analista. El método *Ward's minimum variance* es un caso particular en el que el objetivo es minimizar la suma total de varianza intracluster. En cada paso, se identifican aquellos 2 *clusters* cuya fusión conlleva menor incremento de la varianza total intracluster.
+
+### Análisis de la agrupación {#sec-180.2.2}
+
+En un modelo de *cluster* jerárquico se pueden llegar a soluciones muy diferentes debido a la elección de la distancia entre pares de muestras y la distancia entre grupos. Para analizar las posibles soluciones existen diferentes herramientas gráficas y númericas que pasamos a analizar.
+
+#### Métodos gráficos
+
+Los métodos gráficos habituales son el `dendograma` y el `scree plot`.
+
+##### Dendograma
+
+El dendograma (o árbol invertido) es un diagrama de árbol que se utiliza para representar de forma gráfica la estructura de los grupos que se forman al aplicar un algoritmo de agrupamiento jerárquico y sus niveles de similitud. Cuanto más próximos más similares serán. Se puede representar de forma ascendente o descendente, pero siempre contiene la misma información.
+
+Su estructura consiste en un conjunto de ramas que se extienden desde un eje vertical y se ramifican hacia arriba. Los objetos se representan en las hojas de las ramas y los grupos en los nodos interiores de estas. La longitud de las ramas se utiliza para representar la distancia o similitud entre los objetos o grupos que conectan.
+
+![](https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/dendograma.png){fig-align="center" width="450" height="450"}
+
+En el dendograma observamos la agrupación de los mamíferos según la dieta que siguen. Como hemos comentado anteriormente no indicamos a priori el número de grupos que se deben crear, por lo que dependerá del valor que escojamos.
+
+Los grupos se representan mediante líneas horizontales y las alturas representan distancias, de manera que la altura a la que se unen dos grupos es la distancia entre ellos. Por ejemplo, foca y delfín (*seal* y *dolphin*) son diferentes del resto, formando un grupo propio que no se ha unido al resto de animales hasta el último paso. Si cortamos con una línea horizontal a la altura 20, podemos observar que se forman tres grupos muy claros.
+
+##### Gráfico scree
+
+El gráfico scree se utiliza habitualmente para determinar el número de *clusters* óptimo mediante la representación de la distancia de agrupación versus el número de *clusters* considerados. Se considera que el número óptimo de *clusters* se alcanza cuando la curva obtenida se estabiliza sobre cierto valor. Sin embargo, este procedimiento resulta muy costoso computacionalmente si el número de muestras con el que trabajamos es muy alto.
+
+Podemos utilizar versiones de este gráfico con los criterios numéricos que vemos a continuación prefijando el número máximo de grupos a considerar.
+
+#### Métodos numéricos
+
+Como se analizó anteriormente, las tareas no supervisadas no tienen datos reales con los que comparar en la evaluación del modelo. Sin embargo, aún podemos medir la calidad de las asignaciones de conglomerados cuantificando qué tan estrechamente están relacionados los objetos dentro del mismo conglomerado (cohesión de conglomerados), así como qué tan distintos son los diferentes conglomerados entre sí (separación de conglomerados).
+
+Dos medidas comunes son la medida de suma interna de cuadrados o suma de cuadrado intra grupos (WSS) y el coeficiente de silueta. WSS calcula la suma de diferencias al cuadrado entre observaciones y centroides, que es una cuantificación de la cohesión de los conglomerados (los valores más pequeños indican que los conglomerados son más compactos). El coeficiente de silueta cuantifica qué tan bien pertenece cada punto a su grupo asignado en comparación con los grupos vecinos, donde las puntuaciones más cercanas a 1 indican que están bien agrupados y las puntuaciones más cercanas a -1 indican que están mal agrupados.
+
+## Modelos de agrupación partitivos {#sec-180.3}
+
+Los algoritmos partitivos se diferencian principalmente de los modelos jerárquicos en que a priori se debe establecer el número de grupos (k) que se desean obtener. En muchas aplicaciones prácticas estos algoritmos de agrupación se utilizan como los modelos supervisados de clasificación.
+
+Para comenzar con este tipo de algoritmos necesitamos especificar los centroides que califican los k centroides iniciales. Un centroide es un punto que identifica a un *cluster* o grupo. Generalmente, se trata de un conjunto de puntos, en el que cada uno representa a un grupo de los que se han formado. Los resultados finales que se obtengan dependerán de la forma en la que se seleccionen inicialmente estos centroides.
+
+Lo más usual es elegir un conjunto aleatorio de k puntos y asignarlos como centroides y cada paso que avance el algoritmo irá mejorando la precisión. La elección de estos puede afectar al rendimiento del algoritmo pero nunca afectará a su convergencia. A continuación presentamos los modelos partitivos más habituales.
+
+### Algoritmo de k-medias {#sec-180.3.1}
+
+El algoritmo K-Means o K-Medias propuesto por Lloyd pretende partir un conjunto de `N` registros u observaciones en `k` grupos, de forma que su distancia al centroide de cada grupo sea mínima (o la similitud con respecto al centroide sea máxima). Los pasos del algoritmo son:
+
+-   Paso 1. Se seleccionan aleatoriamente `k` centroides ($C_i, i = 1,...,k$).
+-   Paso 2. Se asigna cada uno de los restantes `N` puntos al centroide $C_i$ más cercano, utilizando como criterio que un punto es asignado al grupo $i$ si la distancia al cuadrado del cada punto al centroide $C_i$ es la menor de todas las obtenidas con respecto al resto de centroides.
+-   Paso 3. Recalcular los centroides a partir de los puntos asignados en cada uno de los grupos o cluster.
+-   Paso 4. Repetir los puntos 2 y 3 hasta que los grupos no cambien o se supere una tolerancia de usuario o un número máximo de iteraciones.
+
+Podemos ver el funcionamiento del algoritmo mediante la imagen siguiente:
+
+![](https://dcain.etsin.upm.es/~carlos/bookAA/_images/Kmedias-esquema.png){fig-align="center" width="550" height="475"}
+
+La principal dificultad con este algoritmo es el establecimiento del número de clusters. Por ese motivo se suele usar en conjunto de datos conde tenemos un target categórico que nos indica el número de grupos que debemos considerar.
+
+### Minibatch k-medias {#sec-180.3.2}
+
+El algoritmo de agrupación en *clusters* *minibatch k-means* es una versión del algoritmo estándar de k-medias que se puede usar en sustitución de este cuando se tratan grandes conjuntos de datos. Con el objetivo de reducir la dificultad computacional utiliza lotes o conjuntos de datos pequeños, aleatorios y de tamaño fijo para almacenarlos en la memoria y luego, con cada iteración, se recopila una muestra aleatoria de los datos y se usa para actualizar los *clusters*. A la vez que usa mini-lotes para reducir el tiempo de cálculo, intenta optimizar la función objetivo.
+
+### Algoritmo DBSCAN {#sec-180.3.3}
+
+Este es un algoritmo que se utiliza para identificar grupos (también conocidos como regiones densas), en los que no requiere que el usuario especifique el número de grupos a priori. Los grupos de puntos se asignan donde hay altas densidades y se calcula qué tan cercanos deben ser los puntos para que se consideren un miembro del grupo.
+
+Para identificar los grupos de una base de datos usando DBSCAN, el algoritmo realiza los siguientes pasos:
+
+1.  Selecciona un punto al azar del conjunto de datos y recupera todos los puntos dentro de una distancia `Epsilon` desde ese punto.
+2.  Si el número de puntos recuperados en el paso 1 es mayor o igual a `MinPts`, marca todos estos puntos como pertenecientes al mismo grupo y repite el proceso con la finalidad de identificar puntos adicionales que pertenecen al grupo.
+3.  Si por el contrario, el número de puntos recuperados en el paso 1 es inferior a `MinPts`, el punto se marca como ruido.
+4.  Repite los pasos 1, 2 y 3 hasta que se hayan procesado todos los puntos del conjunto de datos.
+
+Las instancias principales son aquellas que se encuentran en regiones densas. Todas las que estén en la vecindad de una instancia principal pertenecen al mismo grupo. Cualquier instancia que no sea una instancia central y no tenga una en su vecindad se considera una anomalía.
+
+El algoritmo funciona bien si todos los *clusters* son lo suficientemente densos y si están bien separados por regiones de baja densidad. Es particularmente útil para encontrar grupos de forma arbitraria en grandes conjuntos de datos y es capaz de identificar grupos incluso en presencia de ruido o valores atípicos. Sin embargo, no es determinista y es sensible a la elección de `Epsilon` y `MinPts`. Estos parámetros deben elegirse cuidadosamente para obtener buenos resultados.
+
+De esta forma el algoritmo DBSCAN permite identificar tres tipos de puntos:
+
+-   Punto núcleo (*Core point*): es aquel en el que al menos tiene minPts número de puntos (incluido el propio punto) en su región circundante dentro del radio eps.
+-   Punto frontera (*Border point*): es aquel en el que es alcanzable desde un punto núcleo y hay menos de minPts número de puntos dentro de su región circundante.
+-   Valor atípico (*Outlier*): no es un punto central ni es accesible desde ningún punto central.
+
+En la imagen siguiente se muestra el funcionamiento del algoritmo para dos grupos y con minPts igual a cuatro.
+
+![](https://dcain.etsin.upm.es/~carlos/bookAA/_images/dbscan.png){fig-align="center" width="350" height="350"}
+
+### Análisis de la agrupación
+
+En todos los algoritmos partitivos el análisis de la agrupación obtenida se realiza con los mismos criterios que para los clusters jerárquicos.
+
+## Análisis cluster en `R` {#sec-180.4}
+
+Para llevar a cabo el análisis cluster vamos a utilizar diferentes modelos de aprendizaje que están definidos en `mlr3`. Son los más habituales pero hay muchos más definidos que pueden ser explorados en toro momento. Todos ellos se encuentran dentro de las librerías que hemos visto y en la `mlr3cluster` que cargaremos en este caso. En concreto nos centramos en los modelos:
+
+-   `clust.hclust` para cluster jerárquicos, cuyos parámetros principales son `method` para establecer el método de agrupación de los clusters, y `distmethod` para definir el tipo de distancia entre las muestras. Se pueden consultar las opciones disponibles en este [enlace](https://mlr3cluster.mlr-org.com/reference/mlr_learners_clust.hclust.html).
+
+-   `clust.kmeans` para el algoritmo de k-medias cuyos parámetros principales son `centers` que establece el número de clusters, `iter.max` que fija el número de iteraciones del método, y `algorithm` que establece el algoritmo utilizado en el proceso iterativo. Se pueden consultar las opciones disponibles en este [enlace](https://mlr3cluster.mlr-org.com/reference/mlr_learners_clust.kmeans.html).
+
+-   `clust.MBatchKMeans` para el algoritmo minibatch k-means, cuyos parámetros principales son `clusters` para identificar el número de clusters considerados, `batch_size` para fijar el tamaño de cada uno de los batch, y `max_iters` que fija el número máximo de iteraciones del algoritmo. Este modelo utiliza la función `MiniBatchKmeans()` que se encuentra alojada en la librería `ClusterR`. Se pueden consultar las opciones disponibles en este [enlace](https://mlr3cluster.mlr-org.com/reference/mlr_learners_clust.MiniBatchKMeans.html).
+
+-   `clust.dbscan` para el método dbscan, cuyos parámetros principales son `eps` para la tolerancia, y `minPts` para definir el número de puntos. Este modelo utiliza la función `dbscan()` que se encuentra alojada en la librería `dbscan`. Se pueden consultar las opciones disponibles en este [enlace](https://mlr3cluster.mlr-org.com/reference/mlr_learners_clust.dbscan.html).
+
+A continuación cargamos todas las librerías necesarias para los análisis.
+
+```{r}
+#| label: cluster-001
+#| message: false
+#| results: false
+#| warning: false
+
+# Paquetes anteriores
+library(tidyverse)
+library(sjPlot)
+library(knitr) # para formatos de tablas
+library(skimr)
+library(DataExplorer)
+library(GGally)
+library(gridExtra)
+library(ggpubr)
+library(cvms)
+library(kknn)
+library(rpart.plot)
+library(rda)
+library(klaR)
+library(ggord)
+theme_set(theme_sjplot2())
+
+# Paquetes AA
+library(mlr3verse)
+library(mlr3tuning)
+library(mlr3tuningspaces)
+library(mlr3cluster)
+library(cluster)
+library(ClusterR)
+library(dbscan)
+library(gbm)
+library(RWeka)
+library(xgboost)
+library(lightgbm)
+library(FactoMineR)
+library(factoextra)
+library(rsvd)
+library(kernlab)
+library(fastICA)
+```
+
+### Bancos de datos {#sec-180.4.1}
+
+Para ejemplificar el uso de los modelos de cluster vamos a utilizar tres bancos de datos: `Gene expression leukemia`, `Vehicle silhouettes`, y `Sales`. Mostramos el uso de los modelos como herramienta individual y más tarde como acompañamiento de un modelo de componentes principales. A continuación presentamos los tres bancos de datos y la definición de la tarea de agrupación cada uno de ellos.
+
+#### Gene expression leukemia
+
+Este banco de datos lo hemos descrito en temas anteriores. Cargamos los datos, y generamos la tarea dejando fuera la característica que identifica el tipo de tumor.
+
+```{r}
+#| label: cluster-002
+#| warning: false
+#| message: false
+
+# Leemos los datos
+geneexpleu = read_rds("geneexpressionleukemia.rds")
+# Eliminamos el indicador de la muestra
+geneexpleu = geneexpleu %>% dplyr::select(-samples)
+# Consideramos matriz de características y tipos
+X_genes = geneexpleu %>% dplyr::select(-type)
+y_genes = geneexpleu[,"type"]
+# Debemos cambiar los nombres pq no se respeta la convención de R ya que todas ellas empiezan por un número
+names(X_genes) = str_replace_all(names(X_genes),"[/_-]","")
+names(X_genes) = paste("V", names(X_genes), sep="_")
+# Definimos la tarea de cluster 
+tsk_genes = as_task_clust(X_genes)
+```
+
+#### Vehicle silhouettes
+
+Este conjunto de datos recoge información de cuatro tipos diferentes de vehículos, utilizando un conjunto de características extraídas de su silueta. Para el experimento se utilizaron cuatro vehículos modelo "Corgie": un bus de dos pisos, una camioneta Cheverolet, un Saab 9000 y un Opel Manta 400. El objetivo del estudio es clasificar una silueta dada como uno de cuatro tipos diferentes de vehículos. Todos los atributos son numéricos discretos salvo la última variable que registra el tipo de vehículo. No existen valores perdidos.
+
+```{r}
+#| label: cluster-003
+#| warning: false
+#| message: false
+
+# Leemos los datos
+vehicle = read_rds("vehicle.rds")
+# Consideramos matriz de características y tipos
+X_vehicle = vehicle %>% dplyr::select(-Class)
+y_vehicle = vehicle[,"Class"]
+# Definimos la tarea de cluster cambiando los nombres
+tsk_vehicle = as_task_clust(X_vehicle)
+```
+
+#### Sales
+
+Contiene las cantidades compradas semanalmente de 800 productos a lo largo de 52 semanas. Todos los atributos son numéricos sin valores perdidos y van identificados mediante W(número de la semana). En este caso no tenemos posible variable target.
+
+```{r}
+#| label: cluster-004
+#| warning: false
+#| message: false
+
+# Leemos los datos
+sales = read_rds("sales.rds")
+# Eliminamos la variable que identifica el código del producto y la almacenamos por si hiciera falta
+X_sales = sales %>% dplyr::select(-Product_Code)
+y_sales = sales[,"Product_Code"]
+# Definimos la tarea de cluster 
+tsk_sales = as_task_clust(X_sales)
+```
+
+### Modelos de agrupación {#sec-180.4.2}
+
+En primer lugar comenzamos presentando los modelos de agrupación puros, es decir a partir de la variables originales, y en el punto siguiente veremos que ocurre cuando utilizamos los modelos de cluster como resultado del preprocesado mediante componentes principales. Cuando sea posible compararemos la solución del cluster con el target establecido en la base de datos.
+
+#### Gene expression leukemia
+
+##### Modelo de agrupación jerárquica
+
+Comenzamos con el análisis de cluster jerárquico utilizando el método de `Ward` que proporciona buenas soluciones en muchas situaciones prácticas, y la distancia euclídea. En este caso consideramos todos los datos para el análisis. En primer lugar establecemos el modelo de aprendizaje, y lo entrenamos con todos los datos disponibles. Esto nos permitirá realizar los gráficos por defecto para estos modelos de aprendizaje con la función `autoplot`. En la tarea de preprocesamiento únicamente escalamos las variables para reducir la variabilidad original.
+
+```{r}
+#| label: cluster-005
+#| warning: false
+#| message: false
+
+# Preprocesamiento
+pp_genes =  
+   po("scale", param_vals = list(center = TRUE, scale = TRUE))
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean")
+genes_lrn1 = as_learner(pp_genes %>>% lrn1)
+# Entrenamiento del modelo
+genes_lrn1$train(tsk_genes)
+# Valoración del modelo
+pr1 = genes_lrn1$train(tsk_genes)$predict(tsk_genes)
+# Valores de scores
+pr1$score(msr("clust.silhouette"), task = tsk_genes)
+```
+
+El valor del score es muy bajo indicando que el modelo establecido no parce muy adecuado. Obtenemos el dendograma y el gráfico scree asociado con el modelo obtenido.
+
+```{r}
+#| label: cluster-006
+#| warning: false
+#| message: false
+#| fig-width: 14
+
+modelo = genes_lrn1$model$clust.hclust$model
+plot(as.dendrogram(modelo))
+```
+
+En el dendograma obtenido se aprecian muchos grupos pero poco homogéneos. De hecho no queda muy clara cual sería la solución más correcta. Vamos a representar sobre el dendograma la solución con 5 grupos.
+
+```{r}
+#| label: cluster-007
+#| warning: false
+#| message: false
+#| fig-width: 14
+
+plot(as.dendrogram(modelo))
+rect.hclust(modelo, k = 5, border = 1:5)
+```
+
+Una vez fijada una solución el siguiente paso es la caracterización de los clusters obtenidos a partir de las características consideradas para su construcción. Sin embargo, cuando el número de características es muy elevado resulta imposible dicha tarea. Por ese motivo se recurre a un análisis de reducción de la dimensión antes del análisis cluster, ya que entonces si resulta posible caracterizar los clusters obtenidos.
+
+Otra opción como en este caso es comparar la solución cluster con el target original y analizar la matriz de confusión, para entender como se agrupan las muestras y si los grupos se corresponden con la información original. En este caso tomamos la solución con cinco clusters (ya que el target tenía cinco tipos de tumor) y comparamos los resultados.
+
+```{r}
+#| label: cluster-008
+#| warning: false
+#| message: false
+
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean", k = 5)
+genes_lrn1 = as_learner(pp_genes %>>% lrn1)
+# Valores de predicción
+pr1 = genes_lrn1$train(tsk_genes)$predict(tsk_genes)
+# Generamos la tabla de comparación
+table(y_genes$type, pr1$partition)
+```
+
+Podemos ver como los clusters 2 a 4 se caracterizan por contener sujetos con un tipo de leucemia específica, mientras que el cluster es una combinación de varios de ellos. Podríamos establecer la equivalencia:
+
+-   Cluster 1: PBSC_CD34
+-   Cluster 2: AML
+-   Cluster 3: Bone_Marrow
+-   Cluster 4: AML
+-   Cluster 5: PB
+
+No queda claro donde agregar el tipo Bone_Marrow_CD34, y aparecen dos grupos con tumores AML mayoritariamente. No parece que la solución obtenida permita clasificar adecuadamente los tipos de tumor, y queda claro que el tipo AML es el más difícil de aislar de forma independiente.
+
+##### Modelo de k-medias
+
+Utilizamos ahora el algoritmo de k-medias fijando k igual a 5, el número de grupos que deseamos encontrar, para que coincida con el número de niveles del target. Definimos el modelo de aprendizaje, utilizando el mismo preprocesado que con el algoritmo anterior:
+
+```{r}
+#| label: cluster-009
+#| warning: false
+#| message: false
+
+# Modelo de aprendizaje
+lrn1 = lrn("clust.kmeans", centers =  5)
+genes_lrn1 = as_learner(pp_genes %>>% lrn1)
+# Entrenamiento del modelo
+genes_lrn1$train(tsk_genes)
+```
+
+Podemos analizar la solución obtenida identificando el cluster al que es asignado cada elemento de la muestra y comparando lo resultados con los datos originales.
+
+```{r}
+#| label: cluster-010
+#| warning: false
+#| message: false
+
+# Asignación del modelo
+genes_lrn1$model$clust.kmeans$model$cluster
+# Tamaño de cada uno de los grupos
+genes_lrn1$model$clust.kmeans$model$size
+```
+
+Veamos ahora como se corresponde la clasificación del algoritmo con los valores originales:
+
+```{r}
+#| label: cluster-011
+#| warning: false
+#| message: false
+
+# Generamos la tabla de comparación
+table(y_genes$type, genes_lrn1$model$clust.kmeans$model$cluster)
+```
+
+El modelo se comporta de forma similar la jerárquico, incluso empeora la asignación a los grupos. Para verificar el mal comportamiento podemos valorar los scores asociados a este modelo:
+
+```{r}
+#| label: cluster-012
+#| warning: false
+#| message: false
+
+# Predicción para cada modelo
+pr1 = genes_lrn1$train(tsk_genes)$predict(tsk_genes)
+# Valores de scores
+pr1$score(msr("clust.silhouette"), task = tsk_genes)
+```
+
+El resultado obtenido mejora los del modelo jerárquico a pesar de que la clasificación obtenida es menos clara. En este caso tenemos dos posibilidades de mejora. La primera consiste en determinar el número óptimo de grupos a considerar mediante una búsqueda automática, mientras que la segunda pasa por realizar el algoritmo de k-medias después del preprocesado mediante componentes principales. Esta segunda la exploraremos un poco más adelante en este mismo tema.
+
+#### Vehicle silhouettes
+
+Realizamos ahora el análisis para el banco de datos de vehículos.
+
+##### Modelo de agrupación jerárquica
+
+De nuevo utilizamos el método de Ward para obtener la solución jerárquica. De nuevo escalamos los valores de las características
+
+```{r}
+#| label: cluster-013
+#| warning: false
+#| message: false
+
+# Preprocesamiento
+pp_vehicle =  
+   po("scale", param_vals = list(center = TRUE, scale = TRUE))
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean")
+vehicle_lrn1 = as_learner(pp_vehicle %>>% lrn1)
+# Entrenamiento del modelo
+vehicle_lrn1$train(tsk_vehicle)
+# Valoración del modelo
+pr1 = vehicle_lrn1$train(tsk_vehicle)$predict(tsk_vehicle)
+pr1$score(msr("clust.silhouette"), task = tsk_vehicle)
+```
+
+El score es bastante alto mostrando que el modelo de cluster obtenido parece bastante adecuado. Veamos el dendograma correspondiente:
+
+```{r}
+#| label: cluster-014
+#| warning: false
+#| message: false
+#| fig-width: 14
+
+modelo = vehicle_lrn1$model$clust.hclust$model
+plot(as.dendrogram(modelo))
+```
+
+Parecen apreciarse claramente una solución con tres grupos, pero para poder realizar las comparaciones necesarias con el target original, optamos por una solución con cuatro grupos que representamos gráficamente.
+
+```{r}
+#| label: cluster-015
+#| warning: false
+#| message: false
+#| fig-width: 14
+
+plot(as.dendrogram(modelo))
+rect.hclust(modelo, k = 4, border = 1:4)
+```
+
+A la vista del dendograma una solución con 4 grupos parece bastante buena para definir grupos homogéneos. Comparamos la solución del modelo con el target original.
+
+```{r}
+#| label: cluster-016
+#| warning: false
+#| message: false
+
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean", k = 4)
+vehicle_lrn1 = as_learner(pp_vehicle %>>% lrn1)
+# Valores de predicción
+pr1 = vehicle_lrn1$train(tsk_vehicle)$predict(tsk_vehicle)
+# Generamos la tabla de comparación
+table(y_vehicle, pr1$partition)
+```
+
+La solución obtenida es bastante mala porque no resulta posible identificar cada grupo con un tipo de vehículo ya que los datos están muy repartidos. Esto puede ser debido a que las variables no poseen suficiente información para clasificar las observaciones o que las utilizarlas directamente las distancia obtenidas no nos permiten realizar agrupaciones adecuadas. Como en el ejemplo anterior un preprocesado mediante CP podría resolver en parte este problema. Veamos que ocurre si utilizamos el algoritmo de k-medias.
+
+##### Modelo de k-medias
+
+Utilizamos ahora el algoritmo de k-medias fijando k igual a 4.
+
+```{r}
+#| label: cluster-017
+#| warning: false
+#| message: false
+
+# Modelo de aprendizaje
+lrn1 = lrn("clust.kmeans", centers =  4)
+vehicle_lrn1 = as_learner(pp_vehicle %>>% lrn1)
+# Entrenamiento del modelo
+vehicle_lrn1$train(tsk_vehicle)
+```
+
+Identificamos clusters y comparamos los resultados con los datos originales.
+
+```{r}
+#| label: cluster-018
+#| warning: false
+#| message: false
+
+# Asignación del modelo
+vehicle_lrn1$model$clust.kmeans$model$cluster
+# Tamaño de cada uno de los grupos
+vehicle_lrn1$model$clust.kmeans$model$size
+```
+
+Veamos ahora como se corresponde la clasificación del algoritmo con los valores originales:
+
+```{r}
+#| label: cluster-019
+#| warning: false
+#| message: false
+
+# Generamos la tabla de comparación
+table(y_vehicle, vehicle_lrn1$model$clust.kmeans$model$cluster)
+```
+
+La agrupación es similar e incluso un poco peor que la del modelo jerárquico como podemos comprobar al analizar el score correspondiente.
+
+```{r}
+#| label: cluster-020
+#| warning: false
+#| message: false
+
+# Predicción para cada modelo
+pr1 = vehicle_lrn1$train(tsk_vehicle)$predict(tsk_vehicle)
+# Valores de scores
+pr1$score(msr("clust.silhouette"), task = tsk_vehicle)
+```
+
+El resultado con el algoritmo de k-medias es muy inferior al del modelo jerárquico, o que nos haría decantarnos por este último para este banco de datos.
+
+#### Sales
+
+Finalizamos estos primeros modelos con el banco de datos de ventas. Procedemos de la misma forma que en ejemplos anteriores salvo por el hecho de que ahora no tenemos target y no podemos comparar nuestros resultados.
+
+##### Modelo de agrupación jerárquica
+
+De nuevo utilizamos el método de Ward para obtener la solución jerárquica y escalamos los valores de las características.
+
+```{r}
+#| label: cluster-021
+#| warning: false
+#| message: false
+
+# Preprocesamiento
+pp_sales =  
+   po("scale", param_vals = list(center = TRUE, scale = TRUE))
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean")
+sales_lrn1 = as_learner(pp_sales %>>% lrn1)
+# Entrenamiento del modelo
+sales_lrn1$train(tsk_sales)
+# Valoración del modelo
+pr1 = sales_lrn1$train(tsk_sales)$predict(tsk_sales)
+pr1$score(msr("clust.silhouette"), task = tsk_sales)
+```
+
+El coeficientes es bastante alto indicando que el modelo es capaz de establecer grupos más o menos homogéneos. Veamos el dendograma correspondiente.
+
+```{r}
+#| label: cluster-022
+#| warning: false
+#| message: false
+#| fig-width: 14
+
+modelo = sales_lrn1$model$clust.hclust$model
+plot(as.dendrogram(modelo))
+```
+
+En este caso se podría optar por una solución con tres o cuatro clusters. En este caso vamos a seleccionar la solución con cuatro grupos.
+
+```{r}
+#| label: cluster-023
+#| warning: false
+#| message: false
+#| fig-width: 14
+
+plot(as.dendrogram(modelo))
+rect.hclust(modelo, k = 4, border = 1:4)
+```
+
+A la vista del dendograma una solución con 4 grupos parece bastante buena para definir grupos homogéneos. En este caso vamos a caracterizar los grupos en función de las ventas realizadas en cada una de las semanas. para ellos añadiremos el grupo de pertenencia de cada muestra la banco de datos original, y realizaremos un estudio descriptivo y gráfico de ellos.
+
+```{r}
+#| label: cluster-024
+#| warning: false
+#| message: false
+
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean", k = 4)
+sales_lrn1 = as_learner(pp_sales %>>% lrn1)
+# Valores de predicción
+pr1 = sales_lrn1$train(tsk_sales)$predict(tsk_sales)
+# Añadimos columna  de asignación (en formato factor) a matriz de datos de ventas
+X_sales$grupo = as.factor(pr1$partition)
+```
+
+Una vez tenemos el dataframe con los datos originales y el grupo asignado calculamos las medias de cada variable para cada uno de los grupos:
+
+```{r}
+#| label: cluster-025
+#| warning: false
+#| message: false
+
+resumen = X_sales %>% 
+  group_by(grupo) %>% 
+  summarise_all(mean)
+resumen
+```
+
+El problema es que a tabla es demasiado grande y por tanto resulta difícil extraer conclusiones. Recolocamos los datos para poder representarlos gráficamente. Hacemos uso de la función `pivot_longer` que nos permite reestructurar los datos en un formato que la función gráfica puede interpretar fácilmente. Para utilizar esta función debemos identificar los nombres de las variables que deseamos reorganizar.
+
+```{r}
+#| label: cluster-026
+#| warning: false
+#| message: false
+#| fig-width: 14
+
+# Reorganizamos los datos para tener solo tres columnas: grupo, semana, y ventas
+df = resumen %>% pivot_longer(cols = colnames(resumen[,2:ncol(resumen)]), names_to = "W", values_to = "Sales") 
+ggplot(df, aes(W, Sales, col = grupo)) + geom_point()
+```
+
+El gráfico de medias nos permite identificar claramente las características de cada uno de los grupos. Por ejemplo, el grupo 3 viene caracterizado por las mayores ventas en todas las semanas, mientras que el cuatro contiene las ventas semanales más bajas. En este caso no establecemos el algoritmo de k-medias ya que no tenemos información suficiente para establecer el número de clusters inicial. Podríamos plantear soluciones para diferentes valores de `k` y seleccionar aquel con el mejor score.
+
+Una vez hemos visto los modelos de cluster aplicados directamente sobre los bancos de datos originales, vamos a ver como utilizar el algoritmo de componentes principales para refinar nuestras agrupaciones y conseguir soluciones más eficientes y que nos permitan caracterizar los datos de forma más precisa.
+
+### Modelos de agrupación con CP {#sec-180.4.3}
+
+Comenzaremos todos los análisis determinado el número óptimo de componentes. A continuación extraeremos las coordenadas de todas las muestras en dichas componentes y procederemos con el análisis cluster. Como criterio valoraremos el número de componentes de las soluciones donde alcanzamos el 50%, 70%, y 80% de variabilidad explicada. Una vez establecido dicho número utilizaremos el pipeop `pca` para realizar el preprocesado de datos mediante componentes principales.
+
+#### Gene expression leukemia
+
+Comenzamos con el análisis de CP y la selección del número de componentes.
+
+```{r}
+#| label: cluster-027
+#| warning: false
+#| message: false
+
+# CP
+leukemia_cp = prcomp(X_genes, scale = TRUE)
+# Resumen numérico del análisis
+resumen_cp = get_eigenvalue(leukemia_cp)
+# Componentes para el 50% de VE
+sum(resumen_cp$cumulative.variance.percent <= 50) + 1
+# Componentes para el 70% de VE
+sum(resumen_cp$cumulative.variance.percent <= 70) + 1
+# Componentes para el 80% de VE
+sum(resumen_cp$cumulative.variance.percent <= 80) + 1
+```
+
+En este caso hay una gran diferencia en el número de componentes entre todas soluciones, aunque dado el gran número de variables originales (22283) es hasta cierto punto el comportamiento esperado. Para ver la potencia del análisis empezamos con la solución con cuatro componentes. Analizamos únicamente la solución del modelo jerárquico.
+
+Establecemos el modelo de aprendizaje utilizando el preprocesado adecuado, y obtenemos el score correspondiente para comparar con el modelo sin preprocesado de CP:
+
+```{r}
+#| label: cluster-028
+#| warning: false
+#| message: false
+
+# Preprocesado
+pp_genes =  
+   po("pca", param_vals = list(center = TRUE, scale. = TRUE, rank. = 5))
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean")
+genes_lrn1 = as_learner(pp_genes %>>% lrn1)
+# Entrenamiento del modelo
+genes_lrn1$train(tsk_genes)
+# Valoración del modelo
+pr1 = genes_lrn1$train(tsk_genes)$predict(tsk_genes)
+# Valores de scores
+pr1$score(msr("clust.silhouette"), task = tsk_genes)
+```
+
+El score ha mejorado algo con respecto al modelo sin CP pero todavía resulta muy bajo. Veamos que ocurre si cambiamos la solución con 13 componentes.
+
+```{r}
+#| label: cluster-029
+#| warning: false
+#| message: false
+
+# Preprocesado
+pp_genes =  
+   po("pca", param_vals = list(center = TRUE, scale. = TRUE, rank. = 13))
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean")
+genes_lrn1 = as_learner(pp_genes %>>% lrn1)
+# Entrenamiento del modelo
+genes_lrn1$train(tsk_genes)
+# Valoración del modelo
+pr1 = genes_lrn1$train(tsk_genes)$predict(tsk_genes)
+# Valores de scores
+pr1$score(msr("clust.silhouette"), task = tsk_genes)
+```
+
+El coeficiente empeora el resultado anterior. Veamos que ocurre en el último caso:
+
+```{r}
+#| label: cluster-030
+#| warning: false
+#| message: false
+
+# Preprocesado
+pp_genes =  
+   po("pca", param_vals = list(center = TRUE, scale. = TRUE, rank. = 22))
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean")
+genes_lrn1 = as_learner(pp_genes %>>% lrn1)
+# Entrenamiento del modelo
+genes_lrn1$train(tsk_genes)
+# Valoración del modelo
+pr1 = genes_lrn1$train(tsk_genes)$predict(tsk_genes)
+# Valores de scores
+pr1$score(msr("clust.silhouette"), task = tsk_genes)
+```
+
+A la vista de los resultados parece que una solución con cinco componentes es suficiente. En primer lugar vemos el dendograma correspondiente:
+
+```{r}
+#| label: cluster-031
+#| warning: false
+#| message: false
+
+# Preprocesado
+pp_genes =  
+   po("pca", param_vals = list(center = TRUE, scale. = TRUE, rank. = 5))
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean")
+genes_lrn1 = as_learner(pp_genes %>>% lrn1)
+# Entrenamiento del modelo
+genes_lrn1$train(tsk_genes)
+# Dendograma
+modelo = genes_lrn1$model$clust.hclust$model
+plot(as.dendrogram(modelo))
+```
+
+En este caso no queda clara que una solución con cinco clusters parece acertada, a pesar de que el target tiene cinco grupos. Veamos como se corresponden los clusters obtenidos con dicha variable. Planteamos cinco grupos para mantener la equivalencia con el target original.
+
+```{r}
+#| label: cluster-032
+#| warning: false
+#| message: false
+
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean", k = 5)
+genes_lrn1 = as_learner(pp_genes %>>% lrn1)
+# Valores de predicción
+pr1 = genes_lrn1$train(tsk_genes)$predict(tsk_genes)
+# Generamos la tabla de comparación
+table(y_genes$type, pr1$partition)
+```
+
+En este caso si ocurre que algunos cluster identifican mayoritariamente cada tipo de tumor. El más problemático es el cluster 1 con los tipos `AML`, `Bone_Marrow_CD34`, y `PBSC_CD34`. Vista la agrupación obtenida la caracterización de los clusters que nos puede aportar información muy relevante sobre las características de cada tipo de tumor. Extraemos las coordenadas en las 5 componentes y las unimos con la solución obtenida.
+
+```{r}
+#| label: cluster-033
+#| warning: false
+#| message: false
+
+# Obtención de coordenadas
+leukemia_cp = prcomp(X_genes, scale = TRUE)
+coor_cp = as.data.frame(get_pca_ind(leukemia_cp)$coord[,1:5])
+# Fusión de datos
+coor_cp$cluster = as.factor(pr1$partition)
+colnames(coor_cp)[1:5] = c("D01", "D02","D03","D04","D05")
+# Gráfico descriptivo de componentes
+df = coor_cp %>% pivot_longer(cols = colnames(coor_cp[,1:(ncol(coor_cp)-1)]), names_to = "CP", values_to = "Coordenadas") 
+ggplot(df, aes(cluster, Coordenadas)) + 
+  geom_boxplot() +
+  facet_wrap(vars(CP), nrow = 2)
+```
+
+Como era de esperar, por la misma construcción de las componentes, las mayores diferencias entre los clusters se observan en las primera dimensiones. Por ejemplo, en la primera componente podemos establecer el orden siguiente en función de los valores observados (en orden descendente): C5 \> C2 \> C3 \> C4 \> C1, lo que implica teniendo en cuenta la tabla de coincidencias entre clasificación y valores originales, que las leucemias del tipo `PB` se pueden identificar si buscamos los valores más altos en la primera componente. Por otro lado los valores más bajos en dicha componente se pueden asociar con las leucemias de los tipos `PBSC_CD34`, `AML`, y `Bone_Marrow_CD34`. Así mismo podemos ver que los valores más bajos en la componente 2 se corresponden con el grupo 5 (`PB`), y los más altos con los grupos 1 y 2 (`AML`, `Bone_Marrow_CD34`). Veamos estas conclusiones de forma gráfica:
+
+```{r}
+#| label: cluster-034
+#| warning: false
+#| message: false
+
+# Añadimos el tipo de leucemia a las coordenadas y el cluster.
+coor_cp$type = y_genes$type
+# Gráfico
+ggplot(coor_cp, aes(D01, D02, color = cluster, shape = type)) +
+  geom_point(size = 3) 
+```
+
+En el gráfico se observa claramente que el cluster 5 esta asociado con `PB` y se sitúa sobre el cuadrante IV. En los otros cuatro grupos hay mezclas de diferentes tipos de leucemia, aunque geográficamente si se aprecia cierta separación entre los diferentes cluster.
+
+#### Vehicle silhouettes
+
+Comenzamos con el análisis de CP y la selección del número de componentes.
+
+```{r}
+#| label: cluster-035
+#| warning: false
+#| message: false
+
+# CP
+vehicle_cp = prcomp(X_vehicle, scale = TRUE)
+# Resumen numérico del análisis
+resumen_cp = get_eigenvalue(vehicle_cp)
+# Componentes para el 50% de VE
+sum(resumen_cp$cumulative.variance.percent <= 50) + 1
+# Componentes para el 70% de VE
+sum(resumen_cp$cumulative.variance.percent <= 70) + 1
+# Componentes para el 80% de VE 
+sum(resumen_cp$cumulative.variance.percent <= 80) + 1 
+```
+
+En este caso seleccionamos cuatro componentes ya que no añadimos mucha complejidad (muchas componentes) pero si ganamos un 10% de variabilidad explicada.
+
+Establecemos el modelo de aprendizaje utilizando el preprocesado adecuado, y obtenemos el score correspondiente para comparar con el modelo sin preprocesado de CP:
+
+```{r}
+#| label: cluster-036
+#| warning: false
+#| message: false
+
+# Preprocesado
+pp_vehicle =  
+   po("pca", param_vals = list(center = TRUE, scale. = TRUE, rank. = 4))
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean")
+vehicle_lrn1 = as_learner(pp_vehicle %>>% lrn1)
+# Entrenamiento del modelo
+vehicle_lrn1$train(tsk_vehicle)
+# Valoración del modelo
+pr1 = vehicle_lrn1$train(tsk_vehicle)$predict(tsk_vehicle)
+# Valores de scores
+pr1$score(msr("clust.silhouette"), task = tsk_vehicle)
+```
+
+El valor obtenido del índice es superior al del modelo jerárquico original. Veamos el dendograma asociado:
+
+```{r}
+#| label: cluster-037
+#| warning: false
+#| message: false
+
+# Preprocesado
+pp_genes =  
+   po("pca", param_vals = list(center = TRUE, scale. = TRUE, rank. = 4))
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean")
+vehicle_lrn1 = as_learner(pp_vehicle %>>% lrn1)
+# Entrenamiento del modelo
+vehicle_lrn1$train(tsk_vehicle)
+# Dendograma
+modelo = vehicle_lrn1$model$clust.hclust$model
+plot(as.dendrogram(modelo))
+```
+
+Como en el caso anterior vamos a mantener la solución con cuatro clusters para poder comparar la solución con el target original.
+
+```{r}
+#| label: cluster-038
+#| warning: false
+#| message: false
+
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean", k = 4)
+vehicle_lrn1 = as_learner(pp_vehicle %>>% lrn1)
+# Valores de predicción
+pr1 = vehicle_lrn1$train(tsk_vehicle)$predict(tsk_vehicle)
+# Generamos la tabla de comparación
+table(y_vehicle, pr1$partition)
+```
+
+Se puede ver una gran mezcla en todos los clusters. Ahora caracterizamos los grupos en función de las coordenadas en las componentes principales consideradas:
+
+```{r}
+#| label: cluster-039
+#| warning: false
+#| message: false
+
+# Obtenición de coordenadas
+vehicle_cp = prcomp(X_vehicle, scale = TRUE)
+coor_cp = as.data.frame(get_pca_ind(vehicle_cp)$coord[,1:4])
+# Fusión de datos
+coor_cp$cluster = as.factor(pr1$partition)
+colnames(coor_cp)[1:4] = c("D01", "D02","D03","D04")
+# Gráfico descriptivo de componentes
+df = coor_cp %>% pivot_longer(cols = colnames(coor_cp[,1:(ncol(coor_cp)-1)]), names_to = "CP", values_to = "Coordenadas") 
+ggplot(df, aes(cluster, Coordenadas)) + 
+  geom_boxplot() +
+  facet_wrap(vars(CP), nrow = 2)
+```
+
+¿Cómo interpretamos ahora los gráficos anteriores? Para finalizar utilizamos las dos primeras componentes para la representación gráfica de los clusters y target.
+
+```{r}
+#| label: cluster-040
+#| warning: false
+#| message: false
+
+# Añadimos el tipo de leucemia a las coordenadas y el cluster.
+coor_cp$vehicle = y_vehicle
+# Gráfico
+ggplot(coor_cp, aes(D01, D02, color = cluster, shape = vehicle)) +
+  geom_point(size = 3) 
+```
+
+Aunque el gráfico de dispersión es capaz de separar los cuatro grupos (ese es el motivo por el que el índice es alto), también es cierto que la mezcla de tipos de vehículos es muy grande impidiendo una clasificación clara de todos ellos. tal vez si se aumenta el número de grupos podríamos tener una solución más efectiva. Vamos a ver que ocurre si consideramos 8 grupos en lugar de cuatro que parece una solución más adecuada para la obtención de clusters homogéneos.
+
+```{r}
+#| label: cluster-041
+#| warning: false
+#| message: false
+
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean", k = 8)
+vehicle_lrn1 = as_learner(pp_vehicle %>>% lrn1)
+# Valores de predicción
+pr1 = vehicle_lrn1$train(tsk_vehicle)$predict(tsk_vehicle)
+# Generamos la tabla de comparación
+table(y_vehicle, pr1$partition)
+```
+
+El reparto sigue siendo similar lo que nos impedirá obtener una buena clasificación.
+
+```{r}
+#| label: cluster-042
+#| warning: false
+#| message: false
+
+# Obtención de coordenadas
+vehicle_cp = prcomp(X_vehicle, scale = TRUE)
+coor_cp = as.data.frame(get_pca_ind(vehicle_cp)$coord[,1:4])
+# Fusión de datos
+coor_cp$cluster = as.factor(pr1$partition)
+colnames(coor_cp)[1:4] = c("D01", "D02","D03","D04")
+# Gráfico descriptivo de componentes
+df = coor_cp %>% pivot_longer(cols = colnames(coor_cp[,1:(ncol(coor_cp)-1)]), names_to = "CP", values_to = "Coordenadas") 
+ggplot(df, aes(cluster, Coordenadas)) + 
+  geom_boxplot() +
+  facet_wrap(vars(CP), nrow = 2)
+```
+
+Al aumentar el número de clusters resulta más difícil extraer conclusiones sobre las características de los grupos- Veamos el gráfico de dispersión.
+
+```{r}
+#| label: cluster-043
+#| warning: false
+#| message: false
+
+# Añadimos el tipo de leucemia a las coordenadas y el cluster.
+coor_cp$vehicle = y_vehicle
+# Gráfico
+ggplot(coor_cp, aes(D01, D02, color = cluster, shape = vehicle)) +
+  geom_point(size = 3) 
+```
+
+Aunque algunos grupos se identifican más claramente, también es cierto que en el cuadrante I hay una gran mezcla de subgrupos. Esta claro que el modelo de cluster no es capaz de clasificar adecuadamente este tipo de datos.
+
+#### Sales
+
+Ampliamos ahora el análisis del banco de datos `Sales`.
+
+```{r}
+#| label: cluster-044
+#| warning: false
+#| message: false
+
+X_sales = sales %>% dplyr::select(-Product_Code)
+# CP
+sales_cp = prcomp(X_sales, scale = TRUE)
+# Resumen numérico del análisis
+resumen_cp = get_eigenvalue(sales_cp)
+# Componentes para el 50% de VE
+sum(resumen_cp$cumulative.variance.percent <= 50) + 1
+# Componentes para el 70% de VE
+sum(resumen_cp$cumulative.variance.percent <= 70) + 1
+# Componentes para el 80% de VE 
+sum(resumen_cp$cumulative.variance.percent <= 80) + 1 
+```
+
+Con la primera componente ya superamos el 80% de variabilidad explicada. Veamos toda la solución:
+
+```{r}
+#| label: cluster-045
+#| warning: false
+#| message: false
+
+resumen_cp 
+```
+
+Con las dos primeras CP alcanzamos un 92% de variabilidad explicada y optamos por esta solución para proceder con el análisis cluster.
+
+```{r}
+#| label: cluster-046
+#| warning: false
+#| message: false
+
+# Preprocesado
+pp_sales =  
+   po("pca", param_vals = list(center = TRUE, scale. = TRUE, rank. = 2))
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean")
+sales_lrn1 = as_learner(pp_sales %>>% lrn1)
+# Entrenamiento del modelo
+sales_lrn1$train(tsk_sales)
+# Valoración del modelo
+pr1 = sales_lrn1$train(tsk_sales)$predict(tsk_sales)
+# Valores de scores
+pr1$score(msr("clust.silhouette"), task = tsk_sales)
+```
+
+El score ha mejorado teniendo en cuenta que hemos reducido a un análisis solo con dos predictoras. procedemos con el resto del análisis. Veamos el dendograma:
+
+```{r}
+#| label: cluster-047
+#| warning: false
+#| message: false
+
+# Preprocesado
+pp_sales =  
+   po("pca", param_vals = list(center = TRUE, scale. = TRUE, rank. = 2))
+# Modelo de aprendizaje
+lrn1 = lrn("clust.hclust", method = "ward.D", distmethod = "euclidean")
+sales_lrn1 = as_learner(pp_sales %>>% lrn1)
+# Entrenamiento del modelo
+sales_lrn1$train(tsk_sales)
+# Dendograma
+modelo = sales_lrn1$model$clust.hclust$model
+plot(as.dendrogram(modelo))
+```
+
+Una solución con cinco grupos parece construir grupos homogéneos y distintos entre si. Veamos con algo más detalle esta solución tratando de caracterizar los grupos obtenidos:
+
+```{r}
+#| label: cluster-048
+#| warning: false
+#| message: false
+
+# Obtención de coordenadas
+sales_cp = prcomp(X_sales, scale = TRUE)
+coor_cp = as.data.frame(get_pca_ind(sales_cp)$coord[,1:2])
+# Fusión de datos
+coor_cp$cluster = as.factor(pr1$partition)
+colnames(coor_cp)[1:2] = c("D01", "D02")
+# Gráfico descriptivo de componentes
+df = coor_cp %>% pivot_longer(cols = colnames(coor_cp[,1:(ncol(coor_cp)-1)]), names_to = "CP", values_to = "Coordenadas") 
+ggplot(df, aes(cluster, Coordenadas)) + 
+  geom_boxplot() +
+  facet_wrap(vars(CP), nrow = 1)
+```
+
+Como era de esperar casi toda la caracterización de los grupos se corresponde con la componente 1 ya que tenia más del 90% de variabilidad explicada. De acuerdo a ella nos resulta bastante fácil clasificar las diferentes semanas. El grupo 5 es que el que tiene los productos con mayores ventas y el grupo 4 el que tiene los productos con ventas más bajas. Veamos el gráfico de dispersión.
+
+```{r}
+#| label: cluster-049
+#| warning: false
+#| message: false
+
+# Añadimos el tipo de leucemia a las coordenadas y el cluster.
+coor_cp$product = y_sales$Product_Code
+# Gráfico
+ggplot(coor_cp, aes(D01, D02, color = cluster)) +
+  geom_point(size = 3) 
+```
+
+Podemos identificar claramente los clusters de izquierda a derecha (de menos a más ventas). Esto nos permite identificar rápidamente patrones de productos sin necesidad de revisar toda la tabla de datos. Podemos ver por ejemplo los productos que se corresponden con las menores ventas (grupo 4) y las mayores ventas (grupo 5).
+
+```{r}
+#| label: cluster-050
+#| warning: false
+#| message: false
+
+# Menores ventas
+coor_cp[coor_cp$cluster == 4, "product"]
+# mayores ventas
+coor_cp[coor_cp$cluster == 5, "product"]
+```
+
+## Ejercicios {#sec-180.5}
+
+Consideramos diferentes ejercicios donde el target es categórico o numérico.
+
+1.  Ajustar un modelo de aprendizaje automático basado en algoritmo de cluster (independiente o como resultado de un preprocesado de componentes principales) para el banco de datos `Iris`[-@sec-iris].
+2.  Ajustar un modelo de aprendizaje automático basado en algoritmo de cluster (independiente o como resultado de un preprocesado de componentes principales) para el banco de datos `Wine quality`[-@sec-winequality].
+3.  Ajustar un modelo de aprendizaje automático basado en algoritmo de cluster (independiente o como resultado de un preprocesado de componentes principales) para el banco de datos `WGene expression breast cancer`[-@sec-geneexp].
+4.  Ajustar un modelo de aprendizaje automático basado en algoritmo de cluster (independiente o como resultado de un preprocesado de componentes principales) para el banco de datos `QSAR`[-@sec-qsar].
+5.  Ajustar un modelo de aprendizaje automático basado en algoritmo de cluster (independiente o como resultado de un preprocesado de componentes principales) para el banco de datos `Meat spec`[-@sec-meatspec].

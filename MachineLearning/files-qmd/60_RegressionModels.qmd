@@ -1,0 +1,2034 @@
+# Modelos de Regresión {#sec-60}
+
+Los modelos de aprendizaje automático de regresión lineal son de los más utilizados en el mundo real por su sencillez y rapidez de ejecución. Son modelos en los que se trata de explicar el comportamiento de una variable respuesta (de tipo numérico) a partir de un conjunto de variables predictoras (de tipo numérico o categórico) mediante una combinación lineal de ellas. El resultado de este tipo de modelos es obtener un valor de salida (predicción) a partir de dicha combinación lineal de forma que el valor se aproxime lo más posible al verdadero valor observado de la respuesta. Aplicaciones de este tipo de modelos son: análisis de las ventas de productos, el precio futuro de la vivienda, predicción de indicadores numéricos en salud, la predicción del PIB, predicción del crecimiento de entidades biológicas, predicción del rendimiento deportivo, etc.
+
+Estos modelos tratan de aprender únicamente sobre la relación entre la respuesta y las predictoras a partir de un montón de datos históricos. De hecho, como veremos en el punto siguiente, estos modelos no necesitan de hiperparámetos para su ajuste. Por ejemplo, si estamos interesados en la predicción del precio de la vivienda para una ciudad en particular, necesitaríamos datos sobre los precios de la vivienda en varias partes de la ciudad. Cada muestra contiene información sobre cuántas habitaciones tiene la casa, a qué distancia está del centro de la ciudad, a qué distancia está del aeropuerto, si hay un hospital cerca, etc. La próxima vez, cuando se esté interesado en el precio de una vivienda que no está en el conjunto de datos utilizado, podremos utilizar la información de la característica de la vivienda para que utilizando el modelo obtenido podamos proporcionar una previsión de precios.
+
+Entre las ventajas de este tipo de modelos encontramos que los resultados se pueden interpretar fácilmente y es más rápido de entrenar que otros modelos de aprendizaje automático. La parte negativa es que asume una combinación lineal entre las predictoras y la respuesta, lo que en muchas situaciones reales puede ser difícil de cumplir, además de que es sensible a los valores atípicos, de forma que el modelo puede tener cambios drásticos debido a la presencia de dichas observaciones.
+
+Paquetes y configuración básica
+
+```{r}
+#| label: regmod-001
+#| message: false
+#| warning: false
+
+# Paquetes anteriores
+library(tidyverse)
+library(sjPlot)
+library(knitr) # para formatos de tablas
+library(skimr)
+library(DataExplorer)
+library(GGally)
+library(gridExtra)
+library(ggpubr)
+theme_set(theme_sjplot2())
+
+# Paquetes AA
+library(mlr3verse)
+library(mlr3tuning)
+library(mlr3tuningspaces)
+library(mlr3extralearners)
+```
+
+## Modelos de Regresión Lineal {#sec-60.2}
+
+A continuación se presentan brevemente los conceptos teóricos más relevantes de los modelos lineales de regresión con respuesta numérica.
+
+### Modelo de regresión Lineal Simple (RLS) {#sec-60.2.1}
+
+Para ilustrar las características de este modelo de aprendizaje comenzamos con el modelo más sencillo en el que únicamente consideramos una variable predictora de tipo numérico ($x$), conocido como modelo de regresión lineal simple y que se expresa matemáticamente como:
+
+$$y = w_0 + w_1x + \epsilon,$$ {#eq-rm001}
+
+donde:
+
+-   $w_0$ se conoce como interceptación o sesgo y representa el valor medio de la respuesta cuando la variable predictora no tiene influencia sobre ella, y se utiliza como modelo de partida.
+
+-   $w_1$ se conoce como pendiente y representa la variación de la respuesta al aumentar en una unidad el valor de la predictora, es decir, el cambio que sufre $y$ cuando pasamos de $x$ a $x+1$, de forma que el valor de $w_1$ determina si la relación entre $x$ e $y$ es directa (valor positivo) o inversa (valor negativo).
+
+-   $\epsilon$ se conoce como error aleatorio y representa la diferencia entre el valor observado de la respuesta y el valor predicho por el modelo, teniendo en cuenta que los valores de la respuesta para un mismo valor de la predictora pueden ser diferentes debido a otras variables que no aparecen en nuestro modelo de aprendizaje.
+
+Tanto $w_0$ como $w_1$ son las cantidades desconocidas que el algoritmo debe estimar para alcanzar el modelo de predicción:
+
+$$\hat{y} = \hat{w_0} + \hat{w_1}x,$$ {#eq-rm002}
+
+donde el símbolo $^$ indica los valores estimados mediante el modelo de $w_0$ y $w_1$, mientras que el error estimado viene dado por la diferencia entre el valor observado y el predicho por el modelo:
+
+$$\hat{\epsilon} = y - \hat{y}.$$ {#eq-rm003}
+
+Es evidente que cuanto menor sea el error estimado mejor será nuestro modelo, ya que más cerca estará el valor predicho del valor real observado. De hecho, las funciones de pérdida para este tipo de modelos se basan en estimar los valores de $w_0$ y $w_1$ de forma que el error cometido sea lo más pequeño posible.
+
+De forma general, el modelo anterior se suele expresar en notación matricial como:
+
+$$y = Xw + \epsilon$$ {#eq-rm004}
+
+donde la primera columna de $X$ es toda de unos para representar el efecto asociado a $w_0$, de forma que en realidad la matriz $X$ viene dada por $(1| x)$, es decir una matriz con dos columnas.
+
+Dado un conjunto de datos $\{(y_i, x_i)\}_{i=1}^n$, la función de pérdida habitual es el error cuadrático medio definido como:
+
+$$\frac{1}{n}\sum_{i_1}^n (y_i - \hat{y}_i)^2$$ {#eq-rm005} de donde se pueden obtener los valores estimados de $w_0$ y $w_1$ minimizando dicha cantidad para el rango de valores posibles de ambos parámetros. Gráficamente tenemos:
+
+<img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/rls.png" width="450" height="350"/>
+
+donde los puntos representan los pares de puntos $(x_i, y_i)$, la línea roja sería el modelo de regresión estimado, y la líneas verticales negras representan el error cometido por el modelo para cada muestra del conjunto de datos. Se trata pues de obtener el modelo que minimice el error conjunto para todos los elementos de la muestra.
+
+La solución para $w = (w_0, w_1)$ se obtiene entonces como el cuadrado de la norma 2 sobre los errores:
+
+$$\underset{w}{min} ||y-Xw||_2^2,$$ {#eq-rm006}
+
+que es la forma matemática de la minimización del error cuadrático medio.
+
+### Modelo Lineal General (MLG) {#sec-60.2.2}
+
+El Modelo Lineal General es una generalización del modelo anterior donde se dispone de una variable respuesta ($y$) de tipo numérico y una matriz de variables predictoras de tipo numérico y/o categórico, a partir del cual podemos obtener la matriz $X$ mediante la codificación de las variables de tipo categórico junto las variables de tipo numérico. Si disponemos de $p$ posibles predictoras el conjunto de datos
+
+$$\{(y_i, x_{1i},...x_{pi})\}_{i=1}^n$$ {#eq-rm007}
+
+nos proporciona los datos para la obtención de este modelo donde $x_{ji}$ es el valor de la muestra $i$ en la predictora $j$, de forma que la ecuación del Modelo Lineal General viene dada por:
+
+$$y = w_0 + w_1X_1+...+w_pX_p + \epsilon$$ {#eq-rm008}
+
+donde cada $w_j$ representa la pendiente o variación de la respuesta con respecto a cada predictora, y $w_0$ representa el sesgo del modelo.
+
+Como en el caso anterior el ajuste de este modelo se basa en obtener los valores de $\hat{w}_0, \hat{w}_1,...,\hat{w}_p$ que minimicen el error cuadrático medio de los errores del modelo obtenidos como:
+
+$$y - \hat{y} = y -  \hat{w}_0 + \hat{w}_1X_1+...+\hat{w}_pX_p$$ {#eq-rm009}
+
+De forma general, el modelo anterior se suele expresar en notación matricial como:
+
+$$y = Xw + \epsilon$$ {#eq-rm010}
+
+donde la primera columna de $X$ es toda de unos para representar el efecto asociado a $w_0$, de forma que en realidad la matriz $X$ viene dada por $(1| X_1,...,X_p)$, es decir una matriz con $p+1$ columnas.
+
+Al igual que en el caso más simple, la solución de $w = (w_0, w_1,...,w_p)$ se obtiene mediante la expresión:
+
+$$\underset{w}{min} ||y-Xw||_2^2$$ {#eq-rm011}
+
+Como veremos más adelante, uno de los principales problemas que nos encontramos con este tipo de modelos es determinar que subconjunto de $X$ es relevante para explicar el comportamiento de la respuesta. Dado que cada predictora numérica puede estar medida en escalas diferentes, es necesario expresar dichas variables en escala estandarizada para determinar la relevancia de cada una de ellas sobre la respuesta, ya que de lo contrario los pesos $w_j$ no son comparables para dos predictoras medidas en escalas distintas.
+
+El procedimiento habitual es corregir cada variable por su media y dividir por la norma 2 de sus valores para que las nuevas variables tengan media cero y varianza similar. Si todas las predictoras son de tipo numérico el modelo lineal se expresa como:
+
+$$y' = w'_0 + w'_1X'_1+...+w'_pX'_p+ \epsilon$$ {#eq-rm012}
+
+donde $y', X'_1,...,X'_p$ son las variables normalizadas y los coeficientes $w'_j$ ahora si son comparables para el conjunto de predictoras, de forma que los valores más grandes en valor absoluto indican mayor peso sobre la respuesta, mientras que el signo del coeficiente indica si la relación es directa o inversa con la respuesta.
+
+## Modelo Lineal General con mlr3 {#sec-60.3}
+
+De los diferentes learner con los que se puede obtener un modelo lineal general nos vamos a centrar por le momento en el más sencillo de todos que es el `regr.lm`. Este algoritmo asume que el target es de tipo numérico y todos los efectos que pueden afectarlo se pueden describir mediante una ecuación del tipo \@eq-rm012. Podemos acceder tanto a los parámetros como los métodos disponibles para este algoritmo en este [enlace](https://mlr3learners.mlr-org.com/reference/mlr_learners_regr.lm.html).
+
+En el punto siguiente estudiamos como especificar la ecuación de este tipo de modelos cuando las características que utilizamos para predecir la respuesta son numéricas y/o factores. Algo muy importante a tener en cuenta en este tipo de modelos es que no resulta necesaria la codificación de los factores en el preprocesado, ya que el algoritmo lleva a cabo su propia codificación cuando detecta que una de las predictoras es un factor. Esto facilita esta tarea y nos permite escribir modelos más complejos sin tener que especificar la codificación. En `R` la codificación de factores se realiza fijando una categoría como referencia y comparando el resto frente a ella. Por defecto se utiliza `contr.treatment()`. En los ejemplos que trataremos veremos como interpretar los resultados del modelo teniendo en cuenta dicha codificación.
+
+### Especificación del modelo {#sec-60.3.1}
+
+Para especificar un modelo de este tipo utiliza la formulación habitual de `R`. Veamos diferentes situaciones en modelos muy sencillos donde tenemos un target numérico $Y$, y que podremos generalizar en situaciones más complejas más tarde:
+
+-   Una predictora de tipo numérico ($X_1$). En este caso la ecuación del modelo viene dada por:
+
+$$Y \sim X_1$$
+
+donde $X_1$ representa el efecto de regresión asociado con ella, es decir, la respuesta y $X_1$ están relacionadas mediante una recta con una pendiente que deberemos estimar. Este es el denominado modelo de regresión lineal simple.
+
+-   Dos predictoras de tipo numérico ($X_1$ y $X_2$). En este caso la ecuación del modelo viene dada por:
+
+$$Y \sim X_1 + X_2$$ donde $X_1$ y $X_2$ representan el efecto de regresión asociado con cada una de las variable numéricas, es decir, la respuesta y cada una de ellas están relacionadas mediante una recta con una pendiente que deberemos estimar. Este es el denominado modelo de regresión lineal múltiple.
+
+-   Una predictora de tipo categórico ($F_1$). En este caso la ecuación del modelo viene dada por:
+
+$$Y \sim F_1$$ donde $F_1$ representa el efecto del factor que en este tipo de modelos lo que hace es comparar la media de la respuesta para cada uno de los niveles del factor considerado. En este caso no estimamos una pendiente sino una media directamente, es decir, es un modelo para la comparación de medias. Este es el denominado modelo de anova de una vía.
+
+-   Dos predictoras de tipo categórico ($F_1$ y $F_2$). En este caso la ecuación del modelo viene dada por:
+
+$$Y \sim F_1 + F_2 + F_1:F_2$$ donde $F_1$ y $F_2$ representan los denominados efectos principales de los factores, es decir la comparación de medias de los nivel de cada factor (de forma independiente). Por otro lado, $F_1:F_2$ representa el efecto de interacción entre ambos factores, es decir, comparamos las medias de la respuesta para las diferentes combinaciones de los niveles de ambos factores. Este es el denominado modelo anova de dos vías.
+
+-   Una predictora de tipo numérico ($X_1$) y otra de tipo categórico ($F_1$). En este caso la ecuación del modelo viene dada por:
+
+$$Y \sim X_1 + F_1 + X_1:F_1$$
+
+donde $X_1$ representa el efecto de regresión asociado con la variable numérica, es decir, la respuesta y $X_1$ están relacionadas mediante una única pendiente que deberemos estimar. $F_1$ representa el efecto del factor, es decir, comparamos si las medias de la respuesta para cada grupo pueden considerarse iguales. $X_1:F_1$ representa el efecto de interacción entre predictoras, es decir, que la respuesta se relaciona con la predictora numérica mediante tantas curvas (generalmente líneas) como niveles tenga el factor $F_1$. Este es el denominado modelo ancova con una vía de clasificación.
+
+Esto último modelo es el más habitual ya que generalmente en las predictoras podemos tener variables de diferentes tipos. Modelos que generalizan este último podrían ser:
+
+-   Modelo para dos factores ($F_1$, $F_2$) y una numérica ($X_1$):
+
+$$Y \sim F_1 + F_2 + F_1:F:2 + X_1 + F_1:X_1 + F_2:X_1 + F_1:F:2:X_1$$ o de forma resumida $$Y \sim F_1*F_2*X_1$$
+
+-   Modelo para un factor ($F_1$) y dos numéricas ($X_1$, $X_2$):
+
+$$Y \sim F_1 + X_1 + X_2 + F_1:X_1 + F_1:X_2$$ o de forma resumida $$Y \sim F_1*(X_1 + X_2)$$
+
+-   Modelo para dos factores ($F_1$, $F_2$) y dos numéricas ($X_1$, $X_2$):
+
+$$Y \sim F_1 * F_2 *(X_1 + X_2)$$
+
+Como se puede ver la complejidad del modelo aumenta sustancialmente con la consideración de más variables predictoras. En cualquier caso estas son las ecuaciones de os denominados modelos saturados, es decir, el más complejo que se puede establecer a partir de la información recogida. Como veremos en diferentes situaciones prácticas en ocasiones resulta más sencillo considerar modelos más sencillos que conocemos como modelos anidados. Para determinar el modelo de partida resulta obligatorio realizar un análisis descriptivo gráfico que nos permita establecer tendencias (gráficos de dispersión) o diferencias entre medias (gráficos de cajas).
+
+::: {.callout-note appearance="simple" title="Clasificación binaria"}
+**Si el modelo considerado no contiene efectos de interacción la especificación del modelo saturado es automática y no hace falta escribir la ecuación correspondiente. Si se consideran interacciones es necesario escribir la ecuación del modelo para proceder con su estimación.**
+:::
+
+### Bancos de datos {#sec-60.3.2}
+
+Para ejemplificar el uso de estos modelos vamos a utilizar los bancos de datos Diabetes ([-@sec-diabetes]), Meat spec ([-@sec-meatspec]), Electricity ([-@sec-electricity]), y Housing in California ([-@sec-housingCA]) que presentamos en el capítulo [-@sec-40].
+
+A continuación se muestra el código para la carga de los diferentes bancos de datos y la creación de la correspondiente task de regresión para cada uno de ellos. A continuación definiremos los modelos saturados (cuando sea necesario) para cada uno de esos bancos de datos.
+
+#### Diabetes
+
+En un estudio sobre la diabetes se obtuvieron diez variables basales, edad, sexo, índice de masa corporal, presión arterial media y seis mediciones de suero sanguíneo para 442 pacientes diabéticos, así como la respuesta de interés, una medida cuantitativa de la progresión de la enfermedad un año después de la línea de base. Cada una de estas 10 variables predictoras se ha centrado en la media y se ha escalado por la desviación estándar multiplicada por la raíz cuadrada de n_muestras (es decir, la suma de los cuadrados de cada columna suma 1).
+
+El target viene identificado con $Y$ (progresión de la enfermedad) y las posibles predictoras como AGE, SEX, BMI, BP, S1, S2, S3, S4, S5, S6.
+
+```{r}
+#| label: regmod-002
+#| message: false
+#| warning: false
+
+# Carga de datos
+diabetes = read_rds("diabetes.rds")
+# Creación de task
+tsk_diabetes = as_task_regr(diabetes, target = "Y")
+# información de la tarea
+print(tsk_diabetes)
+```
+
+Veamos la representación gráfica de la información contenida en el banco de datos.
+
+```{r}
+#| label: fig-regmod-003
+#| message: false
+#| warning: false
+#| fig-width: 14
+#| fig-height: 14
+#| fig-cap: "Autoplot pairs para Diabetes"
+
+autoplot(tsk_diabetes, type ="pairs")
+```
+
+En la primera fila de la matriz podemos ver los valores de correlación de la respuesta con cada una de las predictoras numéricas, así como el gráfico de cajas con respecto a las predictoras categóricas. Aunque los coeficientes de correlación resultan significativos también es cierto que los valores obtenidos son bastante bajos salvo para `BMI` y `S5`. Tampoco parece apreciarse diferencias entre los niveles de `SEX` para la respuesta.
+
+En la primera columna podemos ver los gráficos de dispersión entre predictoras y respuesta. Dado el elevado número de puntos no se aprecian tendencias en el comportamiento. Vamos a estudiar con algo más de detalle los gráficos de dispersión para las variables con mayores valores del coeficiente de correlación.
+
+```{r}
+#| label: fig-regmod-004
+#| message: false
+#| warning: false
+#| fig-width: 14
+#| fig-height: 14
+#| fig-cap: "Diabetes BMI, SS vs Y"
+
+g1 <- ggplot(tsk_diabetes$data(), aes(x = BMI, y= Y)) + geom_point() 
+g2 <- ggplot(tsk_diabetes$data(), aes(x = S5, y= Y)) + geom_point()
+ggarrange(g1, g2, nrow = 1)
+```
+
+Se aprecia cierta tendencia creciente en ambos gráficos, es decir, conforme aumentan los valores de la predictora aumenta el valor de la respuesta, pero como indicaban los valores de correlación esta no es muy elevada. Verificamos ahora que no tenemos valores perdidos en el conjunto de datos:
+
+```{r}
+#| label: regmod-005
+#| message: false
+#| warning: false
+
+tsk_diabetes$missings()
+```
+
+Dado que no hay missings podemos pasar a especificar el modelo saturado que utilizaremos en el punto siguiente.
+
+```{r}
+#| label: regmod-006
+#| message: false
+#| warning: false
+
+# Modelo saturado para diabetes
+diabetes_model = po("modelmatrix", formula = ~ (AGE + BMI + BP + S1 + S2 + S3 + S4 + S5 + S6)*SEX)
+
+```
+
+#### Meat spec
+
+El departamento de calidad de una empresa de alimentación se encarga de medir el contenido en grasa de la carne que comercializa. Este estudio se realiza mediante técnicas de analítica química, un proceso relativamente costoso en tiempo y recursos. Una alternativa que permitiría reducir costes y optimizar tiempo es emplear un espectrofotómetro (instrumento capaz de detectar la absorbancia que tiene un material a diferentes tipos de luz en función de sus características) e inferir el contenido en grasa a partir de sus medidas. Por lo tanto, el objetivo que se persigue es predecir el contenido en grasa (`fat`) a partir de los valores dados por el espectrofotómetro.El resto de variables almacenan los valores de los 100 puntos del espectrofómetro para cada una de las muestras.
+
+En este caso tampoco tenemos valores perdidos pero no resulta útil la representación gráfica de los datos debido al alto número de predictoras. Por el momento creamos únicamente la tara de interés.
+
+```{r}
+#| label: regmod-007
+#| message: false
+#| warning: false
+
+# Carga de datos
+meatspec = read_rds("meatspec.rds")
+meatspec = meatspec[,-1]
+# Creación de task
+tsk_meatspec = as_task_regr(meatspec, target = "fat")
+# información de la tarea
+print(tsk_meatspec)
+```
+
+Dado que no tenemos valores perdidos la única tarea de preprocesamiento es la estandarización de la variables numéricas. Definimos el `pipeops` necesario.
+
+```{r}
+#| label: regmod-008
+#| message: false
+#| warning: false
+
+# Objeto preprocesado
+pp_meatspec = po("scale", param_vals = list(center = TRUE, scale = TRUE))
+```
+
+Dado que todas las predictoras son de tipo numérico no existen interacciones y no hace falta especificar el modelo.
+
+#### Electricity
+
+Una central eléctrica de ciclo combinado (CCPP) está compuesta por turbinas de gas (GT), turbinas de vapor (ST) y generadores de vapor de recuperación de calor. En una CCPP, la electricidad es generada por turbinas de gas y vapor, que se combinan en un ciclo, y se transfiere de una turbina a otra. Mientras que el Vacío se recolecta y tiene efecto sobre la Turbina de Vapor, las otras tres variables ambientales afectan el desempeño del GT. Este conjunto de de datos recogidos se ha recogido de una central eléctrica de ciclo combinado a lo largo de 6 años (2006-2011), cuando la central eléctrica estaba configurada para funcionar a plena carga. Las características consisten en variables ambientales promedio por hora: Temperatura (`AT`), Presión ambiental (`AP`), Humedad relativa (`RH`) y Vacío de escape (`V`) para predecir la producción de energía eléctrica neta por hora (`PE`) de la planta.
+
+Creamos la tarea asociada, evaluamos la presencia de valores perdidos y representamos gráficamente la información contenida.
+
+```{r}
+#| label: regmod-009
+#| message: false
+#| warning: false
+
+# Carga de datos
+electricity = read_rds("electricity.rds")
+# Creación de task
+tsk_electricity = as_task_regr(electricity, target = "PE")
+# información de la tarea
+print(tsk_electricity)
+```
+
+Evaluamos la presencia de missings.
+
+```{r}
+#| label: regmod-010
+#| message: false
+#| warning: false
+
+# Creación de task
+tsk_electricity$missings()
+```
+
+No hay missings. Realizamos el análisis gráfico.
+
+```{r}
+#| label: fig-regmod-011
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Autoplot pairs Electricity"
+
+autoplot(tsk_electricity, type ="pairs")
+```
+
+Podemos ver que hay correlaciones bastante altas entre `AT` y `V` con `PE`, aunque solo parece que el comportamiento lineal esta asociado con `AT`, mientras que con `V` la tendencia tiene una forma curvilínea. Definimos el objeto de preprocesado asociado con la estandarización de las predictoras.
+
+```{r}
+#| label: regmod-012
+#| message: false
+#| warning: false
+
+# Objeto preprocesado
+pp_electricity = po("scale", param_vals = list(center = TRUE, scale = TRUE))
+```
+
+Como en el caso anterior no resulta necesario explicitar el modelo, ya que todas las predictoras son de tipo numérico.
+
+#### Housing in California
+
+En este ejemplo vamos a utilizar la base de datos `HousingCA`, que recoge la información sobre el censo viviendas de California en el año 1990. Se está interesado en predecir el valor medio de la vivienda (`median_house_value`) medido en dólares americanos en función de las predictoras. Cargamos los datos y valoramos la presencia de missings.
+
+```{r}
+#| label: regmod-013
+#| message: false
+#| warning: false
+
+# Carga de datos
+housingCA = read_rds("housingCA.rds")
+# Creación de task
+tsk_housing = as_task_regr(housingCA, target = "median_house_value")
+# información de la tarea
+print(tsk_housing)
+```
+
+Evaluamos la presencia de missings.
+
+```{r}
+#| label: regmod-014
+#| message: false
+#| warning: false
+
+tsk_housing$missings()
+```
+
+La única característica donde aparecen valores perdidos es `total_bedrooms`. Podemos definir un objeto de preprocesado donde imputemos los valores missings para esa variable y a su vez estandarizamos los valores de las características numéricas. Como método de imputación utilizaremos la mediana de los valores de la característica.
+
+```{r}
+#| label: regmod-015
+#| message: false
+#| warning: false
+
+pp_housing = 
+   po("scale", param_vals = list(center = TRUE, scale = TRUE)) %>>%
+   po("imputemedian", affect_columns = selector_type("numeric")) 
+```
+
+Realizamos el análisis descriptivo gráfico del conjunto de datos ignorando por el momento la presencia de valores perdidos.
+
+```{r}
+#| label: fig-regmod-016
+#| message: false
+#| warning: false
+#| fig-width: 14
+#| fig-height: 14
+#| fig-cap: "Autoplot pairs Housing In California"
+
+autoplot(tsk_housing, type ="pairs")
+```
+
+Tan solo se aprecia una correlación alta entre la respuesta y `median_income`, mientras que para el resto todas las correlaciones son bastante bajas. Además no se aprecia ninguna tendencia clara en los gráficos de dispersión. Sin embargo, si podemos ver ciertas diferencias en el gráfico de cajas de la proximidad al océano.
+
+Como en este caso si disponemos de predictoras categóricas resulta necesario especificar el modelo saturado para tener en cuenta las interacciones entre las predictoras numéricas y el factor.
+
+```{r}
+#| label: regmod-017
+#| message: false
+#| warning: false
+
+# Modelo saturado para housing
+housing_model = po("modelmatrix", formula = ~ (households + housing_median_age + latitude + longitude + median_income + population + total_bedrooms + total_rooms)*ocean_proximity)
+```
+
+### Nuestros primeros modelos {#sec-60.3.3}
+
+En este punto presentamos los modelos saturados para cada uno de los bancos de datos de ejemplos que hemos presentado en el punto anterior. Para los primeros resultados utilizaremos una división de muestras 80% - 20% (entrenamiento - validación), para determinar las predictoras más relevantes, y más tarde realizaremos un estudio de estabilidad de la solución mediante validación cruzada.
+
+#### Diabetes
+
+En este caso no tenemos tareas de preprocesado y nos vamos a centrar directamente en el establecimiento del proceso de aprendizaje a partir del modelo saturado que hemos definido en el punto anterior. La mayor dificultad con el algoritmo `regr.lm` es que no nos permite realzar un proceso de selección de variables de forma automática. La única opción que tenemos es definir un `filter` adecuado y obtener los valores para la muestra de entrenamiento. Sin embargo, en este tipo de modelos esta estrategia no es óptima dado que los `filter` no nos permiten evaluar directamente los efectos de interacción entre predictoras numéricas y factores.
+
+A continuación vamos a presentar un procedimiento para seleccionar los efectos relevantes el modelo basados en el estadístico `AIC`, y más tarde automatizaremos ese modelo para realizar un estudio de validación de la solución obtenida. En primer lugar obtenemos la muestra de entrenamiento y validación que utilizaremos para la valoración de efectos.
+
+```{r}
+#| label: regmod-18
+#| message: false
+#| warning: false
+
+# Fijamos semilla para asegurar la reproducibilidad del modelo
+set.seed(135)
+# Creamos la partición
+splits = mlr3::partition(tsk_diabetes, ratio = 0.8)
+# Muestras de entrenamiento y validación
+tsk_train_diabetes = tsk_diabetes$clone()$filter(splits$train)
+tsk_test_diabetes  = tsk_diabetes$clone()$filter(splits$test)
+```
+
+Para el ajuste del modelo lineal hacemos uso de la función `lm()` en la que únicamente debemos identificar el modelo deseado (en este caso el saturado), y el conjunto de datos sobre el que vamos a ajustar dicho modelo. A continuación utilizamos la función `step()` de la librería `stats` que toma el modelo saturado y mediante una búsqueda adelante-atrás determina el conjunto de efectos que más influye en la respuesta mediante el estadístico `AIC`. Este estadístico selecciona como mejor modelo aquel con un menor valor de `AIC` de todos los que se pueden construir al ir eliminando efectos en el modelo saturado. Por último utilizamos la función `summary()` para ver el modelo resultante (coeficientes, capacidad explicativa,...).
+
+```{r}
+#| label: regmod-19
+#| message: false
+#| warning: false
+
+fit = lm(Y ~ (AGE + BMI + BP + S1 + S2 + S3 + S4 + S5 + S6)*SEX, data = tsk_train_diabetes$data())
+fit = stats::step(fit)
+summary(fit)
+```
+
+El modelo obtenido nos da una tabla con los efectos del modelo que son seleccionados por el `AIC`, así como los coeficientes que dichos efectos tienen en el modelo. En este caso podemos ver que los efectos más relevantes se corresponden con `BMI` y `S5` con coeficientes positivos, indicando que cuando aumentan los valores de esas predictoras más aumenta el valor de la respuesta. Puesto que las variables están estandarizadas el coeficiente también refleja el peso de cada predictora en la respuesta. Por otro lado, aunque el coeficiente asociado con `SEX` es el más elevado no tiene sentido su interpretación ya que en el modelo están presentes diferentes efectos de interacción relacionados con dicho factor, En esa situación los coeficientes más relevantes son los de la interacción.
+
+El modelo no tiene una capacidad explicada muy elevada dado que el $R^2$ se sitúa en 53% y el `MSE` es de 2767.502 (residual standard error\^2).
+
+Las ecuaciones del modelo resultante son:
+
+**Para los sujetos de SEX = 1**
+
+$$\hat{Y} = (-431.1117+134.9858) + (0.5030-1.0742)*AGE + (6.7845-2.3455)*BMI + 1.1940*BP 
+-1.0872*S1 + 0.8818*S2 + 77.3292*S5$$ o lo que es o mismo
+
+$$\hat{Y} = -296.1259 -0.5712*AGE + 4.439*BMI + 1.1940*BP -1.0872*S1 + 0.8818*S2 + 77.3292*S5$$ En este caso el progreso de la enfermedad aumenta con `BMI`, `BP`, `S2` y `S5`, y disminuye con `AGE` y `S1` para los individuos codificados con `SEX =1`
+
+**Para los sujetos de SEX = 2**
+
+$$\hat{Y} = -431.1117 + 0.5030*AGE + 6.7845*BMI + 1.1940*BP -1.0872*S1 + 0.8818*S2 + 77.3292*S5$$ En este caso todos los indicadores son positivos salvo `S1`.
+
+Una vez hemos identificado los efectos que parecen mas relevantes para explicar el comportamiento de la respuesta, vamos a estudiar la validez construyendo un `grpahlearner` que nos permita entrenar el modelo de forma sencilla y evaluar individualmente y mediante validación cruzada k-fold el modelo propuesto. para ello definimos el nuevo modelo, establecemos el learner adecuado y utilizamos la medida de valoración del modelo basada en el `MSE`.
+
+```{r}
+#| label: regmod-20
+#| message: false
+#| warning: false
+
+# Algoritmo de aprendizaje
+learner = lrn("regr.lm")
+# Modelo en términos de predictoras
+diabetes_model = po("modelmatrix", formula = ~ AGE + BMI + BP + S1 + S2 + S5 + SEX + AGE:SEX + BMI:SEX)
+
+# Graphlearner: Estructura del modelo y learner
+gr = diabetes_model %>>% learner
+gr = GraphLearner$new(gr)
+
+# Entrenamiento del modelo
+gr$train(tsk_train_diabetes)
+# Resumen del modelo
+summary(gr$model$regr.lm$model)
+```
+
+Como era de esperar el modelo obtenido es el mismo, dado que el algoritmo `regr.lm` se basa en la función `lm` para su ajuste. Obtenemos la predicción del modelo tanto para la muestra de entrenamiento como de validación y representamos las soluciones obtenidas
+
+```{r}
+#| label: regmod-21
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento
+pred_train = gr$predict(tsk_train_diabetes)
+# Predicción de la muestra de validación
+pred_test = gr$predict(tsk_test_diabetes)
+# Scores de validación
+measures = msr(c("regr.mse"))
+# Valores de validación entrenamiento y validación
+pred_train$score(measures)
+pred_test$score(measures)
+```
+
+Como era de esperar el `MSE` para la muestra de validación es superior al de la muestra de entrenamiento. A continuación vemos la solución gráfica para el modelo de aprendizaje que hemos entrenado. En concreto realizamos los gráficos:
+
+-   Valores observados reales versus predichos por el modelo, donde pretendemos ver cuanto de buena es nuestra predicción con respecto a los valores observados realmente.
+-   Valores observados reales frente a residuos del modelo, donde queremos observar is estos últimamente se comportan de forma adecuada, es decir, tiene un comportamiento aleatorio y se centran en cero.
+-   Histograma de los residuos del modelo para analizar su normalidad, es decir, comportamiento simétrico con respecto al cero y con forma de campana de Gauss.
+
+Realizamos los gráficos anteriores tanto para la muestra de entrenamiento como la de validación:
+
+```{r}
+#| label: fig-regmod-22
+#| message: false
+#| warning: false
+#| fig-width: 14
+#| fig-height: 14
+#| fig-cap: "Gráficos del modelo (entrenamiento-validación). Task Penguins."
+
+# Muestra de entrenamiento
+p1 = autoplot(pred_train, type = "xy") + labs(title = "Observados vs predichos")
+p2 = autoplot(pred_train, type = "residual") + labs(title = "Observados vs residuos")
+p3 = autoplot(pred_train, type = "histogram") + labs(title = "Histograma residuos")
+
+# Muestra de validación
+p4 = autoplot(pred_test, type = "xy") + labs(title = "Observados vs predichos")
+p5 = autoplot(pred_test, type = "residual") + labs(title = "Observados vs residuos")
+p6 = autoplot(pred_test, type = "histogram") + labs(title = "Histograma residuos")
+
+ggarrange(p1,p2,p3, p4, p5, p6, nrow = 2, ncol = 3)
+```
+
+En los gráficos de observados vs predichos podemos ver que la nube de puntos se encuentra centrada sobre la diagonal (ajuste perfecto) pero con una gran variabilidad (dispersión) lo que provoca un `MSE` bastante alto e indica una bajo valor predictivo.
+
+En los gráficos de observados frente a residuos podemos ver que se encuentran centrados en cero pero su comportamiento no es totalmente aleatorio, ya que se observa una mayor dispersión en los valores centrales de la respuesta, mientras que es menor en los extremos. Esto implica que le modelo lineal propuesto no es muy adecuado y es necesario una modificación o la consideración de otro algoritmo para predecir la repuesta de interés.
+
+En los histogramas de los residuos podemos ver que se encuentran centrados en cero y su comportamiento se parece bastante al de la campana de Gauss, indicando la normalidad de los residuos del modelo.
+
+Una vez hemos analizado el modelo propuesto en detalle vamos a realizar un estudio de validación cruzada para valorar la estabilidad de la solución obtenida. utilizamos el modelo definido anteriormente y la misma métrica de validación.
+
+```{r}
+#| label: regmod-23
+#| message: false
+#| warning: false
+
+# Fijamos semilla
+set.seed(135)
+# Definimos proceso de validación cruzada kfold con k=10
+resamp = rsmp("cv", folds = 10)
+# Remuestreo
+rr = resample(tsk_diabetes, gr, resamp, store_models=TRUE)
+```
+
+En primer lugar estudiamos los scores de validación (en este caso el `MSE`) tanto para cada fold como de forma agregada.
+
+```{r}
+#| label: regmod-24
+#| message: false
+#| warning: false
+
+# Scores individuales
+rr$score()$regr.mse
+# Gráfico de los scores individuales
+autoplot(rr, type = "boxplot")
+```
+
+Podemos ver una gran dispersión en los valores de los scores lo que puede ser debido a la gran dispersión de los datos originales. Vamos a estudiar las soluciones individuales de todos los folds analizando los modelos estimados y la predicción obtenida con cada uno de ellos.
+
+En primer lugar analizamos la ecuación del modelo para cada fold.
+
+```{r}
+#| label: regmod-25
+#| message: false
+#| warning: false
+
+# Número de folds
+nfolds = 10
+# Coeficientes primer fold
+fold_coef = rr$learners[[1]]$model$regr.lm$model$coefficients[-2]
+# Bucle con el resto de folds
+for (i in 2:nfolds)
+{
+  pre = rr$learners[[i]]$model$regr.lm$model$coefficients[-2]
+  fold_coef = rbind(fold_coef, pre)
+}
+rownames(fold_coef) = paste("fold ", 1:nfolds)
+fold_coef
+```
+
+Podemos ver que las estimaciones de los modelos en cada fold son muy similares para todos los efectos del modelo. hay bastante estabilidad en la construcción del modelo dentro de cada fold. En la tabla siguiente podemos ver el resumen de cada coeficiente (media y desviación típica) para todos los folds.
+
+```{r}
+#| label: regmod-26
+#| message: false
+#| warning: false
+
+descrip = function(x)
+{
+  c(mean(x),sd(x))
+}
+
+tabla = apply(fold_coef,2,descrip)
+rownames(tabla) = c("Media", "sd")
+tabla
+```
+
+Los coeficientes siguen la misma interpretación que vimos en el modelo inicial, y la variabilidad de la estimación es pequeña en comparación con el valor estimado del coeficiente (sobre todo en los efectos más relevantes `BMI`, `S5`, y las interacciones de `AGE` y `BMI` con `SEX`).
+
+A continuación realizamos un análisis gráfico de cada uno de los modelos de cada fold. Para ello utilizamos las predicciones asociados a cada uno de ellos.
+
+```{r}
+#| label: fig-regmod-27
+#| message: false
+#| warning: false
+#| fig-width: 14
+#| fig-height: 14
+#| fig-cap: "Gráfico de observados vs predichos para cada submuestro. Task Diabetes."
+
+p1 = autoplot(rr$predictions()[[1]], type = "xy") + labs(title = "Obs vs Pre (f1)")
+p2 = autoplot(rr$predictions()[[2]], type = "xy") + labs(title = "Obs vs Pre (f2)")
+p3 = autoplot(rr$predictions()[[3]], type = "xy") + labs(title = "Obs vs Pre (f3)")
+p4 = autoplot(rr$predictions()[[4]], type = "xy") + labs(title = "Obs vs Pre (f4)")
+p5 = autoplot(rr$predictions()[[5]], type = "xy") + labs(title = "Obs vs Pre (f5)")
+p6 = autoplot(rr$predictions()[[6]], type = "xy") + labs(title = "Obs vs Pre (f6)")
+p7 = autoplot(rr$predictions()[[7]], type = "xy") + labs(title = "Obs vs Pre (f7)")
+p8 = autoplot(rr$predictions()[[8]], type = "xy") + labs(title = "Obs vs Pre (f8)")
+p9 = autoplot(rr$predictions()[[9]], type = "xy") + labs(title = "Obs vs Pre (f9)")
+p10 = autoplot(rr$predictions()[[10]], type = "xy") + labs(title = "Obs vs Pre (f10)")
+
+
+ggarrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, nrow = 3, ncol = 4)
+```
+
+Como era de esperar el comportamiento en todos los fold es similar. El objeto resampling nos permite combinar las predicciones de cada uno de los fold en un único objeto con el método `prediction()`. Esto nos da la posibilidad de realizar los gráficos para analizar el modelo obtenido:
+
+```{r}
+#| label: fig-regmod-28
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Gráficos del modelo obtenido. Task Diabetes."
+
+p1 = autoplot(rr$prediction(), type = "xy") + labs(title = "Observados vs predichos")
+p2 = autoplot(rr$prediction(), type = "residual") + labs(title = "Observados vs residuos")
+p3 = autoplot(rr$prediction(), type = "histogram") + labs(title = "Histograma residuos")
+
+ggarrange(p1, p2, p3, nrow = 1, ncol = 3)
+```
+
+Los resultados obtenidos son similares a los del modelo inicial con la muestra de validación.
+
+Para finalizar nuestra primera aproximación al modelo propuesto vamos a realizar el análisis de la curva de aprendizaje asociada con este modelo. El análisis de la curva de aprendizaje nos permite estudiar como mejora el aprendizaje del modelo planteado conforme vamos aumentando el tamaño de la muestra de entrenamiento. Esto nos permite determinar el tamaño de la muestra de aprendizaje para que la solución sea estable.
+
+El proceso es similar al de validación cruzada descrito en el punto anterior. Se utilizan subconjuntos del conjunto de entrenamiento con tamaños variables para entrenar el modelo y se calcula una puntuación para cada tamaño de subconjunto de entrenamiento y el conjunto de validación. Después, las puntuaciones obtenidas se promediarán para las k ejecuciones en cada tamaño de subconjunto de entrenamiento.
+
+Para realizar esta tarea nos apoyamos en la función `rsmp()` con la opción `subsampling` donde podemos fijar el número de repeticiones que deseamos para una partición de muestras de entrenamiento y validación. Con la función `resample()` nos resulta posible obtener los valores del score buscado tanto para la muestra de entrenamiento como de validación. En primer lugar definimos dos funciones `learningcurve` y `plot_learningcurve` que nos permiten obtener los valores de la curva de aprendizaje y su representación gráfica. Los parámetros de ambas funciones son los mismos y vienen definidos en la función.
+
+```{r}
+#| label: regmod-29
+#| message: false
+#| warning: false
+
+# Función que nos permite obtener los valores asociados a la curva de aprendizaje
+learningcurve = function(task, learner, score, ptr, rpeats)
+{
+  # Parámetros de la función
+  # task: tarea
+  # learner: algoritmo de aprendizaje
+  # score: nombre del score a utilizar
+  # ptr: vector con las proporciones de tamaños de muestra de entrenamiento
+  # rpeats: número de repeticiones para cada proporción de tamaño de muestra de entrenamiento
+  
+  # Definimos los scores para cada conjunto de muestra
+  mtrain = msr(score, predict_sets = "train")
+  mtest = msr(score, predict_sets = "test")
+  # Configuramos el learner para que evalué los scores en la muestra de validación y test
+  learner$predict_sets = c("train", "test")
+  # Incicializamos vector de scores agregados para la muestra de entrenamiento y validación
+  sco_train = c()
+  sco_test = c()
+  for(i in 1:length(ptr))
+  {
+    # estructura de muestreo: 5 repeticiones con porcentaje muestra entrenamiento ptr[i]
+    subsam = rsmp("subsampling", repeats = rpeats, ratio = ptr[i])
+    # ejecución de remuestreo
+    rr = resample(task, learner, subsam)
+    sco_train[i] = rr$aggregate(mtrain)
+    sco_test[i] = rr$aggregate(mtest)
+  }
+  # Matriz de resultados
+  res = data.frame(ptr, sco_train, sco_test)
+  resdf = res %>% pivot_longer(!ptr, names_to = "Sample", values_to = "MSR")
+  return(resdf)
+}
+
+
+# Función que nos permite representar la curva de aprendizaje 
+plot_learningcurve = function(task, learner, score, ptr, rpeats)
+{
+  # Parámetros de la función
+  # task: tarea
+  # learner: algoritmo de aprendizaje
+  # score: nombre del score a utilizar
+  # ptr: vector con las proporciones de tamaños de muestra de entrenamiento
+  # rpeats: número de repeticiones para cada proporción de tamaño de muestra de entrenamiento
+
+  lcurve = learningcurve(task, gr, score, ptr, rpeats)
+  # Gráfico
+  ggplot(lcurve, aes(ptr, MSR, color = Sample)) + 
+    geom_line() +
+    labs(x ="Proporción tamaño muestra entrenamiento", y = "MSE",color = "Muestra") +
+    scale_color_hue(labels = c("Validación", "Entrenamiento")) +
+    scale_x_continuous(breaks=ptr)
+}
+```
+
+A continuación se muestra la curva de aprendizaje para un un grid de porcentajes que va desde el 10% al 90% del tamaño de la muestra de entrenamiento con diez repeticiones para cada tamaño.
+
+```{r}
+#| label: fig-regmod-30
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Curva de calibración. Task Diabetes."
+
+# Algoritmo de aprendizaje
+learner = lrn("regr.lm")
+# Modelo en términos de predictoras
+diabetes_model = po("modelmatrix", formula = ~ AGE + BMI + BP + S1 + S2 + S5 + SEX + AGE:SEX + BMI:SEX)
+# Graphlearner: Estructura del modelo y learner
+gr = diabetes_model %>>% learner
+gr = GraphLearner$new(gr)
+
+plot_learningcurve(tsk_diabetes, gr, "regr.mse", ptr = seq(0.1, 0.9, 0.1), rpeats = 10)
+```
+
+Se puede ver como a ir aumentando el tamaño de la muestra de entrenamiento se va reduciendo el `MSE` de validación, obteniendo un valor óptimo para el 60% o 80%. Por tanto el tamaño de muestra de entrenamiento debería ser uno de esos dos. De hecho, se puede ver que el `MSE` para la muestra de entrenamiento tiene valores similares al de la muestra de validación para esos tamaños.
+
+#### Electricity
+
+En este banco de datos no existen valores perdidos pero si es necesario estandarizar las variables para acometer el ajuste del modelo. Ese proceso de estandarización lo englobaremos dentro del graph learner correspondiente. Como todas la predictoras son de tipo numérico no resulta necesario detallar el modelo que vamos a ajustar. Además como su número es muy bajo no consideramos aquí un proceso de selección de variables.
+
+Para el estudio procedemos como en el ejemplo anterior:
+
+-   Ajustamos un primer modelo con un tamaño de muestra de entrenamiento del 80%.
+-   Realizamos un estudio sobre la estabilidad de la solución.
+-   Obtenemos la curva de aprendizaje.
+
+En primer lugar realizamos la división de muestras:
+
+```{r}
+#| label: regmod-31
+#| message: false
+#| warning: false
+
+# Fijamos semilla para asegurar la reproducibilidad del modelo
+set.seed(135)
+# Creamos la partición
+splits = mlr3::partition(tsk_electricity, ratio = 0.8)
+# Muestras de entrenamiento y validación
+tsk_train_electricity = tsk_electricity$clone()$filter(splits$train)
+tsk_test_electricity  = tsk_electricity$clone()$filter(splits$test)
+```
+
+Establecemos el proceso de aprendizaje
+
+```{r}
+#| label: regmod-32
+#| message: false
+#| warning: false
+
+# Algoritmo de aprendizaje
+learner = lrn("regr.lm")
+# Preprocesado
+pp_electricity = po("scale", param_vals = list(center = TRUE, scale = TRUE))
+# Graphlearner: Preprocesado y learner
+gr = pp_electricity %>>% learner
+gr = GraphLearner$new(gr)
+
+# Entrenamiento del modelo
+gr$train(tsk_train_electricity)
+# Resumen del modelo
+summary(gr$model$regr.lm$model)
+```
+
+La ecuación del modelo obtenido viene dada por:
+
+$$\hat{PE} = 454.39 + 0.35*AP - 14.81*AT -2.36*RH -2.97*V$$ donde se puede ver que la variable más relevante es `AT` peso negativo hasta siete veces superior al de `RH` y `V` con peso negativo. Esto implica que `PE` aumenta cuando disminuyen `AT`, `RH`, y `V` al tratarse de efectos inversamente proporcionales. Además podemos ver que el $R^2$ se sitúa en el 92% de capacidad explicativa, y con un pvalor del test F del modelo inferior a 0.05, lo que indica que las predictoras tiene capacidad explicativa sobre la respuesta.
+
+A continuación obtenemos la predicción del modelo para evaluar los scores correspondientes y realizar el análisis gráfico.
+
+```{r}
+#| label: regmod-33
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento
+pred_train = gr$predict(tsk_train_electricity)
+# Predicción de la muestra de validación
+pred_test = gr$predict(tsk_test_electricity)
+# Scores de validación
+measures = msr(c("regr.mse"))
+# Valores de validación entrenamiento y validación
+pred_train$score(measures)
+pred_test$score(measures)
+```
+
+En este caso los `MSE` son casi del mismo orden y bastante pequeños indicando la posibilidad de un buen ajuste. Veamos los gráficos del modelo.
+
+```{r}
+#| label: fig-regmod-34
+#| message: false
+#| warning: false
+#| fig-width: 14
+#| fig-height: 14
+#| fig-cap: "Gráficos del modelo para muestras de entrenamiento y validación. Task Electricity."
+
+# Muestra de entrenamiento
+p1 = autoplot(pred_train, type = "xy") + labs(title = "Observados vs predichos")
+p2 = autoplot(pred_train, type = "residual") + labs(title = "Observados vs residuos")
+p3 = autoplot(pred_train, type = "histogram") + labs(title = "Histograma residuos")
+
+# Muestra de validación
+p4 = autoplot(pred_test, type = "xy") + labs(title = "Observados vs predichos")
+p5 = autoplot(pred_test, type = "residual") + labs(title = "Observados vs residuos")
+p6 = autoplot(pred_test, type = "histogram") + labs(title = "Histograma residuos")
+
+ggarrange(p1,p2,p3, p4, p5, p6, nrow = 2, ncol = 3)
+```
+
+En los gráficos de observados versus predichos podemos ver que el ajuste del modelo es bastante bueno, dado que la nube de puntos se encuentra muy próxima a la diagonal. Solo se aprecia un grupo de puntos (muestra entrenamiento) donde el valor predicho es superior al verdadero valor. Este comportamiento se aprecia también en el gráfico de predichos versus residuos. Si embargo, los residuos del modelo son excesivamente grandes. Lo habitual es que se sitúen en rango `[-3, 3]` para indicar un buen modelo. En este caso tenemos valores muy por encima de ese rango indica mayor dispersión en los residuos de la que sería deseable. Más adelante estudiaremos diferentes posibilidades para corregir esta situación.
+
+Comenzamos ahora con el estudio de validación mediante validación cruzada. En este caso consideramos 10 grupos para el análisis.
+
+```{r}
+#| label: regmod-35
+#| message: false
+#| warning: false
+
+# Fijamos semilla
+set.seed(135)
+# Definimos proceso de validación cruzada kfold con k=10
+resamp = rsmp("cv", folds = 10)
+# Remuestreo
+rr = resample(tsk_electricity, gr, resamp, store_models=TRUE)
+```
+
+En primer lugar estudiamos los scores de validación (en este caso el `MSE`) tanto para cada fold como de forma agregada.
+
+```{r}
+#| label: regmod-36
+#| message: false
+#| warning: false
+
+# Scores individuales
+rr$score()$regr.mse
+```
+
+Podemos ver muy poca dispersión en los valores de los scores indicando una gran estabilidad en la solución obtenida. Vamos a estudiar las soluciones individuales de todos los folds analizando los modelos estimados y la predicción obtenida con cada uno de ellos.
+
+En primer lugar analizamos la ecuación del modelo para cada fold.
+
+```{r}
+#| label: regmod-37
+#| message: false
+#| warning: false
+
+# Número de folds
+nfolds = 10
+# Coeficientes primer fold
+fold_coef = rr$learners[[1]]$model$regr.lm$model$coefficients
+# Bucle con el resto de folds
+for (i in 2:nfolds)
+{
+  pre = rr$learners[[i]]$model$regr.lm$model$coefficients
+  fold_coef = rbind(fold_coef, pre)
+}
+rownames(fold_coef) = paste("fold ", 1:nfolds)
+fold_coef
+```
+
+Como se puede ver los coeficientes coinciden prácticamente hasta el primer decimal (redondeando) indicando una gran estabilidad en la solución. En la tabla siguiente podemos ver el resumen de cada coeficiente (media y desviación típica) para todos los folds.
+
+```{r}
+#| label: regmod-38
+#| message: false
+#| warning: false
+
+tabla = apply(fold_coef, 2, descrip)
+rownames(tabla) = c("Media" , "sd")
+tabla
+```
+
+Para finalizar el análisis preliminar analizamos la curva de aprendizaje asociada al modelo propuesto:
+
+```{r}
+#| label: fig-regmod-39
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Curva de aprendizaje. Task Electricity."
+
+# Algoritmo de aprendizaje
+learner = lrn("regr.lm")
+# Graphlearner: Estructura del modelo y learner
+gr = pp_electricity %>>% learner
+gr = GraphLearner$new(gr)
+
+plot_learningcurve(tsk_electricity, gr, "regr.mse", ptr = seq(0.1, 0.9, 0.1), rpeats = 10)
+```
+
+A la vista del gráfico parece desprenderse que el tamaño de muestra de entrenamiento que proporciona mejores resultados se encentra sobre el 70%.
+
+#### Housing in California
+
+En este caso el conjunto de datos dispone de valores perdidos, y además resulta necesario establecer el modelo saturado ya que disponemos de una predictora categórica y debemos introducir los efectos de interacción. En primer lugar procedemos con la división de muestras considerando el 80% de tamaño de la muestra de entrenamiento. para realizar esta tarea utilizamos la función `partition()` de la librería `mlr3` donde debemos indicar la tarea y la proporción de elementos que tomaremos en la muestra de entrenamiento (`ratio`). Esta función nos proporciona los índices o posiciones de las muestras que debemos incluir tanto en la muestra de entrenamiento como de validación. A continuación se muestra como utilizar esta función y como construir la task de entrenamiento y validación a partir de la información que proporciona.
+
+```{r}
+#| label: regmod-40
+#| message: false
+#| warning: false
+
+# Fijamos semilla para asegurar la reproducibilidad del modelo
+set.seed(135)
+# Creamos la partición
+splits = mlr3::partition(tsk_housing, ratio = 0.8)
+# Muestras de entrenamiento y validación
+tsk_train_housing = tsk_housing$clone()$filter(splits$train)
+tsk_test_housing  = tsk_housing$clone()$filter(splits$test)
+```
+
+Proponemos el modelo con interacciones y realizamos el proceso de selección de efectos del modelo. En principio ajustamos el modelo sin tener en cuenta la presencia de missings().
+
+```{r}
+#| label: regmod-41
+#| message: false
+#| warning: false
+
+fit = lm(median_house_value ~ (households + housing_median_age + latitude + longitude + median_income + population + total_bedrooms + total_rooms )*ocean_proximity, data = tsk_train_housing$data())
+fit = stats::step(fit)
+summary(fit)
+```
+
+En este caso el procedimiento de selección basado en el estadístico `AIC` nos indica que no debemos eliminar ningún efecto del modelo. Pasamos ahora con el análisis preliminar del modelo.
+
+```{r}
+#| label: regmod-42
+#| message: false
+#| warning: false
+
+# Algoritmo de aprendizaje
+learner = lrn("regr.lm")
+# Modelo en términos de predictoras
+housing_model = po("modelmatrix", formula = ~ (households + housing_median_age + latitude + longitude + median_income + population + total_bedrooms + total_rooms)*ocean_proximity)
+
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_housing %>>% housing_model%>>% learner
+gr = GraphLearner$new(gr)
+
+# Entrenamiento del modelo
+gr$train(tsk_train_housing)
+# Resumen del modelo
+summary(gr$model$regr.lm$model)
+```
+
+Como el modelo obtenido es bastante complejo resulta bastante difícil escribir su expresión. La capacidad explicativa se sitúa en el 67% (no es muy alto) y el test f de regresión resulta significativo (p-valor \< 0.05). Para poder visualizar los efectos del modelo se presenta la imagen siguiente donde se identifican los coeficientes positivos y negativos para cada uno de los coeficientes del modelo.
+
+```{r}
+#| label: fig-regmod-43
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Coeficientes estimados del modelo. Task Housing in California"
+
+# Data frame con los coeficientes obtenidos y su codificación )positivo-negativo
+coeficientes = na.omit(as.data.frame(gr$model$regr.lm$model$coefficients))
+coeficientes = rownames_to_column(coeficientes)
+colnames(coeficientes) = c("Coef", "Estimate")
+coeficientes$Value = ifelse(coeficientes$Estimate > 0, "Positivo", "Negativo")
+# Gráfico de coeficientes
+ggplot(coeficientes, aes(Estimate, Coef, color = Value)) + 
+  geom_point() + 
+  geom_vline(xintercept = 0, linetype = 2, color = "black") +
+  theme(legend.position = "none")
+```
+
+Podemos ver como `longitude` y `latitude` tienen los efectos inversamente proporcionales más grandes con respecto a `median_house_value`. Por otro lado, la categoría `ISLAND` de `ocean_proximity` muestra el efecto proporcional directo más grande con respecto a la variable target. De hecho, hay muchas interacciones con coeficientes positivos indicando que las variables numéricas se combinan con la situación geográfica para determinar el precio medio de la vivienda.
+
+Llevamos a cabo ahora el análisis de los residuos del modelo propuesto.
+
+```{r}
+#| label: regmod-44
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento
+pred_train = gr$predict(tsk_train_housing)
+# Predicción de la muestra de validación
+pred_test = gr$predict(tsk_test_housing)
+# Scores de validación
+measures = msr(c("regr.mse"))
+# Valores de validación entrenamiento y validación
+pred_train$score(measures)
+pred_test$score(measures)
+```
+
+En este caso los valores del `MSE` son muy grandes debido a la escala de la variable target. Veamos el comportamiento de los residuos.
+
+```{r}
+#| label: fig-regmod-45
+#| message: false
+#| warning: false
+#| fig-width: 14
+#| fig-height: 14
+#| fig-cap: "Gráficos del modelo para muestras de entrenamiento y validación. Task Housing in California"
+
+# Muestra de entrenamiento
+p1 = autoplot(pred_train, type = "xy") + labs(title = "Observados vs predichos")
+p2 = autoplot(pred_train, type = "residual") + labs(title = "Observados vs residuos")
+p3 = autoplot(pred_train, type = "histogram") + labs(title = "Histograma residuos")
+
+# Muestra de validación
+p4 = autoplot(pred_test, type = "xy") + labs(title = "Observados vs predichos")
+p5 = autoplot(pred_test, type = "residual") + labs(title = "Observados vs residuos")
+p6 = autoplot(pred_test, type = "histogram") + labs(title = "Histograma residuos")
+
+ggarrange(p1,p2,p3, p4, p5, p6, nrow = 2, ncol = 3)
+```
+
+Se ve claramente el comportamiento incorrecto de los residuos indicando que debemos modificar este modelo o considerar un algoritmo diferente para poder analizar estos datos. Para analizar con algo más de detalle realizamos el proceso de validación cruzada para estudiar el comportamiento del `MSE`.
+
+```{r}
+#| label: regmod-46
+#| message: false
+#| warning: false
+
+# Fijamos semilla
+set.seed(135)
+# Definimos proceso de validación cruzada follad con k=10
+resamp = rsmp("cv", folds = 10)
+# Remuestreo
+rr = resample(tsk_housing, gr, resamp, store_models=TRUE)
+# Análisis de los valores obtenidos
+skim(rr$score()$regr.mse)
+```
+
+Observamos la gran dispersión en los valores obtenidos debido en parte a la escala de la respuesta, y por otro al modelo planteado.
+
+## Actualizando el modelo de regresión {#sec-60.4}
+
+Una vez considerado un modelo de partida para nuestro conjunto de datos nos debemos plantear la posibilidad de mejorarlo para obtener modelos más sencillos o con mayor capacidad explicativa.
+
+Antes de estudiar las diferentes posibilidades de mejora que podemos plantear en los modelos lineales del cuaderno anterior, debemos generalizar algunos conceptos ya presentados para aprender sobre el efecto que tienen en la construcción de los modelos de aprendizaje. Aunque aquí presentamos los resultados para los modelos de regresión, parte de las ideas son generales en cualquier modelo de aprendizaje automático.
+
+En primer lugar analizamos con un poco más de profundidad los conceptos de **sesgo del modelo** (*Bias*) y **variabilidad del modelo** (*Variance*), así como su efecto sobre el error de predicción que cometemos al establecer nuestro modelo de aprendizaje.
+
+En la situación ideal donde tuviéramos toda la información posible de las predictoras consideradas en nuestro modelo de aprendizaje podríamos escribir:
+
+$$y = f(X).$$
+
+Sin embargo, ya que habitualmente sólo disponemos de un conjunto de muestras nuestro modelo de aprendizaje lineal se expresa mediante:
+
+$$y = f(x) + \epsilon$$
+
+donde $\epsilon$ hace referencia al error cometido con las muestras seleccionadas, de forma que la predicción de la respuesta viene dada por:
+
+$$\hat{y} = \hat{f}(X).$$
+
+El sesgo del modelo es el error cometido entre el promedio de las predicciones de nuestro modelo de aprendizaje y el verdadero modelo para nuestros datos:
+
+$$bias=E(\hat{y})- y,$$
+
+que representa la capacidad del modelo considerado para predecir los valores de la respuesta.
+
+La variabilidad del modelo representa la variabilidad promedio de las predicciones obtenidas para nuestro conjunto de muestras específico, es decir:
+
+$$variance=E[(\hat{y}-E(\hat{y})^2],$$
+
+que indica cuánto puede ajustarse el modelo considerado al cambio en el conjunto de datos que se utilizan para entrenarlo.
+
+Esto nos lleva a la ecuación de compromiso entre sesgo y variabilidad para determinar el error del modelo que viene dado por la expresión:
+
+$$Error = \text{sesgo}^2 + \text{variabilidad} + \text{error irreducible},$$
+
+donde el error irreducible es aquel que no somos capaces de reducir o explicar aunque aumentemos el número de predictoras o de muestras. Dado que nuestro objetivo es quedarnos con el modelo con un error lo más pequeño posible, es evidente que tendremos que mantener un equilibrio entre sesgo y variabilidad para reducirlo.
+
+¿Cómo afectan el sesgo y la variabilidad a nuestro modelo de aprendizaje?
+
+-   Un sesgo alto proporciona un modelo excesivamente simplificado, con un ajuste insuficiente, y con un alto nivel de error tanto en los datos de prueba como en los de entrenamiento.
+
+-   Una variabilidad alta proporciona un modelo excesivamente complejo, con un ajuste excesivo, y con un error bajo en los datos de entrenamiento y alto en los de prueba. En este caso interesa reducir la variabilidad de entrada (técnicas de reducción de la dimensión) antes de comenzar el proceso de modelización.
+
+En la imagen siguiente podemos ver el efecto de los cambios en el sesgo y la variabilidad, donde asumimos que el centro de la diana es el valor verdadero que deseamos predecir (imagen reproducida de https://www.cheatsheets.aqeel-anwar.com)
+
+<img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/img_60_10.png" width="300" height="300"/>
+
+Por otro lado, en la imagen siguiente representamos el efecto que tiene el comportamiento del sesgo y la variabilidad en el ajuste del modelo. La línea gris punteada indica el punto con menos error y por tanto con mejor ajuste. En la parte izquierda tenemos el denominado modelo infra-ajustado (*Under-fitting*) que coincide con baja variabilidad y sesgo alto, mientras que en la parte derecha tenemos el modelo sobre-ajustado (*Over-fitting*) que coincide con alta variabilidad y sesgo bajo. En el mínimo error tenemos el compromiso entre sesgo y variabilidad (*Just Right*).
+
+<img src="https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/img_60_20.png" width="350" height="250"/>
+
+Entendemos por infra-ajuste cuando el modelo no explica bien los datos de entrenamiento (los datos que se usaron para ajustar el modelo), ni esperamos que se generalice a ningún dato no visto previamente del mismo proceso de generación de datos. El infra-ajuste suele ser el resultado de un modelo que no es lo suficientemente complejo para ajustarse a los datos dados. La forma más fácil de abordarlo es aumentando la complejidad del modelo, por ejemplo, agregando más predictoras.
+
+El sobre-ajuste, por otro lado, es el caso en el que el modelo se ajusta muy bien a los datos de entrenamiento pero no logra generalizar sus resultados a la muestra de validación o a otro nuevo conjunto de datos.
+
+### Modelos de regresión penalizada {#sec-60.4.1}
+
+En este punto se presentan diferentes modificaciones de los modelos lineales vistos hasta ahora para solucionar problemas como el sobreajuste. Para ello se plantean diferentes métodos de regularización que son modificaciones del algoritmo de estimación de los parámetros del modelo introduciendo cierto tipo de restricciones o penalizaciones para evitar los problemas de sobreajuste o la tendencia a obtener modelos muy complejos. Se trata pues de establecer cierto equilibrio entre la capacidad explicativa y la complejidad del modelo. Estas modificaciones eliminan parte de los problemas que aparecen cuando utilizamos el criterio de los mínimos cuadrados habitual.
+
+El objetivo que se persigue con este tipo de métodos es estudiar cómo varía el valor de los coeficientes del modelo manteniendo su capacidad explicativa. Es decir, buscamos un modelo cuyos coeficientes reflejen de la mejor manera posible la importancia de las variables y muestre las variables que realmente son relevantes a la hora de explicar la respuesta.
+
+#### Regresión de Cresta (Ridge regression)
+
+El primer método de regularización que se presenta es la **Regresión de Cresta** (*Ridge Regression*) que aborda algunos de los problemas de los mínimos cuadrados ordinarios imponiendo una penalización sobre los coeficientes en el proceso de estimación. El problema principal que se trata de resolver con este método de regularización es el de colinealidad entre las predictoras. Este problema es muy común y aparece cuando las predictoras están muy correlacionadas entre sí, lo que es muy habitual cuando disponemos de bancos de datos con muchas variables. Para un modelo lineal de la forma:
+
+$$\mathbf{y} = \mathbf{X}\mathbf{w} +\mathbf{\epsilon}$$
+
+los coeficientes de la cresta minimizan una suma de cuadrados residual penalizada:
+
+$$\underset{w}{min} (||\mathbf{y} - \mathbf{X}\mathbf{w}||_2^2 + \alpha ||\mathbf{w}||_2^2)$$
+
+donde el parámetro de complejidad $\alpha \geq 0$ controla la cantidad de contracción, es decir, cuanto mayor sea el valor de $\alpha$, mayor será la cantidad de contracción y, por tanto, los coeficientes serán más resistentes a la colinealidad, y $||.||_2$ es la norma $L_2$ del vector de coeficientes. En este caso el parámetro $\alpha$ controla el grado de dispersión de los coeficientes estimados.
+
+#### Regresión de Lazo (Lasso regression)
+
+La **Regresión de Lazo** (*Lasso Regression*) es un modelo lineal que estima coeficientes dispersos. Resulta útil en algunos contextos debido a su tendencia a preferir soluciones con menos coeficientes distintos de cero, reduciendo de hecho el número de variables predictoras de las que depende la solución dada. Matemáticamente, consiste en un modelo lineal con un término de regularización añadido. La función objetivo a minimizar es:
+
+$$\underset{\mathbf{w}}{min} \frac{1}{2n}(||\mathbf{y} - \mathbf{X}\mathbf{w}||_2^2 + \alpha ||\mathbf{w}||_1)$$
+
+La estimación Lasso resuelve así la minimización de la penalización por mínimos cuadrados añadiendo el término $\alpha ||\mathbf{w}||_1$, donde $\alpha$ es una constante y $||.||_1$ es la norma $L_1$ del vector de coeficientes. En este caso el parámetro $\alpha$ controla el grado de dispersión de los coeficientes estimados.
+
+Este algoritmo está concebido para ir eliminando progresivamente predictores en el modelo, de forma que podemos estudiar cómo evoluciona el número de predictores en el modelo conforme varía el valor de la penalización ($\alpha$). A mayor penalización menor número de predictores en el modelo.
+
+#### Regresión de Red Elástica (Elastic Net)
+
+La **Regresión de Red Elástica** (*Elastic Net*) es una modificación de la regresión lineal que combina la penalización l1 y l2, es decir, la regresión de Lazo y la de Cresta. En el procedimiento, la estrategia habitual es primero encontrar el coeficiente de Regresión de Cresta y después realizar un algoritmo de Lazo sobre el coeficiente de regresión para reducirlo. La combinación de ambas penalizaciones suele dar lugar a buenos resultados.
+
+La función objetivo a minimizar es una especie de mixtura entre ambas penalizaciones y viene dada por:
+
+$$\underset{\mathbf{w}}{min} \frac{1}{2n}(||\mathbf{y} - \mathbf{X}\mathbf{w}||_2^2 + \alpha*l1ratio*||\mathbf{w}||_1 + 0.5*\alpha*(1-l1ratio) ||\mathbf{w}||_2^2$$
+
+El grado en que influye cada una de las penalizaciones está controlado por el hiperparámetro $l1ratio$, cuyo valor está comprendido entre los valores 0 y 1, de forma que si toma el valor 0 estamos con la penalización l2 (Regresión de Lazo), mientras que si toma el valor 1 estamos con la penalización l1 (Regresión de Cresta).
+
+En forma reducida podemos expresar el término de penalización como:
+
+$$a||\mathbf{w}||_1 + 0.5*b||\mathbf{w}||_2^2,$$
+
+de forma que
+
+$$\alpha = a+b \quad \text{y} \quad l1ratio=\frac{a}{a+b}.$$
+
+#### Regresión penalizada en mlr3
+
+La regresión penalizada con el paquete `mlr3` se puede llevar a cabo con los learner `regr.glmnet` y `regr.cv_glmnet`.
+
+`regr.glmnet` utiliza para valores fijos de $\alpha$ y se optimiza el valor de `lambda` o valor que define la cantidad de contracción de los coeficientes. El valor de $\alpha$ determina el tipo de modelo utilizado:
+
+-   $\alpha = 0$ para la lasso regression.
+-   $\alpha = 1$ para ridge regression.
+-   $0 < \alpha < 1$ para elastic net.
+
+`regr.cv_glmnet` es similar al anterior pero realiza un estudio de validación cruzada para obtener el valor de \`$\lambda$ que proporciona un score de validación más pequeño. Este ultimo se puede combinar con un grid search para determinar la combinación óptima de $\alpha$ y $\lambda$.
+
+Para entender el funcionamiento de estos modelos nos centraremos en el banco de datos `Meat spec` donde todas las características están altamente correlacionadas. Comenzaremos con modelos independientes y finalizaremos con el modelo de optimización de ambos parámetros de interés.
+
+En primer lugar realizamos la división de muestras de entrenamiento y validación considerando la regla 80-20.
+
+```{r}
+#| label: regmod-47
+#| message: false
+#| warning: false
+
+# Fijamos semilla para asegurar la reproducibilidad del modelo
+set.seed(135)
+# Creamos la partición
+splits = mlr3::partition(tsk_meatspec, ratio = 0.8)
+# Muestras de entrenamiento y validación
+tsk_train_meatspec = tsk_meatspec$clone()$filter(splits$train)
+tsk_test_meatspec  = tsk_meatspec$clone()$filter(splits$test)
+```
+
+##### Ridge regression
+
+Comenzamos configurando el learner de aprendizaje teniendo en cuenta el algoritmo que vamos a utilizar y las tareas de preprocesado específicas para este banco de datos.
+
+```{r}
+#| label: regmod-48
+#| message: false
+#| warning: false
+
+# Algoritmo de aprendizaje
+learner = lrn("regr.cv_glmnet", alpha = 0)
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_meatspec %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento del modelo
+gr$train(tsk_train_meatspec)
+```
+
+Comenzamos con el análisis del modelo obteniendo en primer lugar el valor de $\lambda$ óptimo.
+
+```{r}
+#| label: regmod-49
+#| message: false
+#| warning: false
+
+# Modelo obtenido para todos los lambda
+modelo_AA = gr$model$regr.cv_glmnet$model
+# Lambda óptimo
+modelo_AA$lambda.min
+```
+
+Podemos representar el proceso de validación cruzada a través del gráfico siguiente.
+
+```{r}
+#| label: fig-regmod-50
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Gráfico validación cruzada para estimación de $\\lambda$. Task Meat Spec"
+
+plot(modelo_AA)
+```
+
+Los puntos rojos indican la curva de validación cruzada junto con las curvas de desviación estándar superior e inferior a lo largo de la secuencia de $log(\lambda)$. la líneas punteadas verticales representan lambda.min y lambda.1se que proporciona el modelo más regularizado de modo que el error de validación cruzada esté dentro de un error estándar del mínimo.
+
+Veamos las características del modelo ajustado utilizando el valor óptimo de $\lambda$ para obtener le modelo final haciendo uso del learner `regr.glmnet`. Entrenamos el nuevo modelo con esta configuración:
+
+```{r}
+#| label: regmod-51
+#| message: false
+#| warning: false
+
+# Algoritmo de aprendizaje
+learner = lrn("regr.glmnet", alpha = 0, lambda = modelo_AA$lambda.min)
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_meatspec %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento del modelo
+gr$train(tsk_train_meatspec)
+
+# modelo resultante
+modelo_glmnet_AA = gr$model$regr.glmnet$model
+```
+
+Para visualizar el efecto de los coeficientes sobre a respuesta resulta más útil la creación de un gráfico donde podemos ver su comportamiento:
+
+```{r}
+#| label: fig-regmod-52
+#| message: false
+#| warning: false
+#| fig-width: 14
+#| fig-height: 14
+#| fig-cap: "Coeficientes del modelo Ridge. Task Meat Spec"
+
+# Data frame con los coeficientes obtenidos y su codificación) positivo-negativo quitando intercept
+coeficientes = as.data.frame(as.matrix(modelo_glmnet_AA$beta))
+coeficientes = rownames_to_column(coeficientes)
+colnames(coeficientes) = c("Coef", "Estimate")
+coeficientes$Value = ifelse(coeficientes$Estimate > 0, "Positivo", "Negativo")
+# Gráfico de coeficientes
+ggplot(coeficientes, aes(Coef, Estimate, color = Value)) + 
+  geom_point() + 
+  geom_hline(yintercept = 0, linetype = 2, color = "black") +
+  theme(legend.position = "none")
+```
+
+En este gráfico se aprecia claramente el efecto de la penalización. Los coeficientes próximos se penalizan para tener coeficientes similares, de forma que no se producen cambios bruscos entre dos coeficientes consecutivos. Además podemos detectar el conjunto de coeficientes que influye positivamente y negativamente sobre el contenido de grasa, es decir, detectamos de forma sencilla los rango del espectómetro que afectan más.
+
+Evaluamos los scores asociados a la muestra de entrenamiento y validación:
+
+```{r}
+#| label: regmod-53
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento
+pred_train = gr$predict(tsk_train_meatspec)
+# Predicción de la muestra de validación
+pred_test = gr$predict(tsk_test_meatspec)
+# Scores de validación
+measures = msr(c("regr.mse"))
+# Valores de validación entrenamiento y validación
+pred_train$score(measures)
+pred_test$score(measures)
+```
+
+Estos valores los utilizaremos para comparar con el resto de modelos penalizados que vemos a continuación.
+
+##### Lasso regression
+
+Comenzamos configurando el learner de aprendizaje.
+
+```{r}
+#| label: regmod-54
+#| message: false
+#| warning: false
+
+# Algoritmo de aprendizaje
+learner = lrn("regr.cv_glmnet", alpha = 1)
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_meatspec %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento del modelo
+gr$train(tsk_train_meatspec)
+```
+
+Una vez entrenado el modelo obtenemos el valor de $\lambda$ óptimo y representamos gráficamente el proceso .
+
+```{r}
+#| label: fig-regmod-55
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Gráfico de validación cruzada para estimar $\\lambda$. Task Meat Spec"
+
+
+# Modelo obtenido para todos los lambda
+modelo_AA = gr$model$regr.cv_glmnet$model
+# Lambda óptimo
+modelo_AA$lambda.min
+plot(modelo_AA)
+```
+
+Entrenamos el modelo con el valor óptimo.
+
+```{r}
+#| label: regmod-56
+#| message: false
+#| warning: false
+
+# Algoritmo de aprendizaje
+learner = lrn("regr.glmnet", alpha = 1, lambda = modelo_AA$lambda.min)
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_meatspec %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento del modelo
+gr$train(tsk_train_meatspec)
+
+# modelo resultante
+modelo_glmnet_AA = gr$model$regr.glmnet$model
+```
+
+Para visualizar el efecto de los coeficientes sobre a respuesta resulta más útil la creación de un gráfico donde podemos ver su comportamiento:
+
+```{r}
+#| label: fig-regmod-57
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Coeficientes de modelo Lasso. Task Meat Spec"
+
+# Data frame con los coeficientes obtenidos y su codificación) positivo-negativo quitando intercept
+coeficientes = as.data.frame(as.matrix(modelo_glmnet_AA$beta))
+coeficientes = rownames_to_column(coeficientes)
+colnames(coeficientes) = c("Coef", "Estimate")
+coeficientes$Value = ifelse(coeficientes$Estimate > 0, "Positivo", "Negativo")
+# Gráfico de coeficientes
+ggplot(coeficientes, aes(Coef, Estimate, color = Value)) + 
+  geom_point() + 
+  geom_hline(yintercept = 0, linetype = 2, color = "black") +
+  theme(legend.position = "none")
+```
+
+En este caso el efecto de la penalización es muy relevante, porque se aprecia claramente la cantidad de coeficientes cero que establece el modelo. Este el efecto que se busca en estos modelos donde hay muchas predictoras y queremos reducir su número en el modelo final. Evaluamos los scores asociados a la muestra de entrenamiento y validación:
+
+```{r}
+#| label: regmod-58
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento
+pred_train = gr$predict(tsk_train_meatspec)
+# Predicción de la muestra de validación
+pred_test = gr$predict(tsk_test_meatspec)
+# Scores de validación
+measures = msr(c("regr.mse"))
+# Valores de validación entrenamiento y validación
+pred_train$score(measures)
+pred_test$score(measures)
+```
+
+Claramente el modelo lasso es mucho mejor que el ridge ya que reduce claramente el mse tanto en la muestra de entrenamiento y validación. Además como el número de coeficientes distintos de cero es bastante pequeño tenemos una expresión del modelo lineal bastante sencilla que se pude usar con fines predictivos.
+
+##### Elastic Net
+
+Comenzamos configurando el learner de aprendizaje. En este caso tomamos un valor de $\alpha = 0.3$ para analizar su comportamiento.
+
+```{r}
+#| label: regmod-59
+#| message: false
+#| warning: false
+
+# Algoritmo de aprendizaje
+learner = lrn("regr.cv_glmnet", alpha = 0.3)
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_meatspec %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento del modelo
+gr$train(tsk_train_meatspec)
+```
+
+Una vez entrenado el modelo obtenemos el valor de $\lambda$ óptimo y representamos gráficamente el proceso .
+
+```{r}
+#| label: fig-regmod-60
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: Validación cruzada estimación de $\lambda$. Task Meat Spec"
+
+
+# Modelo obtenido para todos los lambda
+modelo_AA = gr$model$regr.cv_glmnet$model
+# Lambda óptimo
+modelo_AA$lambda.min
+plot(modelo_AA)
+```
+
+Entrenamos el modelo con el valor óptimo.
+
+```{r}
+#| label: regmod-61
+#| message: false
+#| warning: false
+
+# Algoritmo de aprendizaje
+learner = lrn("regr.glmnet", alpha = 1, lambda = modelo_AA$lambda.min)
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_meatspec %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento del modelo
+gr$train(tsk_train_meatspec)
+
+# modelo resultante
+modelo_glmnet_AA = gr$model$regr.glmnet$model
+```
+
+Para visualizar el efecto de los coeficientes sobre a respuesta resulta más útil la creación de un gráfico donde podemos ver su comportamiento:
+
+```{r}
+#| label: fig-regmod-62
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: Coeficientes del modelo Elastic-Net. Task Meat Spec"
+
+
+# Data frame con los coeficientes obtenidos y su codificación) positivo-negativo quitando intercept
+coeficientes = as.data.frame(as.matrix(gr$model$regr.glmnet$model$beta))
+coeficientes = rownames_to_column(coeficientes)
+colnames(coeficientes) = c("Coef", "Estimate")
+coeficientes$Value = ifelse(coeficientes$Estimate > 0, "Positivo", "Negativo")
+# Gráfico de coeficientes
+ggplot(coeficientes, aes(Coef, Estimate, color = Value)) + 
+  geom_point() + 
+  geom_hline(yintercept = 0, linetype = 2, color = "black") +
+  theme(legend.position = "none")
+```
+
+En este caso se aprecia una mezcla entre los dos modelos anteriores. Hay bastantes coeficientes cero como en el modelo anterior. Evaluamos los scores asociados a la muestra de entrenamiento y validación:
+
+```{r}
+#| label: regmod-63
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento
+pred_train = gr$predict(tsk_train_meatspec)
+# Predicción de la muestra de validación
+pred_test = gr$predict(tsk_test_meatspec)
+# Scores de validación
+measures = msr(c("regr.mse"))
+# Valores de validación entrenamiento y validación
+pred_train$score(measures)
+pred_test$score(measures)
+```
+
+Este modelo combinado de las dos penalizaciones es el que muestra valores similares de los scores.
+
+##### Optmizando $\alpha$
+
+Para finalizar este apartado vamos a ver el procedimiento para la obtención del $\alpha$ de forma semi automática, sin necesidad de especificar un valor desde el inicio. Para poder hacer esto debemos introducir nuevas funciones, que detallamos a continuación, que nos servirán de aquí en adelante en todos los procesos de optimización de los hiperpárametros de los algoritmos de aprendizaje. Para poder introducir y utilizar dichas funciones es necesario instalar en primer lugar el paquete `mlr3tuning`.
+
+```{r}
+#| label: regmod-64
+#| message: false
+#| warning: false
+library(mlr3tuning)
+```
+
+El proceso de optimización comienza decidiendo qué hiperparámetros ajustar y en qué rango ajustarlos. Para conocer los posibles hiperparámetros asociados con una algoritmo de aprendizaje podemos utilizar el método `$param_set` asociado con él. En el caso que nos ocupa tenemos:
+
+```{r}
+#| label: regmod-65
+#| message: false
+#| warning: false
+as.data.table(lrn("regr.cv_glmnet")$param_set)[,
+  .(id, class, lower, upper, nlevels)]
+```
+
+Con recursos infinitos, podríamos ajustar todos los hiperparámetros de forma conjunta, pero en realidad eso no es posible (o quizás necesario), por lo que normalmente solo se puede ajustar un subconjunto de hiperparámetros. Este subconjunto de posibles valores de hiperparámetros para optimizar se denomina espacio de búsqueda. En este ejemplo hay 43 hiperparámetros asociados con el algoritmo y nos vamos a centrar únicamente en optimizar el valor de $\alpha$. En espacios de búsqueda más complejos pueden requerir conocimientos expertos para definirlos. Una forma avanzada de optimización es definir espacios de búsqueda predefinidos mediante el uso del paquete `mlr3tuningspaces`. para utilizar dichos espacios de búsqueda predefinidos debemos utilizar la función `lts()`. A continuación se muestra como realizar la optimización definiendo nuestro propio espacio de búsqueda y posteriormente utilizando espacios de búsqueda predefinidos. La colección de algoritmos que permite espacios de búsqueda predefinidos se pueden consultar en este [enlace](https://mlr3tuningspaces.mlr-org.com/).
+
+::: {.callout-caution title="A tener en cuenta" appearance="simple"}
+**En casos excepcionales, los conjuntos de parámetros pueden incluir hiperparámetros que no deben ajustarse. Por lo general, serán parámetros "técnicos" (o de "control") que proporcionan información sobre cómo se ajusta el modelo pero no controlan el proceso de entrenamiento en sí.**
+:::
+
+###### Espacio de búsqueda personalizado
+
+Para los hiperparámetros numéricos (exploraremos otros más adelante), se deben especificar los límites del proceso de optimización. Hacemos esto construyendo un learner y usando la función `to_tune()` para establecer los límites superior e inferior de los parámetros que queremos ajustar.
+
+En nuestro caso para el ejemplo con el que venimos trabajando en este apartado vamos a optimizar únicamente el valor de $\alpha$ mediante la definición del correspondiente learner. Definimos los posibles valor del hiperparámetro en el intervalo $[0.01, 1]$.
+
+```{r}
+#| label: regmod-66
+#| message: false
+#| warning: false
+
+# Algoritmo de aprendizaje
+learner = lrn("regr.cv_glmnet", 
+              alpha = to_tune(1e-10, 1))
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_meatspec %>>% learner
+gr = GraphLearner$new(gr)
+```
+
+El paquete `mlr3tuning` incluye muchos métodos para especificar cuándo terminar el proceso de optimización, que se implementan en las clases `Terminator`. Los terminadores se almacenan en el diccionario `mlr_terminators` y se construyen con la función sugar `trm()`. La lista de terminadores disponibles se pueden consultar en la tabla siguiente:
+
+| Terminator            | Función y parámetros por defecto               |
+|-----------------------|------------------------------------------------|
+| Clock Time            | `trm("clock_time")`                            |
+| Combo                 | `trm("combo", any = TRUE)`                     |
+| None                  | `trm("none")`                                  |
+| Number of Evaluations | `trm("evals", n_evals = 100, k = 0)`           |
+| Performance Level     | `trm("perf_reached", level = 0.1)`             |
+| Run Time              | `trm("run_time", secs = 30)`                   |
+| Stagnation            | `trm("stagnation", iters = 10, threshold = 0)` |
+
+Los terminadores más comúnmente utilizados son aquellos que detienen el ajuste después de un cierto tiempo (`trm("run_time")`) o un número determinado de evaluaciones (`trm("evals")`). La elección de un tiempo de ejecución suele basarse en consideraciones prácticas y en la intuición. Usar un límite de tiempo puede ser importante en clústeres de computación donde es posible que sea necesario especificar un tiempo de ejecución máximo para un trabajo de computación. `trm("perf_reached")` detiene el ajuste cuando se alcanza un nivel de rendimiento específico, lo que puede ser útil si cierto rendimiento se considera suficiente para el uso práctico del modelo; sin embargo, si se establece de manera demasiado optimista, el ajuste puede nunca terminar. `trm("stagnation")` se detiene cuando no se ha realizado ningún progreso mayor que el `umbral` durante un número determinado de `iteraciones`. El umbral puede ser difícil de seleccionar ya que la optimización podría detenerse demasiado pronto para espacios de búsqueda complejos a pesar de que hay margen para mejoras (posiblemente significativas). `trm("none")` se usa para sintonizadores que controlan la terminación por sí mismos y, por lo tanto, este terminador no hace nada. Finalmente, cualquiera de estos terminadores se puede combinar libremente usando `trm("combo")`, que se puede usar para especificar si HPO finaliza cuando se activa cualquier terminador (`any = TRUE`) o cuando todos (`any = FALSE`) se activan.
+
+La instancia de ajuste recopila la información independiente del sintonizador necesaria para optimizar un modelo, es decir, toda la información sobre el proceso de ajuste, excepto el algoritmo de ajuste en sí. Esto incluye la tarea de ajustar, el algoritmo de aprendizaje, el método de remuestreo y la medida utilizados para comparar analíticamente las configuraciones de optimización de hiperparámetros, y el terminador para determinar cuándo la medida se ha optimizado "suficientemente". Esto define implícitamente una función objetivo de "caja negra", que asigna configuraciones de hiperparámetros a valores de rendimiento (estocásticos) que se optimizarán. Se puede construir una instancia con la función `ti()`.
+
+Para el ejemplo que venimos trabajando, utilizaremos una partición 80-20 de la muestra de trabajo en la práctica esto supone que trabajamos con el reparto 80-20) y optimizaremos la medida del error de clasificación. En este caso el terminador establece 15 iteraciones del algoritmo de optimización. Al finalizar verificaremos si el algoritmo ha convergido o necesitamos aumentar el número de iteraciones.
+
+```{r}
+#| label: regmod-67
+#| message: false
+#| warning: false
+
+# Fijamos semilla para reproducibilidad
+set.seed(123)
+# Definimos instancia
+instance = ti(
+  task = tsk_train_meatspec,
+  learner = gr,
+  resampling = rsmp("holdout", ratio = 0.8),
+  measures = msr("regr.mse"),
+  terminator = trm("evals", n_evals = 15)
+)
+
+instance
+```
+
+Con todas las piezas de nuestro problema de optimización ensambladas, ahora podemos decidir *cómo* optimizar nuestro modelo. Hay múltiples clases `"Tuner` en `mlr3tuning`, que implementan diferentes algoritmos HPO (o más generalmente hablando `optimización de caja negra`. A continuación se muestra una tabla con todos ellos, así como la librería que debe cargarse para poder ser utilizado el correspondiente algoritmo de optimización:
+
+| Tuner                           | Función                | Librería        |
+|---------------------------------|------------------------|-----------------|
+| Random Search                   | `tnr("random_search")` | `mlr3tuning`    |
+| Grid Search                     | `tnr("grid_search")`   | `mlr3tuning`    |
+| Bayesian Optimization           | `tnr("mbo")`           | `mlr3mbo`       |
+| CMA-ES                          | `tnr("cmaes")`         | `adagio`        |
+| Iterated Racing                 | `tnr("irace")`         | `irace`         |
+| Hyperband                       | `tnr("hyperband")`     | `mlr3hyperband` |
+| Generalized Simulated Annealing | `tnr("gensa")`         | `GenSA`         |
+| Nonlinear Optimization          | `tnr("nloptr")`        | `nloptr`        |
+
+Se puede consultar la actualización de estos algoritmos en este [enlace](https://mlr-org.com/tuners.html).
+
+La `Grid search` (búsqueda en cuadrícula) y la `Random search` (búsqueda aleatoria) son los algoritmos más básicos y, a menudo, se seleccionan primero en los experimentos iniciales. La idea de la búsqueda en cuadrícula es evaluar exhaustivamente cada combinación posible de valores de hiperparámetros dados. Los hiperparámetros categóricos generalmente se evalúan sobre todos los valores posibles que pueden tomar. Luego, los valores de hiperparámetros numéricos y enteros se espacian equidistantemente en sus restricciones (límites superior e inferior) de acuerdo con una resolución determinada, que es el número de valores distintos que se deben probar por hiperparámetro.
+
+La búsqueda aleatoria implica seleccionar aleatoriamente valores para cada hiperparámetro independientemente de una distribución predeterminada, generalmente uniforme. Ambos métodos no son adaptativos, lo que significa que cada configuración propuesta ignora el rendimiento de configuraciones anteriores. Debido a su simplicidad, tanto la búsqueda en cuadrícula como la búsqueda aleatoria pueden manejar espacios de búsqueda mixtos (es decir, los hiperparámetros pueden ser numéricos, enteros o categóricos), así como espacios de búsqueda jerárquicos. El resto de algoritmos son del tipo adaptativo en los que se aprende de configuraciones evaluadas previamente para encontrar buenas configuraciones rápidamente.
+
+Como regla general, si el espacio de búsqueda es pequeño o no tiene una estructura compleja, la búsqueda en cuadrícula puede evaluar exhaustivamente todo el espacio de búsqueda en un tiempo razonable. Sin embargo, generalmente no se recomienda debido a la maldición de la dimensionalidad (el tamaño de la cuadrícula "explota" muy rápidamente a medida que aumenta el número de parámetros a ajustar) y la cobertura insuficiente de los espacios de búsqueda numéricos. Por construcción, la búsqueda en cuadrícula no puede evaluar una gran cantidad de valores únicos por hiperparámetro, lo cual no es óptimo cuando algunos hiperparámetros tienen un impacto mínimo en el rendimiento mientras que otros sí. En tales escenarios, `random search` suele ser una mejor opción ya que considera más valores únicos por hiperparámetro en comparación con la búsqueda en cuadrícula.
+
+Para espacios de búsqueda de dimensiones superiores o espacios de búsqueda con estructura más compleja, los algoritmos de optimización más guiados, como las estrategias evolutivas o la optimización bayesiana, tienden a funcionar mejor y es más probable que den como resultado un rendimiento máximo. En este caso el coste de la evaluación de la función es muy relevante. Si las configuraciones de hiperparámetros se pueden evaluar rápidamente, las estrategias evolutivas suelen funcionar bien. Por otro lado, si las evaluaciones del modelo consumen mucho tiempo y el presupuesto de optimización es limitado, generalmente se prefiere la optimización bayesiana, ya que es bastante eficiente en comparación con otros algoritmos, es decir, se necesitan menos evaluaciones de funciones para encontrar buenas configuraciones. Por lo tanto, generalmente se recomienda la optimización bayesiana para HPO. Si bien la sobrecarga de optimización de la optimización bayesiana es comparativamente grande (por ejemplo, en cada iteración, entrenamiento del modelo sustituto y optimización de la función de adquisición), esto tiene un impacto menor en el contexto de evaluaciones de funciones relativamente costosas, como el remuestreo de modelos de ML.
+
+En nuestro caso al tener un único parámetro para optimizar vamos a utilizar `random_search`. A continuación se muestra el código para el proceso de optimización:
+
+```{r}
+#| label: regmod-68
+#| message: false
+#| warning: false
+
+# Definimos el optimizador
+tuner = tnr("random_search")
+# Optimización
+tuner$optimize(instance)
+```
+
+En primer lugar verificamos si el algoritmo de optimización ha convergido, es decir, ha obtenido una solución óptima.
+
+```{r}
+#| label: regmod-69
+#| message: false
+#| warning: false
+
+instance$is_terminated
+```
+
+Una vez hemos verificado la convergencia podemos ver el valor obtenido en el proceso de optimización:
+
+```{r}
+#| label: regmod-70
+#| message: false
+#| warning: false
+
+instance$result
+```
+
+La solución nos da un $\alpha$ de 0.82 con un `MSE` de 12.35. Este valor es casi un promedio entre la regresión de lazo y la de cresta. Podemos utilizar este valor para estimar el modelo de aprendizaje obteniendo el valor de $\lambda$:
+
+```{r}
+#| label: regmod-71
+#| message: false
+#| warning: false
+
+# Algoritmo de aprendizaje
+learner = lrn("regr.cv_glmnet", alpha = instance$result$regr.cv_glmnet.alpha)
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_meatspec %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento del modelo
+gr$train(tsk_train_meatspec)
+# Modelo obtenido para todos los lambda
+modelo_AA = gr$model$regr.cv_glmnet$model
+# Lambda óptimo
+modelo_AA$lambda.min
+```
+
+Utilizamos el valor de lambda óptimo para ajustar el modelo final de aprendizaje.
+
+```{r}
+#| label: regmod-72
+#| message: false
+#| warning: false
+
+# Algoritmo de aprendizaje
+learner = lrn("regr.glmnet", 
+              alpha = instance$result$regr.cv_glmnet.alpha, 
+              lambda = modelo_AA$lambda.min)
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_meatspec %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento del modelo
+gr$train(tsk_train_meatspec)
+# Modelo resultante
+modelo_glmnet_AA = gr$model$regr.glmnet$model
+modelo_glmnet_AA
+```
+
+El modelo resultante tiene 74 parámetros (hay 26 que son penalizados a cero) y una variabilidad explicada del 95.05% proporcionando un modelo muy adecuado para la predicción de la respuesta. Podemos ver que la solución obtenida es intermedia entre las producidas por la regresión lazo y regresión cresta. A continuación podemos ver el efecto de los parámetros del modelo:
+
+```{r}
+#| label: regmod-73
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: Coeficientes del modelo tunnig. Task Meat Spec"
+
+# Data frame con los coeficientes obtenidos y su codificación) positivo-negativo quitando intercept
+coeficientes = as.data.frame(as.matrix(gr$model$regr.glmnet$model$beta))
+coeficientes = rownames_to_column(coeficientes)
+colnames(coeficientes) = c("Coef", "Estimate")
+coeficientes$Value = ifelse(coeficientes$Estimate > 0, "Positivo", "Negativo")
+# Gráfico de coeficientes
+ggplot(coeficientes, aes(Coef, Estimate, color = Value)) + 
+  geom_point() + 
+  geom_hline(yintercept = 0, linetype = 2, color = "black") +
+  theme(legend.position = "none")
+```
+
+Veamos los errores `MSE` para la muestra de entrenamiento y validación.
+
+```{r}
+#| label: regmod-74
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento
+pred_train = gr$predict(tsk_train_meatspec)
+# Predicción de la muestra de validación
+pred_test = gr$predict(tsk_test_meatspec)
+# Scores de validación
+measures = msr(c("regr.mse"))
+# Valores de validación entrenamiento y validación
+pred_train$score(measures)
+pred_test$score(measures)
+```
+
+###### Espacios de búsqueda predifinidos
+
+En este punto utilizamos los espacios de búsqueda predefinidos para tratar de buscar una solución óptima del algoritmo de aprendizaje. A continuación se muestra el código correspondiente:
+
+```{r}
+#| label: regmod-75
+#| message: false
+#| warning: false
+
+library(mlr3tuningspaces)
+
+# Algoritmo de aprendizaje con espacio de búsqueda predefinido
+learner = lts(lrn("regr.glmnet"))
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_meatspec %>>% learner
+gr = GraphLearner$new(gr)
+
+### Definimos el proceso de optimización asegurando reproducibilidad
+set.seed(123)
+instance = tune(
+  tnr("random_search"),
+  task = tsk_train_meatspec,
+  learner = learner,
+  resampling = rsmp("holdout", ratio = 0.8),
+  measure = msr("regr.mse"),
+  term_evals = 10
+)
+
+# Valoramos si el proceso de optimización ha finalizado
+instance$is_terminated
+```
+
+Vemos la solución de los hiperparámetros obtenida en el proceso de optimización:
+
+```{r}
+#| label: regmod-76
+#| message: false
+#| warning: false
+
+instance$result
+```
+
+El valor de $\alpha$ es 0.26 con un `MSE` de 11.02. la solución es muy parecida al del procedimiento más manual del punto anterior. Podemos ajustar ahora el modelo final con los hiperparámetros obtenidos:
+
+```{r}
+#| label: regmod-77
+#| message: false
+#| warning: false
+
+# Algoritmo de aprendizaje
+learner = lrn("regr.glmnet", 
+              alpha = instance$result$alpha)
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_meatspec %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento del modelo
+gr$train(tsk_train_meatspec)
+# Modelo resultante
+modelo_glmnet_AA = gr$model$regr.glmnet$model
+modelo_glmnet_AA
+```
+
+El modelo final tiene 83 coeficientes distintos de cero con una variabilidad explicada del 94.34%, y un valor de $\lambda$ de 0.0025. En este caso 100 iteraciones para alcanzar la solución.
+
+```{r}
+#| label: fig-regmod-78
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: Coeficientes del modelo tunning con búsqueda predifinida. Task Meat Spec"
+
+
+# Data frame con los coeficientes obtenidos (en la última iteración) y su codificación positivo-negativo 
+coeficientes = as.data.frame(as.matrix(coef(modelo_glmnet_AA)[,100]))
+coeficientes = rownames_to_column(coeficientes)
+colnames(coeficientes) = c("Coef", "Estimate")
+coeficientes$Value = ifelse(coeficientes$Estimate > 0, "Positivo", "Negativo")
+# Gráfico de coeficientes
+ggplot(coeficientes, aes(Coef, Estimate, color = Value)) + 
+  geom_point() + 
+  geom_hline(yintercept = 0, linetype = 2, color = "black") +
+  theme(legend.position = "none")
+```
+
+En el gráfico siguiente podemos ver la evolución de los coeficientes en el proceso de penalización:
+
+```{r}
+#| label: fig-regmod-79
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: Evolución de los coeficientes del modelo. Task Meat Spec"
+
+plot(modelo_glmnet_AA)
+```
+
+Por último, analizamos los `MSE` asociados con la muestra de entrenamiento y validación.
+
+```{r}
+#| label: regmod-80
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento
+pred_train = gr$predict(tsk_train_meatspec)
+# Predicción de la muestra de validación
+pred_test = gr$predict(tsk_test_meatspec)
+# Scores de validación
+measures = msr(c("regr.mse"))
+# Valores de validación entrenamiento y validación
+pred_train$score(measures)
+pred_test$score(measures)
+```
+
+Los `MSE` obtenidos son similares a los del procedimiento de búsqueda manual. En la práctica se puede utilizar el procedimiento basado en la búsqueda en espacios predefinidos para obtener una primera solución, y posteriormente realizar un búsqueda más fina con los valores obtenidos. Esto nos puede llevar a modelos de aprendizaje algo mejores con un tiempo de convergencia y ejecución algo menores.
+
+### Modelos aditivos lineales {#sec-60.4.2}
+
+Los modelos aditivos lineales surgen cuando la relación entre una predictora y la respuesta (en el caso de variables numéricas) no se puede escribir de forma lineal, sino más bien a través de una función desconocida. En la forma más simple se consideran funciones polinómicas en términos de la predictora. Sin embargo, se pueden utilizar funciones más complejas (funciones de suavizado) que permiten capturar todo tipo de comportamiento entre ambas.
+
+La mayor dificultad en este tipo de modelos es que no tenemos una forma explícita para la función de suavizado, y por tanto es necesario utilizar las funciones específicas de predicción para obtener el modelo resultante. En este punto se pretende dar una versión introductoria de los modelos de suavizado por o que se recomienda la lectura de textos más avanzados para completar lo visto en este punto.
+
+El modelo aditivo más básico con una variable predictora y una respuesta Normal viene dado por:
+
+$$Y = f(X) + \epsilon$$ donde $f()$ se denomina función de suavizado para la predictora $X$. Las ventajas de este tipo de modelos es que son muy flexibles ya que permiten modelizar, a través de dichas funciones suaves, relaciones de tipo no lineal entre la variable respuesta y las predictoras. Sin embargo, no todo son ventajas ya que el proceso de selección del mejor modelo se complica al añadir la elección de la función de suavizado a utilizar.
+
+La forma habitual de proceder es obtener el modelo sin suavizado y comparar su capacidad explicativa y error de predicción con respecto a un modelo de suavizado. Para comparar esos modelos no podemos utilizar el estadístico AIC y se recurre al estadístico GCV para poder comparar las curvas de suavizado. Este estadístico selecciona el modelo con una valor más bajo.
+
+Las funciones de suavizado son los denominados `splines` que consisten en funciones definidas sobre bases de polinomios. En nuestro caso utilizaremos los denominados `splines penalizados` o `p-splines`. En este caso la función de suavizado tiene la estructura siguiente:
+
+$$s(variable, k = , m = , bs = , by = factor)$$ donde $k$ es el tamaño de la base de polinomios, $m$ es el orden de los polinomios, $bs$ es el tipo de la base de splines utilizados y $by$ identifica un factor para el ajuste de las curvas de suavizado (efecto de interacción). Por defecto se utiliza la configuración $k=10, m = 2, bs = "ps"$. La elección del grado de suavización de la función que ajusta la tendencia entre respuesta y predictora es un tema muy importante, y está asociado al grado de la base de polinomios utilizada. Las posibilidades que tenemos a la hora de elegir el grado de suavizado pasan por utilizar los denominados "splines penalizados" que son splines de regresión en los que se introduce una penalización al realizar el ajuste del modelo. Dicha penalización viene controlada por el parámetro de suavizado $\lambda$. Si $\lambda = 0$ estamos en el caso particular en el que no hay penalización y a medida que $\lambda$ aumenta, aumentamos la intensidad de la penalización. Cuando $\lambda$ tiende a 1 el modelo se convierte prácticamente en un modelo de regresión lineal simple.
+
+#### Modelos GAM en mlr3
+
+Para el análisis de los modelos GAM con la librería `mlr3` debemos utilizar la función `regr.gam()`. Su funcionamiento y métodos son similares a los de los modelos presentados en puntos anteriores. Para mostrar el funcionamiento de estos modelos vamos a utilizar el banco de datos Electricity. Recordemos que este banco de datos no tenia valores perdidos y la única tarea de preprocesado era la estandarización de las predictoras numéricas. Pasamos a establecer el modelo de aprendizaje. Para ello debemos establecer la ecuación del modelo utilizando las funciones de suavizado. En este primer modelo consideramos una función de suavizado para cada predictora.
+
+```{r}
+#| label: regmod-82
+#| message: false
+#| warning: false
+
+# Modelo de aprendizaje
+learner = mlr3::lrn("regr.gam")
+# Ecuación del modelo
+learner$param_set$values$formula = PE ~ s(AP, k=10, m=2, bs = "ps") + 
+  s(AT, k=10, m=2, bs = "ps") + 
+  s(RH, k=10, m=2, bs = "ps") + 
+  s(V, k=10, m=2, bs = "ps")
+# Graphlearner: Estructura del modelo y learner
+gr = pp_electricity %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento del modelo
+gr$train(tsk_train_electricity)
+```
+
+Una vez entrenado el modelo podemos ver el resumen del modelo:
+
+```{r}
+#| label: regmod-83
+#| message: false
+#| warning: false
+
+# Resumen del modelo
+summary(gr$model$regr.gam$model)
+```
+
+Los resultados del modelo muestran que las cuatro funciones de suavizado resultan significativas (pvalor $< 0.05$), con una variabilidad explicada del 94%, y con un valor del estadístico GCV de 17.614.
+
+Podemos ver los modelos de suavizado obtenidos con el gráfico siguiente
+
+```{r}
+#| label: fig-regmod-84
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: Modelo de suavizado. Task Electricity"
+
+# Curvas de suavizado
+par(mfrow=c(2,2))
+plot(gr$model$regr.gam$model)
+```
+
+A la vista de los gráficos podemos ver que:
+
+-   La predictora `AP` esta inversamente relacionada con `PE`, pero la curva suavizada estimada es demasiado irregular, lo que puede ser debido a que el número de nodos no es el adecuado o que no es necesario una curva de suavizado ya que el modelo obtenido es más complejo.
+-   La predictora `AT` esta inversamente relacionada con `PE`, con una curva suavizada estimada muy adecuada para esta situación. Claramente la relación entre ambas variables no es lineal.
+-   La predictora `RH` esta un efecto combinado con `PE`. Para valores inferiores a -2 (estandarizados) de `RH` hay un efecto creciente de la respuesta, mientras que a partir de ese punto la curva es decreciente. La ecuación de suavizado es muy adecuada para explicar la relación entre esas variables.
+-   Por último, para la predictora `V` observamos un comportamiento similar al de `AP`. Hay demasiada fluctuación en la función de suavizado.
+
+Podemos evaluar ahora las métricas de ajuste para el modelo obtenido:
+
+```{r}
+#| label: regmod-85
+#| message: false
+#| warning: false
+
+# Métrica de evaluación
+measures = msr("regr.mse")
+# Predicción muestra entrenamiento y validación
+pred_train = gr$predict(tsk_train_electricity)
+pred_test = gr$predict(tsk_test_electricity)
+# Scores para muestras de entrenamiento y validación
+pred_train$score(measures)
+pred_test$score(measures)
+```
+
+Podemos ver la solución gráfica del modelo con el código siguiente:
+
+```{r}
+#| label: fig-regmod-86
+#| message: false
+#| warning: false
+#| fig-width: 14
+#| fig-height: 14
+#| fig-cap: Gráficos del modelo. Task Electricity"
+
+# Muestra de entrenamiento
+p1 = autoplot(pred_train, type = "xy") + labs(title = "Observados vs predichos")
+p2 = autoplot(pred_train, type = "residual") + labs(title = "Observados vs residuos")
+p3 = autoplot(pred_train, type = "histogram") + labs(title = "Histograma residuos")
+
+# Muestra de validación
+p4 = autoplot(pred_test, type = "xy") + labs(title = "Observados vs predichos")
+p5 = autoplot(pred_test, type = "residual") + labs(title = "Observados vs residuos")
+p6 = autoplot(pred_test, type = "histogram") + labs(title = "Histograma residuos")
+
+ggarrange(p1,p2,p3, p4, p5, p6, nrow = 2, ncol = 3)
+```
+
+La solución se parece bastante a la obtenida con el modelo lineal habitual. Para poder comparar ambas situaciones vamos a construir un nuevo modelo donde combinamos efectos lineales y efectos de suavizado.
+
+```{r}
+#| label: regmod-87
+#| message: false
+#| warning: false
+
+# Modelo de aprendizaje
+learner = mlr3::lrn("regr.gam")
+# Ecuación del modelo
+learner$param_set$values$formula = PE ~ AP + 
+  s(AT, k=10, m=2, bs = "ps") + 
+  s(RH, k=10, m=2, bs = "ps") + 
+  V
+# Graphlearner: Estructura del modelo y learner
+gr2 = pp_electricity %>>% learner
+gr2 = GraphLearner$new(gr2)
+# Entrenamiento del modelo
+gr2$train(tsk_train_electricity)
+# Resumen del modelo
+summary(gr2$model$regr.gam$model)
+```
+
+De nuevo todos los efectos del modelo (lineales y suavizados) resultan significativos con una variabilidad explicada del 93.7% y un GCV de 18.556. Aunque los resultados empeoran un poco respecto del modelo con todas las funciones de suavizado, este modelo podría ser más adecuado, ya que la ecuación del modelo es más simple. Veamos las métricas de evaluación:
+
+```{r}
+#| label: regmod-88
+#| message: false
+#| warning: false
+
+# Predicción muestra entrenamiento y validación
+pred_train = gr2$predict(tsk_train_electricity)
+pred_test = gr2$predict(tsk_test_electricity)
+# Scores para muestras de entrenamiento y validación
+pred_train$score(measures)
+pred_test$score(measures)
+```
+
+Como era de esperar los `MSE` empeoran con respecto al modelo de suavizado completo. Para finalizar podemos ver las curvas de predicción:
+
+```{r}
+#| label: fig-regmod-89
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: Curvas de predicción. Task Electricity"
+
+# Curvas de suavizado
+par(mfrow=c(2,2))
+plot(gr2$model$regr.gam$model)
+```
+
+Las curvas son más simples y con una capacidad explicativa similar al del modelo más complejo. Optamos por este modelo como modelo de predicción.
+
+Estudiamos ahora la estabilidad de la solución del modelo mediante un proceso de validación cruzada.
+
+```{r}
+#| label: regmod-90
+#| message: false
+#| warning: false
+
+# Fijamos semilla
+set.seed(135)
+# Definimos proceso de validación cruzada kfold con k=10
+resamp = rsmp("cv", folds = 10)
+# Remuestreo
+rr = resample(tsk_electricity, gr2, resamp, store_models=TRUE)
+# Scores individuales
+skim(rr$score()$regr.mse)
+```
+
+La solución obtenida es muy estable dado que la desviación típica es bastante pequeña en comparación con la media de los scores individuales. Para finalizar representamos la curva de aprendizaje para ver como cambia el valor de la métrica de aprendizaje tanto para la muestra de entrenamiento y validación.
+
+```{r}
+#| label: fig-regmod-91
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: Curva de aprendizaje. Task Electricity"
+
+# Curva de aprendizaje
+plot_learningcurve(tsk_electricity, gr2, "regr.mse", ptr = seq(0.1, 0.9, 0.1), rpeats = 10)
+```
+
+Como se aprecia en los gráficos el porcentaje más adecuado de la muestra de entrenamiento es del 80% (mejor combinación de `MSE` para entrenamiento y validación).
+
+## Ejercicios {#sec-60.5}
+
+1.  Ajustar un modelo de aprendizaje automático basado en modelos de regresión para el banco de datos `Penguins`[-@sec-penguins].
+2.  Ajustar un modelo de aprendizaje automático basado en modelos de regresión para el banco de datos `Us economic time series`[-@sec-usaets].
+3.  Ajustar un modelo de aprendizaje automático basado en modelos de regresión para el banco de datos `QSAR`[-@sec-qsar].

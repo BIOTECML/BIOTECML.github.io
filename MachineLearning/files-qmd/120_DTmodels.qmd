@@ -1,0 +1,1111 @@
+# Árboles de decisiónn (DT) {#sec-120}
+
+Los árboles de decisión son modelos predictivos, englobados dentro de los algoritmos de aprendizaje supervisado no paramétrico, basados en reglas binarias con las que se consiguen repartir las observaciones en función de sus características y predecir así el valor de la variable respuesta bien sea numérica o categórica.
+
+Muchos métodos predictivos generan modelos globales en los que una única ecuación se aplica a todo el espacio muestral. En situaciones prácticas que implican múltiples predictores, que interaccionan entre ellos de forma compleja y no lineal, es muy difícil encontrar un único modelo global que sea capaz de reflejar la relación entre las variables. Con los modelos basados en árboles de decisión resulta más sencillo manejar las interacciones y situaciones con muchos predictores. Es esta característica la que les proporciona gran parte de su potencial.
+
+A lo largo de este documento se explora la forma en que se construyen y predicen los árboles de decisión para problemas de clasificación, que además resultan elementos fundamentales de modelos predictivos más complejos como *Random Forest* y *Gradient Boosting Machine*.
+
+Como su propio nombre indica, los árboles de decisión se estructuran en forma de árbol, en la que cada rama representa una decisión sobre una de las variables predictoras proporcionando dos sub-ramas para cada una de las soluciones de la regla binaria asociada a dicha rama. A continuación se presentan algunas de las terminologías más importantes relacionadas con un Árbol de Decisión:
+
+-   **Nodo raíz:** generalmente representa toda la muestra y es el nodo superior del árbol de decisión (raíz del árbol).
+-   **Separación:** proceso de división de un nodo en dos o más subnodos.
+-   **Nodo de decisión:** es un nodo o subnodo que divide los datos en otros subnodos.
+-   **Nodo terminal:** los nodos que no se dividen se denominan nodos terminales; son las salidas finales del árbol de decisión.
+-   **Poda:** lo contrario de la separación. Cuando se elimina un subnúcleo de un nodo de decisión, el proceso se denomina poda.
+-   **Subárbol:** una subsección de todo el árbol se denomina rama o subárbol.
+-   **Nodo padre:** un nodo dividido en subnodos se denomina nodo padre.
+-   **Nodo hijo:** cualquier subnodo de un nodo padre se llama nodo hijo.
+
+A continuación se muestra gráficamente la estructura de un árbol de decisión.
+
+![](https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/decisiontree.png){fig-align="center" width="550" height="400"}
+
+En todo el documento iremos detallando la construcción teórica de los árboles de decisión tanto para tareas de clasificación como regresión.
+
+## Árboles de decisión en tareas de clasificación {#sec-120.1}
+
+Para construir un árbol de clasificación, se emplea un método de división binaria recursiva en cuyo proceso es necesario tener en cuenta que:
+
+-   Todo el conjunto de datos se considera como parte del nodo raíz al comienzo del proceso de división.
+
+-   Dado que se producen divisiones de tipo binario a cada paso del algoritmo se prefieren los valores de características categóricas en el proceso de construcción. Si los valores son continuos, deben discretizarse antes de construir el modelo.
+
+-   Las muestras se distribuyen recursivamente en función de las reglas de decisión establecidas con respecto a la predictora considerada en cada paso del algoritmo.
+
+-   El proceso de división se debe realizar mediante un enfoque estadístico estableciendo una función de pérdida o ganancia que es necesario optimizar.
+
+Antes de presentar el algoritmo completo para la creación del árbol de decisión se presenta el enfoque estadístico para la construcción de las reglas de decisión óptimas.
+
+### Medidas de impureza {#sec-120.1.1}
+
+A la hora de establecer los criterios estadísticos a tener en cuenta en la construcción del árbol de decisión existen varias alternativas, todas ellas con el objetivo de encontrar nodos lo más puros/homogéneos posibles. Antes de presentar las medidas más habituales introducimos el concepto de entropía que está directamente relacionado con la construcción del árbol.
+
+La incertidumbre en nuestro conjunto de datos o la medida del desorden se llama entropía. Su valor describe el grado de aleatoriedad de un nodo concreto, de forma que, cuanto mayor es la entropía, mayor será la aleatoriedad en el conjunto de datos, y por tanto menos influencia tiene la predictora considerada en la división del árbol. La fórmula general de la entropía en un conjunto de datos categóricos con k clases viene dada por:
+
+$$H = \sum_{i=1}^{k} -p_ilog(p_i)$$
+
+donde $p_i$ es la proporción de observaciones de la categoría $i$ en el conjunto de datos considerado.
+
+Los métodos de medidas más empleadas son:
+
+-   **Ratio de error de clasificación.** Se define como la proporción de observaciones que no pertenecen a la clase mayoritaria del nodo, definida como:
+
+$$E_m = 1- \underset{k}{max} \text{ } \hat{p}_{mk}$$
+
+> donde $\hat{p}_{mk}$ representa la proporción de observaciones del nodo $𝑚$ que pertenecen a la clase $𝑘$. A pesar de la sencillez de esta medida, no es suficientemente sensible para crear buenos árboles, por lo que, en la práctica, no suele emplearse.
+
+-   **Ganancia de información.** La ganancia de información ayuda a determinar el orden en que las predictoras consideradas deben ser utilizadas para dividir un nodo o no. Es simplemente una medida de los cambios en la entropía tras la segmentación de un conjunto de datos basado en una predictora específica. Calcula cuánta información nos proporciona una característica sobre una clase. En función del valor de la ganancia de información, dividimos los nodos y construimos un árbol de decisión. El nodo/atributo con mayor ganancia de información se divide primero en una estructura de árbol, que siempre maximiza el valor de la ganancia de información. La expresión para dicha medida viene dada por:
+
+$$D = - \sum_{k=1}^{K} \hat{p}_{mk} log(\hat{p}_{mk}).$$
+
+> Los conocidos como algortimos C4.5 y C5.0 utilizan este criterio para la construcción del árbol.
+
+-   **Índice de Gini.** El índice de Gini, también conocido como impureza de Gini o coeficiente de Gini, mide la probabilidad de que un nuevo valor de una variable aleatoria se clasifique incorrectamente si se clasificara al azar utilizando la distribución de etiquetas de clase del conjunto de datos. Técnicamente cuantifica la varianza total en el conjunto de las $𝐾$ clases del nodo $𝑚$, es decir, mide la pureza del nodo mediante la expresión:
+
+$$G_m = \sum_{k=1}^{K} \hat{p}_{mk} (1-\hat{p}_{mk}).$$
+
+> Cuando $\hat{p}_{mk}$ es cercano a 0 o a 1 (el nodo contiene mayoritariamente observaciones de una sola clase), el término correspondiente es muy pequeño. Como consecuencia, cuanto mayor sea la pureza del nodo, menor el valor del índice Gini.
+
+> El algoritmo CART (*Classification and Regression Tree*) utiliza este criterio para la construcción del árbol.
+
+-   **Ji-cuadrado.** Esta aproximación consiste en identificar si existe una diferencia significativa entre los nodos hijos y el nodo parental, es decir, si hay evidencias de que la división consigue una mejora. Para ello, se aplica un test estadístico ji-cuadrado de bondad de ajuste empleando como distribución esperada $𝐻_0$ la frecuencia de cada clase en el nodo parental. Cuanto mayor el estadístico $𝜒^2$ , mayor es la evidencia estadística de que existe una diferencia. Los árboles generados con este criterio de división reciben el nombre de CHAID (*Chi-square Automatic Interaction Detector*).
+
+Independientemente de la medida empleada como criterio de selección de las divisiones, el proceso de construcción del árbol siempre es el mismo:
+
+1.  Para cada posible división se calcula el valor de la medida considerada en cada uno de los dos nodos resultantes.
+2.  Se suman los dos valores, ponderando cada uno por la fracción de observaciones que contiene cada nodo. Este paso es muy importante, ya que no es lo mismo dos nodos puros con 2 observaciones, que dos nodos puros con 100 observaciones. Si consideramos como $n_A$ y $n_B$ el número de observaciones en los nodos A y B resultantes de la división con $n=n_A+n_B$, y por $p_A$ y $p_B$ las medidas de pureza calculadas para cada uno de ellos el criterio de división se basa en:
+
+$$\frac{n_a}{n}p_A + \frac{n_b}{n}p_B$$
+
+3.  La división con menor o mayor valor (dependiendo de la medida empleada) se selecciona como punto de corte óptimo.
+
+### El algortmo CART {#sec-120.1.2}
+
+El algoritmo CART es uno de los más extendidos en la construcción de árboles de decisión. Este funciona dividiendo primero el conjunto de entrenamiento por características $k$ y umbrales $t_k$. Más concretamente, de entre todos los pares $(k, t_k)$ se eligen los que producen los subconjuntos más puros ponderados por su tamaño.
+
+La función de pérdida en la que se basa el funcionamiento del algoritmo viene dada por:
+
+$$J(k, t_k)=\frac{n_a}{n}G_A + \frac{n_B}{n}G_B$$
+
+donde $G_A$ y $G_B$ son respectivamente las medidas de impureza asociadas con cada uno de los nodos resultantes, que en este caso es el índice de Gini.
+
+Una vez que el algoritmo CART divide con éxito los datos de entrenamiento iniciales en dos subconjuntos, hace lo mismo con ambos subconjuntos. El algoritmo se detiene cuando no puede encontrar una división que reduzca la impureza.
+
+Al algoritmo CART no le importa si su división actual conduce a una hoja óptima en la parte inferior. Sólo le importa encontrar la mejor división posible en la hoja actual. En este sentido, no necesariamente da lugar a una solución óptima. Por desgracia, se sabe que encontrar el árbol óptimo es un problema NP-Completo con una complejidad de $O(exp(n))$.
+
+### Tratamiento de sobreajuste {#sec-120.1.3}
+
+El proceso de construcción de árboles tiende a reducir rápidamente el error de entrenamiento, es decir, el modelo se ajusta muy bien a las observaciones empleadas como entrenamiento. Como consecuencia, se genera un sobreajuste que reduce su capacidad predictiva al aplicarlo a nuevos datos. La razón de este comportamiento radica en la facilidad con la que los árboles se ramifican adquiriendo estructuras complejas. De hecho, si no se limitan las divisiones, todo árbol termina ajustándose perfectamente a las observaciones de entrenamiento creando un nodo terminal por observación. Las dos estrategias más habituales para prevenir este problema es limitar el tamaño del árbol (parada temprana) y el proceso de podado (*pruning*).
+
+**Parada temprana**
+
+El tamaño final que adquiere un árbol puede controlarse mediante reglas de parada que detengan la división de los nodos dependiendo de si se cumplen o no determinadas condiciones. El nombre de estas condiciones puede variar dependiendo del software o librería empleada, pero suelen estar presentes en todos ellos.
+
+-   *Observaciones mínimas para división:* define el número mínimo de observaciones que debe tener un nodo para poder ser dividido. Cuanto mayor el valor, menos flexible es el modelo.
+
+-   *Observaciones mínimas de nodo terminal:* define el número mínimo de observaciones que deben tener los nodos terminales. Su efecto es muy similar al de observaciones mínimas para división.
+
+-   *Profundidad máxima del árbol:* define la profundidad máxima del árbol, entendiendo por profundidad máxima el número de divisiones de la rama más larga (en sentido descendente) del árbol. Cuanto menor el valor, menos flexible es el modelo.
+
+-   *Número máximo de nodos terminales:* define el número máximo de nodos terminales que puede tener el árbol. Una vez alcanzado el límite, se detienen las divisiones. Su efecto es similar al de controlar la profundidad máxima del árbol.
+
+-   *Reducción mínima de error:* define la reducción mínima de error que tiene que conseguir una división para que se lleve a cabo.
+
+Todos estos parámetros son lo que se conoce como hiperparámetros porque no se aprenden durante el entrenamiento del modelo. Su valor tiene que ser especificado por el usuario en base a su conocimiento del problema y mediante el uso de estrategias de validación.
+
+**Podado del árbol**
+
+La estrategia de controlar el tamaño del árbol mediante reglas de parada tiene un inconveniente, el árbol crece seleccionando la mejor división en cada momento. Al evaluar las divisiones sin tener en cuenta las que vendrán después, nunca se elige la opción que resulta en el mejor árbol final, a no ser que también sea la que genera en ese momento la mejor división. A este tipo de estrategias se les conoce como *greedy*.
+
+Una alternativa no *greedy* que consigue evitar el sobreajuste consiste en generar los árboles más grandes posibles, sin establecer condiciones de parada más allá de las necesarias por las limitaciones computacionales, y después podarlos (*pruning*), mantener la estructura que consigue un test error bajo. La selección del sub-árbol óptimo puede hacerse mediante validación cruzada, sin embargo, dado que los árboles crecen lo máximo posible (tienen muchos nodos terminales) no suele ser viable estimar el test error de todas las posibles sub-estructuras que se pueden generar. En su lugar, se recurre a la "poda de complejidad de costes" o "poda del eslabón más débil".
+
+La poda de complejidad por costes es un método de penalización de tipo "coste" mas "penalización", similar al empleado en *Ridge Regression* o *Lasso*. En este caso, se busca el sub-árbol $𝑇$ que minimiza la ecuación:
+
+$$\text{coste} + \alpha|T|$$
+
+donde $|T|$ es el número de nodos terminales del árbol. El término de penalización, evalúa los modelos en función del número de nodos terminales (a mayor número, mayor penalización). El grado de penalización se determina mediante el parámetro de ajuste $\alpha$. Cuando $\alpha=0$, la penalización es nula y el árbol resultante es equivalente al árbol original. A medida que se incrementa dicho parámetro, la penalización es mayor y, como consecuencia, los árboles resultantes son de menor tamaño. El valor óptimo de $\alpha$ puede identificarse mediante validación cruzada.
+
+### Predicción y evaluación del modelo {#sec-120.1.4}
+
+Tras la creación de un árbol, las observaciones de entrenamiento quedan agrupadas en los nodos terminales. Para predecir una nueva observación se recorre el árbol en función del valor de sus predictores hasta llegar a uno de los nodos terminales. En el caso de clasificación, suele emplearse la moda de la variable respuesta de los elementos que aparecen en el nodo terminal como valor de predicción. Lo habitual además es acompañar dicho valor con el porcentaje de cada clase en el nodo terminal, lo que aporta información sobre la confianza de la predicción, en caso de que los porcentajes de las diferentes clases se encuentren muy próximos.
+
+## Árboles de decisión en tareas de regresión {#sec-120.2}
+
+Los árboles de regresión son el subtipo de árboles de predicción que se aplica cuando la variable respuesta es continua. En términos generales, en el entrenamiento de un árbol de regresión, las observaciones se van distribuyendo por bifurcaciones (nodos) generando la estructura del árbol hasta alcanzar un nodo terminal.
+
+El proceso de entrenamiento de un árbol de decisión para problemas de regresión es similar al del proceso de clasificación donde se produce una división sucesiva del espacio de los predictores generando regiones no solapantes (nodos terminales) $𝑅_1$ , $𝑅_2$ , $𝑅_3$ , ..., $𝑅_𝑗$ . Aunque, desde el punto de vista teórico las regiones podrían tener cualquier forma, si se limitan a regiones rectangulares (de múltiples dimensiones), se simplifica en gran medida el proceso de construcción y se facilita la interpretación.
+
+### Medidas de impureza {#sec-120.2.1}
+
+En los árboles de regresión, el criterio empleado con más frecuencia para identificar las divisiones es la suma de cuadrados residual (SCE). El objetivo es encontrar las $𝐽$ regiones $(𝑅_1 ,..., 𝑅_𝑗)$ que minimizan la suma de cuadrados del error total:
+
+$$SCE = \sum_{j=1}^J \sum_{i \in R_j} (𝑦_𝑖−\hat{y}_{R_j})^2,$$
+
+donde $\hat{y}_{R_j}$ es la media de la variable respuesta en la región $𝑅_𝑗$ . Una descripción menos técnica equivale a decir que se busca una distribución de regiones tal que, el sumatorio de las desviaciones al cuadrado entre las observaciones y la media de la región a la que pertenecen sea lo menor posible.
+
+Desafortunadamente, no es posible considerar todas las posibles particiones del espacio de los predictores. Por esta razón, se recurre a lo que se conoce como división binaria recursiva. Esta solución sigue la misma idea que la selección de predictores *stepwise* (*backward* o *fordward*) en regresión lineal múltiple, no evalúa todas las posibles regiones pero, alcanza un buen balance computación-resultado.
+
+### Algoritmo CART para problemas de regresión {#sec-120.2.2}
+
+EL algoritmo CART para problemas de regresión se basa en el método de división binaria recursiva cuyo objetivo es encontrar, en cada iteración, el predictor $𝑋_𝑗$ y el punto de corte (umbral) $𝑠$ tal que, si se distribuyen las observaciones en las regiones ${𝑋|𝑋𝑗<𝑠}$ y ${𝑋|𝑋𝑗≥𝑠}$ , se consigue la mayor reducción posible en la suma de cuadrados de los residuos (SCE). El algoritmo seguido es:
+
+1.  El proceso se inicia en lo más alto del árbol, donde todas las observaciones pertenecen a la misma región.
+
+2.  Se identifican todos los posibles puntos de corte $𝑠$ para cada uno de los predictores $(𝑋_1, 𝑋_2 ,..., 𝑋_𝑝)$. En el caso de predictores cualitativos, los posibles puntos de corte son cada uno de sus niveles. Para predictores continuos, se ordenan de menor a mayor sus valores, empleándose el punto intermedio entre cada par de valores como punto de corte.
+
+3.  Se calcula la SCR total que se consigue con cada posible división identificada en el paso 2:
+
+$$\sum_{i: x_i \in R_1(j,s)} (y_i-\hat{y}_{R_1})^2 +\sum_{i: x_i \in R_2(j,s)} (y_i-\hat{y}_{R_2})^2$$
+
+> donde el primer término es la SCE de la región 1 y el segundo término es la SCE de la región 2, siendo cada una de las regiones el resultado de separar las observaciones acorde al predictor $𝑗$ y valor $𝑠$.
+
+4.  Se selecciona el predictor $𝑋_𝑗$ y el punto de corte $s$ que resulta en la menor SCE total, es decir, que da lugar a las divisiones más homogéneas posibles. Si existen dos o más divisiones que consiguen la misma mejora, la elección entre ellas es aleatoria.
+
+5.  Se repiten de forma iterativa los pasos 1 a 4 para cada una de las regiones que se han creado en la iteración anterior hasta que se alcanza alguna norma de parada. Algunas de las más empleadas son: alcanzar una profundidad máxima, que ninguna región contenga menos de n observaciones, que el árbol tenga un máximo de nodos terminales o que la incorporación del más nodos no reduzca el error en al menos un % mínimo.
+
+Para mejorar el funcionamiento de este algoritmo se suelen incorporar estrategias para evitar evaluar todos los posibles puntos de corte. Por ejemplo, para predictores continuos, primero se crea un histograma que agrupa los valores y luego se evalúan los puntos de corte de cada región del histograma.
+
+### Tratamiento del sobreajuste {#sec-120.2.3}
+
+El tratamiento del sobreajuste utiliza los mismos procedimientos que en el caso de los árboles de decisión para clasificación. Leer el cuaderno anterior para conocer todos los detalles.
+
+### Predicción y evaluación del modelo {#sec-120.2.4}
+
+Tras la creación de un árbol, las observaciones de entrenamiento quedan agrupadas en los nodos terminales. Para predecir una nueva observación, se recorre el árbol en función de los valores que tienen sus predictores hasta llegar a uno de los nodos terminales. En el caso de regresión, el valor predicho suele ser la media de la variable respuesta de las observaciones de entrenamiento que están en ese mismo nodo. Si bien la media es el valor más empleado, se puede utilizar cualquier otro (mediana, cuantil...).
+
+Sin embargo, la predicción de un árbol de decisión para regresión puede verse como una variante de vecinos cercanos en la que, solo las observaciones que forman parte del mismo nodo terminal que la observación predicha, tienen influencia. Siguiendo esta aproximación, la predicción del árbol se define como la media ponderada de todas las observaciones de entrenamiento, donde el peso de cada observación depende únicamente de si forma parte o no del mismo nodo terminal.
+
+Imaginemos que tenemos un árbol con cuatro nodos terminales con observaciones y valores de la respuesta para la muestra de entrenamiento:
+
+-   nodo 1: 1 (10), 3 (24), 7 (16)
+-   nodo 2: 4 (8), 10 (14)
+-   nodo 3: 2 (18), 3 (24), 5 (2), 9 (20)
+-   nodo 4: 6 (9), 8 (10)
+
+de forma que realizamos la predicción de una nueva observación y esta cae en el nodo tres. La predicción viene dada entonces por la media ponderada del número de observaciones:
+
+$$\hat{\mu} = 0.25*18 + 0.25*24 + 0.25*2 + 0.25*20 = 16$$
+
+## Ventajas y desventajas de los árboles de decisión {#sec-120.3}
+
+Entre las ventajas y desventajas del uso de árboles de decisión podemos considerar:
+
+**Ventajas**
+
+-   Los árboles son fáciles de interpretar aún cuando las relaciones entre predictores son complejas.
+
+-   Los modelos basados en un solo árbol (no es el caso de *random forest*, *boosting*) se pueden representar gráficamente aún cuando el número de predictores es mayor de 3.
+
+-   Los árboles pueden, en teoría, manejar tanto predictores numéricos como categóricos sin tener que crear variables *dummy* o *one-hot-encoding*. En la práctica, esto depende de la implementación del algoritmo que tenga cada librería.
+
+-   Al tratarse de métodos no paramétricos, no es necesario que se cumpla ningún tipo de distribución específica.
+
+-   Por lo general, requieren mucha menos limpieza y preprocesado de los datos en comparación con otros métodos de aprendizaje estadístico (por ejemplo, no requieren estandarización).
+
+-   No se ven muy influenciados por observaciones anómalas.
+
+-   Si para alguna observación el valor de un predictor no está disponible, a pesar de no poder llegar a ningún nodo terminal, se puede conseguir una predicción empleando todas las observaciones que pertenecen al último nodo alcanzado. La precisión de la predicción se verá reducida pero al menos podrá obtenerse.
+
+-   Son muy útiles en la exploración de datos, ya que permiten identificar de forma rápida y eficiente las variables (predictores) más importantes.
+
+-   Son capaces de seleccionar predictores de forma automática.
+
+**Desventajas**
+
+-   La capacidad predictiva de los modelos basados en un único árbol es bastante inferior a la conseguida con otros modelos. Esto es debido a su tendencia al sobreajuste y a la alta varianza. Sin embargo, existen técnicas más complejas que, haciendo uso de la combinación de múltiples árboles (*bagging*, *random forest*, *boosting*), consiguen mejorar en gran medida este problema.
+
+-   Son sensibles a datos de entrenamiento desbalanceados (una de las clases domina sobre las demás).
+
+-   Cuando tratan con predictores continuos, pierden parte de su información al categorizarlos en el momento de la división de los nodos.
+
+-   Los predictores continuos tienen mayor probabilidad de contener, solo por azar, algún punto de corte óptimo, por lo que suelen verse favorecidos en la creación de los árboles.
+
+-   No son capaces de extrapolar fuera del rango valores observados para los predictores en los datos de entrenamiento.
+
+## Árboles de decisión en mlr3 {#sec-120.4}
+
+Antes de comenzar con la implementación de los DT en `mlr3` vamos a cargar las librerías necesarias:
+
+```{r}
+#| label: dt-001
+#| message: false
+#| results: false
+#| warning: false
+
+# Paquetes anteriores
+library(tidyverse)
+library(sjPlot)
+library(knitr) # para formatos de tablas
+library(skimr)
+library(DataExplorer)
+library(GGally)
+library(gridExtra)
+library(ggpubr)
+library(cvms)
+library(kknn)
+theme_set(theme_sjplot2())
+
+# Paquetes AA
+library(mlr3verse)
+library(mlr3tuning)
+library(mlr3tuningspaces)
+```
+
+Para implementar los árboles de decisión en el paquete `mlr3` disponemos de varias funciones tanto para las tareas de clasificación como de regresión, pero nosotros nos centraremos en los algoritmos más básicos:
+
+-   `classif.rpart` para la obtención de árboles de decisión en tareas de clasificación.
+-   `regr.rpart` para la obtención de árboles de decisión en tareas de regresión.
+
+que utilizan como base las funciones definidas en la librería `rpart`.
+
+Podemos cargar los algoritmos con su hiperparámetros por defecto con el código siguiente:
+
+```{r}
+#| label: dt-002
+#| message: false
+#| warning: false
+
+# Learner tarea de clasificación
+ldt_classif = lrn("classif.rpart", keep_model = TRUE)
+# Learner tarea de regresión
+ldt_regr = lrn("regr.rpart", keep_model = TRUE)
+```
+
+En este caso los hiperparámetros de ambos algoritmos son los mismos. A continuación se muestran todos ellos:
+
+```{r}
+#| label: dt-003
+#| warning: false
+#| message: false
+
+# Hiperparámetros para DT clasificación
+ldt_classif$param_set$ids()
+```
+
+Los parámetros más relevantes son:
+
+-   `cp`: parámetro de complejidad. Cualquier división que no disminuya la falta general de ajuste en un factor de cp no es tenida en cuenta. Por ejemplo, con la división de anova, esto significa que el R cuadrado general debe aumentar en cp en cada paso. El papel principal de este parámetro es para ahorrar tiempo de cálculo eliminando divisiones que obviamente no valen la pena. Básicamente, el usuario informa al programa que cualquier división que no mejora el ajuste por cp probablemente será eliminado mediante validación cruzada, y que por lo tanto el programa no necesita perseguirlo. La opción por defecto es 0.01 y puede tomar cualquier valor en el rango $[0, 1]$.
+-   `maxcompete`: el número de divisiones de competidores retenidas en la salida. Es útil saber no solo qué división se eligió, pero qué variable quedó en segundo, tercer lugar, etc. La opción por defecto es 4 con valores en el intervalo $[0, \infty]$.
+-   `maxdepth`: Establece la profundidad máxima de cualquier nodo del árbol final, con el nodo raíz contado como profundidad 0. Los valores superiores a 30 rpart darán resultados sin sentido en máquinas de 32 bits. Por defecto se utiliza el valor 30 con un rango de valores posibles en el intervalo $[1, 30]$.
+-   `maxsurrogate`: número de divisiones sustitutas retenidas en la salida. Si se establece en cero, el tiempo de cálculo se reducirá, ya que aproximadamente la mitad del tiempo de cálculo (aparte del de configuración) se utiliza en la búsqueda de divisiones sustitutas. Por defecto se utiliza el valor de 5 con un rango de valores posibles en el intervalo $[0, \infty]$.
+-   `minbucket`: el número mínimo de observaciones en cualquier nodo terminal. Si solo se especifica uno de minbucket o minsplit, el código establece minsplit en minbucket\*3 o minbucket en minsplit/3, según corresponda. No tiene valor por defecto pero el rango de valores posibles en el intervalo $[1, \infty]$.
+-   `minsplit`: el número mínimo de observaciones que deben existir en un nodo para que se intente una división. El valor por defecto es 20 con una rango de valores posibles en el intervalo $[1, \infty]$.
+-   `surrogatestyle`: controla la selección de la mejor sustituto. Si se establece en 0 (predeterminado), el programa usa el número total de clasificaciones correctas para una posible variable sustituta; si se establece en 1, usa el porcentaje correcto, calculado sobre los valores no faltantes del sustituto. La primera opción penaliza más severamente las covariables con una gran cantidad de valores faltantes. El valor por defecto es 0 con valores posibles en el rango $[0, 1]$.
+-   `usesurrogate`: cómo utilizar sustitutos en el proceso de división. 0 significa solo visualización; una observación con un valor faltante para la regla de división principal no se envía más abajo en el árbol. 1 significa utilizar sustitutos, en orden, para dividir a los sujetos a los que les falta la variable principal; si faltan todos los sustitutos, la observación no se divide. Para el valor 2, si faltan todos los sustitutos, envíe la observación en la dirección mayoritaria. Un valor de 0 corresponde a la acción del árbol, y 2 a las recomendaciones de Breiman y otros (1984). El valor por defecto es 2 con valores en el intervalo $[0, 2]$.
+-   `xval`: número de validaciones cruzadas. El valor por defecto es 10 con valores en el rango $[0, \infty]$.
+
+## Bancos de datos {#sec-120.5}
+
+Para ejemplificar el uso de estos algoritmos vamos a utilizar los bancos de datos `stroke`, `penguins` para tareas de clasificación, y `electricity` para tareas de regresión. Dado que los algoritmos DT permiten trabajar con factores, y predictores sin escalar no resulta necesario realizar dicha tarea de preprocesamiento. Lo que si resulta necesaria es imputar los valores perdidos como veremos en el punto siguiente.
+
+### Stroke {#sec-120.5.1}
+
+Cargamos los datos y definimos la tarea correspondiente
+
+```{r}
+#| label: dt-004
+#| warning: false
+#| message: false
+
+# Leemos datos
+stroke = read_rds("stroke.rds")
+# Eliminamos la variable id
+stroke = stroke %>% dplyr::select(-id)
+# creamos la tarea
+tsk_stroke = as_task_classif(stroke, target = "stroke")
+```
+
+Creamos ahora la división de muestras:
+
+```{r}
+#| label: dt-005
+#| warning: false
+#| message: false
+
+# Generamos variable de estrato
+tsk_stroke$col_roles$stratum <- "stroke"
+# Fijamos semilla para asegurar la reproducibilidad del modelo
+set.seed(432)
+# Creamos la partición
+splits = mlr3::partition(tsk_stroke, ratio = 0.8)
+# Muestras de entrenamiento y validación
+tsk_train_stroke = tsk_stroke$clone()$filter(splits$train)
+tsk_test_stroke  = tsk_stroke$clone()$filter(splits$test)
+```
+
+### Penguins {#sec-120.5.2}
+
+El banco de datos ya ha sido descrito en detalle en temas anteriores pero en este caso vamos a utilizar el que se encuentra disponible en la librería `mlr3`. Definimos la tarea.
+
+```{r}
+#| label: dt-006
+#| warning: false
+#| message: false
+
+# creamos la tarea
+tsk_penguins = tsk("penguins")
+```
+
+Creamos ahora las muestras de entrenamiento y validación:
+
+```{r}
+#| label: dt-009
+#| warning: false
+#| message: false
+
+# Generamos variable de estrato
+tsk_penguins$col_roles$stratum <- "sex"
+# Fijamos semilla para asegurar la reproducibilidad del modelo
+set.seed(432)
+# Creamos la partición
+splits = mlr3::partition(tsk_penguins, ratio = 0.8)
+# Muestras de entrenamiento y validación
+tsk_train_penguins = tsk_penguins$clone()$filter(splits$train)
+tsk_test_penguins  = tsk_penguins$clone()$filter(splits$test)
+```
+
+### Electricity {#sec-120.5.3}
+
+Cargamos los datos y generamos las muestras de entrenamiento y validación.
+
+```{r}
+#| label: dt-010
+#| message: false
+#| warning: false
+
+# Carga de datos
+electricity = read_rds("electricity.rds")
+# Creación de task
+tsk_electricity = as_task_regr(electricity, target = "PE")
+```
+
+Ahora la división de muestras:
+
+```{r}
+#| label: dt-011
+#| message: false
+#| warning: false
+
+# Fijamos semilla para asegurar la reproducibilidad del modelo
+set.seed(432)
+# Creamos la partición
+splits = mlr3::partition(tsk_electricity, ratio = 0.8)
+# Muestras de entrenamiento y validación
+tsk_train_electricity = tsk_electricity$clone()$filter(splits$train)
+tsk_test_electricity  = tsk_electricity$clone()$filter(splits$test)
+```
+
+## Nuestros primeros modelos {#sec-120.6}
+
+En primer lugar consideramos modelos básicos de DT para los dos bancos de datos presentados. Trabajaremos con las opciones por defecto para poder comparar los resultados con el modelo optimizado que veremos posteriormente. También compararemos los resultados con otros modelos de clasificación de los estudiados hasta ahora.
+
+### Stroke {#sec-120.6.1}
+
+En primer lugar generamos el algoritmo DT para este banco de datos y entrenamos el modelo. Dado que los datos preprocesados se generan a través de un graphlearner no podemos representar directamente la solución del árbol de decisión. Después de ver la solución habitual veremos como completar los datos para tener que definir únicamente un learner y poder representar la solución mediante la función `autoplot`.
+
+```{r}
+#| label: dt-012
+#| warning: false
+#| message: false
+
+# Preprocesamiento
+pp_stroke =  po("imputemedian", affect_columns = selector_type("numeric"))
+# Modelo de aprendizaje combinando preprocesado y algoritmo
+ldt_classif_stroke = as_learner(pp_stroke %>>% lrn("classif.rpart", keep_model = TRUE, predict_type = "prob"))
+# Entrenamiento del modelo
+ldt_classif_stroke$train(tsk_train_stroke)
+```
+
+Podemos ver el funcionamiento del algoritmo obteniendo el árbol de clasificación proporcionado en la fase de entrenamiento.
+
+```{r}
+#| label: dt-013
+#| warning: false
+#| message: false
+
+ldt_classif_stroke$model$classif.rpart$model
+```
+
+Como se puede ver el algoritmo no es capaz de realizar ninguna división. Esto se puede deber a dos motivos: i) este algoritmo no funciona bien para este banco de datos, ii) hay que modificar los hiperparámetros del modelo porque resultan muy restrictivos. En el segundo caso podemos buscar una solución óptima y ver que tipo de árbol de decisión resulta.
+
+### Penguins {#sec-120.6.2}
+
+Procedemos directamente con el modelo ya que los datos han sido preparados. Al cargar directamente el `learner` podemos utilizar la función `autoplot` para representar la solución.
+
+```{r}
+#| label: dt-016
+#| warning: false
+#| message: false
+
+# Modelo de aprendizaje 
+ldt_classif_penguins = lrn("classif.rpart", keep_model = TRUE)
+# Entrenamiento del modelo
+ldt_classif_penguins$train(tsk_train_penguins)
+```
+
+Vemos el árbol obtenido:
+
+```{r}
+#| label: dt-017
+#| warning: false
+#| message: false
+
+ldt_classif_penguins$model
+```
+
+Aunque seguramente resultará más fácil mediante un gráfico:
+
+```{r}
+#| label: dt-018
+#| warning: false
+#| message: false
+
+autoplot(ldt_classif_penguins)
+```
+
+El modelo proporciona tres nodos terminales con 120, 50, y 104 casos respectivamente. Cada uno de los nodos terminales viene determinado principalmente por una especie en particular. El árbol selecciona en primer lugar como predictor la variable `flipper_length` con valor de corte 207.5, y posteriormente los menores a ese valor se subdividen de acuerdo a `bill_length` con valor de corte 43.35. De esta forma podemos establecer que:
+
+-   La especie `Adelie` se caracteriza principalmente por `flipper_length` menor a 207.5 y `bill_length` menor a 43.35.
+-   La especie `Chinstrap` se caracteriza principalmente por `flipper_length` menor a 207.5 y `bill_length` mayo o igual a 43.35.
+-   La especie `Gentoo` se caracteriza principalmente por `flipper_length` mayor o igual a 207.5.
+
+Sin embargo, la clasificación no es perfecta porque podemos ver que los nodos terminales combinan resultados de diferentes especies. Podemos ver los porcentajes de cada especie en cada nodo terminal con:
+
+```{r}
+#| label: dt-019
+#| warning: false
+#| message: false
+
+ldt_classif_penguins$model
+```
+
+donde podemos ver que el nodo terminal identificado como 4) tiene un 96.67% de muestras de Adelie, un 3.33% Chinstrap y un 0% de Gentoo. Los \* indican los nodos terminales del árbol obtenido. Antes de valorar la clasificación obtenida vamos a estudiar la relevancia de cada predictora en la construcción del árbol. Para ello utilizamos el método `importance()`.
+
+```{r}
+#| label: dt-020
+#| warning: false
+#| message: false
+
+ldt_classif_penguins$importance()
+```
+
+La tabla proporciona el orden de importancia de las variables en la construcción del árbol de decisión. De las cinco predictoras disponibles la solución solo considera dos de ellas. Podemos identificar las predictoras seleccionadas con el código:
+
+```{r}
+#| label: dt-021
+#| warning: false
+#| message: false
+
+ldt_classif_penguins$selected_features()
+```
+
+Ahora podemos estudiar la capacidad explicativa del modelo. Como no he os solicitado predecir la probabilidad no podemos obtener los scores asociados (`bbrier` y `auc`):
+
+```{r}
+#| label: dt-022
+#| warning: false
+#| message: false
+
+# Predicción de la muestra de entrenamiento y validación
+pred_train = ldt_classif_penguins$predict(tsk_train_penguins)
+pred_test = ldt_classif_penguins$predict(tsk_test_penguins)
+# scores de validación
+measures = msrs(c("classif.acc", "classif.bacc", "classif.bbrier", "classif.auc"))
+# Muestra de entrenamiento
+pred_train$score(measures)
+# Muestra de validación
+pred_test$score(measures)
+```
+
+El algoritmo se comporta bastante bien ya que alcanzamos un porcentaje de clasificación correcta del 91.5% (similar al de modelos anteriores para estos datos). Podemos estudiar la matriz de confusión:
+
+```{r}
+#| label: dt-023
+#| message: false
+#| warning: false
+
+# Cargamos la librería para representar la matriz de confusión
+cm = confusion_matrix(pred_test$truth, pred_test$response)
+plot_confusion_matrix(cm$`Confusion Matrix`[[1]]) 
+```
+
+Podemos ver que los errores de clasificación en cada especie son a lo sumo de dos ejemplares, lo que indica que con tan solo esas dos predictoras somos capaces de construir un modelo con una gran capacidad de clasificación/predicción.
+
+### Electricity {#sec-120.6.3}
+
+Para finalizar este apartado de modelos iniciales vamos a finalizar con el primer árbol de decisión para un modelo de regresión. En este caso no tenemos valore perdidos por lo que podemos implementar directamente el algoritmo de aprendizaje.
+
+```{r}
+#| label: dt-024
+#| warning: false
+#| message: false
+
+# Modelo de aprendizaje 
+ldt_regr_electricity = lrn("regr.rpart", keep_model = TRUE)
+# Entrenamiento del modelo
+ldt_regr_electricity$train(tsk_train_electricity)
+```
+
+Veamos la solución gráfica del árbol:
+
+```{r}
+#| label: dt-025
+#| warning: false
+#| message: false
+
+autoplot(ldt_regr_electricity)
+```
+
+Para este conjunto de datos el árbol de decisión obtenido es bastante más complejo con 7 nodos terminales. Lo que puede resultar más curioso es que se utiliza la misma variable en diferentes niveles del árbol. El algoritmo determina en función de las subdivisiones que va realizando si una variable ya utilizada debe utilizarse de nuevo con unos puntos de corte distintos aunque siempre consistentes con lo decidido en las ramas superiores). De hecho, en los diagramas de caja podemos observar que el nodo terminal con mayores valores de `PE` se corresponde con la regla de decisión `AT` menor que 8.725, que es una combinación de los resultados de las divisiones anteriores. Por otro lado, el nodo terminal con menores valores de `PE` se corresponde con la regla de decisión `AT` mayor o igual a 23.055 y `V` mayor o igual a 66. Podemos ver la relevancia de las predictoras con:
+
+```{r}
+#| label: dt-026
+#| warning: false
+#| message: false
+
+ldt_regr_electricity$importance()
+```
+
+A partir de dichos valores podemos valorar la importancia relativa en términos de porcentaje mediante el código:
+
+```{r}
+#| label: dt-027
+#| warning: false
+#| message: false
+
+importancia = ldt_regr_electricity$importance()
+100*importancia/sum(importancia)
+```
+
+Podemos ver que `AT` tiene una importancia relativa del 44.40%. Además podemos conocer el valor medio estimado de la respuesta para cada nodo sin más que ver el modelo ajustado.
+
+```{r}
+#| label: dt-028
+#| warning: false
+#| message: false
+
+ldt_regr_electricity$model
+```
+
+En la última columna aparecen los valores estimados de la respuesta `PE` dentro de cada nodo del árbol. podemos estudiar ahora las precisiones de las estimaciones con el análisis de las predicciones tanto para la muestra de entrenamiento como la de validación.
+
+```{r}
+#| label: dt-029
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento
+pred_train = ldt_regr_electricity$predict(tsk_train_electricity)
+# Predicción de la muestra de validación
+pred_test = ldt_regr_electricity$predict(tsk_test_electricity)
+# Scores de validación
+measures = msrs(c("regr.rsq", "regr.mse", "regr.smape"))
+# Valores de validación entrenamiento y validación
+pred_train$score(measures)
+pred_test$score(measures)
+```
+
+Los resultados son muy buenos, incluso mejorando los que vimos para este mismo conjunto de datos con otros algoritmos. La ventaja principal es que la selección de predictoras se hace automáticamente con la construcción del árbol. Por último analizamos los gráficos de predicción (más concretamente el de valores observados versus valores predichos) para comprender de forma más precisa el proceso de predicción en los modelos de árboles. Para ello realizamos los gráficos siguientes.
+
+```{r}
+#| label: dt-030
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Gráficos del modelo para muestras de entrenamiento y validación. Task Electricity."
+
+# Muestra de entrenamiento
+p1 = autoplot(pred_train, type = "xy") + labs(title = "Observados vs predichos")
+
+# Muestra de validación
+p2 = autoplot(pred_test, type = "xy") + labs(title = "Observados vs predichos")
+
+ggarrange(p1, p2, ncol = 2)
+```
+
+Como se puede ver tanto el gráfico de la muestra de entrenamiento como de validación la predicción no representa una nube de untos como en modelos anteriores de regresión, sino que únicamente se predice un valor por cada nodo terminal presenten el modelo. En este caso hay 7 nodos terminales y por eso solo tenemos 7 valores predichos, o que provoca que aparezcan 7 columnas de predicción y no una nube de puntos. Este efecto en la predicción es debida a que no tenemos una ecuación que nos proporcione valores, sino únicamente nodos donde todas las observaciones alojadas en él se les asigna el mismo valor de predicción, que en este caso es el valor medio de la respuesta para todas las observaciones en ese nodo.
+
+En el punto siguiente tratamos de mejorar los modelos obtenidos en este bloque mediante un búsqueda óptima de los hiperparámetros del modelo.
+
+## Optimizando los modelos {#sec-120.7}
+
+Para el proceso de optimización de los modelos vamos a considerar únicamente los parámetros `cp`, `minsplit` y `maxdepth`. Aunque este algoritmo permite configurar muchos hiperparámetros nos centramos en estos para buscar una mejora sobre los modelos básicos aunque esta sea mínimo. No buscamos mejorar en exceso el modelo sino ver como funciona la selección de hiperparámetros en este modelo de aprendizaje.
+
+### Stroke {#sec-120.7.1}
+
+A continuación se muestra el código de optimización para el banco de datos `Stroke`. Recordemos que con las opciones por defecto no resulta posible obtener ningún árbol de decisión. Para el parámetro `cp` utilizaremos la escala logaritmo para la búsqueda del óptimo. Para la profundidad máxima del árbol consideramos el intervalo $[3, 8]$ para evitar tener un árbol demasiado pequeño o demasiado grande. Por último, consideramos que el tamaño mínimo de los nodos terminales debe estar en el intervalo $[5, 50]$. Consideramos una evaluación de 30 iteraciones debido al tamaño de la base de datos.
+
+```{r}
+#| label: dt-031
+#| message: false
+#| warning: false
+#| results: hide
+
+ldt_classif_stroke = lrn("classif.rpart", keep_model = TRUE, predict_type = "prob",
+                         cp = to_tune(1e-04, 1, logscale = TRUE),
+                         maxdepth = to_tune(3, 8),
+                         minsplit = to_tune(5, 50)
+                         )
+gr_stroke =  pp_stroke %>>% ldt_classif_stroke
+gr_stroke = GraphLearner$new(gr_stroke)
+
+# Fijamos semilla para reproducibilidad del proceso
+set.seed(123)
+# Definimos instancia de optimización fijando el número de evaluaciones
+instance = tune(
+  tuner = tnr("random_search"),
+  task = tsk_stroke,
+  learner = gr_stroke,
+  resampling = rsmp("cv", folds = 5),
+  measures = msr("classif.bacc"),
+  term_evals = 30
+)
+```
+
+Veamos los resultados obtenidos:
+
+```{r}
+#| label: dt-032
+#| message: false
+#| warning: false
+
+# Veamos si converge el algoritmo
+instance$is_terminated
+# Resultados del proceso de optimización
+instance$result_learner_param_vals
+# Valor de la métrica para resultado óptimo
+instance$result_y
+```
+
+El proceso de optimización ha finalizado encontrando los valores óptimos de `cp` igual a 0.0003562633, `minsplit` igual 10, y `maxdepth` igual a 6. El porcentaje de clasificación correcta ponderada es del 50.9% mejorando los resultados del modelo por defecto, pero no mucho los de otros modelos de clasificación vistos anteriormente. El modelo sigue siendo bastante pobre en términos predictivos. Utilizamos los valores obtenidos para establecer un nuevo árbol de decisión:
+
+```{r}
+#| label: dt-033
+#| message: false
+#| warning: false
+
+# Nuevo modelo
+ldt_classif_stroke = lrn("classif.rpart", keep_model = TRUE, predict_type = "prob",
+                         cp = instance$result_x_domain$classif.rpart.cp,
+                         maxdepth = instance$result_x_domain$classif.rpart.maxdepth,
+                         minsplit = instance$result_x_domain$classif.rpart.minsplit
+                         )
+gr_stroke =  pp_stroke %>>% ldt_classif_stroke
+gr_stroke = GraphLearner$new(gr_stroke)
+# Entrenamiento del modelo
+gr_stroke$train(tsk_train_stroke)
+```
+
+Para representar la solución utilizamos la librería `rpart.plot`:
+
+```{r}
+#| label: dt-034
+#| message: false
+#| warning: false
+
+modelo = gr_stroke$model$classif.rpart$model
+library(rpart.plot)
+rpart.plot(modelo, type = 5)
+```
+
+En el caso de árboles de clasificación binaria la información presentada en los nodos terminales es:
+
+-   La categoría predicha para ese nodo
+-   La probabilidad predicha de la clase de interés (en este caso `Yes`).
+-   El porcentaje de observaciones en el nodo.
+
+Dado que los sujetos que sufren un ictus (249) es muy bajo en comparación con los que no (4861) es lógico que los porcentaje de observaciones en los nodos terminales identificados con `Yes` sean muy bajos. Podemos ver las reglas de clasificación:
+
+```{r}
+#| label: dt-035
+#| message: false
+#| warning: false
+
+rpart.rules(modelo)
+```
+
+Las reglas viene ordenadas de menor a mayor porcentaje de respuesta de sujetos que ha sufrido un ictus dentro de cada nodo terminal. Los tres últimos contienen sólo sujetos con ictus y podemos ver sus indicadores de clasificación con detalle. Analizamos ahora la importancia de las predictoras en este modelo:
+
+```{r}
+#| label: dt-036
+#| message: false
+#| warning: false
+
+importancia = gr_stroke$model$classif.rpart$model$variable.importance
+100*importancia/sum(importancia)
+```
+
+En la tabla anterior observamos que `age` y `avg_glucose_level` son las predictoras más importantes, seguidas de `smoking_status` y `heart_disease`. Estas variables marcan el perfil de los sujetos con mayor probabilidad de ictus, Podemos buscar en las reglas de clasificación para encontrar los pintos de corte de cada una de ellas. Para ver el comportamiento del modelo obtenemos la matriz de confusión:
+
+```{r}
+#| label: dt-037
+#| warning: false
+#| message: false
+
+# Predicción de la muestra de entrenamiento y validacion
+pred_train = gr_stroke$predict(tsk_train_stroke)
+pred_test = gr_stroke$predict(tsk_test_stroke)
+# scores de validación
+measures = msrs(c("classif.acc", "classif.bacc", "classif.bbrier", "classif.auc"))
+# Muestra de entrenamiento
+pred_train$score(measures)
+# Muestra de validación
+pred_test$score(measures)
+# Matriz de confusión
+cm = confusion_matrix(pred_test$truth, pred_test$response)
+plot_confusion_matrix(cm$`Confusion Matrix`[[1]]) 
+```
+
+Podemos ver que en este caso la matriz de confusión si reparte observaciones entre todas las combinaciones, aunque el mayor error se comete de nuevo al clasificar casi todas observaciones originales con ictus como sanas.
+
+El proceso de optimización nos ha permitido construir un árbol de decisión pero su poder de clasificación real para distinguir individuos sanos de enfermos es muy bajo. Para analizar la estabilidad de la solución planteamos una análisis de validación cruzada y el análisis de la curva de aprendizaje.
+
+```{r}
+#| label: dt-038
+#| message: false
+#| warning: false
+
+# Fijamos semilla
+set.seed(135)
+# Definimos proceso de validación cruzada kfold con k=10
+resamp = rsmp("cv", folds = 10)
+# Remuestreo
+rr = resample(tsk_stroke, gr_stroke, resamp, store_models=TRUE)
+```
+
+```{r}
+#| label: dt-039
+#| message: false
+#| warning: false
+
+measure = msr("classif.bacc")
+# Resumen Scores individuales
+scores = rr$score(measure)
+skim(scores)
+```
+
+El valor estimado del porcentaje de clasificación ponderado se sitúa en el 51.59% con una desviación del 1.89%. Para finalizar analizamos la curva de aprendizaje:
+
+```{r}
+#| label: dt-040
+#| echo: false
+#| message: false
+#| warning: false
+
+# Función que nos permite obtener los valores asociados a la curva de aprendizaje
+learningcurve = function(task, learner, score, ptr, rpeats)
+{
+  # Parámetros de la función
+  # task: tarea
+  # learner: algoritmo de aprendizaje
+  # score: nombre del score a utilizar
+  # ptr: vector con las proporciones de tamaños de muestra de entrenamiento
+  # rpeats: número de repeticiones para cada proporción de tamaño de muestra de entrenamiento
+  
+  # Definimos los scores para cada conjunto de muestra
+  mtrain = msr(score, predict_sets = "train")
+  mtest = msr(score, predict_sets = "test")
+  # Configuramos el learner para que evalue los scores en la muestra de validación y test
+  learner$predict_sets = c("train", "test")
+  # Incicializamos vector de scores agregados para la muestra de entrenamiento y validación
+  sco_train = c()
+  sco_test = c()
+  for(i in 1:length(ptr))
+  {
+    # estrucura de muestreo: 5 repeticiones con porcentaje muestra entrenamiento ptr[i]
+    subsam = rsmp("subsampling", repeats = rpeats, ratio = ptr[i])
+    # ejecución de remuestreo
+    rr = resample(task, learner, subsam)
+    sco_train[i] = rr$aggregate(mtrain)
+    sco_test[i] = rr$aggregate(mtest)
+  }
+  # Matriz de resultados
+  res = data.frame(ptr, sco_train, sco_test)
+  resdf = res %>% pivot_longer(!ptr, names_to = "Sample", values_to = "BACC")
+  return(resdf)
+}
+```
+
+```{r}
+#| label: dt-041
+#| message: false
+#| warning: false
+#| fig-cap: "Curva de aprendizaje"
+
+ptr = seq(0.1, 0.9, 0.1)
+lcurve = learningcurve(tsk_stroke, gr_stroke, "classif.bacc", ptr = ptr, rpeats = 10)
+# Gráfico
+ggplot(lcurve, aes(ptr, BACC, color = Sample)) + 
+    geom_line() +
+    labs(x ="Proporción tamaño muestra entrenamiento", y = "BACC",color = "Muestra") +
+    scale_color_hue(labels = c("Validación", "Entrenamiento")) +
+    scale_x_continuous(breaks=ptr)
+```
+
+El porcentaje de clasificación correcta ponderado para la muestra de validación se mantiene bastante estable cuando variamos el tamaño de la muestra de entrenamiento.
+
+### Penguins {#sec-120.7.2}
+
+Planteamos ahora el proceso de optimización del árbol de decisión para el banco de datos `Penguins`. Recordemos que el porcentaje de clasificación correcta ponderado es del 94.3%. Para este proceso consideramos una configuración de hiperparámetros similar al del ejemplo anterior.
+
+```{r}
+#| label: dt-042
+#| message: false
+#| warning: false
+#| results: hide
+
+ldt_classif_penguins = lrn("classif.rpart", keep_model = TRUE, predict_type = "prob",
+                         cp = to_tune(1e-04, 1, logscale = TRUE),
+                         maxdepth = to_tune(3, 8),
+                         minsplit = to_tune(5, 50)
+                         )
+
+# Fijamos semilla para reproducibilidad del proceso
+set.seed(123)
+# Definimos instancia de optimización fijando el número de evaluaciones
+instance = tune(
+  tuner = tnr("random_search"),
+  task = tsk_penguins,
+  learner = ldt_classif_penguins,
+  resampling = rsmp("cv", folds = 5),
+  measures = msr("classif.bacc"),
+  term_evals = 30
+)
+```
+
+Veamos los resultados obtenidos:
+
+```{r}
+#| label: dt-043
+#| message: false
+#| warning: false
+
+# Veamos si converge el algoritmo
+instance$is_terminated
+# Resultados del proceso de optimización
+instance$result_learner_param_vals
+# Valor de la métrica para resultado óptimo
+instance$result_y
+```
+
+A simple vista ya podemos ver que hemos mejorado un 2% (alcanzamos el 96.6%) nuestro porcentaje de clasificación. Utilizamos los valore obtenidos para generar el nuevo árbol de decisión.
+
+```{r}
+#| label: dt-044
+#| message: false
+#| warning: false
+
+# Nuevo modelo
+ldt_classif_penguins = lrn("classif.rpart", keep_model = TRUE, predict_type = "prob",
+                         cp = instance$result_x_domain$cp,
+                         maxdepth = instance$result_x_domain$maxdepth,
+                         minsplit = instance$result_x_domain$minsplit
+                         )
+# Entrenamiento del modelo
+ldt_classif_penguins$train(tsk_train_penguins)
+```
+
+Representamos la solución:
+
+```{r}
+#| label: dt-045
+#| message: false
+#| warning: false
+
+modelo = ldt_classif_penguins$model
+rpart.plot(modelo, type = 5)
+```
+
+En este caso la información proporcionada en los nodos terminales es:
+
+-   Clase mayoritaria del nodo terminal, es decir, predicción proporciona por el modelo para esa rama del árbol.
+-   Los porcentajes de cada una de las clases en ese nodo terminal.
+-   Porcentaje de observaciones en ese nodo respecto del total de muestras.
+
+Podemos ver claramente cuales son los nodos más relevantes mirando los porcentaje de observaciones y extraer las reglas de clasificación correspondientes (recordemos que las variables están estandarizadas:
+
+-   El nodo clasificado con `Adelie` que contiene el 41% de las muestras se caracterizan por `flipper_length` menor a 0.47 y `bill_length` menor a -0.31.
+-   El nodo clasificado con `Chinstrap` que contiene el 18% de las muestras se caracterizan por `flipper_length` menor a 0.47 y `bill_length` mayor o igual a -0.13, e `island` igual a `Dream`.
+-   El nodo clasificado con `Gentoo` que contiene el 36% de las muestras se caracterizan por `flipper_length` mayor o igual a 0.47 e `island` igual a `Biscoe`.
+
+Las reglas de clasificación completas se encuentran en la tabla siguiente:
+
+```{r}
+#| label: dt-046
+#| message: false
+#| warning: false
+#| results: asis
+
+rpart.rules(modelo)
+```
+
+Para finalizar analizamos la matriz de confusión asociada con el nuevo modelo.
+
+```{r}
+#| label: dt-047
+#| warning: false
+#| message: false
+
+# Predicción de la muestra de entrenamiento y validación
+pred_train = ldt_classif_penguins$predict(tsk_train_penguins)
+pred_test = ldt_classif_penguins$predict(tsk_test_penguins)
+# scores de validación
+measures = msrs(c("classif.acc", "classif.bacc"))
+# Muestra de entrenamiento
+pred_train$score(measures)
+# Muestra de validación
+pred_test$score(measures)
+# Matriz de confusión
+cm = confusion_matrix(pred_test$truth, pred_test$response)
+plot_confusion_matrix(cm$`Confusion Matrix`[[1]]) 
+```
+
+Todos los errores de clasificación (2.9%) están asociados con la especie `Gentoo` original, ya que el modelo obtenido clasifica esas muestras como pertenecientes a la especie `Adelie`.
+
+Se puede finalizar el análisis mediante el estudio de validación y la construcción de la curva de aprendizaje.
+
+### Electricity {#sec-120.7.3}
+
+Finalizamos con la optimización para el banco de datos `Electricity`. Recordemos que el `sMAPE` para la muestra de validación obtenido era del 0.00925. Empezamos definiendo la configuración del proceso de optimización cambiando algunos de los parámetros dado que el número de predictoras en este caso es muy bajo y no podemos considerar árboles muy profundos.
+
+```{r}
+#| label: dt-048
+#| message: false
+#| warning: false
+#| results: hide
+
+ldt_regr_electricity = lrn("regr.rpart", keep_model = TRUE,
+                         cp = to_tune(1e-03, 1, logscale = TRUE),
+                         maxdepth = to_tune(2, 4),
+                         minsplit = to_tune(5, 50)
+                         )
+
+# Fijamos semilla para reproducibilidad del proceso
+set.seed(123)
+# Definimos instancia de optimización fijando el número de evaluaciones
+instance = tune(
+  tuner = tnr("random_search"),
+  task = tsk_electricity,
+  learner = ldt_regr_electricity,
+  resampling = rsmp("cv", folds = 5),
+  measures = msr("regr.smape"),
+  term_evals = 30
+)
+```
+
+Veamos los resultados obtenidos:
+
+```{r}
+#| label: dt-049
+#| message: false
+#| warning: false
+
+# Veamos si converge el algoritmo
+instance$is_terminated
+# Resultados del proceso de optimización
+instance$result_learner_param_vals
+# Valor de la métrica para resultado óptimo
+instance$result_y
+```
+
+El modelo optimizado reduce el `sMAPE` hasta el valor 0.0082. Analizamos ahora e árbol obtenido con dichos valores.
+
+```{r}
+#| label: dt-050
+#| message: false
+#| warning: false
+
+# Nuevo modelo
+ldt_regr_electricity = lrn("regr.rpart", keep_model = TRUE, 
+                         cp = instance$result_x_domain$cp,
+                         maxdepth = instance$result_x_domain$maxdepth,
+                         minsplit = instance$result_x_domain$minsplit
+                         )
+# Entrenamiento del modelo
+ldt_regr_electricity$train(tsk_train_electricity)
+```
+
+Representamos la solución:
+
+```{r}
+#| label: dt-051
+#| message: false
+#| warning: false
+
+modelo = ldt_regr_electricity$model
+rpart.plot(modelo, type = 5)
+```
+
+En este caso la información de los nodos terminales es:
+
+-   Predicción de la respuesta en el nodo terminal.
+-   Porcentaje de muestras en el nodo terminal con respecto del total de muestras.
+
+Podemos ver además que las ramas del árbol hacen uso recursivo de las mismas predictores con diferentes scores de división.
+
+Para finalizar realizamos un estudio de validación cruzada de la solución obtenida.
+
+```{r}
+#| label: dt-052
+#| message: false
+#| warning: false
+
+# Fijamos semilla
+set.seed(135)
+# Definimos proceso de validación cruzada kfold con k=10
+resamp = rsmp("cv", folds = 10)
+# Remuestreo
+rr = resample(tsk_electricity, ldt_regr_electricity, resamp, store_models=TRUE)
+```
+
+Analizamos los resultados obtenidos:
+
+```{r}
+#| label: dt-053
+#| message: false
+#| warning: false
+
+measure = msr("regr.smape")
+# Resumen Scores individuales
+scores = rr$score(measure)
+skim(scores)
+```
+
+El valor estimado del `sMAPE` se sitúa en el 0.0082 con una desviación del 0.0001. Para finalizar analizamos la curva de aprendizaje:
+
+```{r}
+#| label: dt-054
+#| message: false
+#| warning: false
+#| fig-cap: "Curva de aprendizaje"
+
+ptr = seq(0.1, 0.9, 0.1)
+lcurve = learningcurve(tsk_electricity, ldt_regr_electricity, "regr.smape", ptr = ptr, rpeats = 10)
+# Gráfico
+ggplot(lcurve, aes(ptr, BACC, color = Sample)) + 
+    geom_line() +
+    labs(x ="Proporción tamaño muestra entrenamiento", y = "sMAPE",color = "Muestra") +
+    scale_color_hue(labels = c("Validación", "Entrenamiento")) +
+    scale_x_continuous(breaks=ptr)
+```
+
+Se aprecia como el `sMAPE` disminuye cuando aumentamos el tamaño de la muestra de entrenamiento. El valor óptimo se sitúa en un tamaño del 60%.
+
+## Otros modelos de áboles en mlr3
+
+En `mlr3` existen otro algoritmos para la obtención de árboles de decisión:
+
+-   `classif.C50`, para construir árboles de decisión en problemas de clasificación utilizando el criterio de ganancia de información.
+-   `classif.ctree`, para construir árboles de decisión en problemas de clasificación donde se utiliza un test de comparación para encontrar la división de cada rama.
+-   `regr.ctree`, para construir árboles de decisión en problemas de regresión donde se utiliza un test de comparación para encontrar la división de cada rama.
+
+## Ejercicios {#sec-120.8}
+
+1.  Ajustar un modelo de aprendizaje automático basado en un modelo de árbol de decisión para el banco de datos `Mushroom`[-@sec-mushroom].
+2.  Ajustar un modelo de aprendizaje automático basado en un modelo de árbol de decisión para el banco de datos `Water potability`[-@sec-waterpot].
+3.  Ajustar un modelo de aprendizaje automático basado en un modelo de árbol de decisión para el banco de datos `Hepatitis`[-@sec-hepatitis].
+4.  Ajustar un modelo de aprendizaje automático basado en un modelo de árbol de decisión para el banco de datos `Abalone`[-@sec-abalone].
+5.  Ajustar un modelo de aprendizaje automático basado en un modelo de árbol de decisión para el banco de datos `Us economic time series`[-@sec-usaets].
+6.  Ajustar un modelo de aprendizaje automático basado en un modelo de árbol de decisión para el banco de datos `QSAR`[-@sec-qsar].

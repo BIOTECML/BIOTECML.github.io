@@ -1,0 +1,3 @@
+# Parte 1. Introducción {#part01}
+
+En esta primera parte de los materiales se introducen los conceptos básicos del análisis de datos y del aprendizaje automático. Veremos como instalar los programas y librerías necesarias para seguir los materiales, así como los bancos de datos con los que iremos trabajando. Para finalizar veremos el formato en el que debemos preparar nuestros bancos de datos para proceder con los modelos de aprendizaje automático que proporciona la librería mlr3 [@mlr3] de R.

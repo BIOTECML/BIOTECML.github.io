@@ -1,0 +1,75 @@
+# Prefacio {.unnumbered}
+
+Este compendio de materiales es una introducción a los problemas con los que se enfrenta todo analista de datos, científico de datos o bioinformático. Los materiales están orientados en un sentido muy practico dejando los conceptos teóricos más avanzados para otro tipo de cursos más teóricos.
+
+Entre los muchos materiales referidos al aprendizaje automático recomendar el libro de @MohriRostamizadehTalwalkar18.
+
+La comunidad de aprendizaje automático es muy dinámica y en continua evolución, y ha generado (y sigue generando) infinidad de recursos de aprendizaje. A continuación destacamos una lista de cursos online sobre aprendizaje automático, que han obtenido altas calificaciones en la comunidad, así como un listado de libros recomendados.
+
+**Cursos**
+
+-   [Machine Learning, por Andrew Ng en Coursera](https://colab.research.google.com/corgiredirector?site=https%3A%2F%2Fwww.coursera.org%2Fspecializations%2Fmachine-learning-introduction&link_redirector=1). Es uno de los cursos introductorios de aprendizaje automático más populares, con más de 4 millones de usuarios. El curso se centra más en los fundamentos de las técnicas y algoritmos de aprendizaje automático y es gratuito en Coursera.
+
+-   [Especialización en ingeniería de aprendizaje automático para la producción (MLOps), impartido por Andrew Ng, Laurence Moroney y Robert Crowe en Coursera](https://colab.research.google.com/corgiredirector?site=https%3A%2F%2Fwww.coursera.org%2Fspecializations%2Fmachine-learning-engineering-for-production-mlops&link_redirector=1). Es uno de los mejores cursos de ingeniería de Machine Learning. Enseña cómo diseñar sistemas de producción de aprendizaje automático de extremo a extremo, construyendo pipelines de datos y de modelado eficientes, y desplegando modelos en producción.
+
+**Libros**
+
+-   [El Libro de Aprendizaje Automático de Cien Páginas](https://colab.research.google.com/corgiredirector?site=https%3A%2F%2Fwww.amazon.es%2FHundred-Page-Machine-Learning-Book-espa%25C3%25B1ol%2Fdp%2F1999579593&link_redirector=1), escrito por Andriy Burkov, es uno de los libros más cortos pero concisos y bien escritos que encontrarás en Internet.
+
+-   [Machine Learning Engineering](https://colab.research.google.com/corgiredirector?site=https%3A%2F%2Fwww.amazon.es%2FMachine-Learning-Engineering-English-Andriy-ebook%2Fdp%2FB09Q18725P%2F&link_redirector=1), también escrito por Andriy Burkov, es otro gran libro de Machine Learning que descubre cada paso del flujo de trabajo en este tipo de análisis.
+
+-   [Hands-on Machine Learning with Scikit-Learn, Keras, and TensorFlow](https://colab.research.google.com/corgiredirector?site=https%3A%2F%2Fwww.oreilly.com%2Flibrary%2Fview%2Fhands-on-machine-learning%2F9781098125967%2F&link_redirector=1), escrito por Aurelion Geron, es uno de los mejores libros de aprendizaje automático. Está escrito con claridad y repleto de ideas y ejemplos.
+
+A continuación se listan diferentes contenidos (texto y videos) de diferentes cursos sobre conceptos matemáticos, probabilidad y aprendizaje autmático que pueden complementar la formación de estos cuadernos (listado obtenido del [enlace](https://github.com/ahmedbahaaeldin/From-0-to-Research-Scientist-resources-guide)). Se indica la dificultad de los materiales y su relevancia sore los modelos de aprendizaje automático. la dificultad de los contenidos viene representada mediante tres niveles.
+
+A continuación se listan diferentes contenidos (texto y videos) de diferentes cursos sobre conceptos matemáticos, probabilidad y aprendizaje autmático que pueden complementar la formación de estos cuadernos (listado obtenido del [enlace](https://github.com/ahmedbahaaeldin/From-0-to-Research-Scientist-resources-guide)).
+
+**Álgebra Lineal**
+
+Esta rama de las matemáticas es crucial para comprender el mecanismo de las técnicas de aprendizaje automático en cuanto al tratamiento y procesamiento de conjuntos de datos en estructura matricial.
+
+-   [MIT Gilbert Strang 2005 Linear Algebra](https://www.youtube.com/watch?v=QVKj3LADCnA&list=PL49CF3715CB9EF31D)
+-   [Mathematics for Machine Learning Book: Chapter 2](https://mml-book.github.io/book/mml-book.pdf)
+-   [3Blue1Brown Essence of Linear Algebra](https://www.youtube.com/watch?v=fNk_zzaMoSs&list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab)
+-   [Mathematics For Machine Learning Specialization: Linear Algebra](https://www.youtube.com/watch?v=T73ldK46JqE&list=PLiiljHvN6z1_o1ztXTKWPrShrMrBLo5P3)
+-   [Matrix Methods for Linear Algebra for Gilber Strang UPDATED!](https://www.youtube.com/watch?v=Cx5Z-OslNWE&list=PLUl4u3cNGP63oMNUHXqIUcrkS2PivhN3k)
+
+**Probabilidad**
+
+La mayoría de los algoritmos de aprendizaje automático se basan en la teoría de la probabilidad. Así que esta rama es extremadamente importante para comprender cómo funcionan.
+
+-   [Joe Blitzstein Harvard Probability and Statistics Course](https://www.youtube.com/watch?v=KbB0FjPg0mw&list=PL2SOU6wwxB0uwwH80KTQ6ht66KWxbzTIo)
+-   [MIT Probability Course 2011 Lecture videos](https://www.youtube.com/watch?v=j9WZyLZCBzs&list=PLUl4u3cNGP61MdtwGTqZA0MreSaDybji8)
+-   [MIT Probability Course 2018 short videos UPDATED!](https://www.youtube.com/watch?v=1uW3qMFA9Ho&list=PLUl4u3cNGP60hI9ATjSFgLZpbNJ7myAg6)
+-   [Mathematics for Machine Learning Book: Chapter 6](https://mml-book.github.io/book/mml-book.pdf)
+-   [Probalistic Graphical Models CMU Advanced](https://www.youtube.com/watch?v=oqvdH_8lmCA&list=PLoZgVqqHOumTqxIhcdcpOAJOOimrRCGZn)
+-   [Probalistic Graphical Models Stanford Daphne Advanced](https://www.youtube.com/watch?v=GqMzbbaN6T4&list=PLzERW_Obpmv-_TkPEmCyzaJUGHtl7S01i)
+-   [A First Course In Probability Book by Ross](http://www.seyedkalali.com/wp-content/uploads/2016/11/A-First-Course-in-Probability-8th-ed.-Sheldon-Ross.pdf)
+
+**Cálculo y Optimización**
+
+-   [Essence of Calculus by 3Blue1Brown](https://www.youtube.com/watch?v=WUvTyaaNkzM&list=PL0-GT3co4r2wlh6UHTUeQsrf3mlS2lk6x)
+-   [Single Variable Calculus MIT 2007](https://www.youtube.com/watch?v=7K1sB05pE0A&list=PL590CCC2BC5AF3BC1)
+-   [Mathematics for Machine Learning Book: Chapter 5](https://mml-book.github.io/book/mml-book.pdf)
+-   [CMU optimization course 2018](https://www.youtube.com/watch?v=Di9f47LAzHQ&list=PLRPU00LaonXQ27RBcq6jFJnyIbGw5azOI)
+-   [CMU Advanced optimization course](https://www.youtube.com/watch?v=yBO4E1FARaA&list=PLjTcdlvIS6cjdA8WVXNIk56X_SjICxt0d)
+-   [Stanford Famous optimization course](https://www.youtube.com/watch?v=McLq1hEq3UY&list=PL3940DD956CDF0622)
+-   [Boyd Convex Optimization Book](https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf)
+
+**Aprendizaje Automático**
+
+-   [Mathematics for Machine Learning Part 2](https://mml-book.github.io/)
+-   [Pattern Recognition and Machine Leanring](http://users.isr.ist.utl.pt/~wurmd/Livros/school/Bishop%20-%20Pattern%20Recognition%20And%20Machine%20Learning%20-%20Springer%20%202006.pdf)
+-   [Elements of Statistical Learning](https://hastie.su.domains/Papers/ESLII.pdf)
+-   [Machine Learning: A Probalisitic Perspective](http://noiselab.ucsd.edu/ECE228/Murphy_Machine_Learning.pdf)
+-   [Berkley CS188 Introduction to AI course](https://inst.eecs.berkeley.edu/~cs188/fa18/)
+-   [MIT Classic AI course taught by Prof. Patrick H. Winston](https://ocw.mit.edu/courses/6-034-artificial-intelligence-fall-2010/resources/lecture-1-introduction-and-scope/)
+-   [Stanford AI course 2018](https://www.youtube.com/playlist?list=PLoROMvodv4rO1NB9TD4iUZ3qghGEGtqNX)
+-   [California Instuite of Technology Learning from Data course](https://work.caltech.edu/lectures.html)
+-   [CMU Machine Learning 2015 10-601](http://www.cs.cmu.edu/~ninamf/courses/601sp15/lectures.shtml)
+-   [CMU Statistical Machine Learning 10-702](https://www.youtube.com/playlist?list=PLjbUi5mgii6BWEUZf7He6nowWvGne_Y8r)
+-   [Information Theory, Pattern Recognition ML course 2012](http://videolectures.net/course_information_theory_pattern_recognition/)
+-   [Large Scale Machine Learning Toronto University 2015](https://video-archive.fields.utoronto.ca/view/2800)
+-   [Algorithmic Aspects of Machine Learning MIT](https://www.youtube.com/playlist?list=PLB3sDpSRdrOvI1hYXNsa6Lety7K8FhPpx)
+-   [MIT Course 9.520 - Statistical Learning Theory and Applications, Fall 2015](https://www.youtube.com/playlist?list=PLyGKBDfnk-iDj3FBd0Avr_dLbrU8VG73O)
+-   [Undergraduate Machine Learning Course University of British Columbia 2013](https://www.youtube.com/watch?v=w2OtwL5T1ow&list=PLE6Wd9FR--EdyJ5lbFl8UuGjecvVw66F6)

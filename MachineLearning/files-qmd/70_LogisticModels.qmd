@@ -1,0 +1,987 @@
+# Modelos de Regresión Logística {#sec-70}
+
+Los modelos de regresión logística son aquellos donde el target es de tipo categórico. En función del tipo de categorías del target hablamos de un modelo de regresión logística binario o multinomial.
+
+En los modelos de regresión logística binaria el target que deseamos analizar sólo puede tomar dos valores posibles (0 o 1, Sí y No, Comprar o No comprar, etc...) de forma que el modelo de aprendizaje automático trata de predecir la probabilidad de que una muestra proporcione una respuesta específica entre las dos posibles en función de un conjunto de posibles variables predictoras (de tipo cuantitativo o cualitativo). De forma automática, una vez que determinamos la probabilidad de cada categoría tenemos disponible una herramienta de clasificación de las muestras en cada una de las dos categorías. Se trata pues de un método combinado entre un método de regresión y de clasificación. Dadas las características especiales de este tipo de modelos veremos que las métricas de evaluación utilizadas son las habituales de los modelos de clasificación en lugar de los de regresión.
+
+En los modelos de regresión logística multinomial el target categórico tiene más de dos categorías de respuesta. En estas situaciones no podemos aplicar los modelos de regresión logística binomial, ya que es necesario hacer una clasificación para más de dos clases, y necesitamos una modificación de dicho modelo que se conoce como regresión logística multinomial, o también regresión softmax. En este tipo de regresión la variable respuesta tiene un rango de valores posibles en un conjunto de K clases. El objetivo aquí será determinar cuál es la probabilidad de que el valor de la respuesta sea cada una de las clases potenciales, $P(y=k|x), k \in K$.
+
+Existen dos variantes para este tipo de modelos:
+
+-   Regresión logística multinomial con respuesta nominal, es decir, las categorías de la respuesta no siguen ningún orden específico. Por ejemplo el color del pelo de un conjunto de sujetos.
+
+-   Regresión logística multinomial con respuesta ordinal, es decir, las categorías de la respuesta siguen un orden específico. Por ejemplo el grado de una enfermedad.
+
+En el código siguiente se cargan los paquetes y la configuración básica para este tipo de modelos.
+
+```{r}
+#| label: reglog-001
+#| message: false
+#| results: false
+#| warning: false
+
+# Paquetes anteriores
+library(tidyverse)
+library(sjPlot)
+library(knitr) # para formatos de tablas
+library(skimr)
+library(DataExplorer)
+library(GGally)
+library(gridExtra)
+library(ggpubr)
+library(cvms)
+theme_set(theme_sjplot2())
+
+# Paquetes AA
+library(mlr3verse)
+library(mlr3tuning)
+library(mlr3tuningspaces)
+```
+
+## Bancos de datos {#sec-70.1}
+
+A continuación presentamos los bancos de datos con los que trabajaremos en este tema. En concreto usaremos los bancos de datos Breast Cancer Wisconsin (\[-sec-brestcancer\]), e Iris ([-@sec-iris]) que presentamos en el capítulo [-@sec-40].
+
+A continuación se muestra el código para la carga de los diferentes bancos de datos y la creación de la correspondiente task de regresión para cada uno de ellos.
+
+Para crear una tarea de clasificación utilizamos la función `as_task_classif`. En el caso de un target binario debemos identificar además la categoría de mayor interés identificada con el parámetro `positive`.
+
+### Breast Cancer Wisconsin
+
+En esta base de datos se recoge información sobre los cánceres de mama en la ciudad de Wisconsin. Las características de la base de datos se calculan a partir de una imagen digitalizada de un aspiración de aguja fina (FNA) de una masa mamaria. Describen las características de los núcleos celulares presentes en la imagen y el objetivo que se persigue es clasificar un tumor como benigno o maligno en función de las variables predictoras. Como en este caso estamos interesados en saber que predictoras influyen más en el carácter maligno del cáncer, utilizaremos esa categoría como la de interés.
+
+```{r}
+#| label: reglog-002
+#| message: false
+#| warning: false
+
+# Cargamos datos
+breastcancer = read_rds("breastcancer.rds")
+# Creación de task eliminado la columna que identifica os sujetos
+tsk_cancer = as_task_classif(breastcancer[,-1], target = "diagnosis", positive = "M")
+# información de la tarea
+print(tsk_cancer)
+```
+
+Todas la variables son de tipo numérico. En primer lugar evaluamos la existencia de missings
+
+```{r}
+#| label: reglog-003
+#| message: false
+#| warning: false
+
+# Missings
+tsk_cancer$missings()
+```
+
+No hay valores perdidos en ninguna de las variables el conjunto de datos.
+
+Como el conjunto de predictoras es tan grande no resulta útil representar todos los datos de la tarea en un único gráfico. vamos a utilizar un filtro de las características para determinar a priori las más relevantes, y poder representarlas gráficamente. En este caso utilizamos el filtro `anova` que nos permite realizar el test F de comparación de medias de las predictoras numéricas con respecto al target categórico.
+
+```{r}
+#| label: fig-reglog-004
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Autoplot filter. Task Breast Cancer"
+
+# Construimos el objeto que define el filtro
+filter = flt("anova")
+# Aplicamos el filtro sobre los datos de entrenamiento
+filter$calculate(tsk_cancer)
+# Vemos los resultados
+filter
+# o los representamos gráficamente
+autoplot(filter)
+```
+
+En la tabla aparecen ordenados las variables con mayores diferencias entre las muestras clasificadas como benignas o malignas. A continuación vemos el gráfico para las cuatro variables más relevantes.
+
+```{r}
+#| label: fig-reglog-005
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Gráficos de cajas predictoras más relevantes. Task Breast Cancer"
+
+g1 <- ggplot(tsk_cancer$data(), aes(x = concave_points_worst, y= diagnosis)) + geom_boxplot() 
+g2 <- ggplot(tsk_cancer$data(), aes(x = perimeter_worst, y= diagnosis)) + geom_boxplot()
+g3 <- ggplot(tsk_cancer$data(), aes(x = concave_points_mean, y= diagnosis)) + geom_boxplot() 
+g4 <- ggplot(tsk_cancer$data(), aes(x = radius_worst, y= diagnosis)) + geom_boxplot()
+ggarrange(g1, g2, g3, g4, nrow = 2, ncol = 2)
+```
+
+Como se puede ver en los cuatro gráficos hay diferencias entre las cajas correspondientes a cada grupo, indicando que todas ellas pueden ser utilizadas para clasificar el tipo de tumor como benigno o maligno. De hecho en todas ellas se aprecia el mismo efecto. Cuanto mayor es el valor de la predictora más seguros podemos estar de que el cáncer es maligno.
+
+### Iris
+
+El banco de datos iris ya los presentamos en temas anteriores y aquí solo se presenta el código para crear la tarea de clasificación correspondiente.
+
+```{r}
+#| label: reglog-006
+#| message: false
+#| warning: false
+
+# Cargamos datos
+iris = read_rds("iris.rds")
+# creamos la tarea
+tsk_iris = as_task_classif(iris, target = "species")
+# información de la tarea
+print(tsk_iris)
+```
+
+## Modelos de Regresión Logística Binaria {#sec-70.2}
+
+A continuación se detallan los aspectos teóricos más importantes de este tipo de modelos.
+
+### El modelo {#sec-70.2.1}
+
+En este tipo de modelos disponemos de una variable respuesta ($y$) de tipo cualitativo con dos posibles respuestas que se codifican habitualmente con 0-1, donde el 0 indica "fracaso" y el 1 indica "éxito". Además disponemos de una matriz de variables predictoras de tipo numérico y/o categórico, a partir de las cuales podemos obtener la matriz $X$. La definición de "éxito" o "fracaso" depende de cada problema específico.
+
+Imaginemos que disponemos de $p$ posibles predictoras de forma que el conjunto de muestras viene dado por:
+
+$$\{(y_i, x_{1i},...x_{pi})\}_{i=1}^n$$ {#eq-rl001}
+
+donde $x_{ji}$ es el valor de la muestra $i$ en la predictora $j$ e $y_i$ nos da el valor de la categoría de la muestra $i$ (codificada como 0 o 1). En esta situación construimos el predictor lineal:
+
+$$z = w_0 + w_1X_1+...+w_pX_p$$ {#eq-rl002}
+
+donde cada $w_j$ representa la pendiente o variación del predictor lineal con respecto a cada predictora, y $w_0$ representa el sesgo del modelo. Dado que el valor del predictor lineal no necesariamente se encuentra restringido al intervalo $[0, 1]$, resulta necesario convertir dicho valor en una probabilidad para determinar la solución del modelo. Para realizar esta operación utilizamos la función logística:
+
+$$\phi(z) = \frac{1}{1+e^{-z}},$$ {#eq-rl003}
+
+que permite pasar cualquier valor del intervalo $[-∞,∞]$ al intervalo $[0,1]$, es decir, pasamos cualquier valor numérico a una probabilidad. En la figura siguiente podemos ver la representación gráfica de la función logística para diferentes valores de z:
+
+```{r}
+#| label: fig-reglog-007
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Función logística"
+
+z = seq(-8, 8, 0.001)
+y = 1/(1+exp(-z))
+res = data.frame(z , y)
+ggplot(res, aes(x = z, y = y)) + geom_line()
+```
+
+La función logit se define entonces como:
+
+$$logit(P(y=1 | X) = z,$$ {#eq-rl004}
+
+donde $P(y=1 | X)$ es la probabilidad condicional de que una muestra concreta pertenezca a la clase 1 dadas sus predictoras $X$. La función logit toma entradas en el rango $[0, 1]$ y las transforma en valores en todo el rango de números reales. En cambio, la función logística toma valores de entrada en todo el rango de números reales y los transforma en valores en el rango $[0, 1]$. En otras palabras, la función logística es la inversa de la función logit, y nos permite predecir la probabilidad condicional de que una determinada muestra pertenezca a la clase 1 (o a la clase 0). En realidad a partir de ambas expresiones podemos escribir:
+
+$$P(y=1 | X) = \frac{e^{w_0 + w_1X_1+...+w_pX_p}}{1+e^{w_0 + w_1X_1+...+w_pX_p}}$$ {#eq-rl005}
+
+y podemos relacionar las probabilidades condicionadas de ambas respuestas mediante el log-odds:
+
+$$log(\frac{P(y=1 | X)}{P(y=0 | X)}) = w_0 + w_1X_1+...+w_pX_p$$ {#eq-rl006}
+
+que podemos utilizar para representar el ratio entre la probabilidad de evento verdadero y la probabilidad de evento falso (*odds ratio*):
+
+$$\frac{P(y=1 | X)}{P(y=0 | X)} = exp(w_0 + w_1X_1+...+w_pX_p)$$ {#eq-rl007}
+
+Los principales elementos que hay que interpretar en un modelo de regresión logística son los siguientes coeficientes de los predictores:
+
+-   $w_0$ es la ordenada en el origen o *intercept*. Se corresponde con el valor esperado del logaritmo de *odds* cuando todos los predictores son cero.
+
+-   $w_p$ son los coeficientes de regresión parcial de cada predictor e indican el cambio promedio del logaritmo de *odds* al incrementar en una unidad la variable predictora, manteniéndose constantes el resto de variables. Esto equivale a decir que, por cada unidad que se incrementa la predictora, se multiplican los *odds* por $e^{w_p}$, es decir, aumenta el riesgo en esa cantidad.
+
+Dado que la relación entre la probabilidad condicional y las predictoras no es lineal, los coeficientes de regresión no se corresponden con el cambio en la probabilidad de la respuesta asociada con el incremento en una unidad de la predictora, sino con el cambio en el log-odds.
+
+### Evaluación del modelo {#sec-70.2.2}
+
+Para la evaluación del modelo se utilizan diferentes métricas obtenidas a partir de la clasificación con las probabilidades proporcionadas por el modelo de regresión logística, entre las que podemos destacar:
+
+-   El porcentaje de clasificación correcta/incorrecta.
+-   La matriz de confusión, que nos permite obtener todos los porcentajes de interés para la clasificación.
+-   La curva ROC, que se utilizan a menudo para obtener una visión del resultado de un clasificador en términos de sus verdaderos frente a los falsos positivos. Suelen presentar la tasa de verdaderos positivos en el eje Y, y la tasa de falsos positivos en el eje X. Por tanto, la inclinación de la curva y el espacio entre la diagonal y la curva son importantes ya que cuanto más alejada esté la curva y más hacia arriba mejor será nuestro modelo.
+-   El área bajo la curva (AUC), que nos proporciona el área bajo la curva ROC de forma que valores próximos a 1 indican un buen ajuste (clasificación perfecta), mientras que valores próximos a 0.5 indican un ajuste malo (clasificación incorrecta).
+-   El score de Brier, que mide la precisión de las predicciones probabilísticas. Para situaciones unidimensionales su comportamiento es igual al del `MSE`.
+
+### Validación del modelo {#sec-70.2.3}
+
+Las técnicas de validación para este tipo de modelos son las mismas que las de los modelos de regresión lineal: validación cruzada y curva de aprendizaje.
+
+## Modelos de Regresión Logística Multinomial {#sec-70.3}
+
+A continuación se presentan brevemente los conceptos teóricos más relevantes de los modelos de regresión logística para respuesta multinomial.
+
+### El modelo {#sec-70.3.1}
+
+Imaginemos que disponemos de $p$ posibles predictoras de forma que el conjunto de muestras viene dado por:
+
+$$\{(y_i, x_{1i},...x_{pi})\}_{i=1}^n$$
+
+donde $x_{ji}$ es el valor de la muestra $i$ en la predictora $j$ e $y_i$ nos da el valor de la categoría de la muestra $i$, codificada de 1 a k . En esta situación construimos el predictor lineal para una clase k de la respuesta:
+
+$$z_k = w_{0k} + w_{1k}X_1+...+w_{pk}X_p$$
+
+donde cada $w_{jk}$ representa la pendiente o variación del predictor lineal con respecto a cada predictora para la clase k, y $w_{0k}$ representa el sesgo del modelo para la clase k.
+
+La regresión logística multinomial clasifica usando una generalización de la función sigmoide, conocida como la función softmax, para calcular la probabilidad $P(y=k|x)$. La función softmax toma un vector $z=[z_1,z_2,…,z_k]'$ de k valores obtenidos a partir de los predictores lineales correspondientes, y los transforma en una distribución de probabilidades.
+
+Para un vector $z$ de dimensionalidad $k$ la función softmax se define a partir de los elementos individuales:
+
+$$\phi(z_i) = \frac{e^{z_i}}{\sum_{j=1}^k e^{z_j}}, \quad 1\leq i\leq k$$
+
+como:
+
+$$\phi(z)=\left[\frac{e^{z_1}}{\sum_{j=1}^k e^{z_j}},\frac{e^{z_2}}{\sum_{j=1}^k e^{z_j}},...,\frac{e^{z_k}}{\sum_{j=1}^k e^{z_j}} \right],$$
+
+donde queda claro que todos los elementos están restringidos al intervalo $[0,1]$ y la suma de todas las componentes es 1. Tenemos una distribución de probabilidad para la respuesta en función de las predictoras consideradas.
+
+Como ocurría en el modelo de regresión logística binomial:
+
+-   $w_{0k}$ es la ordenada en el origen o *intercept*. Se corresponde con el valor esperado del logaritmo de *odds* cuando todos los predictores son cero para la clase k.
+
+-   $w_{pk}$ los coeficientes de regresión parcial de cada predictor que indican el cambio promedio del logaritmo de *odds* al incrementar en una unidad la variable predictora, manteniéndose constantes el resto de variables para una clase dada. Esto equivale a decir que, por cada unidad que se incrementa la predictora, se multiplican los odds por $e^{w_{pk}}$.
+
+Dado que la relación entre la probabilidad condicional y las predictoras no es lineal, los coeficientes de regresión no se corresponden con el cambio en la probabilidad de la respuesta asociada con el incremento en una unidad de la predictora, sino con el cambio en el log-odds.
+
+Como ocurría en los modelos lineales la magnitud de cada coeficiente parcial de regresión depende de las unidades en las que se mida la variable predictora a la que corresponde, por lo que su magnitud no está asociada con la importancia de cada predictor. Para poder determinar qué impacto tienen en el modelo cada una de las variables, se emplean los coeficientes parciales estandarizados, que se obtienen al estandarizar las predictoras.
+
+### Evaluación del modelo {#sec-70.3.2}
+
+Para la evaluación del modelo se utilizan diferentes métricas obtenidas a partir de la clasificación con las probabilidades proporcionadas por el modelo de regresión logística multinomial, entre las que podemos destacar:
+
+-   El porcentaje de clasificación correcta/incorrecta.
+-   La matriz de confusión, que nos permite obtener todos los porcentajes de interés para la clasificación.
+-   El score de Brier para clasificaciones múltiples que mide la precisión de las predicciones probabilísticas.
+
+## Regresión logística en mlr3 {#sec-70.4}
+
+Para realizar el proceso de aprendizaje de un modelo de regresión logística podemos usar dos learner en la librería `mlr3`:
+
+-   `classif.log_reg`, que esta enfocado en la tarea de clasificación pero que nos permite predecir las probabilidades de cada categoría de la respuesta.
+-   `classif.multinom`, que esta enfocado en la tarea de clasificación cuando hay más de dos categorías en la respuesta. En este caso se fija una categoría como referencia y se obtienen los modelos que proporcionan la probabilidad de clasificación para las otras dos. La probabilidad de la referencia se calcula como 1 menos las otras dos.
+-   `regr.glm`, que esta enfocado en al tarea de regresión para predecir las probabilidades de cada categoría (cuando la respuesta tiene dos o más categorías).
+
+Usar cualquiera de ellos implica que el proceso de evaluación y validación (scores) debe estar adaptado a ellos. Sin embargo, en la práctica ambos algoritmos utilizan la misma función y producen el miso resultado
+
+### Datos Breast Cancer {#sec-70.4.1}
+
+En este caso utilizamos el learner `classif.log_reg`. Antes de comenzar definimos el preprocesado vinculado a este conjunto de datos (estandarización de predictoras numéricas), y preparamos la muestra de entrenamiento y validación.
+
+Herramienta de preprocesado:
+
+```{r}
+#| label: reglog-008
+#| message: false
+#| warning: false
+
+# preprocesado
+pp_cancer = po("scale", param_vals = list(center = TRUE, scale = TRUE))
+```
+
+Antes de realizar la división de muestras es necesario saber si el reparto de las categorías maligno-benigno es equitativo en al respuesta. Para ello evaluamos la variable de interés:
+
+```{r}
+#| label: reglog-009
+#| message: false
+#| warning: false
+
+table(tsk_cancer$data()[,"diagnosis"])
+```
+
+Dado que el reparto esta algo desequilibrado vamos a introducir un estrato de agrupación basado en la variable de interés. A continuación consideramos un reparto 80-20.
+
+```{r}
+#| label: reglog-010
+#| message: false
+#| warning: false
+
+# Generamos variable de estrato
+tsk_cancer$col_roles$stratum <- "diagnosis"
+# Fijamos semilla para asegurar la reproducibilidad del modelo
+set.seed(135)
+# Creamos la partición
+splits = mlr3::partition(tsk_cancer, ratio = 0.8)
+# Muestras de entrenamiento y validación
+tsk_train_cancer = tsk_cancer$clone()$filter(splits$train)
+tsk_test_cancer  = tsk_cancer$clone()$filter(splits$test)
+```
+
+Vemos en primer lugar si el reparto realizado respeta el estrato establecido
+
+```{r}
+#| label: reglog-011
+#| message: false
+#| warning: false
+
+table(tsk_train_cancer$data()[,"diagnosis"])
+table(tsk_test_cancer$data()[,"diagnosis"])
+```
+
+El ratio entre ambas categorías se mantiene en ambas muestras. Ahora podemos comenzar el proceso de aprendizaje asociado con este modelo.
+
+```{r}
+#| label: reglog-012
+#| message: false
+#| warning: false
+
+# Definimos learner para predecir la probabilidad
+learner = lrn("classif.log_reg", predict_type = "prob")
+# Graphlearner: Preprocesado y learner
+gr = pp_cancer %>>% learner
+gr = GraphLearner$new(gr)
+```
+
+Podemos comenzar ahora con el entrenamiento del modelo y su interpretación:
+
+```{r}
+#| label: reglog-013
+#| message: false
+#| warning: false
+
+# Entrenamiento
+gr$train(tsk_train_cancer)
+# Resumen del modelo
+modelo = gr$model$classif.log_reg$model
+summary(modelo)
+```
+
+En el resumen del modelo podemos ver el valor del estadístico AIC (62) y los coeficientes asociados a cada una de las predictoras consideradas. Para su interpretación debemos atender a las siguientes indicaciones:
+
+-   los coeficientes negativos reducen la probabilidad de ocurrencia de la categoría de interés (en este caso tumor maligno), mientras que los positivos aumentan la probabilidad de ocurrencia.
+-   Cuanto mayor es el valor negativo o positivo asociado con el coeficiente mayor es la influencia de la predictora sobre la probabilidad de ocurrencia.
+
+En este caso tenemos coeficientes muy grandes tanto en signo negativo como positivo pero todos ellos resultan no significativos, debido seguramente a un efecto de confusión entre las predictoras. Esto suele ocurrir cuando consideramos un número muy elevado de predictoras y estas están relacionadas entre si. Como veremos más adelante existen diferentes formas de solucionar este problemas entre las que se encuentran: i) trabajar con un número de predictoras reducido, 2) reducir la información contenida en las predictoras mediante un algoritmo de reducción de la dimensión, 3) platear un algoritmo de clasificación distinto, 4) introducir penalización en los coeficientes para obtener un modelo más adecuado. Por el momento, vamos a analizar con más detalle esta solución y dejamos para más adelante cada una de las posibles soluciones.
+
+En el gráfico siguiente podemos apreciar mejor el efecto de las diferentes predictoras sobre la respuesta. Para ello vamos a definir una función que nos permite representar los coeficientes, reutilizando el código del tema anterior.
+
+```{r}
+#| label: reglog-014
+#| message: false
+#| warning: false
+
+# Función para representar los coeficientes
+plot_coef = function(mod)
+{
+  # mod: modelo utilizado
+  # Data frame con los coeficientes obtenidos y su codificación) positivo-negativo
+  coeficientes = na.omit(as.data.frame(mod$coefficients))
+  coeficientes = rownames_to_column(coeficientes)
+  colnames(coeficientes) = c("Coef", "Estimate")
+  coeficientes$Value = ifelse(coeficientes$Estimate > 0, "Positivo", "Negativo")
+  # Gráfico de coeficientes
+  ggplot(coeficientes, aes(Estimate, Coef, color = Value)) + 
+    geom_point() + 
+    geom_vline(xintercept = 0, linetype = 2, color = "black") +
+    theme(legend.position = "none")
+}
+```
+
+Representamos la solución para nuestro modelo:
+
+```{r}
+#| label: fig-reglog-015
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Coeficientes del modelo de regresión logística. Task Breast Cancer"
+
+plot_coef(modelo)
+```
+
+Pasamos a evaluar la capacidad predictiva de nuestro modelo a través de diferentes scores como son el porcentaje de clasificación correcto, el score de brier, las curvas ROC y el AUC. En primer lugar obtenemos los valores de la predicción tanto para la muestra de entrenamiento como de validación.
+
+```{r}
+#| label: reglog-016
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento y validación
+pred_train = gr$predict(tsk_train_cancer)
+pred_test = gr$predict(tsk_test_cancer)
+# Visualizamos las primeras predicciones de la muestra de validación
+pred_test
+```
+
+En la tabla anterior tenemos tanto la respuesta predicha según el modelo, como las probabilidades asociadas a cada una de las categorías. Podemos ver como la categoría que proporciona el modelo está asociada directamente con la probabilidad de ocurrencia de cada nivel del factor.
+
+Evaluamos la capacidad de clasificación del modelo con diferentes scores:
+
+-   `classif.acc` (porcentaje de clasificación correcta),
+-   `classif.bacc` (porcentaje de clasificación correcta ponderado para muestras no balanceadas),
+-   `classif.bbrier` (score de Brier para clasificaciones binarias),
+-   `classif.auc` (área bajo la curva ROC).
+
+Comenzamos obteniendo la matriz de confusión para la muestra de validación:
+
+```{r}
+#| label: reglog-017
+#| message: false
+#| warning: false
+
+# matriz de confusión
+pred_test$confusion
+```
+
+Podemos ver el alto grado de clasificación correcta que proporciona el modelo con solo 3 errores sobre todas las muestras de validación. Representamos gráficamente la matriz de confusión con todos los porcentajes involucrados.
+
+```{r}
+#| label: reglog-0172
+#| warning: false
+#| message: false
+
+# Cargamos la librería para representar la matriz de confusión
+cm = confusion_matrix(pred_test$truth, pred_test$response)
+plot_confusion_matrix(cm$`Confusion Matrix`[[1]]) 
+```
+
+Calculamos ahora los scores para ambas muestras.
+
+```{r}
+#| label: reglog-018
+#| message: false
+#| warning: false
+
+# scores de validación
+measures = msrs(c("classif.acc", "classif.bacc", "classif.bbrier", "classif.auc"))
+# Muestra de entrenamiento
+pred_train$score(measures)
+# Muestra de validación
+pred_test$score(measures)
+```
+
+Podemos ver que tenemos una clasificación perfecta en la muestra de entrenamiento, lo que puede ser debido a un problema de sobre estimación al considerar todas las predictoras sin eliminar las no relevantes. En cuanto a la muestra de validación tenemos valores similares con una pequeña disminución en el porcentaje de clasificación correcta.
+
+Antes de continuar nos planteamos la posibilidad de seleccionar el conjunto de predictoras que están relacionadas más directamente con la respuesta. Para ello utilizamos un procedimiento de selección de características que identifica el mejor conjunto de ellas con respecto a un score de validación mediante un proceso iterativo. En concreto utilizamos el procedimiento `fselect()` y utilizamos el selector `fs` con las opciones `sequential` y estrategia de búsqueda hacia adelante (`sfs`). Se pueden consultar todas las opciones en este [enlace](https://mlr-org.com/fselectors.html).
+
+A continuación se muestra el proceso de selección para este conjunto de datos donde utilizamos el porcentaje de clasificación correcta ponderado como criterio de selección. Para la validación utilizamos un objeto de remuestreo con división 80-20. El código se muestra a continuación:
+
+```{r}
+#| label: reglog-019
+#| message: false
+#| warning: false
+
+set.seed(145)
+instance = fselect(
+  fselector = fs("sequential", strategy = "sfs"),
+  task = tsk_cancer,
+  learner = gr,
+  resampling = rsmp("holdout", ratio = 0.8),
+  measure = msr("classif.bacc"),
+  term_evals = 10
+)
+```
+
+Podemos ver las variables seleccionadas y el score asociado con:
+
+```{r}
+#| label: reglog-020
+#| message: false
+#| warning: false
+
+# Variables seleccionas
+instance$result_feature_set
+# Score
+instance$result_y
+```
+
+El proceso selecciona únicamente la variable `perimeter_worst` con un porcentaje de clasificación correcta ponderado del 96.91%. Ajustamos el nuevo modelo con esa única variable para lo que es necesario modificar la tarea. El código siguiente muestra todo ese proceso:
+
+```{r}
+#| label: reglog-021
+#| message: false
+#| warning: false
+
+# Creación de task seleccionando la predictora de interés
+tsk_cancer2 = as_task_classif(breastcancer[c("diagnosis", "perimeter_worst")], target = "diagnosis", positive = "M")
+# Generamos variable de estrato
+tsk_cancer2$col_roles$stratum <- "diagnosis"
+# Fijamos semilla para asegurar la reproducibilidad del modelo
+set.seed(135)
+# Creamos la partición
+splits = mlr3::partition(tsk_cancer2, ratio = 0.8)
+# Muestras de entrenamiento y validación
+tsk_train_cancer2 = tsk_cancer2$clone()$filter(splits$train)
+tsk_test_cancer2  = tsk_cancer2$clone()$filter(splits$test)
+# Graphlearner: Preprocesado y learner
+learner = lrn("classif.log_reg", predict_type = "prob")
+gr = pp_cancer %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento
+gr$train(tsk_train_cancer2)
+# Resumen del modelo
+modelo = gr$model$classif.log_reg$model
+summary(modelo)
+```
+
+Podemos ver como el modelo resulta significativo para la predictora de interés, mostrando además u efecto positivo, es decir, cuanto mayor es el valor de la predictora mayor es la probabilidad de que el tumor sea maligno. De hecho si $p_i$ es la probabilidad de que el tumor sea clasificado como maligno la ecuación del modelo viene dada por la expresión:
+
+$$log\left(\frac{p_i}{1-p_i}\right) = -0.5693 + 5.4145 * \text{perimeter_worst}_{estandarizada}$$ donde $\text{perimeter_worst}_{estandarizada}$ es la variable estandarizada. Evaluamos ahora el modelo obteniendo los scores asociados a las muestras de entrenamiento y validación:
+
+```{r}
+#| label: reglog-022
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento y validación
+pred_train = gr$predict(tsk_train_cancer2)
+pred_test = gr$predict(tsk_test_cancer2)
+# Scores
+pred_train$score(measures)
+pred_test$score(measures)
+```
+
+Comparando los resultados con los del modelo con todas las predictoras tenemos unos resultados bastante sorprendentes, ya que con un única predictora alcanzamos un porcentaje de clasificación correcta del 90% para la muestra de entrenamiento y del 96% para la muestra de validación. Esto nos da un indicativo de que le modelo anterior estaba sobreajustado. Si embargo, reducir el conjunto de predictoras a una única puede resultar excesivo y más adelante veremos otro tipo de técnicas para no perder la información de todas las posibles predictoras. Pasamos a validar el modelo mediante un proceso de validación cruzada similar a los del tema anterior.
+
+```{r}
+#| label: reglog-023
+#| message: false
+#| warning: false
+
+# Fijamos semilla
+set.seed(135)
+# Definimos proceso de validación cruzada kfold con k=10
+resamp = rsmp("cv", folds = 10)
+# Remuestreo
+rr = resample(tsk_cancer2, gr, resamp, store_models=TRUE)
+# Análisis de los valores obtenidos con los scores definidos anteriormente
+skim(rr$score(measures))
+```
+
+En todos los scores considerados hay poca variabilidad mostrado que la solución propuesta es bastante estable. De hecho, podemos ver que el porcentaje de clasificación correcta promedio se sitúa en el 91%. Podemos representar gráficamente la curva ROC asociada a nuestra tarea de clasificación con el objeto de analizar la estabilidad de la solución.
+
+```{r}
+#| label: fig-reglog-024
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Estimación por remuestreo de la curva ROC . Task Breast Cancer"
+
+autoplot(rr, type = "roc")
+```
+
+La curva se acerca al extremo superior alejándose de la diagonal indicando que el clasificador obtenido resulta muy adecuado. Para finalizar vamos a obtener la curva de aprendizaje asociada con este modelo. Para ello debemos cargar las funciones que definimos en el tema anterior.
+
+```{r}
+#| label: reglog-025
+#| echo: false
+#| message: false
+#| warning: false
+
+# Función que nos permite obtener los valores asociados a la curva de aprendizaje
+learningcurve = function(task, learner, score, ptr, rpeats)
+{
+  # Parámetros de la función
+  # task: tarea
+  # learner: algoritmo de aprendizaje
+  # score: nombre del score a utilizar
+  # ptr: vector con las proporciones de tamaños de muestra de entrenamiento
+  # rpeats: número de repeticiones para cada proporción de tamaño de muestra de entrenamiento
+  
+  # Definimos los scores para cada conjunto de muestra
+  mtrain = msr(score, predict_sets = "train")
+  mtest = msr(score, predict_sets = "test")
+  # Configuramos el learner para que evalue los scores en la muestra de validación y test
+  learner$predict_sets = c("train", "test")
+  # Incicializamos vector de scores agregados para la muestra de entrenamiento y validación
+  sco_train = c()
+  sco_test = c()
+  for(i in 1:length(ptr))
+  {
+    # estrucura de muestreo: 5 repeticiones con porcentaje muestra entrenamiento ptr[i]
+    subsam = rsmp("subsampling", repeats = rpeats, ratio = ptr[i])
+    # ejecución de remuestreo
+    rr = resample(task, learner, subsam)
+    sco_train[i] = rr$aggregate(mtrain)
+    sco_test[i] = rr$aggregate(mtest)
+  }
+  # Matriz de resultados
+  res = data.frame(ptr, sco_train, sco_test)
+  resdf = res %>% pivot_longer(!ptr, names_to = "Sample", values_to = "MSR")
+  return(resdf)
+}
+
+
+# Función que nos permite representar la curva de aprendizaje 
+plot_learningcurve = function(task, learner, score, ptr, rpeats)
+{
+  # Parámetros de la función
+  # task: tarea
+  # learner: algoritmo de aprendizaje
+  # score: nombre del score a utilizar
+  # ptr: vector con las proporciones de tamaños de muestra de entrenamiento
+  # rpeats: número de repeticiones para cada proporción de tamaño de muestra de entrenamiento
+
+  lcurve = learningcurve(task, gr, score, ptr, rpeats)
+  # Gráfico
+  ggplot(lcurve, aes(ptr, MSR, color = Sample)) + 
+    geom_line() +
+    labs(x ="Proporción tamaño muestra entrenamiento", y = "% Clasificación correcta",color = "Muestra") +
+    scale_color_hue(labels = c("Validación", "Entrenamiento")) +
+    scale_x_continuous(breaks=ptr)
+}
+```
+
+```{r}
+#| label: reglog-026
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Curva de aprendizaje. Task Breast Cancer"
+
+plot_learningcurve(tsk_cancer2, gr, "classif.bacc", ptr = seq(0.1, 0.9, 0.1), rpeats = 10)
+```
+
+Como se puede ver el tamaño óptimo para la muestra de entrenamiento se podría situar entre el 60% y el 70%.
+
+### Datos iris {#sec-70.4.2}
+
+Definimos el preprocesado vinculado a este conjunto de datos (estandarización de predictoras numéricas), y preparamos la muestra de entrenamiento y validación.
+
+Herramienta de preprocesado:
+
+```{r}
+#| label: reglog-027
+#| message: false
+#| warning: false
+
+# preprocesado
+pp_iris = po("scale", param_vals = list(center = TRUE, scale = TRUE))
+```
+
+Establecemos el estrato en función de la respuesta antes de realizar las divisiones de muestra de entrenamiento y validación.
+
+```{r}
+#| label: reglog-028
+#| message: false
+#| warning: false
+
+# Generamos variable de estrato
+tsk_iris$col_roles$stratum <- "species"
+# Fijamos semilla para asegurar la reproducibilidad del modelo
+set.seed(135)
+# Creamos la partición
+splits = mlr3::partition(tsk_iris, ratio = 0.8)
+# Muestras de entrenamiento y validación
+tsk_train_iris = tsk_iris$clone()$filter(splits$train)
+tsk_test_iris  = tsk_iris$clone()$filter(splits$test)
+```
+
+Ahora podemos comenzar el proceso de aprendizaje asociado con este modelo.
+
+```{r}
+#| label: reglog-029
+#| message: false
+#| warning: false
+
+# Definimos learner para predecir la probabilidad
+learner = lrn("classif.multinom", predict_type = "prob")
+# Graphlearner: Preprocesado y learner
+gr = pp_iris %>>% learner
+gr = GraphLearner$new(gr)
+```
+
+Podemos comenzar ahora con el entrenamiento del modelo y su interpretación:
+
+```{r}
+#| label: reglog-030
+#| message: false
+#| warning: false
+
+# Entrenamiento
+gr$train(tsk_train_iris)
+# Resumen del modelo
+modelo = gr$model$classif.multinom$model
+modelo
+```
+
+Como era de esperar los coeficientes asociados con `petal_length` y `petal_width` so los que presentan valores más grandes. Podemos ver además que cuanto mayores son esos valores más fácil es que clasifiquemos la muestra como `Iris-virginica`. Antes de proceder con un modelo más sencillo vamos a estudiar la capacidad de clasificación de este modelo. Para ello obtenemos las predicciones de la muestra de entrenamiento y validación:
+
+```{r}
+#| label: reglog-031
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento y validación
+pred_train = gr$predict(tsk_train_iris)
+pred_test = gr$predict(tsk_test_iris)
+# Visualizamos las primeras predicciones de la muestra de validación
+pred_test
+```
+
+En la tabla anterior podemos ver la categoría en la que clasifica cada muestra el modelo y las probabilidades asociadas a cada uno de los niveles de la respuesta. Veamos la matriz de confusión para la muestra de validación:
+
+```{r}
+#| label: reglog-032
+#| message: false
+#| warning: false
+
+# matriz de confusión
+pred_test$confusion
+```
+
+Podemos ver el alto grado de clasificación correcta que proporciona el modelo con solo 1 error sobre todas las muestras de validación. Calculamos los scores para ambas muestras. En este caso utilizamos el porcentaje de clasificación correcta y el score de brier para problemas con múltiples categorías.
+
+```{r}
+#| label: reglog-033
+#| message: false
+#| warning: false
+
+# scores de validación
+measures = msrs(c("classif.acc", "classif.mbrier"))
+# Muestra de entrenamiento
+pred_train$score(measures)
+# Muestra de validación
+pred_test$score(measures)
+```
+
+Obtenemos un porcentaje de clasificación correcta para la muestra de validación del 96.67% lo que demuestra que el modelo de aprendizaje propuesto funciona adecuadamente. Aunque podríamos plantear un proceso de selección de variables, con toda la información hasta ahora vamos a plantear un modelo con las variables de pétalo y estudiar su capacidad de clasificación.
+
+```{r}
+#| label: reglog-034
+#| message: false
+#| warning: false
+
+# Creación de task seleccionando la predictora de interés
+tsk_iris2 = as_task_classif(iris[c("species", "petal_length", "petal_width")], target = "species")
+# Generamos variable de estrato
+tsk_iris2$col_roles$stratum <- "species"
+# Fijamos semilla para asegurar la reproducibilidad del modelo
+set.seed(135)
+# Creamos la partición
+splits = mlr3::partition(tsk_iris2, ratio = 0.8)
+# Muestras de entrenamiento y validación
+tsk_train_iris2 = tsk_iris2$clone()$filter(splits$train)
+tsk_test_iris2  = tsk_iris2$clone()$filter(splits$test)
+# Graphlearner: Preprocesado y learner
+learner = lrn("classif.multinom", predict_type = "prob")
+gr = pp_iris %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento
+gr$train(tsk_train_iris2)
+# Resumen del modelo
+modelo = gr$model$classif.multinom$model
+modelo
+```
+
+Evaluamos la capacidad de clasificación de este modelo
+
+```{r}
+#| label: reglog-035
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento y validación
+pred_train = gr$predict(tsk_train_iris2)
+pred_test = gr$predict(tsk_test_iris2)
+# scores de validación
+measures = msrs(c("classif.acc", "classif.mbrier"))
+# valoración
+pred_train$score(measures)
+pred_test$score(measures)
+```
+
+Para este modelo tenemos un porcentaje de clasificación correcta del 93.3% para la muestra de validación frente al 96.67% del modelo anterior. Perdemos solo un 3% al quitar dos posibles variables predictoras lo que podemos considerar como aceptable si queremos un modelo que seleccione pocas predictoras. Podemos finalizar el análisis de este modelo con un estudio de remuestreo y la construcción de la curva de aprendizaje. Esta tarea se deja como ejercicio.
+
+### Actualizando los modelos {#sec-70.4.3}
+
+Como hicimos en el tema anterior, tratamos de mejorar el modelo del punto anterior introduciendo penalización sobre los coeficientes del modelo. En concreto utilizamos el proceso de optimización de $\alpha$ del tema anterior adaptado a los problemas de clasificación tratados en este punto. para hacer esto hacemos uso del learner `classif.cv_glmnet` y `classif.glmnet` indicando que estamos en un modelo logístico.
+
+#### Datos Breast Cancer
+
+Definimos el proceso de aprendizaje mediante el algoritmo de validación cruzada para encontrar el valor óptimo de $\alpha$.
+
+```{r}
+#| label: reglog-037
+#| message: false
+#| warning: false
+
+set.seed(145)
+# Algoritmo de aprendizaje 
+learner = lrn("classif.cv_glmnet", type.logistic = "Newton", standardize = FALSE,
+              alpha = to_tune(1e-10, 1))
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_cancer %>>% learner
+gr = GraphLearner$new(gr)
+# Definimos instancia de optimización
+instance = ti(
+  task = tsk_cancer,
+  learner = gr,
+  resampling = rsmp("holdout", ratio = 0.8),
+  measures = msr("classif.acc"),
+  terminator = trm("evals", n_evals = 15)
+)
+# Tipo de optimizador
+tuner = tnr("random_search")
+# Proceso de optimización
+tuner$optimize(instance)
+# Resultado
+instance$result
+```
+
+El proceso de optimización nos da un $\alpha$ de 0.081945293 con un porcentaje de clasificación correcta del 100%. Utilizamos este valor para obtener el modelo definitivo:
+
+```{r}
+#| label: reglog-038
+#| message: false
+#| warning: false
+
+set.seed(145)
+# Algoritmo de aprendizaje 
+learner = lrn("classif.glmnet", type.logistic = "Newton", standardize = FALSE,
+              alpha = instance$result$classif.cv_glmnet.alpha)
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_cancer %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento del modelo
+gr$train(tsk_train_cancer)
+# Modelo obtenido para todos los lambda
+modelo_AA = gr$model$classif.glmnet$model
+# Lambda óptimo
+lmin = modelo_AA$lambda[100]
+##############################################
+learner = lrn("classif.glmnet", type.logistic = "Newton", standardize = FALSE, 
+              alpha = instance$result$classif.cv_glmnet.alpha, 
+              lambda = lmin)
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_cancer %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento del modelo
+gr$train(tsk_train_cancer)
+# Modelo resultante
+modelo_glmnet_AA = gr$model$classif.glmnet$model
+modelo_glmnet_AA
+```
+
+El modelo considera 29 predictoras con un porcentaje de clasificación correcta del 95.77% que es salgo superior al el modelo sin penalización. Podemos apreciar el efecto de cada predictor en el gráfico siguiente.
+
+```{r}
+#| label: reglog-039
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Coeficientes del modelo actualizado. Task Breast Cancer"
+
+# Data frame con los coeficientes obtenidos y su codificación) positivo-negativo quitando intercept
+coeficientes = as.data.frame(as.matrix(modelo_glmnet_AA$beta))
+coeficientes = rownames_to_column(coeficientes)
+colnames(coeficientes) = c("Coef", "Estimate")
+coeficientes$Value = ifelse(coeficientes$Estimate > 0, "Positivo", "Negativo")
+# Gráfico de coeficientes
+ggplot(coeficientes, aes(Estimate, Coef, color = Value)) + 
+  geom_point() + 
+  geom_vline(xintercept = 0, linetype = 2, color = "black") +
+  theme(legend.position = "none")
+```
+
+Apreciamos claramente los coeficientes que contribuyen al aumento de la probabilidad de clasificación como maligno (puntos en azul) frente a los que no (puntos en rojo).
+
+#### Datos iris
+
+Definimos el proceso de aprendizaje mediante el algoritmo de validación cruzada para encontrar el valor óptimo de $\alpha$.
+
+```{r}
+#| label: reglog-041
+#| message: false
+#| warning: false
+
+set.seed(145)
+# Algoritmo de aprendizaje 
+learner = lrn("classif.cv_glmnet", type.multinomial = "ungrouped", standardize = FALSE,
+              alpha = to_tune(1e-10, 1))
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_cancer %>>% learner
+gr = GraphLearner$new(gr)
+# Definimos instancia de optimización
+instance = ti(
+  task = tsk_iris,
+  learner = gr,
+  resampling = rsmp("holdout", ratio = 0.8),
+  measures = msr("classif.acc"),
+  terminator = trm("evals", n_evals = 15)
+)
+# Tipo de optimizador
+tuner = tnr("random_search")
+# Proceso de optimización
+tuner$optimize(instance)
+# Resultado
+instance$result
+```
+
+El proceso de optimización nos da un $\alpha$ de 0.6604496 con un porcentaje de clasificación correcta del 87.5%. Utilizamos este valor para obtener el modelo definitivo:
+
+```{r}
+#| label: reglog-042
+#| message: false
+#| warning: false
+
+set.seed(145)
+# Algoritmo de aprendizaje 
+learner = lrn("classif.glmnet",  type.multinomial = "ungrouped", standardize = FALSE,
+              alpha = instance$result$classif.cv_glmnet.alpha)
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_iris %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento del modelo
+gr$train(tsk_train_iris)
+# Modelo obtenido para todos los lambda
+modelo_AA = gr$model$classif.glmnet$model
+# Lambda óptimo
+lmin = modelo_AA$lambda[100]
+##############################################
+learner = lrn("classif.glmnet",  type.multinomial = "ungrouped", standardize = FALSE,
+              alpha = instance$result$classif.cv_glmnet.alpha, 
+              lambda = lmin)
+# Proceso de aprendizaje
+# Graphlearner: Estructura del modelo y learner
+gr =  pp_cancer %>>% learner
+gr = GraphLearner$new(gr)
+# Entrenamiento del modelo
+gr$train(tsk_train_iris)
+# Modelo resultante
+modelo_glmnet_AA = gr$model$classif.glmnet$model
+modelo_glmnet_AA
+```
+
+El modelo considera 4 predictoras con un porcentaje de clasificación correcta del 97.79% similar al que teníamos con le modelo anterior. En este caso el estudio de los coeficientes es algo más complejo ya que tenemos un conjunto para cada nivel de la respuesta. Preparamos los coeficientes de cada nivel para su representación gráfica:
+
+```{r}
+#| label: reglog-043
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Coeficientes del modelo actualizado. Task Iris"
+
+# Data frame con los coeficientes obtenidos y su codificación) positivo-negativo quitando intercept
+coeficientes = rbind(as.matrix(modelo_glmnet_AA$beta$`Iris-virginica`),
+      as.matrix(modelo_glmnet_AA$beta$`Iris-versicolor`),
+      as.matrix(modelo_glmnet_AA$beta$`Iris-setosa`))
+variables = rownames(coeficientes)
+
+coeficientes = as.data.frame(coeficientes)
+names(coeficientes)[1] = "Estimate"
+coeficientes$Variable = variables
+coeficientes$Species = c(rep("Iris-virginica", 4), rep("Iris-versicolor", 4), rep("Iris-setosa", 4))
+coeficientes$Valor = ifelse(coeficientes$Estimate > 0, "Positivo", "Negativo")
+# Gráfico de coeficientes
+ggplot(coeficientes, aes(Estimate, Variable, color = Valor)) + 
+  geom_point(aes(shape = Species), size = 2.5) + 
+  geom_vline(xintercept = 0, linetype = 2, color = "black") 
+```
+
+Apreciamos claramente los coeficientes que contribuyen al aumento de la probabilidad de clasificación como maligno (puntos en azul) frente a los que no (puntos en rojo).
+
+## Ejercicios {#sec-70.5}
+
+1.  Ajustar un modelo de aprendizaje automático basado en modelos de regresión logística para el banco de datos `Mushroom`[-@sec-mushroom].
+2.  Ajustar un modelo de aprendizaje automático basado en modelos de regresión logística para el banco de datos `Water potability`[-@sec-waterpot].
+3.  Ajustar un modelo de aprendizaje automático basado en modelos de regresión logística para el banco de datos `Hepatitis`[-@sec-hepatitis].
+4.  Ajustar un modelo de aprendizaje automático basado en modelos de regresión logística para el banco de datos `Abalone`[-@sec-abalone].

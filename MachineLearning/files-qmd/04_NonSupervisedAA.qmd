@@ -1,0 +1,30 @@
+# Parte 4. Aprendizaje no supervisado {#part04}
+
+En este caso disponemos exclusivamente de datos genéricos con los que entrenar el modelo, pero no se ha observado a la par una variable respuesta a predecir, y con la que juzgar la bondad del modelo. El objetivo en este tipo de problemas es establecer o identificar patrones de comportamiento en el conjunto de datos disponible. El resultado de estos modelos suele ser una etiqueta de clasificación, esto es, una clase o categoría, para cada uno de los registros en la muestra, en base a que se haya identificado un patrón de comportamiento común a todos aquellos que comparten la misma etiqueta.
+
+Los algoritmos de aprendizaje no supervisado se utilizan principalmente para:
+
+-   Agrupar datos por patrones, como los algoritmos de K-Medias y de agrupación jerárquica.
+-   Reducir la dimensión del banco de datos y mejorar su visualización, como el análisis de componentes principales (PCA), el análisis discriminante o las escalas multidimensionales.
+
+## Modelos reducción de la dimensión
+
+Supongamos que disponemos de una muestra de $n$ individuos medidos en $p$ variables diferentes con $p$ grande. La idea que subyace en los métodos de reducción de la dimensión es construir $k$ variables artificiales, con $k << p$, que poseen la misma capacidad explicativa que el conjunto original. De esta forma, cada sujeto pasa de ser representado por un vector de $p$ dimensiones (que gráficamente resulta difícil de visualizar) por uno de $k$ dimensiones. Si $k \leq 3$ resulta posible representar gráficamente la información contenida en todos los sujetos sin pérdida de capacidad explicativa. Los modelos de reducción de la dimensión más habituales son:
+
+-   **Componentes principales** que se obtienen como combinaciones lineales de las variables originales y se van construyendo según el orden de importancia en cuanto a la variabilidad total que recogen de la muestra. De modo ideal, se buscan $k << p$ variables que sean combinaciones lineales de las $p$ originales y que estén incorreladas, recogiendo la mayor parte de la información o variabilidad de los datos. Si las variables originales están incorreladas de partida, entonces no tiene sentido realizar un análisis de componentes principales. En `mlr3` estos procedimientos se engloban dentro del preprocesamiento y por ese motivo vamos a estudiar esta técnica directamente desde las diferentes librerías de `R` que permiten su obtención.
+
+-   **Análisis Discriminante**. Aunque esta englobada dentro de las técnicas de reducción de la dimensión, se utiliza en muchas ocasiones como un modelo de clasificación. El Análisis Discriminante es un método de clasificación supervisado de variables cualitativas en el que dos o más grupos son conocidos a priori y nuevas observaciones se clasifican en uno de ellos en función de sus características. Supongamos que un conjunto de objetos se clasifica en una serie de grupos; el Análisis Discriminante equivale a un análisis de regresión donde la variable dependiente es categórica y tiene como categorías la etiqueta de cada uno de los grupos, y donde las variables independientes son continuas y determinan a qué grupos pertenecen los objetos. Se trata de encontrar relaciones lineales entre las variables continuas que mejor discriminen en los grupos dados a los objetos. Además, se trata de definir una regla de decisión que asigne un objeto nuevo, que no sabemos clasificar previamente, a uno de los grupos prefijados. En este caso si disponemos de modelos de aprendizaje en `mlr3`.
+
+-   **Escalas multidimiensionales**. El escalamiento multidimensional tiene por objetivo representar los puntos que residen en un espacio de gran dimensión a uno de menor dimensión, preservando al máximo las distancias entre esos puntos. De este modo, las distancias o similitudes entre pares de puntos en el espacio de menor dimensión se aproximan mucho a sus distancias reales. Como las componentes principales necesitamos utilizar las librerías específicas de `R`.
+
+## Modelos de agrupación o cluster
+
+Los modelos de agrupación o *cluster* hacen referencia a un amplio abanico de algoritmos cuya finalidad es encontrar patrones o grupos (*clusters*) dentro de un conjunto de muestras. Las particiones se establecen de forma que, las observaciones que están dentro de un mismo grupo, son similares entre ellas y distintas a las observaciones de otros grupos. Se trata de un método de aprendizaje no supervisado, ya que el proceso no tiene en cuenta a qué grupo pertenece realmente cada observación (si es que existe tal información). Esta característica es la que diferencia al *clustering* de los métodos de clasificación en los que se emplea la verdadera clasificación durante su entrenamiento.
+
+Dada la utilidad del *clustering* en disciplinas muy distintas (genómica, marketing...), se han desarrollado multitud de variantes y adaptaciones de sus métodos y algoritmos. Podemos distinguir tres grupos:
+
+-   **Agrupación jerárquica**: este tipo de algoritmos no requieren que el usuario especifique de antemano el número de grupos.
+
+-   **Agrupación partitiva**: este tipo de algoritmos requieren que el usuario especifique de antemano el número de *clusters* que se van a crear.
+
+-   **Métodos combinados**: algortimos que combinan los dos grupos anteriores.

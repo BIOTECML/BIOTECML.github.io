@@ -1,0 +1,1020 @@
+# Bases de datos {#sec-40}
+
+## Introducción {#sec-40.1}
+
+En esta unidad se detallan brevemente las bases de datos que se van a usar a lo largo de estos materiales. Se realiza una breve descripción de cada una, se indica el número de muestras y variables contenidas en ellas, así como si existen valores perdidos. En todos los casos se proporciona el código correspondiente para su carga en R.
+
+Para facilitar la visualización de las bases de datos, estas se han organizados según su objetivo principal: regresión, clasificación, y agrupación. Sin embargo, hay que tener en cuenta que en muchas situaciones prácticas los problemas de clasificación pueden ser vistos también como problemas de regresión, lo que se identificara durante la presentación de los materiales. En principio los problemas de reducción de la dimensión suelen estar integrados dentro de los otras tres situaciones como parte del preprocesado de los datos, y no se considera ninguna base de datos específica para ese problema.
+
+Todos los bancos de datos están alojados en GitHub (<https://github.com/>) para que resulten más accesibles. Sin embargo, para que resulte mas fácil la carga de los datos generamos un fichero rds con los datos cargados (que se crea en nuestro directorio de trabajo) que iremos utilizando en el resto de temas.
+
+Antes de comenzar hay que acordarse de cargar las librerías necesarias para la lectura de datos:
+
+```{r}
+#| results: hide
+#| message: false
+
+library(tidyverse)
+library(readr)
+```
+
+En todos los bancos de datos preparamos los datos para que puedan ser interpretados adecuadamente en nuestros modelos de aprendizaje automático.
+
+## Aprendizaje supervisado: Regresión {#sec-40.1.1}
+
+Consultar @sec-Asupervised de la @sec-introAA para los detalles de este tipo de problemas.
+
+### Anime ratings {#sec-anime}
+
+Este conjunto de datos contiene información sobre las preferencias de los usuarios de diferentes animes. Cada usuario puede agregar el anime a su lista de preferencias y darle una calificación.
+
+**Características del banco de datos**:
+
+-   target: `rating`
+-   Valores perdidos: sí
+-   Número de registros: 12294
+-   Número de características: 7
+
+**Variables contenidas**:
+
+-   **anime_id**: identificación única de myanimelist.net que identifica un anime.
+-   **name**: nombre completo del anime.
+-   **genre**: lista de géneros separada por comas para el anime.
+-   **type**: película, TV, OVA, etc.
+-   **episodes**: cuántos episodios tiene el programa. (1 si es película).
+-   **rating**: calificación promedio sobre 10 para el anime.
+-   **members**: número de miembros de la comunidad que están en el grupo de este anime.
+
+**Referencias bibliográficas**:
+
+-   Kaggle: [enlace](https://www.kaggle.com/datasets/CooperUnion/anime-recommendations-database)
+
+El código para la lectura de este banco de datos es:
+
+```{r}
+#| label: Anime-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/anime.csv"
+anime = read_csv(url, col_types = "ccccidi")
+write_rds(anime, "anime.rds")
+```
+
+### Diabetes {#sec-diabetes}
+
+En un estudio sobre la diabetes se obtuvieron diez variables basales, edad, sexo, índice de masa corporal, presión arterial media y seis mediciones de suero sanguíneo para 442 pacientes diabéticos, así como la respuesta de interés, una medida cuantitativa de la progresión de la enfermedad un año después de la línea de base. Cada una de estas 10 variables predictoras se ha centrado en la media y se ha escalado por la desviación estándar multiplicada por la raíz cuadrada de n_muestras (es decir, la suma de los cuadrados de cada columna suma 1).
+
+**Características del banco de datos**:
+
+-   Target: Y (progresión de la enfermedad)
+-   Valores perdidos: no
+-   Número de registros: 442
+-   Número de características: 11
+
+**Variables contenidas**:
+
+-   **AGE**: edad (en años)
+-   **SEX**: sexo
+-   **BMI**: índice de masa corporal
+-   **BP**: promedio de la presión sanguínea
+-   **S1**: colesterol sérico total
+-   **S2**: lipoproteínas de baja densidad
+-   **S3**: lipoproteínas de alta densidad
+-   **S4**: colesterol total
+-   **S5**: registro del nivel de triglicéridos en suero
+-   **S6**: nivel de azúcar en sangre
+
+**Referencias bibliográficas**:
+
+-   Bradley Efron, Trevor Hastie, Iain Johnstone and Robert Tibshirani (2004) "Least Angle Regression," Annals of Statistics (with discussion), 407-499.
+
+En este caso el fichero de datos es de tipo txt (no csv como el resto) y el código para la carga de este banco de datos es:
+
+```{r}
+#| label: diabetes-007
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/diabetes.tab.txt"
+diabetes = read_delim(url, col_types = "dfddddddddd")
+# usamos la función read_delim en lugar de read_csv
+write_rds(diabetes, "diabetes.rds")
+```
+
+### Electricity {#sec-electricity}
+
+Una central eléctrica de ciclo combinado (CCPP) está compuesta por turbinas de gas (GT), turbinas de vapor (ST) y generadores de vapor de recuperación de calor. En una CCPP, la electricidad es generada por turbinas de gas y vapor, que se combinan en un ciclo, y se transfiere de una turbina a otra. Mientras que el Vacío se recolecta y tiene efecto sobre la Turbina de Vapor, las otras tres variables ambientales afectan el desempeño del GT. Este conjunto de de datos recogidos se ha recogido de una central eléctrica de ciclo combinado a lo largo de 6 años (2006-2011), cuando la central eléctrica estaba configurada para funcionar a plena carga. Las características consisten en variables ambientales promedio por hora Temperatura (`AT`), Presión ambiental (`AP`), Humedad relativa (`RH`) y Vacío de escape (`V`) para predecir la producción de energía eléctrica neta por hora (`PE`) de la planta.
+
+**Características del banco de datos**:
+
+-   Variable respuesta: `PE`
+-   Tipo de variable respuesta: numérica
+-   Tipo de problema que se quiere resolver: regresión
+-   Valores perdidos: no
+-   Número de registros: 9568
+-   Número de variables: 5
+
+**Variables contenidas**:
+
+Se recogen la promedios por hora de:
+
+-   **AT**: temperatura (en grados centígrados)
+-   **V**: vacío de escape (en cm Hg)
+-   **AP**: presión ambiental (en milibares)
+-   **RH**: humedad relativa (en %)
+-   **PE**: producción de energía eléctrica neta (en MW)
+
+**Referencias bibliográficas**:
+
+-   Pınar Tüfekci, Prediction of full load electrical power output of a base load operated combined cycle power plant using machine learning methods, International Journal of Electrical Power & Energy Systems, Volume 60, September 2014, Pages 126-140, ISSN 0142-0615.
+
+-   Heysem Kaya, Pınar Tüfekci , Sadık Fikret Gürgen: Local and Global Learning Methods for Predicting Power of a Combined Gas & Steam Turbine, Proceedings of the International Conference on Emerging Trends in Computer and Electronics Engineering ICETCEE 2012, pp. 13-18 (Mar. 2012, Dubai).
+
+-   UCi Machine learning repository: https://archive.ics.uci.edu/ml/datasets/combined+cycle+power+plant
+
+A continuación tenemos el código para la carga de estos datos
+
+```{r}
+#| label: electricity-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/mult_linear_reg.csv"
+electricity = read_csv(url, col_types = "ddddd")
+write_rds(electricity, "electricity.rds")
+```
+
+### Housing in California {#sec-housingCA}
+
+En este ejemplo vamos a utilizar la base de datos `HousingCA`, que recoge la información sobre el censo viviendas de California en el año 1990. Se está interesado en predecir el valor medio de la vivienda (`median_house_value`) medido en dólares americanos en función de las predictoras.
+
+**Características del banco de datos**:
+
+-   Target: `median_house_value`
+-   Valores perdidos: sí
+-   Número de registros: 20640
+-   Número de variables: 10
+
+**Variables contenidas**:
+
+-   **median_house_value**: valor medio de la vivienda en dólares.
+-   **longitude**: medida de la distancia al oeste de una casa; un valor más alto es más al oeste.
+-   **latitude**: medida de la distancia al norte de una casa; un valor más alto es más al norte.
+-   **housing_median_age**: mediana de edad de una vivienda dentro de una manzana; un número más bajo es un edificio más nuevo (en años)
+-   **total_rooms**: número total de habitaciones dentro de un bloque.
+-   **total_bedrooms**: número total de dormitorios dentro de un bloque.
+-   **population**: Número total de personas que residen en un bloque.
+-   **households**: Número total de hogares, grupo de personas que residen en una unidad de vivienda, para un bloque.
+-   **median_income**: Ingreso medio de los hogares dentro de un bloque de casas (medido en decenas de miles de dólares estadounidenses)
+-   **oceanProximity**: Ubicación de la casa con respecto al océano/mar (`<1H OCEAN`, `INLAND`, `ISLAND`, `NEAR BAY`, `NEAR OCEAN`).
+
+**Referencias bibliográficas**:
+
+-   Pace, R. Kelley and Ronald Barry, Sparse Spatial Autoregressions, Statistics and Probability Letters, 33 (1997) 291-297
+-   Kaggle: [enlace](https://www.kaggle.com/datasets/camnugent/california-housing-prices)
+
+```{r}
+#| label: housingCA-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/housing.csv"
+housingCA = read_csv(url, col_types = "dddddddddf")
+write_rds(housingCA, "housingCA.rds")
+```
+
+### Meat spec {#sec-meatspec}
+
+El departamento de calidad de una empresa de alimentación se encarga de medir el contenido en grasa de la carne que comercializa. Este estudio se realiza mediante técnicas de analítica química, un proceso relativamente costoso en tiempo y recursos. Una alternativa que permitiría reducir costes y optimizar tiempo es emplear un espectrofotómetro (instrumento capaz de detectar la absorbancia que tiene un material a diferentes tipos de luz en función de sus características) e inferir el contenido en grasa a partir de sus medidas. Por lo tanto, el objetivo que se persigue es predecir el contenido en grasa (`fat`) a partir de los valores dados por el espectrofotómetro.
+
+**Características del banco de datos**:
+
+-   Target: `fat`
+-   Valores perdidos: no
+-   Número de registros: 215
+-   Número de variables: 101
+
+**Variables contenidas**:
+
+-   **Variables desde *V1* hasta *V100***: cada una de las variables hace referencia al valor de la muestra para una longitud de onda específica.
+-   **fat**: contenido en grasa de la carne (en gramos)
+
+```{r}
+#| label: meatspec-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/meatspec.csv"
+meatspec = read_csv(url)
+write_rds(meatspec, "meatspec.rds")
+```
+
+### Penguins {#sec-penguins}
+
+`Penguins` es un banco de datos que contiene las mediciones de tamaño, observaciones de nidadas y proporciones de isótopos en sangre de 344 pingüinos adultos de Adelia, Barbijo y Papúa. Estos han sido observados en islas del archipiélago Palmer cerca de la estación Palmer en la Antártida. Los datos fueron recogidos y puestos a disposición por la Dra. Kristen Gorman y el Programa de Investigación Ecológica a Largo Plazo (LTER) de la Estación Palmer, Antártida.
+
+**Características del banco de datos**:
+
+-   Target: `flipper_length_mm`
+-   Valores perdidos: si
+-   Número de registros: 344
+-   Número de variables: 9
+
+**Variables contenidas**:
+
+-   **Id**: identificador del animal
+-   **species**: especie de pingüino (Adélie, Chinstrap y Gentoo)
+-   **island**: isla en el Archipiélago Palmer, Antártida (Biscoe, Dream o Torgersen)
+-   **bill_length_mm**: longitud del pico (en milímetros)
+-   **bill_depth_mm**: profundidad del pico (en milímetros)
+-   **flipper_length_mm**: longitud de la aleta (en milímetros)
+-   **body_mass_g**: masa corporal (en gramos)
+-   **sex**: sexo del pingüino (hembra, macho)
+-   **year**: año de la toma de información
+
+**Referencias bibliográficas**:
+
+-   Data were collected and made available by Dr. Kristen Gorman and the Palmer Station, Antarctica LTER, a member of the Long Term Ecological Research Network.
+-   Kaggle: https://www.kaggle.com/datasets/larsen0966/penguins
+
+```{r}
+#| label: penguins-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/penguins.csv"
+penguins = read_csv(url)
+
+# Convertimos variable carácter a factor
+penguins = penguins |> mutate_if(sapply(penguins, is.character), as.factor) 
+write_rds(penguins, "penguins.rds")
+```
+
+### US economic time series {#sec-usaets}
+
+Esta base de datos contiene datos de series temporales económicas de EE. UU. El objetivo que se persigue es predecir el desempleo (`unemploy`) dentro la economía de US. El desempleo es una gran preocupación socioeconómica y política para cualquier país y, por lo tanto, gestionarlo es una tarea primordial para todos los gobiernos.
+
+**Características del banco de datos**:
+
+-   Target: `unemploy`
+-   Valores perdidos: no
+-   Número de registros: 574
+-   Número de variables: 6
+
+**Variables contenidas**:
+
+-   **date**: mes de recogida de los datos.
+-   **pce**: gastos de consumo personal (en miles de millones de dólares)
+-   **pop**: población total (en miles)
+-   **psavert**: tasa de ahorro personal.
+-   **uempmed**: duración mediana del desempleo (en semanas)
+-   **unemploy**: número de desempleados (en miles)
+
+**Referencias bibliográficas**:
+
+-   Las series de datos se pueden consultar en https://fred.stlouisfed.org/. Mas concretamente:
+
+    -   pce: https://fred.stlouisfed.org/series/PCE
+    -   pop: https://fred.stlouisfed.org/series/POP
+    -   psavert: https://fred.stlouisfed.org/series/PSAVERT/
+    -   uempmed: https://fred.stlouisfed.org/series/UEMPMED
+    -   unemploy: https://fred.stlouisfed.org/series/UNEMPLOY
+
+```{r}
+#| label: usaets-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/US_economic_time_series.csv"
+usaets = read_csv(url)
+
+# Eliminamos las dos primeras variables para quedarnos con el fichero final
+usaets = usaets[,-(1:2)]
+write_rds(usaets, "usaets.rds")
+```
+
+### QSAR {#sec-qsar}
+
+Este conjunto de datos se utilizó para desarrollar modelos QSAR de regresión cuantitativa para predecir la toxicidad acuática aguda hacia el pez Pimephales promelas (pececillo de cabeza plana) sobre un conjunto de 908 sustancias químicas. Como variable a predecir se consideraron los datos de la LC50, que es la concentración que provoca la muerte del 50% de sujetos sometidas a prueba durante 48 horas.
+
+**Características del banco de datos**:
+
+-   Target: `LC50`
+-   Valores perdidos: no
+
+**Variables contenidas**:
+
+-   **TPSA** (propiedades moleculares),
+-   **SAacc** (propiedades moleculares),
+-   **H-050** (fragmentos centrados en átomos),
+-   **MLOGP** (propiedades moleculares),
+-   **RDCHI** (índices de conectividad),
+-   **GATS1p** (autocorrelaciones 2D),
+-   **nN** (índices constitucionales),
+-   **C-040** (fragmentos centrados en átomos),
+-   **LC50**
+
+```{r}
+#| label: qsar-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/jmsocuellamos/DatosBIOTEC/master/CaseStudies/Qsar/qsar_aquatic_toxicity.csv"
+qsar = read_csv(url)
+write_rds(qsar, "qsar.rds")
+```
+
+## Aprendizaje supervisado: Clasificación {#sec-40.1.2}
+
+Consultar @sec-Asupervised de la @sec-introAA para los detalles de este tipo de problemas.
+
+### Abalone {#sec-abalone}
+
+En este conjunto de datos se recoge información sobre los abulones, de la familia de los moluscos. Se está interesado en medir su desarrollo, que viene determinado principalmente por su desarrollo sexual. Concretamente se consideran tres estados de desarrollo asociados con el atributo `Sex`: `M` (machos), `F` (hembras), e `I` (infantil o sin desarrollo sexual). Para clasificar cada sujeto se utiliza un conjunto de características que son de tipo numérico.
+
+**Características del banco de datos**:
+
+-   target: `Sex`
+-   Valores perdidos: no
+-   Número de registros: 4177
+-   Número de características: 8
+
+**Variables contenidas**:
+
+-   **Sex**: sexo (M = masculino, F = femenino e I = intantil)
+-   **Length**: longitud de la carcasa más larga (en mm)
+-   **Diameter**: diámetro perpendicular a la longitud (en mm)
+-   **Height**: altura con carne en cáscara (en mm)
+-   **Whole weight**: peso completo (en gramos)
+-   **Shucked weight**: peso de la carne (en gramos)
+-   **Viscera weight**: peso de las vísceras después del sangrado (en gramos)
+-   **Shell weight**: peso de la cáscara después de secarse (en gramos)
+-   **Rings**: anillos (+1,5 da la edad en años)
+
+**Referencias bibliográficas**:
+
+-   Kaggle: [enlace](https://www.kaggle.com/datasets/rodolfomendes/abalone-dataset)
+
+El código para la lectura de este banco de datos es:
+
+```{r}
+#| label: abalone-001
+#| message: false
+#| results: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/abalone.csv"
+abalone = read_csv(url, col_types = "cdddddddd")
+
+# Convertimos variable carácter a factor
+abalone = abalone |> mutate_if(sapply(abalone, is.character), as.factor) 
+write_rds(abalone, "abalone.rds")
+```
+
+### Breast Cancer Wisconsin {#sec-brestcancer}
+
+En esta base de datos se recoge información sobre los cánceres de mama en la ciudad de Wisconsin. Las características de la base de datos se calculan a partir de una imagen digitalizada de un aspiración de aguja fina (FNA) de una masa mamaria. Describen las características de los núcleos celulares presentes en la imagen y el objetivo que se persigue es clasificar un tumor como benigno o maligno en función de las variables predictoras.
+
+**Características del banco de datos**:
+
+-   Variable respuesta: `diagnosis`
+-   Tipo de variable respuesta: categórica (binaria)
+-   Tipo de problema que se quiere resolver: clasificación y regresión
+-   Valores perdidos: no
+-   Número de registros: 569
+-   Número de variables: 32
+
+**Variables contenidas**:
+
+-   **id**: identificador.
+-   **diagnosis**: diagnóstico de tejidos mamarios (M = maligno, B = benigno)
+-   **radius_mean**: media de las distancias del centro a los puntos del perímetro.
+-   **texture_mean**: desviación estándar de los valores de la escala de grises.
+-   **perimeter_mean**:tamaño medio del tumor central.
+-   **area_mean**:
+-   **smoothness_mean**: media de variación local en longitudes de radio
+-   **compactness_mean**: (media de perímetro)\^2 / área - 1,0
+-   **concavity_mean**: media de gravedad de las porciones cóncavas del contorno.
+-   **concave points_mean**: media para el número de porciones cóncavas del contorno.
+-   **symmetry_mean**:
+-   **fractal_dimension_mean**: media para "aproximación de la costa" - 1.
+-   **radius_se**: error estándar para la media de distancias desde el centro hasta los puntos en el perímetro.
+-   **texture_se**: error estándar para la desviación estándar de los valores de escala de grises.
+-   **perimeter_se**:
+-   **area_se**:
+-   **smoothness_se**: error estándar para la variación local en las longitudes del radio.
+-   **compactness_se**: (error estándar para perímetro)\^2 / área - 1,0.
+-   **concavity_se**: error estándar para la gravedad de las partes cóncavas del contorno.
+-   **concave points_se**: error estándar para el número de porciones cóncavas del contorno.
+-   **symmetry_se**:
+-   **fractal_dimension_se**: error estándar para "aproximación de la costa" - 1.
+-   **radius_worst**: "peor" o mayor valor medio para la media de distancias desde el centro hasta los puntos del perímetro (en cm).
+-   **texture_worst**: "peor" o mayor valor medio para la desviación estándar de los valores de escala de grises.
+-   **perimeter_worst**:
+-   **area_worst**:
+-   **smoothness_worst**: "peor" o mayor valor medio para la variación local en longitudes de radio.
+-   **compactness_worst**: "peor" o mayor valor medio para el perímetro\^2 / área - 1,0.
+-   **concavity_worst**: "peor" o mayor valor medio para la gravedad de las porciones cóncavas del contorno.
+-   **concave points_worst**: "peor" o mayor valor medio para el número de porciones cóncavas del contorno.
+-   **symmetry_worst**:
+-   **fractal_dimension_worst**: "peor" o mayor valor medio para "aproximación de la costa" - 1.
+
+**Referencias bibliográficas**:
+
+-   Kaggle: [enlace](https://www.kaggle.com/datasets/uciml/breast-cancer-wisconsin-data)
+
+El código para la lectura de este banco de datos es:
+
+```{r}
+#| label: brestcancer-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/cancer.csv"
+breastcancer = read_csv(url, col_types = "ccdddddddddddddddddddddddddddddd")
+
+# Cambíamos solo el tipo de la variable diagnosis
+breastcancer$diagnosis = as.factor(breastcancer$diagnosis)
+write_rds(breastcancer, "breastcancer.rds")
+```
+
+### Iris {#sec-iris}
+
+La base de datos iris consta de 50 muestras de cada una de las tres especies de Iris: Iris Setosa, Iris virginica e Iris versicolor. Se escogieron cuatro características de cada muestra: la longitud y el ancho de los sépalos y pétalos, en centímetros. El objetivo que se persigue es predecir la clase de especie (`species`) que es en función de sus características.
+
+**Características del banco de datos**:
+
+-   Target: species
+-   Valores perdidos: no
+-   Número de registros: 150
+-   Número de variables: 5
+
+**Variables contenidas**:
+
+-   **sepal_length**: longitud del sépalo (en cm)
+-   **sepal_width**: anchura del sépalo (en cm)
+-   **petal_length**: longitud del pétalo (en cm)
+-   **petal_width**: anchura del pétalo (en cm)
+-   **species**: especie de la flor (Iris Setosa, Iris virginica e Iris versicolor)
+
+**Referencias bibliográficas**:
+
+-   Kaggle: [enlace](https://www.kaggle.com/datasets/uciml/iris)
+
+```{r}
+#| label: iris-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/IRIS.csv"
+iris = read_csv(url, col_types = "ddddc")
+
+# Convertimos carácter en factor
+iris$species = as.factor(iris$species)
+write_rds(iris, "iris.rds")
+```
+
+### Mushroom {#sec-mushroom}
+
+La "caza de setas" (también conocida como "shrooming" en inglés) está disfrutando de nuevos picos de popularidad. Conocer qué características significan una muerte segura y cuáles son más apetecibles es un aspecto muy importante en este proceso. El conjunto de datos `Mushrooms` muestra las características de una muestra muy extensa de diferentes tipos de setas. En concreto se incluyen descripciones de 23 especies de setas con agallas de la familia *Agaricus* y *Lepiota*, extraídas de *The Audubon Society Field Guide to North American Mushrooms* (1981). Cada especie se identifica como: "definitivamente comestible", "definitivamente venenosa", o "de comestibilidad desconocida y no recomendada". Esta última clase se combinó con la venenosa.
+
+**Características del banco de datos**:
+
+-   Target: `class`
+-   Valores perdidos: no
+-   Número de registros: 8124
+-   Número de variables: 23
+
+**Variables contenidas**:
+
+-   **class**: clase de seta ("e" = comestible, "p" = venenosa)
+-   **cap-shape**: forma del sombrero ("b" = campana, "c" = cónica, "x" = convexa, "f"= plana, "k" = nudosa, "s" = hundida)
+-   **cap-surface**: superficie del sombrero ("f" = fibrosa, "g" = surcos, "y" = escamosa, "s" = lisa)
+-   **cap-color**: color del sombrero ("n" = marrón, "b" = beige, "c" = canela, "g" = gris, "r" = verde, "p" = rosa, "u" = morado, "r" = rojo, "w" = blanco y "y" = amarillo)
+-   **bruises**: cicatrices ("t" = con rasguños y "f" = sin rasguños)
+-   **odor**: olor ("a" = almendra, "l" = anís, "c" = creosota, "y" = pescado, "f" = asqueroso, "m" = mohoso, "n" = ninguno, "p" = acre= y "s" = especiado)
+-   **gill-attachment**: accesorio branquial ("a" = adjunto, "d" = descendente, "f" = libre y "m" = con muescas)
+-   **gill-spacing**: espacio entre branquias("c" = cerca, "w" = abarrotado y "d" = distante)
+-   **gill-size**: tamaño branquial ("b" = ancho y "n" = estrecho)
+-   **gill-color**: color de las branquias ("k" = negro, "n" = marrón, "b" = beige, "h" = chocolate, "g" = gris, "r" = verde, "o" = naranja, "p" = rosa, "u" = morado, "r" = rojo, "w" = blanco y "y" = amarillo)
+-   **stalk-shape**: forma de tallo ("e" = agrandando y "t" = disminuyendo)
+-   **stalk-root**: raíz del tallo ("b" = bulboso, "c" = club,"u" = copa, "e" = igual, "z" = rizomorfos y "r" = enraizado)
+-   **stalk-surface-above-ring**: superficie del tallo sobre el anillo ("f" = fibrosa, "y" = escamosa, "k" = sedosa y "s" = lisa)
+-   **stalk-surface-below-ring**: superficie del tallo debajo del anillo ("f" = fibrosa, "y" = escamosa, "k" = sedosa y "s" = lisa)
+-   **stalk-color-above-ring**: color del tallo sobre el anillo ("n" = marrón, "b" = beige, "c" = canela, "g" = gris, "o" = naranja, "p" = rosa, "r" = rojo, "w" = blanco y "y" = amarillo)
+-   **stalk-color-below-ring**: color del tallo debajo del anillo ("n" = marrón, "b" = beige, "c" = canela, "g" = gris, "o" = naranja, "p" = rosa, "r" = rojo, "w" = blanco y "y" = amarillo)
+-   **veil-type**: tipo de velo ("p" = parcial y "u" = universal)
+-   **veil-color**: color del velo ("n" = marrón, "o" = naranja, "w" = blanco y "y" = amarillo)
+-   **ring-number**: número de anillos ("n" = ninguno, "o" = uno y "t" = dos)
+-   **ring-type**: tipo de anillo ("c" = telaraña, "e" = evanescente, "f" = resplandeciente, "l" = grande, "n" = ninguno, "p" = colgante, "s" = revestimiento y "z" = zona)
+-   **spore-print-color**: color de impresión de esporas ("k" = negro, "n" = marrón, "b" = beige, "h" = chocolate, "r" = verde, "o" = naranja, "u" = morado, "w" = blanco y "y" = amarillo)
+-   **population**: población ("a" = abundante, "c" = agrupada, "n" = numerosa, "s" = dispersa, "v" = varia y "y" = solitaria)
+-   **habitat**: hábitat ("g" = pastos, "l" = hojas, "m" = prados, "p" = caminos, "u" = urbano, "w" = desechos y "d" = bosques)
+
+**Referencias bibliográficas**:
+
+-   Mushroom records drawn from The Audubon Society Field Guide to North American Mushrooms (1981). G. H. Lincoff (Pres.), New York: Alfred A. Knopf.
+-   UCI Machine learning repository: <https://archive.ics.uci.edu/ml/datasets/mushroom>
+
+```{r}
+#| label: mushroom-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/mushrooms.csv"
+mushroom = read_csv(url)
+
+# Convertimos variables carácter a factor
+mushroom = mushroom |> mutate_if(sapply(mushroom, is.character), as.factor) 
+write_rds(mushroom, "mushroom.rds")
+```
+
+### Spam {#sec-spam}
+
+La base de datos trata sobre la detección de spam en una bandeja de entrada de correo electrónico. El banco de datos dispone de dos variables donde la primera es el texto del mail, y la segunda el indicador que nos dice si el correo se ha clasificado como spam o no spam de forma manual.
+
+**Características del banco de datos**:
+
+-   Target: `label`
+-   Valores perdidos: sí (variable email)
+-   Número de registros: 3000
+-   Número de variables: 2
+
+**Variables contenidas**:
+
+-   **label**: etiqueta que indica si es spam o no (0 = no spam, 1 = spam)
+-   **email**: contenido del correo electrónico.
+
+**Referencias bibliográficas**:
+
+-   Kaggle: [enlace](https://www.kaggle.com/code/mukulkirti/naive-bayes-theorem/data?select=spam_or_not_spam.csv)
+
+```{r}
+#| label: spam-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/spam_or_not_spam.csv"
+spam = read_csv(url)
+write_rds(spam, "spam.rds")
+```
+
+### Stroke {#sec-stroke}
+
+Según la Organización Mundial de la Salud (OMS), el ictus es la segunda causa de muerte en el mundo, responsable de aproximadamente el 11% del total de fallecimientos. El banco de datos `Stroke` se utiliza para predecir si es probable que un paciente sufra un ictus en función de los parámetros de entrada como el sexo, la edad, diversas enfermedades y estatus de fumador. Cada fila de los datos proporciona información relevante sobre el paciente.
+
+**Características del banco de datos**:
+
+-   Target: `stroke`
+-   Valores perdidos: sí (en la variable `bmi`)
+-   Número de registros: 5110
+-   Número de variables: 12
+
+**Variables contenidas**:
+
+-   **id**: identificador único del sujeto
+-   **gender**: sexo ("Male" = masculino, "Female" = femenino y "Other" = otro)
+-   **age**: edad del paciente (en años)
+-   **hypertension**: el paciente tiene hipertensión ("Yes" = sí y "No")
+-   **heart_disease**: el paciente tiene una enfermedad del corazón ("Yes" = sí y "No")
+-   **ever_married**: el paciente se ha casado alguna vez ("Yes" = sí y "No")
+-   **work_type**: tipo de trabajo ("children" = niños, "Govt_jov" = Gubernamental, "Never_worked" = nunca ha trabajado, "Private" = privado y "Self-employed" = autónomo)
+-   **Residence_type**: tipo de residencia ("Rural" y "Urban" = urbana)
+-   **avg_glucose_level**: media de glucosa en sangre.
+-   **bmi**: índice de masa corporal.
+-   **smoking_status**: nivel de fumador ("formerly smoked" = fumaba, "never smoked" = nunca ha fumado, "smokes" = fuma y "Unknown" = desconocido).
+-   **stroke**: el paciente sufre un ictus ("Yes" = sí y "No")
+
+**Referencias bibliográficas**:
+
+-   kaggle: <https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset>
+
+```{r}
+#| label: stroke-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/stroke_ori.csv"
+stroke = read_csv(url)
+
+# Convertimos variables carácter a factor
+stroke = stroke |> mutate_if(sapply(stroke, is.character), as.factor) 
+write_rds(stroke, "stroke.rds")
+```
+
+### Water potability {#sec-waterpot}
+
+El agua potable es el derecho humano más básico y un factor importante para la salud. El conjunto de datos `Water potability`, tiene por objetivo estudiar la potabilidad del agua utilizando varias propiedades químicas debido a su importancia como cuestión de salud y desarrollo a nivel nacional, regional y local. En algunas regiones, se ha demostrado que las inversiones en abastecimiento de agua y saneamiento pueden producir un beneficio económico neto, ya que la reducción de los efectos adversos para la salud y los costes de la atención sanitaria superan los costes de las intervenciones.
+
+**Características del banco de datos**:
+
+-   Target: potability
+-   Valores perdidos: sí (variables ph, Sulfate y Trihalomethanes)
+-   Número de registros: 3276
+-   Número de variables: 10
+
+**Variables contenidas**:
+
+-   **pH**: valor del pH.
+-   **Hardness**: dureza o capacidad del agua para precipitar el jabón causado por el calcio y el magnesio.
+-   **Solids**: sólidos disueltos totales (en partes por millón)
+-   **Chloramines**: cantidad de cloraminas (en partes por millón)
+-   **Sulfate**: cantidad de sulfatos disueltos (en mg/L)
+-   **Conductivity**: conductividad eléctrica del agua (en μS/cm)
+-   **Organic_carbon**: cantidad de carbono orgánico (en partes por millón)
+-   **Trihalomethanes**: cantidad de trihalometanos (en μg/L)
+-   **Turbidity**: medida de la propiedad de emisión de luz del agua en NTU.
+-   **Potability**: indica si el agua es segura para el consumo humano (1 = potable y 0 = no potable)
+
+**Referencias bibliográficas**:
+
+-   Kaggle: <https://www.kaggle.com/datasets/adityakadiwal/water-potability>
+
+```{r}
+#| label: waterpot-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/water_potability.csv"
+waterpot = read_csv(url)
+write_rds(waterpot, "waterpot.rds")
+```
+
+### Wine quality {#sec-winequality}
+
+El conjunto de datos `Winequality` está relacionado con las variantes rojas del vino portugués "Vinho Verde". Debido a cuestiones de privacidad y logística, sólo se dispone de variables fisicoquímicas (entradas) y sensoriales (la salida). Por ejemplo, no hay datos sobre tipos de uva, marca de vino, precio de venta del vino, etc. Las variables provienen de tests psicoquímicos y el objetivo es, mediante las predictoras, establecer la calidad del vino (`quality`), medida en la escala discreta de 0 a 10.
+
+**Características del banco de datos**:
+
+-   Target: `quality`
+-   Valores perdidos: no
+-   Número de registros: 1599
+-   Número de variables: 12
+
+**Variables contenidas**:
+
+-   **fixed acidity**: acidez fija.
+-   **volatile acidity**: acidez volátil.
+-   **citric acid**: acidez cítrica.
+-   **residual sugar**: azúcar residual (cantidad de azúcar que queda después de que se detiene la fermentación)
+-   **chlorides**: cloruros (cantidad de sal en el vino)
+-   **free sulfur dioxide**: dióxido de azufre libre.
+-   **total sulfur dioxide**: dióxido de azufre total.
+-   **density**: densidad.
+-   **pH**: ph.
+-   **sulphates**: sulfatos.
+-   **alcohol**: alcohol (porcentaje de contenido de alcohol del vino)
+-   **quality**: calidad (entre 0 y 10)
+
+**Referencias bibliográficas**:
+
+-   P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis. Modeling wine preferences by data mining from physicochemical properties. In Decision Support Systems, Elsevier, 47(4):547-553, 2009.
+-   Kaggle: <https://www.kaggle.com/datasets/sh6147782/winequalityred>
+
+```{r}
+#| label: winequality-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/winequality-red.csv"
+winequality = read_csv(url)
+write_rds(winequality, "winequality.rds")
+```
+
+### Hepatitis {#sec-hepatitis}
+
+Datos de síntomas de hepatitis y resultados en varias personas de ambos sexos de varios grupos de edad. Los síntomas de la hepatitis incluyen fatiga, anorexia, hígado grande, etc. Este archivo informa sobre los diversos síntomas en caso de hepatitis y si la persona que padece hepatitis vivió o murió.
+
+**Características del banco de datos**:
+
+-   Target: `Class`
+-   Valores perdidos: si
+-   Número de registros: 142
+-   Número de variables: 20
+
+**Variables contenidas**:
+
+-   **Class**: DIE, LIVE
+-   **AGE**: 10, 20, 30, 40, 50, 60, 70, 80
+-   **SEX**: male, female
+-   **STEROID**: no, yes
+-   **ANTIVIRALS**: no, yes
+-   **FATIGUE**: no, yes
+-   **MALAISE**: no, yes
+-   **ANOREXIA**: no, yes
+-   **LIVER BIG**: no, yes
+-   **LIVER FIRM**: no, yes
+-   **SPLEEN PALPABLE**: no, yes
+-   **SPIDERS**: no, yes
+-   **ASCITES**: no, yes
+-   **VARICES**: no, yes
+-   **BILIRUBIN**: 0.39, 0.80, 1.20, 2.00, 3.00, 4.00
+-   **ALK PHOSPHATE**: 33, 80, 120, 160, 200, 250
+-   **SGOT**: 13, 100, 200, 300, 400, 500,
+-   **ALBUMIN**: 2.1, 3.0, 3.8, 4.5, 5.0, 6.0
+-   **PROTIME**: 10, 20, 30, 40, 50, 60, 70, 80, 90
+-   **HISTOLOGY**: no, yes
+
+**Referencias bibliográficas**:
+
+-   Kaggle: <https://www.kaggle.com/datasets/harinir/hepatitis>
+
+```{r}
+#| label: hepatitis-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/hepatitis.csv"
+hepatitis = read_csv(url)
+write_rds(hepatitis, "hepatitis.rds")
+```
+
+### Gene expression breast cancer {#sec-geneexp}
+
+Este archivo contiene los niveles de expresión génica de 54676 genes (columnas) de 151 muestras (filas). Hay 5 tipos diferentes de cáncer de mama (más tejido sano) representados en este conjunto de datos (columna "type"). Más información sobre este conjunto de datos, así como otros formatos de archivo como TAB y ARFF, visualización de datos y puntos de referencia de clasificación y agrupación están disponibles gratuitamente en el sitio web oficial de CuMiDa con el id GSE45827: http://sbcb.inf.ufrgs.br/cumida
+
+**Características del banco de datos**:
+
+-   Target: `type`
+-   Valores perdidos: no
+-   Número de registros: 151
+-   Número de variables: 54676
+
+**Referencias bibliográficas**:
+
+-   Kaggle: <https://www.kaggle.com/datasets/brunogrisci/breast-cancer-gene-expression-cumida>
+
+En este caso el banco de datos es muy grande y no es posible importarlo desde github. Es necesario descargarlo a nuestro máquina y cargarlo desde allí directamente. Para ello se ha generado un fichero en formato rds que se puede cargar fácilmente.
+
+```{r}
+#| label: geneexp-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+geneexp = read_rds("geneexpression.rds")
+```
+
+### Gene expression leukemia {#sec-geneexpleu}
+
+Este archivo que contiene los niveles de expresión génica de 22284 genes (columnas) de 64 muestras (filas). Hay 5 tipos diferentes de leucemia representados en este conjunto de datos (columna "type"). Más información sobre este conjunto de datos, así como otros formatos de archivo como TAB y ARFF, visualización de datos y puntos de referencia de clasificación y agrupación están disponibles gratuitamente en el sitio web oficial de CuMiDa con el id GSE9476: http://sbcb.inf.ufrgs.br /cumida
+
+**Características del banco de datos**:
+
+-   Target: `type`
+-   Valores perdidos: no
+-   Número de registros: 64
+-   Número de variables: 22284
+
+**Referencias bibliográficas**:
+
+-   Kaggle: <https://www.kaggle.com/datasets/brunogrisci/leukemia-gene-expression-cumida>
+
+Como antes el fichero es muy grande y procedemos de igual forma al ejemplo anterior.
+
+```{r}
+#| label: geneexpleu-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+geneexpleu = read_rds("geneexpressionleukemia.rds")
+```
+
+## Aprendizaje no supervisado: Agrupación {#sec-40.1.3}
+
+Consultar @sec-Anosupervised de la @sec-introAA para los detalles de este tipo de problemas.
+
+### Sales {#sec-sales}
+
+Contiene las cantidades compradas semanalmente de 800 productos a lo largo de 52 semanas. Todos los atributos son numéricos sin valores perdidos y van identificados mediante W(número de la semana).
+
+**Características del banco de datos**:
+
+-   Número de registros: 527
+-   Número de variables: 38
+
+**Variables contenidas**:
+
+-   **Variables desde *W0* hasta *W51***: cada una de las variables hace referencia a las cantidades compradas semanalmente.
+
+**Referencias bibliográficas**:
+
+-   Tan, Swee Chuan and San Lau, Jess Pei (2014). Time series clustering: A superior alternative for market basket analysis. Proceedings of the First International Conference on Advanced Data and Information Engineering (DaEng-2013), 241--248. Springer.
+
+```{r}
+#| label: sales-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/Sales_Transactions_Weekly.csv"
+sales = read_csv(url)
+write_rds(sales, "sales.rds")
+```
+
+### Vehicle silhouettes {#sec-vehicle}
+
+Este conjunto de datos recoge información de cuatro tipos diferentes de vehículos, utilizando un conjunto de características extraídas de su silueta. Para el experimento se utilizaron cuatro vehículos modelo "Corgie": un bus de dos pisos, una camioneta Cheverolet, un Saab 9000 y un Opel Manta 400. El objetivo del estudio es clasificar una silueta dada como uno de cuatro tipos diferentes de vehículos. Todos los atributos son numéricos discretos salvo la primera variable que lleva el registro de la observación y muchos de ellos contienen valores perdidos.
+
+**Características del banco de datos**:
+
+-   Valores perdidos: si
+-   Número de registros: 946
+-   Número de variables: 19
+
+**Variables contenidas**:
+
+-   **Comp**: compactness, se calcula mediante la fórmula $(perímetro.medio)^2/área$
+-   **Circ**: circularity, se calcula mediante la fórmula $(radio. medio)^2/área$
+-   **D.Circ**: distance_circularity, se calcula mediante la fórmula $área/(distancia. media. desde. el. borde)^2$
+-   **Rad.Ra**: radius_ratio, se calcula mediante la fórmula $(max.rad-min.rad)/av.radius$
+-   **Pr.axis.Ra**: se calcula mediante la fórmula $(eje. menor)/(eje. mayor)$
+-   **Max.L.Ra**: max.length_aspect_ratio, se calcula mediante la fórmula $(longitud. perp. longitud. máxima)/(longitud. máxima)$
+-   **Scat.Ra**: scatter_ratio, se calcula mediante la fórmula \$ (inercia. sobre. el. eje. menor)/(inercia. sobre. el. eje. mayor)\$
+-   **Elong**: elongatedness, se calcula mediante la fórmula $área/(ancho. de. contracción)^2$
+-   **Pr.Axis.Rect**: pr.axis_rectangularity, se calcula mediante la fórmula $área/(longitud. del. eje. pr. * ancho. del. eje. pr.)$
+-   **Max.L.Rect**: max.length_rectangularity, se calcula mediante la fórmula $área/(long. max. * long. perp.)$
+-   **Sc.var.Maxis**: se calcula mediante la fórmula $(momento. de. segundo. orden. sobre. el. eje. menor)/área. a. lo. largo. del. eje. mayor$
+-   **Sc.var.maxis**: se calcula mediante la fórmula $(momento. de. segundo. orden. sobre. el. eje. mayor)/área. a. lo. largo. del. eje. menor$
+-   **Ra.Gyr**: scaled_radius_of_gyration, se calcula mediante la fórmula $(mavar+mivar)/área$
+-   **Skew.Maxis**: se calcula mediante la fórmula $(mavar+mivar)/área$
+-   **Skew.maxis**: se calcula mediante la fórmula $(momento. de. tercer. orden. sobre. el. eje. principal.)/sigma-min^3 * eje. principal$
+-   **Kurt.maxis**: se calcula mediante la fórmula (momento. de. tercer. orden. sobre. el. eje. menor.)/sigma-maj\^3 \* eje. menor\$
+-   **Kurt.Maxis**: se calcula mediante la fórmula (momento. de. tercer. orden. sobre. el. eje. menor.)/sigma-maj\^3 \* eje. menor\$
+-   **Holl.Ra**: se calcula mediante la fórmula $(área. de. huecos)/(área. del. polígono. delimitador)$
+-   **Class**: tipo de vehículo (van, saab, bus y opel)
+
+**Referencias bibliográficas**:
+
+-   Turing Institute Research Memorandum TIRM-87-018 "Vehicle Recognition Using Rule Based Methods" by Siebert,JP (March 1987).
+
+-   Newman, D.J. & Hettich, S. & Blake, C.L. & Merz, C.J. (1998). UCI Repository of machine learning databases \[<http://www.ics.uci.edu/~mlearn/MLRepository.html>\]. Irvine, CA: University of California, Department of Information and Computer Science.
+
+En este banco de datos se encuentra disponible dentro de la librería mlbench (puede ser necesario instalarla), y para acceder al banco de datos basta con usar el código siguiente:
+
+```{r}
+#| label: vehicle-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+library(mlbench)
+data("Vehicle")
+write_rds(Vehicle, "vehicle.rds")
+```
+
+### Water treatment {#sec-watertre}
+
+Este conjunto de datos procede de las medidas diarias de los sensores de una planta de tratamiento de aguas residuales urbanas. El objetivo es clasificar el estado operativo de la planta para predecir fallos a través de las variables de estado de la planta en cada una de las etapas del proceso de tratamiento. Todos los atributos son numéricos y continuos salvo la primera variable que lleva el registro de la observación y muchos de ellos contienen valores perdidos.
+
+**Características del banco de datos**:
+
+-   Valores perdidos: sí (en casi todas las variables)
+-   Número de registros: 527
+-   Número de variables: 38
+
+**Variables contenidas**:
+
+-   **Q-E**: caudal de entrada a la planta
+-   **ZN-E**: zinc de entrada a la planta
+-   **PH-E**: pH de entrada a la planta
+-   **DBO-E**: demanda biológica de oxígeno de entrada a la planta
+-   **DQO-E**: demanda química de oxígeno de entrada a la planta
+-   **SS-E**: sólidos en suspensión de entrada a la planta
+-   **SSV-E**: entrada de sólidos volátiles en suspensión a la planta
+-   **SED-E**: entrada de sedimentos a la planta
+-   **COND-E**: entrada de conductividad a la planta
+-   **PH-P**: entrada de pH al decantador primario
+-   **DBO-P**: entrada de demanda biológica de oxígeno al decantador primario
+-   **SS- P**: entrada de sólidos en suspensión al decantador primario
+-   **SSV-P**: entrada de sólidos volátiles en suspensión al decantador primario
+-   **SED-P**: entrada de sedimentos al decantador primario
+-   **COND-P**: entrada de conductividad al decantador primario
+-   **PH-D**: entrada de pH al decantador secundario
+-   **DBO-D**: entrada de demanda biológica de oxígeno al decantador secundario
+-   **DQO-D**: entrada de demanda química de oxígeno al decantador secundario
+-   **SS-D**: entrada de sólidos en suspensión al decantador secundario
+-   **SSV-D**: entrada de sólidos volátiles en suspensión al decantador secundario
+-   **SED-D**: entrada de sedimentos al decantador secundario
+-   **COND-D**: entrada de conductividad al decantador secundario
+-   **PH-S**: salida de pH
+-   **DBO-S**: salida de demanda biológica de oxígeno
+-   **DQO-S**: salida de demanda química de oxígeno
+-   **SS-S**: salida de sólidos en suspensión
+-   **SSV-S**: salida de sólidos volátiles en suspensión)
+-   **SED-S**: salida de sedimentos
+-   **COND-S**: salida de conductividad
+-   **RD-DBO-P**: entrada de rendimiento Demanda biológica de oxígeno en el decantador primario
+-   **RD-SS-P**: entrada de rendimiento de sólidos en suspensión en el decantador primario
+-   **RD- SED-P**: rendimiento de entrada de sedimentos al decantador primario
+-   **RD-DBO-S**: rendimiento de entrada de demanda biológica de oxígeno al decantador secundario
+-   **RD-DQO-S**: rendimiento de entrada de demanda química de oxígeno al decantador secundario
+-   **RD-DBO-G**: rendimiento global de entrada de demanda biológica de oxígeno
+-   **RD-DQO-G**: rendimiento global de entrada de demanda química de oxígeno
+-   **RD-SS-G**: rendimiento global de entrada de sólidos en suspensión
+-   **RD-SED-G**: rendimiento global de entrada de sedimentos
+
+**Referencias bibliográficas**:
+
+-   J. De Gracia. "Avaluacio de tecniques de classificacio per a la gestio de Bioprocessos: Aplicacio a un reactor de fangs activats'' Master Thesis. Dept. de Quimica. Unitat d'Enginyeria Quimica. Universitat Autonoma de Barcelona. Bellaterra (Barcelona). 1993.
+
+-   J. Bejar, U. Cortés and M. Poch. "LINNEO+: A Classification Methodology for Ill-structured Domains''. Research report RT-93-10-R. Dept. Llenguatges i Sistemes Informatics. Barcelona. 1993.
+
+-   Ll. Belanche, U. Cortes and M. Sánchez. "A knowledge-based system for the diagnosis of waste-water treatment plant''. Proceedings of the 5th international conference of industrial and engineering applications of AI and Expert Systems IEA/AIE-92. Ed Springer-Verlag. Paderborn, Germany, June 92.
+
+```{r}
+#| label: watertre-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/water-treatment.csv"
+watertre = read_csv(url)
+
+# Eliminamos la variable de registro
+watertre = watertre[,-1]
+write_rds(watertre, "watertre.rds")
+```
+
+### Wine recognition {#sec-winerecognition}
+
+En este banco de datos se recoge el resultado de un análisis químico de vinos cultivados en la misma región de Italia pero procedentes de tres cultivos distintos. El análisis determinó las cantidades de 13 características que se encuentran en cada una de las muestras de vinos. El objetivo que perseguimos es clasificar cada muestra en una de estas tres clases de vino (`Class label`) en función de sus características de tipo numérico.
+
+**Características del banco de datos**:
+
+-   Target: `Class label`
+-   Valores perdidos: no
+-   Número de registros: 178
+-   Número de variables: 14
+
+**Variables contenidas**:
+
+-   **Class label**: etiqueta que indica el tipo de vino (1, 2 o 3)
+-   **Alcohol**: alcohol
+-   **Malic acid**: ácido málico
+-   **Ash**: ceniza
+-   **Alcalinity of ash**: alcalinidad de la ceniza
+-   **Magnesium**: magnesio
+-   **Total phenols**: fenoles totales
+-   **Flavanoids**: flavonoides
+-   **Nonflavanoid phenols**: fenoles no flavonoides
+-   **Proanthocyanins**: proantocianinas
+-   **Color intensity**: intensidad de color
+-   **Hue**: matiz
+-   **OD280/OD315 of diluted wines**: OD280/OD315 de vinos diluidos
+-   **Proline**: prolina
+
+**Referencias bibliográficas**:
+
+-   Kaggle: [enlace](https://www.kaggle.com/datasets/amirhosseinzinati/wine-recognition-data)
+
+```{r}
+#| label: winerecognition-001
+#| message: false
+#| results: false
+#| warning: false
+#| eval: false
+
+url = "https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/Wine.csv"
+winerecognition = read_csv(url)
+write_rds(winerecognition, "winerecognition.rds")
+```

@@ -1,0 +1,72 @@
+project:
+  type: book
+
+book:
+  title: "MachineLearning"
+  author: IA4legos UMH
+  cover-image: IA4LEGOS.png
+  date: "7/25/2023"
+  chapters:
+    - index.qmd
+    
+    - part: 01_IntroCourse.qmd
+      chapters:
+        - 10_introAD.qmd
+        - 20_introAA.qmd
+        - 30_RandRstudio.qmd
+        - 40_DataBases.qmd
+    - part: 02_FirstStepsAA.qmd
+      chapters:
+        - 50_AED.qmd
+    - part: 03_SupervisedAA.qmd
+      chapters: 
+        - 60_RegressionModels.qmd
+        - 70_LogisticModels.qmd
+        - 80_SurvivalModels.qmd
+        - 90_BayesianClassif.qmd
+        - 100_kNNmodels.qmd
+        - 110_SVMmodels.qmd
+        - 120_DTmodels.qmd
+        - 130_Ensemblemodels.qmd
+        - 140_Boostingmodels.qmd
+    - part: 04_NonSupervisedAA.qmd
+      chapters: 
+        - 150_Discriminantmodels.qmd
+        - 160_PrinCompmodels.qmd
+        - 170_MDSmodels.qmd
+        - 180_Clustermodels.qmd
+        
+    - references.qmd
+
+  page-navigation: true
+  sidebar:
+    style: "docked"
+    search: true
+  page-footer: 
+    left: "Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche"
+    background: light
+
+
+bibliography: references.bib
+
+highlight-style: pygments
+
+format:
+  html:
+    theme: materia
+    fontsize: 1em
+    linestretch: 1.6
+    number-depth: 4
+    code-folf: false
+    code-line-numbers: true
+    code-block-bg: "#D6EAF8"
+    code-block-border-left: "#2C3E50"    
+    toc: true
+    toc-depth: 4
+    number-sections: true
+  pdf:
+    documentclass: scrreprt
+    code-line-numbers: true
+
+editor: visual
+

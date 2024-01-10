@@ -1,0 +1,899 @@
+# Modelos Boosting {#sec-140}
+
+El *boosting* es una técnica de modelado de conjunto que intenta construir un *strong learner* a partir de un número de *weak learner* secuenciales, todos basados en el mismo algoritmo de predicción o clasificación. El proceso de construcción del *strong learner* comienza fijando un modelo inicial sobre los datos de entrenamiento y obteniendo los errores de dicho modelo (errores de predicción o clasificación). A continuación, se construye un segundo modelo que intenta corregir los errores presentes en el primer modelo mediante la asignación de pesos a todos los datos de entrenamiento en función del error cometido en la primera etapa. Este procedimiento continúa y se añaden modelos hasta que se predice correctamente todo el conjunto de datos de entrenamiento o se añade el máximo número de modelos. Finalmente se combinan los resultados de los diferentes modelos secuenciales para obtener el modelo final. Los métodos de *boosting* más empleados son ***AdaBoost***, ***Gradient Boosting***, ***XGBoost*** y ***LightGBM***. Casi todos ellos toman como *weak learner* basado en árboles de decisión, pero en teoría se pueden utilizar con otro tipo de algoritmos de aprendizaje automático. A continuación podemos ver una imagen del proceso secuencial de construcción para un problema de clasificación:
+
+![](https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/boosting-1.png){fig-align="center" width="550" height="400"}
+
+Antes de pasar a describir los diferentes modelos debemos entender el algoritmo del descenso del gradiente que nos permite construir modelos secuenciales de forma más o menos automática. Las diferentes versiones de este algoritmo nos proporciona los diferentes modelos de boosting que estudiaremos.
+
+## Descenso del gradiente {#sec-140.1}
+
+El término ***boosting*** proviene del principal algoritmo que se utiliza como base para el ajuste de los diferentes modelos secuenciales que conforman este tipo de solución. Dicho algoritmo es el conocido como **algoritmo de descenso del gradiente** (*gradient descent algorithm*) y es muy utilizado en los algoritmos de optimización usados para minimizar funciones de coste o pérdida. Su aplicación se encuentra muy extendida en diferentes algoritmos de aprendizaje automático.
+
+Dada una función de pérdida $f$ que depende del parámetro $\theta$ , y fijada una tasa de aprendizaje $\lambda$, el algoritmo del descenso del gradiente se estructura de la forma siguiente:
+
+1.  Fijar un valor inicial $\theta_0$ para el parámetro de interés.
+
+2.  Obtener la derivada parcial de la función con respecto a $\theta$, y evaluarla en $\theta_0$ (gradiente descendiente):
+
+$$\bigtriangledown f_{\theta_0} = \left[\frac{\partial f}{\partial \theta} \right ]_{\theta = \theta_0}$$
+
+3.  Calcular un nuevo valor del parámetro mediante el "descenso" del valor anterior a partir del gradiente obtenido y la tasa de aprendizaje:
+
+$$\theta_1 = \theta_0 - \lambda *\bigtriangledown f_{\theta_0}$$
+
+4.  Comprobar si el cambio en la actualización del parámetro es inferior a un fijado previamente (llamada criterio de parada), de forma que si es afirmativo el algoritmo se detiene, y en caso contrario se actualiza el gradiente y se pasa a un nuevo valor de $\theta$.
+
+Este algoritmo se puede generalizar a situaciones más generales con múltiples parámetros. Sin embargo, la mayor dificultad estriba en que no tenemos asegurado alcanzar el mínimo absoluto de la función $f$, ya que cuando el algoritmo encuentra un mínimo relativo resulta imposible salir de dicho punto.
+
+Por su modo de implementación, el descenso del gradiente puede realizarse de tres modos diferentes para la función de pérdida establecida en cada uno de los algoritmos de aprendizaje automático:
+
+-   **Descenso de gradiente por lotes**. Este es un tipo de descenso de gradiente que procesa todas las muestras de entrenamiento en cada iteración del descenso de gradiente. Si el número de muestras de entrenamiento es grande, el descenso de gradiente por lotes es computacionalmente muy caro.
+
+-   **Descenso de gradiente estocástico**. Este es un tipo de descenso de gradiente que procesa una muestra de entrenamiento por iteración. Por lo tanto, los parámetros se actualizan incluso después de cada iteración. Por lo tanto, es bastante más rápido que el descenso de gradiente por lotes. Pero de nuevo, cuando el número de muestras de entrenamiento es grande, incluso entonces se procesa sólo una muestra que puede ser una sobrecarga adicional para el sistema ya que el número de iteraciones será bastante grande.
+
+-   **Descenso de gradiente en mini lotes**. Este es un tipo de descenso de gradiente que funciona más rápido que el descenso de gradiente por lotes y el descenso de gradiente estocástico. Aquí se procesan $b$ muestras por iteración donde $b$ es inferior al tamaño de la muestra de entrenamiento. Así, aunque el número de muestras de entrenamiento sea grande, se procesa en lotes de tamaño $b$ de una sola vez. Por lo tanto, funciona para los ejemplos de entrenamiento más grandes y también con un menor número de iteraciones.
+
+## Algorirmos Boosting {#sec-140.2}
+
+A continuación se muestran los algoritmos principales que hacen uso del descenso de gradiente para los modelos de conjunto. Casi todos ellos utilizan como modelo base los árboles de decisión. Como en el caso de los algoritmos de *bagging* mostraremos los aspectos teóricos de cada uno de ellos aplicados a un problema de clasificación, aunque se pueden generalizar a los problemas de regresión de forma inmediata. Para finalizar con cada algoritmo se presenta la función en mlr3 que nos permite el ajuste de dicho modelo.
+
+### AdaBoost {#sec-140.2.1}
+
+Fue el primer algoritmo en hacer uso del *boosting* en los algoritmos de aprendizaje automático. Si estamos interesados en un problema de clasificación con dos grupos posibles necesitamos como punto de partida:
+
+1.  Un *weak learner* que sea capaz de predecir la variable respuesta con un porcentaje de acierto ligeramente superior a lo esperado por azar.
+
+2.  Codificar las dos clases de la variable respuesta como +1 y -1.
+
+3.  Un peso inicial e igual para todas las observaciones que forman el *set* de entrenamiento.
+
+Una vez que estos tres puntos se han establecido, se inicia un proceso iterativo. En la primera iteración, se ajusta el *weak learner* empleando los datos de entrenamiento y los pesos iniciales (todos iguales). Con el *weak learner* ajustado y almacenado, se predicen las observaciones de entrenamiento y se identifican aquellas bien y mal clasificadas. Con esta información:
+
+-   Se actualizan los pesos de las observaciones, disminuyendo el de las que están bien clasificadas y aumentando el de las mal clasificadas.
+
+-   Se asigna un peso total al *weak learner*, proporcional al total de aciertos. Cuantos más aciertos consiga el *weak learner*, mayor su influencia en el conjunto del *ensemble*.
+
+En la siguiente iteración, se llama de nuevo al *weak learner* y se vuelve a ajustar, esta vez, empleando los pesos actualizados en la iteración anterior. El nuevo *weak learner* se almacena, obteniendo así un nuevo modelo para el conjunto. Este proceso se repite $M$ veces, generando un total de $M$ *weak learners*. Para clasificar nuevas observaciones, se obtiene la predicción de cada uno de los *weak learners* que forman el conjunto y se agregan sus resultados, ponderando el peso de cada uno acorde al peso que se le ha asignado en el ajuste. El objetivo detrás de esta estrategia es que cada nuevo *weak learner* se centra en predecir correctamente las observaciones que los anteriores no han sido capaces. A continuación se muestra la estructura del algoritmo.
+
+Consideramos $y$ la variable respuesta, $X$ el conjunto de variables predictoras, $N$ número de muestras de entrenamiento, $M$ número de iteraciones de aprendizaje, $G_m$ *weak learner* en la iteración $m$, $w_i$ peso de la observación $i$, y $\alpha_m$ el peso del *weak learner* $m$, de forma que el algoritmo viene dado por:
+
+1.  Inicializamos los pesos de las observaciones
+
+$$w_i = \frac{1}{N}, \quad i=1,...,N$$
+
+2.  Para $m=1$ hasta $M$:
+
+-   Ajustar el *weak learner* $G_m$ utilizando las muestras de entrenamiento y los pesos $w_i$, para obtener la predicción $\hat{y}_i$ de cada $y_i$
+
+-   Calcular el error del *weak learner* como:
+
+$$err_m = \frac{\sum_{i=1}^N w_i I(y_i \neq \hat{y}_i)}{\sum_{i=1}^N w_i}$$
+
+-   Calcular el peso asignado al *weak learner* $G_m$:
+
+$$\alpha_m = log\left(\frac{1-err_m}{err_m}\right)$$
+
+-   Actualizar los pesos de las observaciones:
+
+$$w_i = w_i exp[\alpha_m I(y_i \neq \hat{y}_i)], \quad i=1,...,N$$
+
+3.  Construcción del *strong learner* agregando todos los *weak learner* obtenidos en el proceso iterativo ponderándolos por su peso:
+
+$$G(x) = sign\left[\sum_{m=1}^M \alpha_m G_m(X)\right]$$
+
+### Gradient Boosting {#sec-140.2.2}
+
+El *gradient boosting* o refuerzo del gradiente es uno de los algoritmos de aprendizaje automático más populares. Es lo suficientemente potente como para encontrar cualquier relación no lineal entre el objetivo del modelo y las variables predictoras, y tiene una gran facilidad de uso ya que nos permite trabajar con valores perdidos, valores atípicos y valores categóricos de alta cardinalidad sin ningún tratamiento especial. De forma habitual este tipo de algoritmos toman como *weak learner* los árboles de decisión lo que provoca que muchas veces este algoritmo se conoce como ***gradient boosting tree***. Se basa en un proceso de boosting donde la actualización en cada iteración se realiza mediante el algoritmo del descenso del gradiente.
+
+De forma sencilla el *gradient boosting* ajusta un primer *weak learner* $f_1$ con el que se predice la variable respuesta $y$, obteniéndose los errores $y−f_1(x)$. A continuación, se ajusta un nuevo modelo $𝑓_2$, que intenta predecir los residuos del modelo anterior, en otras palabras, trata de corregir los errores que ha hecho el modelo $𝑓_1$:
+
+$$f_1(x) \sim y,\qquad f_2(x) \sim y-f_1(x)$$
+
+En la siguiente iteración, se calculan los residuos de los dos modelos de forma conjunta $𝑦−𝑓_1(𝑥)−𝑓_2(𝑥)$, los errores cometidos por $𝑓_1$ y que $𝑓_2$ no ha sido capaz de corregir, y se ajusta un tercer modelo $𝑓_3$ para tratar de corregirlos:
+
+$$f_3(x) \sim y-f_1(x)-f_2(x)$$
+
+Este proceso se repite $M$ veces, de forma que cada nuevo modelo minimiza los errores del anterior, y construimos el strong learner como:
+
+$$y \sim f_1(x) + f_2(x) + ... + f_M(x)$$
+
+Dado que el objetivo de *Gradient Boosting* es ir minimizando los residuos iteración a iteración, es susceptible de sobreajuste. Una forma de evitar este problema es emplear la tasa de aprendizaje ($\lambda$) sobre cada *weak learner* en el proceso de *boosting*, de forma que el predictor final viene dado por:
+
+$$F(x) = \lambda f_1(x) + \lambda f_2(x) + ... + \lambda f_M(x)$$ \### Gradient Boosting en mlr3 {#sec-140.2.4}
+
+### XGBoost {#sec-140.2.3}
+
+El algoritmo más famoso que utiliza como base el *gradient boosting* es el *extreme gradient boosting* (*XGBosst*) que estudiamos a continuación. Todos los aspectos técnicos de este algoritmo se pueden consultar [aquí](https://xgboost.readthedocs.io/en/stable/tutorials/model.html).
+
+Antes de comentar las diferencias existentes entre *gradient boosting* y *extreme gradient boosting* veamos cuales son su puntos en común:
+
+-   Algoritmos basados en árboles: tanto *XGBoost* como *Gradient Boosting* utilizan árboles de decisión como estimadores base.
+
+-   Objetivo de predicción: los árboles se construyen utilizando los residuos, no las etiquetas de clase reales. Por lo tanto, a pesar de que nos centramos en problemas de clasificación, los estimadores base de estos algoritmos son árboles de regresión y no árboles de clasificación. Esto se debe a que los residuos son continuos y no discretos. Al mismo tiempo, sin embargo, algunas de las fórmulas que se presentan a continuación son únicas para la clasificación, así que no podemos asumir su aplicación exactamente igual a los problemas de regresión.
+
+-   Profundidad del árbol: ambos algoritmos permiten controlar el tamaño máximo de los árboles para minimizar el riesgo de sobreajuste de los datos.
+
+-   Métodos de conjunto: similares a *Random Forest* o *AdaBoost*, estos algoritmos construyen muchos árboles en el proceso. Al final, la predicción final se basa en todos los árboles.
+
+-   Tasa de aprendizaje: el valor de cada árbol se escala por la tasa de aprendizaje. Esto permite que el algoritmo tenga una mejora más gradual y constante en cada paso.
+
+A continuación se muestra una imagen resumen del funcionamiento de *XGBoost*:
+
+![](https://raw.githubusercontent.com/ia4legos/MachineLearning/main/images/XGBoost.png){fig-align="center" width="550" height="400"} Las diferencias entre ambos algoritmos se basan en la construcción de los diferentes árboles de decisión secuenciales.
+
+*Gradient Boosting* utiliza un método estándar para construir árboles de regresión, en el que se utiliza una métrica típica como el MSE (error cuadrático medio) u otra similar para determinar la mejor división del árbol. El algoritmo calcula el MSE para cada una de las posibles divisiones de nodos y luego elige la que tenga el menor MSE como la que se utilizará en el árbol.
+
+Por el contrario, *XGBoost* utiliza su propio método de construcción de árboles en el que la puntuación de similitud y la ganancia determinan las mejores divisiones de nodos. La puntuación de similitud o *similarity score*(SS) se define como:
+
+$$SS = \frac{\left(\sum_{i=1}^n r_i \right)^2}{\sum_{i=1}^n  \left[pp_i(1-pp_i)\right] + \lambda}$$
+
+donde:
+
+-   $r_i$ son los residuos o diferencia entre el valor observado actual y el valor predicho.
+
+-   $pp_i$ es la probabilidad previa o probabilidad de un evento calculada en un paso anterior. Se supone que la probabilidad inicial es de 0.5 para cada observación, que se utiliza para construir el primer árbol. Para cualquier árbol posterior, la probabilidad anterior se recalcula basándose en la predicción inicial y en las predicciones de todos los árboles anteriores.
+
+-   $\lambda$ es un parámetro de regularización. Su aumento reduce desproporcionadamente la influencia de las hojas pequeñas (las que tienen pocas observaciones) mientras que sólo tiene un impacto menor en las hojas más grandes (las que tienen muchas observaciones).
+
+Una vez que tenemos la puntuación de similitud para cada hoja, calculamos la ganancia (*gain*) utilizando la siguiente fórmula:
+
+$$Gain = SS_{i} + SS_{d} - SS_{r},$$
+
+donde $SS_i$, $SS_d$, y $SS_r$ son las puntuaciones de similitud de la división de la rama izquierda, de la división de la rama derecha, y el nodo raíz del que parten ambas ramas respectivamente. La división del nodo con la mayor ganancia se elige como la mejor división del árbol.
+
+La introducción de $\lambda$ en el proceso de evaluación de SS es la principal diferencia con *gradient boosting* ya que en este último el SS se calcula sin añadir ese término de regularización.
+
+Además de utilizar su propia manera de construir y podar árboles, *XGBoost* también tiene varias optimizaciones incorporadas para hacer el entrenamiento más rápido cuando se trabaja con conjuntos de datos enormes. He aquí algunas de las principales:
+
+-   Algoritmo *Greedy* aproximado - utiliza cuantiles ponderados cuando busca la mejor división de nodos en lugar de evaluar cada división posible.
+
+-   Aprendizaje paralelo: puede dividir los datos en conjuntos de datos más pequeños para ejecutar procesos en paralelo.
+
+-   *Sparsity-Aware Split Finding* - cuando tiene algunos datos perdidos, calcula *Gain* poniendo las observaciones con valores perdidos en la hoja izquierda. A continuación, hace lo mismo colocándolas en la hoja de la derecha y elige el escenario que produce una mayor ganancia.
+
+-   Acceso consciente del efectivo - *XGBoost* utiliza la memoria caché de la CPU para almacenar los gradientes y así poder calcular las puntuaciones de similitud más rápidamente.
+
+### LightGBM {#sec-140.2.4}
+
+*LightGBM*, abreviatura de ***light gradient-boosting machine***, es un algoritmo que toma como base el *gradient boosting*, y que fue desarrollado originalmente por Microsoft. Utiliza como modelo de partida los árboles de decisión y se utiliza para la clasificación y otras tareas de aprendizaje automático cuando el conjunto de la muestra de entrenamiento es muy grande. Sus puntos fuertes son la mejora en el rendimiento y la escalabilidad. *LightGBM* amplía el algoritmo de *gradient boosting* añadiendo un tipo de selección automática de predictoras centrándose en la evolución del algoritmo hacia las ramas de árbol de decisión con mayores gradientes. Esto puede dar lugar a una gran aceleración del entrenamiento y a una mejora del rendimiento predictivo.
+
+*LightGMB* posee muchas de las ventajas de *XGBoost* como la optimización dispersa, el entrenamiento paralelo, las funciones de pérdida múltiples, la regularización, el *bagging* y la detención temprana. Una de las principales diferencias entre ambos algoritmos es la construcción de los árboles. *LightGBM* no construye un árbol por niveles, fila por fila, como hacen la mayoría de las implementaciones, sino que lo hace por hojas. Además, *LightGBM* no utiliza el algoritmo de aprendizaje de árbol de decisión basado en la ordenación, que busca el mejor punto de división en valores de características ordenados, como hacen *XGBoost* u otras implementaciones. En su lugar, *LightGBM* implementa un algoritmo de aprendizaje de árbol de decisión basado en un histograma altamente optimizado, que ofrece grandes ventajas tanto en eficiencia como en consumo de memoria. El algoritmo *LightGBM* utiliza dos técnicas novedosas llamadas *Gradient-Based One-Side Sampling* (GOSS) y *Exclusive Feature Bundling* (EFB) que permiten que el algoritmo se ejecute más rápidamente manteniendo un alto nivel de precisión.
+
+El muestreo unilateral basado en el gradiente, o GOSS por sus siglas en inglés, es una modificación del método *gradient boosting* que centra la atención en aquellas muestras de entrenamiento que dan lugar a un gradiente mayor, lo que a su vez acelera el aprendizaje y reduce la complejidad computacional del método.
+
+La agrupación de rasgos exclusivos, o EFB por sus siglas en inglés, es un método para agrupar rasgos dispersos (en su mayoría nulos) mutuamente excluyentes, como los niveles de variables categóricas que han sido codificadas mediante *hot-encoding*. Como tal, es un tipo de selección automática de características.
+
+Juntos, estos dos modificaciones dentro del algoritmo de gradiente *boosting* pueden acelerar el tiempo de entrenamiento del algoritmo hasta 20 veces.
+
+## Algortimos Boosting en mlr3 {#sec-140.3}
+
+A continuación se muestran las funciones principales para la obtención de los algoritmos de boosting presentados.
+
+### AdaBoost {#sec-140.3.1}
+
+Por el momento este algoritmo solo se encuentra disponible para tareas de clasificación mediante la función `classif.AdaBoostM1` del paquete `mlr3extralearners`. Para su uso es necesario tener instalada la librería `RWeka`. Los hiperparámetros más relevantes para este modelo son:
+
+-   `P`: Porcentaje de peso masa en el que basar el entrenamiento. Por defecto toma el valor `100`.
+-   `Q`: Si se usa remuestreo para el boosting. Por defecto el valor es `False`
+-   `S`: Semilla aleatoria. Por defecto toma el valor `1`.
+-   `I`: Número de iteraciones. Por defecto se establece el valor `10`.
+-   `W`: Tipo de weak learner utiliza como modelo de base. Por defecto se usan árboles de decisión.
+
+### Gradient Boosting {#sec-140.3.2}
+
+Los algoritmos principales para gradient boosting en mlr3 son `classif.gbm` para las tareas de clasificación, y `regr.gbm` para tareas de regresión, que se encuentran disponibles en el paquete `mlr3extralearners`. Para poder utilizarlos es necesario tener instalada la librería `gbm`.
+
+Los parámetros más relevantes para ambas funciones son:
+
+-   `distribution`: cadena de caracteres que especifica el nombre de la distribución a utilizar o una lista con un nombre de componente que especifica la distribución y cualquier parámetro adicional necesario. Para tareas de clasificación las opciones disponibles son `bernoulli` (target con respuestas 0-1), `adaboost` (utiliza la función de pérdida exponencial de Adaboost para variables 0-1), `huberized` (función de pérdida de huber para variables 0-1), `multinomial` (para respuestas tipo factor.). Por defecto se utiliza el valor `bernouilli`. Para tareas de regresión las opciones disponibles son `gaussian` (donde se utiliza la función de pérdida cuadrática), `laplace` (función de pérdida del valor absoluto), `poisson` (para respuestas que son conteos), y `tdist` (para usar la función de pérdida basada en la distribución t). la opción por defecto es `gaussian`.
+-   `n.tress`: número de árboles de decisión utilizados como weak learner. Por defecto es valor es `100`.
+-   `interaction.depth`: Número entero que especifica la profundidad máxima de cada árbol. El valor por defecto es `1`.
+-   `n.minobsinnode`: Número mínimo de observaciones en los nodos terminales en los árboles de decisión. El valor por defecto es `10`.
+-   `shrinkage`: Tasa de aprendizaje. Por defecto toma el valor `0.001`.
+-   `bag.fraction`: fracción de las observaciones del conjunto de entrenamiento seleccionadas aleatoriamente para proponer el siguiente árbol de la expansión. Valor por defecto igual a 0.5
+-   `train.fraction`: Las primeras observaciones de `train.fraction*nrows(data)` se utilizan para ajustar el gbm y el resto se utiliza para calcular estimaciones fuera de muestra de la función de pérdida. El valor por defecto es `1`.
+-   `cv.folds`: Número de validaciones cruzadas consideradas. Por defecto se toma el valor `0`.
+-   `n.cores`: Número de procesadores utilizados. Por defecto se toma el valor `1`.
+
+### XGBoost {#sec-140.3.3}
+
+Los algoritmos principales para XGBoost (extrem gradient boosting) en mlr3 son `classif.xgboost` para las tareas de clasificación, y `regr.xgboost` para tareas de regresión, que se encuentran disponibles en el paquete `mlr3extralearners`. Para poder utilizarlos es necesario tener instalada la librería `xgboost`. La mayor dificultad con estas dos funciones es la gran cantidad de hiperparámetros disponibles para su ajuste. Los más interesantes son:
+
+-   `eta`: que controla la tasa de aprendizaje, y que por defecto es igual a `0.3`.
+-   `gamma`: reducción mínima de pérdida requerida para realizar una partición adicional en un nodo de hoja del árbol. Cuanto mayor, más conservador será el algoritmo. El valor por defecto es 0.
+-   `lambda`: parámetro de regularización. El valor por defecto es `1`.
+
+### LightGBM {#sec-140.3.4}
+
+Los algoritmos principales para LightGBM en mlr3 son `classif.lightgbm` para las tareas de clasificación, y `regr.lightgbm` para tareas de regresión, que se encuentran disponibles en el paquete `mlr3extralearners`. Para poder utilizarlos es necesario tener instalada la librería `lightgbm`. Este algoritmo tiene una cantidad inmensa de hiperparámetros que nos describiremos. Se puede consultar este [enlace](https://mlr3extralearners.mlr-org.com/reference/mlr_learners_classif.lightgbm.html). Tal vez uno de los más relevantes es `early_stopping` que os permite indicar si debemos realizar parada temprana para evitar sobre ajuste.
+
+::: {.callout-note appearance="simple" title="Clasificación binaria"}
+**Dada la gran cantidad de hiperparámetros que involucran la mayoría de estos modelos en las aplicaciones que presentamos a continuación utilizaremos solo las opciones por defecto, sin búsqueda del óptimo.**
+:::
+
+## Aplicaciones {#sec-140.4}
+
+En este apartado vamos a utilizar los bancos de datos del tema anterior para ejemplificar el uso de los algoritmos de boosting. Antes de presentar los bancos de datos de nuevo, cargamos todas las librerías necesarias así como las necesarias para los diferentes algoritmos de boosting.
+
+```{r}
+#| label: boosting-001
+#| message: false
+#| results: false
+#| warning: false
+
+# Paquetes anteriores
+library(tidyverse)
+library(sjPlot)
+library(knitr) # para formatos de tablas
+library(skimr)
+library(DataExplorer)
+library(GGally)
+library(gridExtra)
+library(ggpubr)
+library(cvms)
+library(kknn)
+library(rpart.plot)
+theme_set(theme_sjplot2())
+
+# Paquetes AA
+library(mlr3verse)
+library(mlr3tuning)
+library(mlr3tuningspaces)
+library(gbm)
+library(RWeka)
+library(xgboost)
+library(lightgbm)
+```
+
+### Bancos de datos {#sec-140.4.1}
+
+Para ejemplificar el uso de los modelos de bagging básicos vamos a utilizar tres bancos de datos: `Stroke`, `Water Potability`, y `Housing in California` que se pueden consultar en el tema [-@sec-40]. De los tres con el único con el que no hemos trabajado hasta ahora es `Water Potability`. A continuación se muestra el código necesario para la carga de cada uno de esos bancos de datos, y la creación de la tarea correspondiente. Los dos primeros corresponden a problemas de clasificación mientras que el último se corresponde con un problema de regresión.
+
+#### Stroke
+
+El código para este banco de datos aparece a continuación. Para poder ejecutar todos los modelos debemos convertir la respuesta en variable 1-0.
+
+```{r}
+#| label: boosting-002
+#| warning: false
+#| message: false
+
+# Leemos datos
+stroke = read_rds("stroke.rds")
+# Eliminamos la variable id
+stroke = stroke %>% dplyr::select(-id)
+# creamos la tarea
+tsk_stroke = as_task_classif(stroke, target = "stroke", positive ="Yes")
+# Generamos variable de estrato
+tsk_stroke$col_roles$stratum <- "stroke"
+```
+
+#### Water Potability
+
+El código para crear la tares es:
+
+```{r}
+#| label: boosting-003
+#| warning: false
+#| message: false
+
+# Leemos datos
+waterpot = read_rds("waterpot.rds")
+# creamos la tarea
+tsk_water = as_task_classif(waterpot, target = "Potability", positive="1")
+# Generamos variable de estrato
+tsk_water$col_roles$stratum <- "Potability"
+```
+
+#### Housing in California
+
+Cargamos los datos correspondientes:
+
+```{r}
+#| label: boosting-004
+#| warning: false
+#| message: false
+
+# Carga de datos
+housingCA = read_rds("housingCA.rds")
+# Creación de task
+tsk_housing = as_task_regr(housingCA, target = "median_house_value")
+```
+
+### Modelos {#sec-140.4.2}
+
+Puesto que los modelos a considerar quedan todos englobados dentro de los algoritmos de boosting, vamos a diseñar un análisis conjunto sobre todos ellos haciendo uso de las funciones `benchmark()` y `benchmark_grid()`. Para cada banco de datos estableceos los diferentes modelos de aprendizaje y seleccionamos el que mejor funciona en cada caso. Para ello hemos de tener en cuenta que no todos ellos se pueden utilizar. Por ejemplo xgboost no permite predictoras de tipo factor con lo que una forma de abordar esa situación es codificando los factores para tener solo variables numéricas. En nuestro caso vamos a considerar los algoritmos de `AdaBoost`, `XGBoost`, y `lightGBM` para problemas de clasificación, y `GBM`, `XGBoost`, y `lightGBM` para problemas de regresión.
+
+#### Stroke
+
+Al tratarse de un problema de clasificación podemos considerar los cuatro algoritmos presentados. A continuación se detalla el código para poder implantarlos. En cada uno de ellos se consideran las tareas de preprocesamiento correspondientes. En este caso consideramos todas las tareas para poder comparar con los resultado que proporcionarían otro tipo de modelos. En este caso el modelo `classif.gbm` no se puede ajustar, aunque se muestra el código correspondiente.
+
+```{r}
+#| label: boosting-005
+#| warning: false
+#| message: false
+
+# Preprocesamiento
+pp_stroke =  
+   po("scale", param_vals = list(center = TRUE, scale = TRUE)) %>>%
+   po("imputemedian", affect_columns = selector_type("numeric")) %>>%
+   po("encode", param_vals = list(method = "one-hot"))
+ 
+
+# Modelo de aprendizaje AdaBoost
+# ==============================
+lrn1 = lrn("classif.AdaBoostM1")
+stroke_adaboost = as_learner(pp_stroke %>>% lrn1)
+
+# Modelo de aprendizaje XGBoost
+# =======================================
+lrn2 = lrn("classif.xgboost")
+stroke_xgboost = as_learner(pp_stroke %>>% lrn2)
+
+# Modelo de aprendizaje lightGBM
+# =======================================
+lrn3 = lrn("classif.lightgbm")
+stroke_lightgbm = as_learner(pp_stroke %>>% lrn3)
+```
+
+Definimos el proceso de remuestreo necesario para la combinación de modelos y el proceso de combinación de todos los modelos definidos:
+
+```{r}
+#| label: boosting-006
+#| message: false
+#| warning: false
+#| results: hide
+
+set.seed(321)
+# Remuestreo
+remuestreo = rsmp("cv", folds = 10)
+# Grid
+design = benchmark_grid(tsk_stroke, 
+                        list(stroke_adaboost, stroke_xgboost, stroke_lightgbm), 
+                        remuestreo)
+# Combinación de soluciones
+bmr = benchmark(design)
+```
+
+Podemos ver ahora los resultados obtenidos con cada algoritmo:
+
+```{r}
+#| label: boosting-007
+#| message: false
+#| warning: false
+#| results: hide
+
+autoplot(bmr, measure = msr("classif.bacc"))
+```
+
+Tanto el modelo `xgboost` como `lightgbm` son os que proporcionan mejores resultados del porcentaje de clasificación ponderado. En cualquier caso los resultados no mejoran significativamente los resultados obtenidos hasta ahora para este banco de datos. Vamos a intentar optimizar el modelo `xgboost` utilizando el espacio de búsqueda definido el la librería `mlr3tuningspaces` pero integrándolo manualmente. Para ello utilizamos los valores de búsqueda definidos en https://mlr3tuningspaces.mlr-org.com/reference/mlr_tuning_spaces_default.html.
+
+```{r}
+#| label: boosting-008
+#| message: false
+#| warning: false
+#| results: hide
+
+boost_classif_stroke = lrn("classif.xgboost", 
+                         eta = to_tune(1e-04, 1, logscale = TRUE),
+                         nrounds = to_tune(1,5000),
+                         max_depth = to_tune(1,20),
+                         colsample_bytree = to_tune(0.1,1),
+                         colsample_bylevel = to_tune(0.1,1),
+                         lambda = to_tune(1e-03, 1000, logscale = TRUE),
+                         alpha = to_tune(1e-03, 1000, logscale = TRUE),
+                         subsample = to_tune(0.1, 1)  
+                         )
+gr_stroke =  pp_stroke %>>% boost_classif_stroke
+gr_stroke = GraphLearner$new(gr_stroke)
+
+# Fijamos semilla para reproducibilidad del proceso
+set.seed(123)
+# Definimos instancia de optimización fijando el número de evaluaciones
+instance = tune(
+  tuner = tnr("random_search"),
+  task = tsk_stroke,
+  learner = gr_stroke,
+  resampling = rsmp("cv", folds = 3),
+  measures = msr("classif.bacc"),
+  term_evals = 50
+)
+```
+
+Podemos ver el resultado del proceso de optimización con:
+
+```{r}
+#| label: boosting-009
+#| message: false
+#| warning: false
+
+instance$result$classif.bacc
+```
+
+El porcentaje de clasificación correcta ha alcanzado el 53.85 que es el valor más alto obtenido hasta ahora para este banco de datos. Podemos analizar con más detalle este modelo:
+
+```{r}
+#| label: boosting-010
+#| message: false
+#| warning: false
+
+# Modelo de aprendizaje
+boost_classif_stroke = lrn("classif.xgboost", 
+                         eta = instance$result_x_domain$classif.xgboost.eta,
+                         nrounds = instance$result_x_domain$classif.xgboost.nrounds,
+                         max_depth = instance$result_x_domain$classif.xgboost.max_depth,
+                         colsample_bytree = instance$result_x_domain$classif.xgboost.colsample_bytree,
+                         colsample_bylevel = instance$result_x_domain$classif.xgboost.colsample_bylevel,
+                         lambda = instance$result_x_domain$classif.xgboost.lambda,
+                         alpha = instance$result_x_domain$classif.xgboost.alpha,
+                         subsample = instance$result_x_domain$classif.xgboost.subsample  
+                         )
+gr_stroke =  pp_stroke %>>% boost_classif_stroke
+gr_stroke = GraphLearner$new(gr_stroke)
+
+# División de muestras
+set.seed(432)
+splits = mlr3::partition(tsk_stroke, ratio = 0.8)
+tsk_train_stroke = tsk_stroke$clone()$filter(splits$train)
+tsk_test_stroke  = tsk_stroke$clone()$filter(splits$test)
+
+# Entrenamiento del modelo
+gr_stroke$train(tsk_train_stroke)
+```
+
+Obtenemos ahora las predicciones del modelo y la matriz de confusión
+
+```{r}
+#| label: boosting-011
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento y validación
+pred_train = gr_stroke$predict(tsk_train_stroke)
+pred_test = gr_stroke$predict(tsk_test_stroke)
+# scores de validación
+measures = msr("classif.bacc")
+# Muestra de entrenamiento
+pred_train$score(measures)
+# Muestra de validación
+pred_test$score(measures)
+# matriz de confusión
+cm = confusion_matrix(pred_test$truth, pred_test$response)
+plot_confusion_matrix(cm$`Confusion Matrix`[[1]]) 
+```
+
+El porcentaje de clasificación sobre la muestra de validación es del 53.55%. El resultado de la matriz de confusión es algo superior al de otros modelos propuestos anteriormente. Además, en este caso si clasificamos algunas muestras con `stroke` dado que originalmente provenían de ese grupo.
+
+Para finalizar el estudio de este modelo es necesario estudiar la validez de la solución y valorar la curva de aprendizaje correspondiente:
+
+```{r}
+#| label: boosting-012
+#| message: false
+#| warning: false
+
+# Fijamos semilla
+set.seed(135)
+# Definimos proceso de validación cruzada kfold con k=10
+resamp = rsmp("cv", folds = 10)
+# Remuestreo
+rr = resample(tsk_stroke, gr_stroke, resamp, store_models=TRUE)
+# Análisis de los valores obtenidos con los scores definidos anteriormente
+skim(rr$score(measures))
+```
+
+El valor medio del porcentaje de clasificación correcta ponderada se sitúa en el 53.9% con una desviación típica del 3%. Aunque los resultados son bastante estables el rango de valores abarca modelos con peores porcentajes que los vistos anteriormente. Por último representamos la curva de aprendizaje.
+
+```{r}
+#| label: boosting-013
+#| echo: false
+#| message: false
+#| warning: false
+
+# Función que nos permite obtener los valores asociados a la curva de aprendizaje
+learningcurve = function(task, learner, score, ptr, rpeats)
+{
+  # Parámetros de la función
+  # task: tarea
+  # learner: algoritmo de aprendizaje
+  # score: nombre del score a utilizar
+  # ptr: vector con las proporciones de tamaños de muestra de entrenamiento
+  # rpeats: número de repeticiones para cada proporción de tamaño de muestra de entrenamiento
+  
+  # Definimos los scores para cada conjunto de muestra
+  mtrain = msr(score, predict_sets = "train")
+  mtest = msr(score, predict_sets = "test")
+  # Configuramos el learner para que evalué los scores en la muestra de validación y test
+  learner$predict_sets = c("train", "test")
+  # Incicializamos vector de scores agregados para la muestra de entrenamiento y validación
+  sco_train = c()
+  sco_test = c()
+  for(i in 1:length(ptr))
+  {
+    # estructura de muestreo: 5 repeticiones con porcentaje muestra entrenamiento ptr[i]
+    subsam = rsmp("subsampling", repeats = rpeats, ratio = ptr[i])
+    # ejecución de remuestreo
+    rr = resample(task, learner, subsam)
+    sco_train[i] = rr$aggregate(mtrain)
+    sco_test[i] = rr$aggregate(mtest)
+  }
+  # Matriz de resultados
+  res = data.frame(ptr, sco_train, sco_test)
+  resdf = res %>% pivot_longer(!ptr, names_to = "Sample", values_to = "MSR")
+  return(resdf)
+}
+```
+
+```{r}
+#| label: boosting-014
+#| message: false
+#| warning: false
+
+ptr = seq(0.1, 0.9, 0.1)
+lcurve = learningcurve(tsk_stroke, gr_stroke, "classif.bacc", ptr = ptr, rpeats = 10)
+datos = lcurve[lcurve$Sample=="sco_test",]
+ggplot(datos, aes(ptr, MSR)) + 
+    geom_line() +
+    labs(x ="Proporción tamaño muestra entrenamiento", y = "% Clasificación correcta") +
+    scale_x_continuous(breaks=ptr)
+```
+
+Podemos ver que el mejor valor para el porcentaje de clasificación correcta en la muestra de validación se alcanza para un tamaño de muestra de entrenamiento del 70%.
+
+#### Water Potability
+
+Como en el caso anterior comenzamos definiendo todos los modelos. En este caso todas las predictoras son de tipo numérico.
+
+```{r}
+#| label: boosting-015
+#| warning: false
+#| message: false
+
+# Preprocesado
+pp_water = po("scale", param_vals = list(center = TRUE, scale = TRUE)) %>>%
+  po("imputemedian", affect_columns = selector_type("numeric"))
+# Modelo de aprendizaje AdaBoost
+# ==============================
+lrn1 = lrn("classif.AdaBoostM1")
+water_adaboost = as_learner(pp_water %>>% lrn1)
+
+# Modelo de aprendizaje XGBoost
+# =======================================
+lrn2 = lrn("classif.xgboost")
+water_xgboost = as_learner(pp_water %>>% lrn2)
+
+# Modelo de aprendizaje lightGBM
+# =======================================
+lrn3 = lrn("classif.lightgbm")
+water_lightgbm = as_learner(pp_water %>>% lrn3)
+```
+
+Definimos el proceso de remuestreo necesario para la combinación de modelos y el proceso de combinación de todos los modelos definidos:
+
+```{r}
+#| label: boosting-016
+#| message: false
+#| warning: false
+#| results: hide
+
+set.seed(321)
+# Remuestreo
+remuestreo = rsmp("cv", folds = 10)
+# Grid
+design = benchmark_grid(tsk_water, 
+                        list(water_adaboost, water_xgboost, water_lightgbm), 
+                        remuestreo)
+# Combinación de soluciones
+bmr = benchmark(design)
+```
+
+Podemos ver ahora los resultados obtenidos con cada algoritmo:
+
+```{r}
+#| label: boosting-017
+#| message: false
+#| warning: false
+#| results: hide
+
+autoplot(bmr, measure = msr("classif.bacc"))
+```
+
+Para este conjunto de datos el algoritmo `lightgbm` es claramente mejor que los otros con un porcentaje medio de clasificación ponderada por encima del 60%. Este resultado es mucho mejor que los obtenidos hasta ahora para este conjunto de datos. Analizamos los resultados de este modelo introduciendo el proceso de optimización para la tasa de aprendizaje:
+
+```{r}
+#| label: boosting-018
+#| message: false
+#| warning: false
+#| results: hide
+
+boost_classif_water = lrn("classif.lightgbm", 
+                         learning_rate = to_tune(1e-04, 10, logscale = TRUE)
+                         )
+gr_water =  as_learner(pp_water %>>% boost_classif_water)
+
+# Fijamos semilla para reproducibilidad del proceso
+set.seed(123)
+# Definimos instancia de optimización fijando el número de evaluaciones
+instance = tune(
+  tuner = tnr("random_search"),
+  task = tsk_water,
+  learner = gr_water,
+  resampling = rsmp("cv", folds = 3),
+  measures = msr("classif.bacc"),
+  term_evals = 50
+)
+```
+
+Podemos ver el resultado del proceso de optimización con:
+
+```{r}
+#| label: boosting-019
+#| message: false
+#| warning: false
+
+instance$result$classif.bacc
+```
+
+El porcentaje de clasificación correcta ha alcanzado el 61.405 que es el valor más alto obtenido hasta ahora para este banco de datos. Podemos analizar con más detalle este modelo:
+
+```{r}
+#| label: boosting-020
+#| message: false
+#| warning: false
+
+# Modelo de aprendizaje
+boost_classif_water = lrn("classif.lightgbm", 
+                         learning_rate = instance$result_x_domain$classif.lightgbm.learning_rate
+                         )
+gr_water =  as_learner(pp_stroke %>>% boost_classif_water)
+
+# División de muestras
+set.seed(432)
+splits = mlr3::partition(tsk_water, ratio = 0.8)
+tsk_train_water = tsk_water$clone()$filter(splits$train)
+tsk_test_water  = tsk_water$clone()$filter(splits$test)
+
+# Entrenamiento del modelo
+gr_water$train(tsk_train_water)
+```
+
+Obtenemos ahora las predicciones del modelo y la matriz de confusión
+
+```{r}
+#| label: boosting-021
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento y validación
+pred_train = gr_water$predict(tsk_train_water)
+pred_test = gr_water$predict(tsk_test_water)
+# scores de validación
+measures = msr("classif.bacc")
+# Muestra de entrenamiento
+pred_train$score(measures)
+# Muestra de validación
+pred_test$score(measures)
+# matriz de confusión
+cm = confusion_matrix(pred_test$truth, pred_test$response)
+plot_confusion_matrix(cm$`Confusion Matrix`[[1]]) 
+```
+
+El porcentaje de clasificación sobre la muestra de validación es del 61.35%. El resultado de la matriz de confusión es superior al de otros modelos propuestos anteriormente. En este caso el modelo ya es capaz de detectar muestras como potables, lo que no ocurría con otros modelos. De hecho, el 15.4% de las muestras que eran potables son clasificadas como tales con el modelo propuesto. Sin embargo, aún tenemos un 23.6% de muestras que originalmente eran potables y que nuestro modelo no es capaz de clasificar correctamente.
+
+Estudiamos la validez de la solución y la curva de aprendizaje.
+
+```{r}
+#| label: boosting-022
+#| message: false
+#| warning: false
+
+# Fijamos semilla
+set.seed(135)
+# Definimos proceso de validación cruzada kfold con k=10
+resamp = rsmp("cv", folds = 10)
+# Remuestreo
+rr = resample(tsk_water, gr_water, resamp, store_models=TRUE)
+# Análisis de los valores obtenidos con los scores definidos anteriormente
+skim(rr$score(measures))
+```
+
+El valor medio del porcentaje de clasificación correcta ponderada se sitúa en el 60.8% con una desviación típica del 3%. En este caso el valor mínimo se sitúa en el 55.8% mostrando un mejor comportamiento que el resto de modelos utilizados sobre este banco de datos. Por último representamos la curva de aprendizaje.
+
+```{r}
+#| label: boosting-023
+#| message: false
+#| warning: false
+
+ptr = seq(0.1, 0.9, 0.1)
+lcurve = learningcurve(tsk_water, gr_water, "classif.bacc", ptr = ptr, rpeats = 10)
+datos = lcurve[lcurve$Sample=="sco_test",]
+ggplot(datos, aes(ptr, MSR)) + 
+    geom_line() +
+    labs(x ="Proporción tamaño muestra entrenamiento", y = "% Clasificación correcta") +
+    scale_x_continuous(breaks=ptr)
+```
+
+En este caso el porcentaje de clasificación correcta no deja de aumentar conforme aumenta la muestra de tamaño de entrenamiento. Esto puede significar un problema de sobreajuste ya que cuanto más aumentamos mejor resultado tenemos. Como en el banco de datos anterior podríamos utilizar un porcentaje del 70% o 80%.
+
+#### Housing in California
+
+Veamos ahora el análisis del modelo de regresión. En este caso consideramos los modelos `gbm`, `xgboost`, y `ligthgbm`. Comenzamos definiendo los modelos de aprendizaje.
+
+```{r}
+#| label: boosting-024
+#| warning: false
+#| message: false
+
+# Preprocesado
+pp_housing = 
+   po("scale", param_vals = list(center = TRUE, scale = TRUE)) %>>%
+   po("imputemedian", affect_columns = selector_type("numeric")) %>>%
+   po("encode", param_vals = list(method = "one-hot"))
+
+# Modelo de aprendizaje AdaBoost
+# ==============================
+lrn1 = lrn("regr.gbm")
+housing_gbm = as_learner(pp_housing %>>% lrn1)
+
+# Modelo de aprendizaje XGBoost
+# =======================================
+lrn2 = lrn("regr.xgboost")
+housing_xgboost = as_learner(pp_housing %>>% lrn2)
+
+# Modelo de aprendizaje lightGBM
+# =======================================
+lrn3 = lrn("regr.lightgbm")
+housing_lightgbm = as_learner(pp_housing %>>% lrn3)
+```
+
+Definimos el proceso de remuestreo necesario para la combinación de modelos y el proceso de combinación de todos los modelos definidos:
+
+```{r}
+#| label: boosting-025
+#| message: false
+#| warning: false
+#| results: hide
+
+set.seed(321)
+# Remuestreo
+remuestreo = rsmp("cv", folds = 10)
+# Grid
+design = benchmark_grid(tsk_housing, 
+                        list(housing_gbm, housing_xgboost, housing_lightgbm), 
+                        remuestreo)
+# Combinación de soluciones
+bmr = benchmark(design)
+```
+
+Podemos ver ahora los resultados obtenidos con cada algoritmo, utilizando el score `smape`:
+
+```{r}
+#| label: boosting-026
+#| message: false
+#| warning: false
+#| results: hide
+
+autoplot(bmr, measure = msr("regr.smape"))
+```
+
+El modelo con un menor valor de `smape` es `lightgbm`, seguido muy cerca por `gbm`. De nuevo, analizamos este modelo buscando el óptimo de la tasa de aprendizaje.
+
+```{r}
+#| label: boosting-027
+#| message: false
+#| warning: false
+#| results: hide
+
+boost_regr_housing = lrn("regr.lightgbm", 
+                         learning_rate = to_tune(1e-04, 10, logscale = TRUE)
+                         )
+gr_housing =  as_learner(pp_housing %>>% boost_regr_housing)
+
+# Fijamos semilla para reproducibilidad del proceso
+set.seed(123)
+# Definimos instancia de optimización fijando el número de evaluaciones
+instance = tune(
+  tuner = tnr("random_search"),
+  task = tsk_housing,
+  learner = gr_housing,
+  resampling = rsmp("cv", folds = 3),
+  measures = msr("regr.smape"),
+  term_evals = 50
+)
+```
+
+Podemos ver el resultado del proceso de optimización con:
+
+```{r}
+#| label: boosting-028
+#| message: false
+#| warning: false
+
+instance$result$regr.smape
+```
+
+El valor de `smape` obtenido es el más bajo de todos los modelos propuestos hasta ahora, por lo que vamos a estudiar con algo más de detalle este modelo:
+
+```{r}
+#| label: boosting-029
+#| message: false
+#| warning: false
+
+# Modelo de aprendizaje
+boost_regr_housing = lrn("regr.lightgbm", 
+                         learning_rate = instance$result_x_domain$regr.lightgbm.learning_rate
+                         )
+gr_housing =  as_learner(pp_housing %>>% boost_regr_housing)
+
+# División de muestras
+set.seed(432)
+splits = mlr3::partition(tsk_housing, ratio = 0.8)
+tsk_train_housing = tsk_housing$clone()$filter(splits$train)
+tsk_test_housing  = tsk_housing$clone()$filter(splits$test)
+
+# Entrenamiento del modelo
+gr_housing$train(tsk_train_housing)
+```
+
+Obtenemos ahora las predicciones del modelo y evaluamos los scores sobre la muestra de entrenamiento y validación.
+
+```{r}
+#| label: boosting-030
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento y validación
+pred_train = gr_housing$predict(tsk_train_housing)
+pred_test = gr_housing$predict(tsk_test_housing)
+# scores de validación
+measures = msr("regr.smape")
+# Muestra de entrenamiento
+pred_train$score(measures)
+# Muestra de validación
+pred_test$score(measures)
+```
+
+El resultado sigue siendo bastante bueno para la muestra de validación. Finalizamos con el análisis de validación y la representación de la curva de aprendizaje.
+
+Estudiamos la validez de la solución y la curva de aprendizaje.
+
+```{r}
+#| label: boosting-031
+#| message: false
+#| warning: false
+
+# Fijamos semilla
+set.seed(135)
+# Definimos proceso de validación cruzada kfold con k=10
+resamp = rsmp("cv", folds = 10)
+# Remuestreo
+rr = resample(tsk_housing, gr_housing, resamp, store_models=TRUE)
+# Análisis de los valores obtenidos con los scores definidos anteriormente
+skim(rr$score(measures))
+```
+
+El valor medio del `smape` se sitúa en el 0.157 con una desviación típica del 0.001. El rango de scores es muy estrecho indicando que la solución es muy estable. Por último representamos la curva de aprendizaje.
+
+```{r}
+#| label: boosting-032
+#| message: false
+#| warning: false
+
+ptr = seq(0.1, 0.9, 0.1)
+lcurve = learningcurve(tsk_housing, gr_housing, "regr.smape", ptr = ptr, rpeats = 10)
+datos = lcurve[lcurve$Sample=="sco_test",]
+ggplot(datos, aes(ptr, MSR)) + 
+    geom_line() +
+    labs(x ="Proporción tamaño muestra entrenamiento", y = "sMAPE") +
+    scale_x_continuous(breaks=ptr)
+```
+
+Como ocurría con el banco de datos anterior, el `smape` se reduce cuando incrementa el tamaño de muestra de entrenamiento. Podemos tener algún problema de sobreaprendizaje que deberíamos controlar para evitar resultados sesgados. Un tamaño del 70% parece una buena opción.
+
+## Ejercicios {#sec-140.5}
+
+1.  Ajustar un modelo de aprendizaje automático basado en bosques aleatorios para el banco de datos `Mushroom`[-@sec-mushroom].
+2.  Ajustar un modelo de aprendizaje automático basado en bosques aleatorios para el banco de datos `Hepatitis`[-@sec-hepatitis].
+3.  Ajustar un modelo de aprendizaje automático basado en bosques aleatorios para el banco de datos `Abalone`[-@sec-abalone].
+4.  Ajustar un modelo de aprendizaje automático basado en bosques aleatorios para el banco de datos `Us economic time series`[-@sec-usaets].
+5.  Ajustar un modelo de aprendizaje automático basado en bosques aleatorios para el banco de datos `QSAR`[-@sec-qsar].

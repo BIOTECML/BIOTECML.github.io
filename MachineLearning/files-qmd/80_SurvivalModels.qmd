@@ -1,0 +1,351 @@
+# Modelos de supervivencia {#sec-80}
+
+El análisis de supervivencia es un campo de la estadística que se ocupa de intentar predecir/estimar el tiempo hasta que ocurre un evento. Este problema predictivo es único, ya que los modelos de supervivencia se entrenan y prueban con datos que pueden incluir "censura", que ocurre cuando el evento de interés no ocurre. El análisis de supervivencia puede ser difícil de explicar en abstracto, por lo que, como ejemplo práctico, consideremos a un corredor de maratón en una carrera. Aquí el "problema de supervivencia" consiste en intentar predecir el momento en que el corredor de maratón termina la carrera. Sin embargo, si el evento de interés no se lleva a cabo (por ejemplo, el corredor de maratón se da por vencido y no termina la carrera), se dice que están censurados. En lugar de descartar información sobre eventos censurados, los conjuntos de datos de análisis de supervivencia incluyen una variable de estado que proporciona información sobre el "estado" de una observación. Entonces, en nuestro ejemplo, podríamos escribir el resultado del corredor como (4,1) si terminan la carrera a las cuatro horas, en caso contrario, si se dan por vencidos a las dos horas escribiríamos (2,0).
+
+La clave para modelar en el análisis de supervivencia es que asumimos que existe un tiempo hipotético que el corredor de maratón habría terminado si no hubiera sido censurado, entonces es trabajo de un modelo de aprendizaje de supervivencia estimar cuál habría sido el tiempo de supervivencia real para un corredor similar, suponiendo que no estén censurados. Matemáticamente, esto está representado por el evento hipotético tiempo, $Y$, el hipotético tiempo de censura, $C$, el tiempo de resultado observado, $T = min(Y, C)$, el indicador de evento $\Delta = (T = Y)$, y como de costumbre algunas características, $X$.
+
+Los modelos de aprendizaje se entrenan sobre $(T, \Delta)$ pero, fundamentalmente, hacen predicciones de $Y$ utilizando la información de las características nunca antes vistas. Esto significa que, a diferencia de la clasificación y la regresión, los modelos de aprendizaje reciben formación sobre dos variables, $(T, \Delta)$, que, en R, a menudo se captura en un objeto `Surv`. En relación con nuestro ejemplo anterior, el resultado del corredor sería entonces $(T = 4, \Delta = 1)$ o $(T = 2, \Delta = 0)$. Otro ejemplo se encuentra en el código siguiente, donde generamos aleatoriamente seis tiempos de supervivencia y seis indicadores de eventos; un resultado con un + indica que el resultado está censurado; de lo contrario, ocurrió el evento de interés. Para poder ejecutar este código necesitamos cargar la librería `survival`.
+
+```{r}
+#| label: survival-001
+#| message: false
+#| warning: false
+
+library(survival)
+Surv(runif(6), rbinom(6, 1, 0.5))
+```
+
+Los lectores familiarizados con el análisis de supervivencia reconocerán que la descripción anterior se aplica específicamente a la "censura por la derecha" (right censoring). Actualmente, esta es la única forma de censura disponible en el universo `mlr3`, por lo que se restringe la discusión a ese escenario. Para obtener una buena introducción al análisis de supervivencia, se puede consultar Collett (2014) o para el aprendizaje automático en el análisis de supervivencia Sonabend y Bender (2023).
+
+Durante el resto de esta tema, veremos cómo utilizar la librería `mlr3proba` que amplía los componentes básicos de `mlr3` para el análisis de supervivencia. Comenzaremos observando los objetos utilizados para construir tareas de aprendizaje automático en el análisis de supervivencia, luego nos centraremos en los modelos de aprendizaje implementados para resolver estas tareas, antes de analizar las medidas para evaluar las predicciones del análisis de supervivencia y, finalmente, considerar cómo transformar los tipos de predicción.
+
+Ante de comenzar el código siguiente nos permite cargar los paquetes y la configuración básica para este tipo de modelos.
+
+```{r}
+#| label: survival-002
+#| message: false
+#| results: false
+#| warning: false
+
+# Paquetes anteriores
+library(tidyverse)
+library(sjPlot)
+library(knitr) # para formatos de tablas
+library(skimr)
+library(DataExplorer)
+library(GGally)
+library(gridExtra)
+library(ggpubr)
+library(survival)
+theme_set(theme_sjplot2())
+
+# Paquetes AA
+library(mlr3verse)
+library(mlr3tuning)
+library(mlr3proba)
+library(mlr3extralearners)
+```
+
+## Aspectos teóricos de los modelos de supervivencia {#sec-80.1}
+
+Antes de presentar el modelos de supervivencia estableemos la notación y definiciones necesarias para el estudio de este tipo de modelos.
+
+Si $f(t)$ denota a la función de densidad de probabilidad para la variable aleatoria T, tiempo de supervivencia, y $F(t)$ a la correspondiente función de distribución, entonces se define la función de supervivencia $S(t)$ como la probabilidad de sobrevivir al menos hasta el instante $t$, esto es,
+
+$$S(t) = P(T >t) = 1 - F(t)$$ Se define el riesgo instantáneo de morir o **función hazard**, $h(t)$, como el cociente entre la función de densidad y la función de supervivencia, es decir:
+
+$$h(t) = \frac{f(t)}{S(t)}$$
+
+De hecho, $h(t)dt$ o incremento de la función hazard representa la intensidad del proceso de ocurrencia del evento, o lo que es lo mismo, la probabilidad de que ocurra el evento en un intervalo pequeño de tiempo $dt$ dado que el individuo no ha registrado el evento de interés hasta el instante $t$.
+
+Una distribución para los tiempos de supervivencia ha de tener una función hazard con buenas propiedades; por ejemplo, es de esperar que la función hazard no decrezca con $t$, esto es, a más tiempo transcurrido, mayor riesgo de de que ocurra el evento de interés. Teniendo esto en cuenta, se define la **función hazard acumulada**, $H(t)$ como:
+
+$$H(t) = - log S(t)$$
+
+Una característica importante de la función de supervivencia es la denominada mediana de supervivencia que es el valor de $t_{0.5}$ de forma que: $$S(t_{0.5}) = 0.5$$. Asociado con este valor se puede obtener un intervalo de confianza para la mediana de supervivencia.
+
+## Task de supervivencia {#sec-80.2}
+
+Como vimos en la introducción de esta sección, los algoritmos de supervivencia requieren dos objetivos para el entrenamiento, esto significa que el nuevo objeto `TaskSurv` espera dos variables objetivo. La forma más sencilla de crear una tarea de supervivencia es utilizar `as_task_surv()`, como en el siguiente fragmento de código. Hay que tener en cuenta Tenga en cuenta que esta tarea tiene más argumentos que `as_task_regr()` para reflejar múltiples tipos de objetivos y de censura, los argumentos de tiempo y evento esperan cadenas que representen nombres de columnas donde se almacenan las variables 'tiempo' y 'evento', el tipo se refiere al tipo de censura (actualmente solo censura derecha compatible, por lo que este es el valor predeterminado). `as_task_surv()` convierte las columnas de destino en un objeto `Surv`. En esta sección usaremos el conjunto de datos de `rats` como ejemplo. Este conjunto de datos busca predecir si un tratamiento farmacológico tuvo éxito en prevenir que 150 ratas desarrollen tumores. El conjunto de datos, según admite él mismo, no es perfecto y, en general, debe tratarse como datos "ficticios", lo cual es bueno para ejemplos pero no para análisis del mundo real.
+
+Vamos a ver como crear la tarea de supervivencia vinculado con ese banco de datos, y veremos las primeras muestras.
+
+```{r}
+#| label: survival-003
+#| message: false
+#| warning: false
+
+# Tarea de supervivencia
+tsk_rats = as_task_surv(survival::rats, time = "time",
+  event = "status", type = "right", id = "rats")
+# Cabecera del banco de datos
+tsk_rats$head()
+```
+
+Representamos la tarea con un autoplot que nos proporciona la curva de Kaplan-Meier, que es un estimador no paramétrico de la probabilidad de supervivencia para la observación promedio.
+
+```{r}
+#| label: fig-survival-004
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: "Autoplot curva supervivencia. Task Rats"
+
+autoplot(tsk_rats)
+```
+
+En este gráfico el eje x representa la variable de tiempo y el eje y es la función de supervivencia, $S(T)$, definida por $F(T)$ donde $F$ es la función de distribución acumulada. Las cruces en rojo indican los puntos donde se produce la censura.
+
+Además de crear tus propias tareas, puedes cargar cualquiera de las tareas incluidas con `mlr3proba`:
+
+```{r}
+#| label: survival-005
+#| message: false
+#| warning: false
+
+as.data.table(mlr_tasks)[task_type == "surv"]
+```
+
+## Modelo aprendizaje, predición y tipos de predicción {#sec-80.3}
+
+La interfaz para los objetos `LearnerSurv` y `PredictionSurv` es idéntica a otras configuraciones de modelos de aprendizaje. Esto significa que debemos utilizar la función `lrn()` para construir nuestro modelo de supervivencia. Con el código siguiente podemos ver todos los modelos de aprendizaje para supervivencia disponibles:
+
+```{r}
+#| label: survival-006
+#| message: false
+#| warning: false
+
+survival_learners = mlr_learners$keys()[startsWith(mlr_learners$keys(),"surv")]
+survival_learners
+```
+
+Se pueden consultar los detalles de todos ellos en este [enlace](https://mlr-org.com/learners.html).
+
+`mlr3proba` tiene una interfaz de predicción diferente a `mlr3`, ya que todos los tipos posibles de predicción ("'predict types") se devuelven cuando es posible para todos los modelos de supervivencia; es decir, si un modelo puede calcular un tipo de predicción particular, se devolverá en `PredictionSurv`. El motivo de esta decisión de diseño es que todos estos tipos de predicción se pueden transformar entre sí y, por lo tanto, es computacionalmente más sencillo devolverlos todos a la vez en lugar de volver a ejecutar los modelos para cambiar el tipo de predicción. En el análisis de supervivencia, se pueden hacer las siguientes predicciones:
+
+-   `response`: tiempo de supervivencia previsto.
+-   `distr`: distribución de supervivencia prevista, ya sea discreta o continua.
+-   `lp`: predictor lineal calculado como los coeficientes ajustados multiplicados por los datos de prueba.
+-   `crank`: Clasificación de riesgo continua.
+
+Analizaremos cada uno de estos tipos de predicción con más detalle y con ejemplos para hacerlos menos abstractos. Usaremos el modelo de aprendizaje `lrn("surv.coxph")`, basado en un modelo de regresión de Cox de riesgos proporcionales, entrenado sobre el conjunto `tsk("rats")` como ejemplo de ejecución. Para este modelo, se pueden calcular todos los tipos de predicción excepto la respuesta.
+
+```{r}
+#| label: survival-007
+#| message: false
+#| warning: false
+
+# Definimos tarea
+tsk_rats = tsk("rats")
+# División de muestras
+set.seed(123)
+split = partition(tsk_rats, ratio = 0.8)
+# Entrenamiento y predicción sobre la muestra de validación
+prediction_cph = lrn("surv.coxph")$train(tsk_rats, split$train)$
+  predict(tsk_rats, split$test)
+prediction_cph
+```
+
+En la tabla podemos ver los diferentes tipos de predicción disponibles para este banco de datos. Analizamos con un poco más de detalle cada uno de los tipos de predicción.
+
+**`predict_type = “response”`**
+
+Contrariamente a la intuición para muchos, la predicción de respuesta de los tiempos de supervivencia previstos es el tipo de predicción menos común en el análisis de supervivencia. La razón probable de esto se debe a la presencia de censura. Rara vez observamos el tiempo de supervivencia real para muchas observaciones y, por lo tanto, es poco probable que algún modelo de supervivencia pueda hacer predicciones con confianza sobre los tiempos de supervivencia. Esto se ilustra en el código siguiente.
+
+En el siguiente ejemplo, entrenamos y predecimos desde una SVM de supervivencia `(lrn("surv.svm"))`, tenga en cuenta que usamos `type = "regression"` para seleccionar el algoritmo que optimiza las predicciones del tiempo de supervivencia y se selecciona `gamma.mu = 1e-3`. arbitrariamente ya que este es un parámetro requerido (este parámetro generalmente debe ajustarse). Luego comparamos las predicciones del modelo con los datos reales.
+
+```{r}
+#| label: survival-008
+#| message: false
+#| warning: false
+
+library(survivalsvm)
+# Modelo de aprendizaje, entrenamiento y predicción
+prediction_svm = lrn("surv.svm", type = "regression", gamma.mu = 1e-3)$
+  train(tsk_rats, split$train)$predict(tsk_rats, split$test)
+# Vemos los tres primeros casos
+data.frame(pred = prediction_svm$response[1:3],
+  truth = prediction_svm$truth[1:3])
+```
+
+Como se puede ver en el resultado, todas nuestras predicciones son menores que el tiempo real observado, lo que significa que sabemos que nuestro modelo subestimó la verdad. Sin embargo, debido a que cada uno de los valores verdaderos son tiempos censurados, no tenemos absolutamente ninguna manera de saber si estas predicciones son levemente malas o absolutamente terribles (es decir, los verdaderos tiempos de supervivencia podrían ser 105, 99, 92 o podrían ser 300, 1000, 200). Por lo tanto, sin una forma realista de evaluar estos modelos, las predicciones del tiempo de supervivencia rara vez son útiles.
+
+**`predict_type = “distr”`**
+
+A diferencia de la regresión, en la que las predicciones deterministas/puntuales son las más comunes, en el análisis de supervivencia las predicciones de distribución son mucho más comunes. Por lo tanto, encontraremos que la mayoría de los modelos de supervivencia en `mlr3proba` hacen predicciones de distribución de forma predeterminada. Estas predicciones se implementan utilizando el paquete `distr6`, que permite la visualización y evaluación de curvas de supervivencia (definidas como función de distribución acumulativa). A continuación extraemos las primeras tres predicciones de `$distr` de nuestro ejemplo en ejecución y calculamos la probabilidad de supervivencia en $t = 77$
+
+```{r}
+#| label: survival-009
+#| message: false
+#| warning: false
+
+prediction_cph$distr[1:3]$survival(77)
+```
+
+El resultado indica que existe una probabilidad del 92,1%, 98,7% y 99,4% de que las tres primeras ratas predichas estén vivas en el momento 77, respectivamente.
+
+**`predict_type = “lp”`**
+
+`lp`, a menudo escrito como $\eta$ en escritura académica, es computacionalmente la predicción más simple y tiene un análogo natural en el modelado de regresión. Los lectores familiarizados con la regresión lineal sabrán que al ajustar un modelo de regresión lineal simple, $Y = X\beta$, estamos estimando los valores para $\beta$, y el predictor lineal estimado (`lp`) es entonces $X\hat{\beta}$, dónde $\hat{\beta}$ son nuestros coeficientes estimados. En los modelos de supervivencia simples, el predictor lineal es la misma cantidad (pero estimada de una manera un poco más complicada). Las implementaciones de aprendizaje en `mlr3proba` se centran principalmente en el aprendizaje automático y pocos de estos modelos tienen una forma lineal simple, lo que significa que `lp` no se puede calcular para la mayoría de ellos. En la práctica, cuando se utiliza para la predicción, `lp` es un indicador de una predicción de riesgo relativo/clasificación continua, que se analiza a continuación.
+
+**`predict_type = “crank”`**
+
+El último tipo de predicción, `crank`, es el más común en el análisis de supervivencia y quizás también el más confuso. Los textos académicos a menudo se refieren a predicciones de "riesgo" en el análisis de supervivencia (de ahí que los modelos de supervivencia a menudo se conozcan como "modelos de predicción de riesgos"), sin definir qué significa "riesgo". A menudo, el riesgo se define como $exp(\eta)$ ya que esta es una cantidad común que se encuentra en modelos lineales simples de supervivencia. Sin embargo, a veces el riesgo se define como $exp(-\eta)$, y a veces puede ser una cantidad arbitraria que no tiene una interpretación significativa. Para evitar esta confusión en `mlr3proba`, definimos el tipo de predicción crank, que significa clasificación continua. Esto se explica mejor con el ejemplo. Continuando con lo anterior, generamos las primeras tres predicciones crank.
+
+```{r}
+#| label: survival-010
+#| message: false
+#| warning: false
+
+prediction_cph$crank[1:3]
+```
+
+Multiplicando los valores por -1, el resultado nos dice que la tercera rata tiene el riesgo más bajo de muerte (los valores más bajos representan un riesgo menor) y la segunda rata tiene el riesgo más alto. La distancia entre las predicciones también nos dice que la diferencia de riesgo entre la primera y la segunda rata es menor que la diferencia entre la segunda y la tercera. Los valores reales en sí mismos no tienen sentido y, por lo tanto, comparar valores de predicción crank entre muestras no tiene sentido.
+
+El tipo de predicción crank es informativo y común en la práctica porque permite identificar observaciones con menor/mayor riesgo entre sí, lo cual es útil para la asignación de recursos, por ejemplo, qué paciente debe recibir un tratamiento costoso y ensayos clínicos, por ejemplo, son personas. en un grupo de tratamiento con menor riesgo de enfermedad X que las personas en el grupo de control.
+
+::: {.callout-warning appearance="simple" title="interpretando el riesgo de supervivencia"}
+**La interpretación de "riesgo" para las predicciones de supervivencia difiere entre los paquetes de R y, a veces, incluso entre los modelos del mismo paquete. En `mlr3proba` hay una interpretación consistente de crank: los valores más altos representan un riesgo menor de que ocurra el evento y los valores más bajos representan un riesgo mayor.**
+:::
+
+## Métricas de evaluación {#sec-80.4}
+
+Los modelos de supervivencia en `mlr3proba` se evalúan con objetos `MeasureSurv`, que se construyen de la forma habitual con `msr()`. En general, las medidas de supervivencia se pueden agrupar en las siguientes:
+
+-   Medidas de discriminación: cuantificar si un modelo identifica correctamente si una observación tiene mayor riesgo que otra. Evaluar predicciones `crank` y/o `lp`.
+-   Medidas de calibración: cuantificar si la predicción promedio se acerca a la verdad (desafortunadamente, todas las definiciones de calibración son vagas en un contexto de supervivencia). Evaluar predicciones `crank` y/o `distr`.
+-   Reglas de puntuación: cuantificar si las predicciones probabilísticas se aproximan a los valores verdaderos. Evaluar predicciones `distr`.
+
+Podemos ver las métricas más habituales en el código siguiente:
+
+```{r}
+#| label: survival-011
+#| message: false
+#| warning: false
+
+as.data.table(mlr_measures)[
+  task_type == "surv", c("key", "predict_type")]
+```
+
+No existe un consenso en la literatura sobre cuáles son las "mejores" medidas de supervivencia a utilizar para evaluar los modelos. Las más habituales son RCLL (logloss censurado por la derecha) (`msr("surv.rcll")`) para evaluar la calidad de las predicciones de distribución, índice de concordancia (`msr("surv.cindex")`) para evaluar la discriminación de un modelo, y D-Calibración ( `msr("surv.dcalib")`) para evaluar la calibración de un modelo.
+
+Usando estas medidas, ahora podemos evaluar nuestras predicciones del ejemplo anterior.
+
+```{r}
+#| label: survival-012
+#| message: false
+#| warning: false
+
+prediction_cph$score(msrs(c("surv.rcll", "surv.cindex", "surv.dcalib")))
+```
+
+El rendimiento del modelo parece bueno ya que RCLL y DCalib son relativamente bajos y el índice C es superior a 0,5; sin embargo, es muy difícil determinar el rendimiento de cualquier modelo de supervivencia sin compararlo con algún modelo basal (generalmente el Kaplan-Meier).
+
+## Composición {#sec-80.5}
+
+En toda la documentación de `mlr3proba` se habla de predicciones "nativas (native)" y "compuestas (composed)". Se define una predicción "nativa" como la predicción realizada por un modelo sin ningún posprocesamiento, mientras que una predicción "compuesta" se devuelve después del posprocesamiento. A continuación se presentan los diferentes tipos de composición.
+
+### Composición interna {#sec-80.5.1}
+
+`mlr3proba` hace uso de la composición internamente para devolver una predicción "crank" para cada modelo de aprendizaje. Esto es para garantizar que podamos comparar de manera significativa todos los modelos según al menos un criterio. El paquete utiliza las siguientes reglas para crear predicciones "crank":
+
+-   Si un modelo devuelve una predicción de ``` risk``, entonces ```crank = risk\` (podemos multiplicar esto por -1 para garantizar la interpretación de "bajo valor y bajo riesgo").
+-   Por otro lado, si un modelo devuelve una predicción ``` resonse`` configuramos ```crank = -response\`.
+-   Por otro lado, si un modelo devuelve una predicción `lp`, entonces configuramos `crank = lp` (o `rank = -lp` si es necesario).
+-   Por otro lado, si un modelo devuelve una predicción `distr`, establecemos `crank` como la suma de la función de riesgo acumulativo (consultar R. Sonabend, Bender y Vollmer (2022) para una discusión completa de por qué se elige este método).
+
+### Composición explícita y pipelines {#sec-80.5.2}
+
+Al comienzo de esta sección, mencionamos que es posible transformar tipos de predicción entre sí. En `mlr3proba` esto es posible con pipelines de composición. Hay varios pipelines implementados en el paquete, pero dos en particular se centran en transformar los tipos de predicción:
+
+-   `pipeline_crankcompositor()` -- Transforma una predicción `distr` en `crank`
+-   `pipeline_distrcompositor()` -- Transforma una predicción `lp` en `distr`
+
+En la práctica, el segundo pipeline es más común ya que usamos internamente una versión del primer pipeline cada vez que devolvemos predicciones de modelos de supervivencia (por lo tanto, solo usamos el primer pipeline para sobrescribir estas predicciones de clasificación), por lo que solo veremos el segundo pipeline.
+
+En el siguiente ejemplo, cargamos el conjunto de datos de `rats`, eliminamos columnas de factores y luego dividimos los datos en entrenamiento y prueba. Construimos el pipeline `distrcompositor` en torno a un modelo de aprendizaje de GLMnet de supervivencia (`lrn("surv.glmnet")`) que, de forma predeterminada, solo puede hacer predicciones para `lp` y `crank`. En el proceso, especificamos que estimaremos la distribución de referencia con un estimador de Kaplan-Meier (`estimador = "kaplan"`) y que queremos asumir una forma de riesgos proporcionales para nuestra distribución estimada (`form = "ph"`). Luego entrenamos y predecimos de la forma habitual y en nuestro resultado ahora podemos ver una predicción de distribución.
+
+```{r}
+#| label: survival-013
+#| message: false
+#| warning: false
+
+# Generamos task seleccionando las predictoras
+tsk_rats = tsk("rats")$select(c("litter", "rx"))
+split = partition(tsk_rats)
+# Modelo de aprendizaje
+learner = lrn("surv.glmnet")
+# Predicción sin distr
+learner$train(tsk_rats, split$train)$predict(tsk_rats, split$test)
+```
+
+Construimos ahora el graphlearner que nos permite obtener la predicción `distr` utilizando el pipeline seleccionado:
+
+```{r}
+#| label: survival-014
+#| message: false
+#| warning: false
+
+graph_learner = as_learner(ppl(
+  "distrcompositor",
+  learner = learner,
+  estimator = "kaplan",
+  form = "ph"
+))
+
+# now with distr
+predicciones = graph_learner$train(tsk_rats, split$train)$predict(tsk_rats, split$test)
+predicciones
+```
+
+Ahora aparece una nueva columna con la predicción `distr`. Esta columna contiene las funciones de distribución asociadas a diferentes cantidades de interés para todas las muestras. En concreto en este caso tenemos las más destacadas son: `survival` (función de supervivencia), `cumHazard` (función hazard acumulada). En el código siguiente extraemos esas dos funciones para el instante de tiempo 100 y todas las muestras.
+
+```{r}
+#| label: survival-015
+#| message: false
+#| warning: false
+
+distribucion = data.frame(survival = t(predicciones$distr$survival(100)),
+cumhazard = t(predicciones$distr$cumHazard(100)))
+colnames(distribucion) = c("Survival" , "CumHazard")
+distribucion
+```
+
+### Combinando todas las funciones {#sec-80.5.3}
+
+Finalmente, pondremos en práctica todo lo anterior en un pequeño experimento de referencia. Primero cargamos `tsk("grace")` (que solo tiene características numéricas) y tomamos muestras de 500 filas al azar. Luego seleccionamos RCLL, D-Calibration y C-index para evaluar las predicciones, configuramos el mismo pipeline que usamos en el experimento anterior y cargamos un estimador Cox PH y Kaplan-Meier. Realizamos nuestro experimento de validación cruzada con k =3 y agregamos los resultados.
+
+Mucho del código que aquí se presenta lo estudiaremos más tarde pero por el momento nos sirve para comparar diferentes modelos de aprendizaje de supervivencia.
+
+```{r}
+#| label: survival-016
+#| message: false
+#| warning: false
+
+tsk_grace = tsk("grace")
+tsk_grace$filter(sample(tsk_grace$nrow, 500))
+msr_txt = c("surv.rcll", "surv.cindex", "surv.dcalib")
+measures = msrs(msr_txt)
+
+graph_learner = as_learner(ppl(
+  "distrcompositor",
+  learner = lrn("surv.glmnet"),
+  estimator = "kaplan",
+  form = "ph"
+))
+graph_learner$id = "Coxnet"
+learners = c(lrns(c("surv.coxph", "surv.kaplan")), graph_learner)
+
+bmr = benchmark(benchmark_grid(tsk_grace, learners,
+  rsmp("cv", folds = 3)))
+bmr$aggregate(measures)[, c("learner_id", ..msr_txt)]
+```
+
+En este pequeño experimento, Coxnet y Cox PH tienen la mejor discriminación, la línea de base de Kaplan-Meier tiene la mejor calibración y Coxnet y Cox PH tienen una precisión predictiva general similar (con el RCLL más bajo).
+
+## Casos prácticos {#sec-80.6}
+
+## Ejercicios {#sec-80.7}
+
+1.  

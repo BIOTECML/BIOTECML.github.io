@@ -1,0 +1,7 @@
+# Parte 2. Primeros pasos {#part02}
+
+Antes de comenzar con la presentación de los diferentes modelos de aprendizaje automático que veremos a lo largo de estos materiales, y de acuerdo al flujo de trabajo establecido en la sección @sec-flujoAA de la unidad @sec-introAA, resulta necesario dedicar algo de tiempo al análisis exploratorio de datos, al establecimiento de un modelo de partida, y al preprocesamiento de los datos para proceder con el entrenamiento del modelo de aprendizaje automático que finalmente utilicemos.
+
+En la unidad siguiente nos centramos en el análisis exploratorio de datos introduciendo algunas nuevas librerías que resultan de utilidad para este trabajo.
+
+En la última unidad de este bloque presentamos en detalle la librería mlr3 [@mlr3], así como todas las ampliaciones disponibles que nos permiten ampliar las posibilidades de construcción de modelos de aprendizaje automático. En este caso usaremos nuestros algoritmos sin prestar mucho detalle a los aspectos técnicos que analizaremos en las unidades siguientes.

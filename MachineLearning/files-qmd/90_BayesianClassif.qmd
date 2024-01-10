@@ -1,0 +1,563 @@
+# Modelos de clasificación Naïve Bayes {#sec-90}
+
+Con este tema nos introducimos en el bloque específico de algoritmos de aprendizaje automático centrados en los problemas de clasificación. En un problema de clasificación tenemos disponible la información de $n$ muestras mediante:
+
+-   Una variable respuesta $y$ de tipo categórico con $k$ categorías o etiquetas (que es el nombre que reciben habitualmente dentro del aprendizaje automático) $y_1,...,y_k$,
+
+-   Un conjunto de variables predictoras $X=(X_1,...,X_p)$ que pueden influir de forma distinta en cada una de las etiquetas de la respuesta.
+
+La estructura es muy similar a la de los problemas de regresión logística pero en este caso no disponemos de un modelo sino que tratamos de predecir directamente la probabilidad de cada etiqueta de la respuesta para una nueva muestra dada en función de las variables predictoras registradas.
+
+Los clasificadores Naïve Bayes son los primeros algoritmos de clasificación que vamos a estudiar, dado que se utilizan en muchas ocasiones como modelo de base o partida en los problemas de clasificación, ya que son extremadamente rápidos y sencillos y suelen ser adecuados para conjuntos de datos de muy alta dimensión.
+
+Los clasificadores Bayes se basan en el teorema de Bayes, que es una ecuación que describe la relación de las probabilidades condicionales entre dos conjuntos de sucesos. En nuestro caso estamos interesados en determinar la probabilidad de una clase, del conjunto posible, en función del conjunto de predictoras observadas $$P(y_l|x_1,...,x_p)$$ para $l=1,...,k$, donde $x_1,...,x_p$ son los valores observados de las predictoras para una muestra dada. Dicha probabilidad se puede escribir utilizando dicho teorema como:
+
+$$P(y_l|x_1,...,x_p) = \frac{P(x_1,...,x_p|y_l)P(y_l)}{P(x_1,...,x_p)}$$
+
+donde $P(x_1,...,x_p|y_l)$ es la verosimilitud para una etiqueta dada, $P(y_l)$ es la probabilidad previa de cada clase antes de la toma de datos, $P(x_1,...,x_p)$ es la información marginal aportada por los datos, y $P(y_l|x_1,...,x_p)$ es la distribución posterior de la clase $l$ dada la información recogida. La distribución posterior cuantifica la probabilidad de cada clase dado el conjunto de datos observado. Para evaluar dicho cociente los algoritmos Naïve Bayes asumen independencia entre las observaciones de forma que:
+
+$$P(x_1,x_2,...,x_p| y) = P(x_1|y)P(x_2|y)...P(x_p|y)=\prod_{i=1}^p P(x_i|y)$$
+
+Para la estimación de $P(y)$ utilizamos la proporción de cada clase en la muestra de entrenamiento.
+
+De esta forma, la regla de clasificación para determinar la clase $l$ a la que debemos asignar una muestra se obtiene evaluando la expresión:
+
+$$\underset{l}{max}\left[ P(y_l)\prod_{i=1}^p P(x_i|y_l)\right], \quad l=1,...,k$$ Por su sencillez, el algoritmo Naïve Bayes tiene muchas aplicaciones en diversos sectores, como la salud, la tecnología, el medio ambiente, etc. Estas son algunas de las más habituales:
+
+-   La aplicación más habitual es en la clasificación de textos. Por ejemplo, las noticias en la web están creciendo rápidamente y cada sitio de noticias tiene su propia disposición y categorización para agruparlas. Para conseguir mejores resultados de clasificación, aplicamos el clasificador Naïve Bayes para determinar el tipo de noticia basándonos en el contenido de las mismas, a partir de la extracción de palabras clave.
+
+-   Quizás la aplicación más antigua y que tiene que ver con el análisis de textos del punto anterior es el filtrado de spam en el correo electrónico. Los clasificadores de Naïve Bayes funcionan correlacionando el uso de "tokens" (normalmente palabras, o a veces otras cosas) que pueden ir asociados con correos que pueden ser clasificados como spam y los que no son, y luego utilizan el teorema de Bayes para calcular la probabilidad de que un correo electrónico sea o no spam.
+
+-   Es un algoritmo habitual dentro del ámbito de la salud donde para cada sujeto hay mucha información disponible, ya que el clasificador Naïve Bayes tiene en cuenta la evidencia de todos los atributos considerados para determinar la probabilidad de que el sujeto padezca o no cierta enfermedad, proporcionando una herramienta muy sencilla para la toma de decisiones.
+
+-   Otro ámbito de aplicación de estos algoritmos es en la predicción del tiempo en situaciones simples. Los algoritmos Naïve Bayes aprovechan la información pasada para predecir la situación climática (soleado, nuboso, lluvioso) en base a la probabilidad posterior de cada una de las situaciones posibles.
+
+-   Dos aplicaciones más modernas y de gran utilización en el ámbito del aprendizaje automático son el Análisis de Sentimientos y la construcción de Sistemas de Recomendación. El Análisis de Sentimientos se refiere a la identificación de los sentimientos positivos o negativos de un grupo objetivo a partir de la información recogida sobre ellos (opiniones respecto de un tema en particular). En este caso el análisis de reputación de las personas u organismos es un campo de aplicación habitual del Análisis de Sentimientos. Por otro lado, el denominado Filtrado Colaborativo y el algoritmo Naïve Bayes se complementan para los sistemas de recomendación que tratan de ofrecer al usuario de portales de internet una colección de productos o servicios en los que el usuario podría estar interesado. Estos algoritmos se usan por ejemplo en plataformas como Amazon o Netflix.
+
+En el código siguiente se cargan los paquetes y la configuración básica para este tipo de modelos.
+
+```{r}
+#| label: nbayes-001
+#| message: false
+#| results: false
+#| warning: false
+
+# Paquetes anteriores
+library(tidyverse)
+library(sjPlot)
+library(knitr) # para formatos de tablas
+library(skimr)
+library(DataExplorer)
+library(GGally)
+library(gridExtra)
+library(ggpubr)
+library(cvms)
+theme_set(theme_sjplot2())
+
+# Paquetes AA
+library(mlr3verse)
+library(mlr3tuning)
+library(mlr3tuningspaces)
+```
+
+## Tipos de clasificadores Naïve Bayes {#sec-90.1}
+
+Dentro de los clasificadores Naïve Bayes encontramos tres tipos principales en función de las características de la variable respuesta y las predictoras. Dichos tipos son: **Naïve Bayes Bernouilli**, **Naïve Bayes Multinomial**, y **Naïve Bayes Gaussiano**.
+
+### Naïve Bayes Bernouilli {#sec-90.1.1}
+
+El algoritmo **Naïve Bayes Bernouilli** se utiliza cuando tanto la respuesta como las predictoras tienen únicamente dos etiquetas o categorías, es decir, son variables de tipo binario. En esta situación si la variable $y$ solo puede tomar los valores $\{0,1\}$, la verosimilitud individual de cada predictora se expresa como:
+
+$$P(x_i|y) = P(y=1)x_i+(1-P(y=1))(1-x_i)$$
+
+con la que podemos obtener de forma muy rápida la regla de clasificación para este algoritmo ya que esta viene dada por elegir la clase 1 si:
+
+$$[P(y=1)^{q+1}] > [P(y=0)^{p-q+1}]$$
+
+donde $p$ es el número de predictoras disponibles, $q$ el número de predictoras que toman el valor 1 para la muestra que tratamos de clasificar, y $P(y=1)$, $P(y=0)$ se estiman a partir de los valores de la muestra de entrenamiento.
+
+Por lo tanto, este tipo de clasificador requiere que las muestras se representen como vectores de características de tipo binario. Es el algoritmo menos utilizado de los tres debido a sus restricciones de aplicación pero es el que proporciona una solución más rápida en este tipo de situaciones.
+
+### Naïve Bayes Multinomial {#sec-90.1.2}
+
+Se utiliza cuando la variable respuesta tiene dos o más etiquetas posibles, y las variables predictoras son de tipo categórico multinomial, es decir, con múltiples etiquetas en cada una de ellas. Es un algoritmo muy extendido que se ha utilizado en la clasificación de textos como por ejemplo la identificación de correo en Spam versus No Spam. Este algoritmo evalúa la probabilidad de cada etiqueta para una muestra determinada y devuelve la etiqueta con la mayor posibilidad.
+
+En este caso si $\theta_{y_l}=(\theta_{y_l;1},...,\theta_{y_l;p})$ representa el vector de probabilidades para la clase $l$ asociada con el conjunto de predictoras, podemos estimar dichos parámetros mediante la expresión:
+
+$$\hat{\theta}_{y_l;j} = \frac{N_{y_l;j} + \alpha}{N_{y_l} + \alpha n},$$
+
+donde $N_{y_l;j}$ es el número de predictoras de la muestra con valor 1 para la clase l, $N_{y_l} = \sum_{j=1}^n N_{y_l;j}$, y $\alpha$ es el parámetro de suavizado que tiene en cuenta las clases que no están presentes en las muestras de aprendizaje y evitan las probabilidades nulas en los cálculos posteriores. El ajuste se denomina suavizado de Laplace cuando $\alpha=1$, mientras que se denomina suavizado de Lidstone cuando $\alpha < 1$.
+
+### Naïve Bayes Gaussiano {#sec-90.1.3}
+
+Es una variante del Naïve Bayes Multinomial donde las variables predictoras son todas de tipo numérico. Todas ellas se distribuyen mediante una distribución Normal Multivariante. Este algoritmo hace uso de las medias y desviaciones estándar de las predictoras para obtener la probabilidad de clasificación de cada etiqueta de la respuesta. En este caso las verosimilitudes necesarias para la regla de clasificación se obtienen a partir de la función de densidad de la distribución normal como:
+
+$$P(x_i|y) = \frac{1}{\sqrt{2\pi\sigma_y^2}}exp\left(-\frac{(x_i-\mu_y)^2}{2\sigma_y^2}\right),$$
+
+donde los parámetros $\mu_y$ y $\sigma_y^2$ se estiman por máxima verosimilitud a partir de la información contenida en la muestra de entrenamiento, es decir, las medias y varianzas muestrales de cada predictora cuando estamos en la clase $l$.
+
+## Ventajas e inconvenientes de los clasificadores Naïve Bayes {#sec-80.2}
+
+Los clasificadores Naïve Bayes tienden a funcionar especialmente bien en cualquiera de las siguientes situaciones:
+
+-   Cuando las clases de la respuesta están bien separadas, es decir, la distribución de probabilidad posterior de las clases en función de las predictoras son diferentes.
+-   Cuando disponemos de una gran cantidad de predictoras y la complejidad del modelo no es relevante.
+
+Estos dos puntos están relacionados ya que a medida que aumenta la dimensión de un conjunto de datos, es mucho menos probable que se descubran dos puntos cercanos entre sí. Esto significa que las agrupaciones en dimensiones altas tienden a estar más separadas que las agrupaciones en dimensiones bajas.
+
+El clasificador Naïve Bayes tiene además las siguientes ventajas computacionales:
+
+-   Es extremadamente rápido tanto para el entrenamiento como para la predicción, y por tanto tiene un coste de cálculo muy bajo.
+-   Proporciona una predicción probabilística directa.
+-   Puede trabajar eficazmente en un gran conjunto de datos.
+-   Cuando se cumple el supuesto de independencia (algo que en la práctica es bastante difícil), un clasificador Naïve Bayes funciona mejor en comparación con otros modelos como la regresión logística.
+
+Entre las desventajas de este algoritmo podemos mencionar:
+
+-   La hipótesis de la independencia condicional no siempre se cumple. En la mayoría de las situaciones, las variables predictoras muestran alguna forma de dependencia.
+
+-   El problema de la probabilidad cero hace referencia a las situaciones en las que en la muestra de test tenemos valores de la respuesta que no estaban en la muestra de entrenamiento. Esto provoca automáticamente que la probabilidad de esa clase sea siempre cero. Por ese motivo hay que tener cuidado y analizar con detalle la muestra de entrenamiento para asegurar de que se dispone de valores de todas las clases de la respuesta.
+
+## Bancos de datos {#sec-90.3}
+
+Para mostrar el funcionamiento de los algoritmos de clasificación naïve Bayes utilizamos los mismos ejemplos del tema anterior, para poder comparar los resultados entre ambos algoritmos. Como ya hemos visto y trabajado con ambos bancos de datos, en este punto solo cargamos las tareas correspondientes.
+
+### Breast Cancer Wisconsin
+
+En esta base de datos se recoge información sobre los cánceres de mama en la ciudad de Wisconsin. Las características de la base de datos se calculan a partir de una imagen digitalizada de un aspiración de aguja fina (FNA) de una masa mamaria. Describen las características de los núcleos celulares presentes en la imagen y el objetivo que se persigue es clasificar un tumor como benigno o maligno en función de las variables predictoras. Como en este caso estamos interesados en saber que predictoras influyen más en el carácter maligno del cáncer, utilizaremos esa categoría como la de interés.
+
+```{r}
+#| label: nbayes-002
+#| message: false
+#| warning: false
+
+# Cargamos datos
+breastcancer = read_rds("breastcancer.rds")
+# Creación de task eliminado la columna que identifica os sujetos
+tsk_cancer = as_task_classif(breastcancer[,-1], target = "diagnosis", positive = "M")
+```
+
+### Iris
+
+El banco de datos iris ya los presentamos en temas anteriores y aquí solo se presenta el código para crear la tarea de clasificación correspondiente.
+
+```{r}
+#| label: nbayes-003
+#| message: false
+#| warning: false
+
+# Cargamos datos
+iris = read_rds("iris.rds") 
+# creamos la tarea
+tsk_iris = as_task_classif(iris, target = "species")
+```
+
+## Clasificador naïve Bayes en mlr3 {#sec-90.4}
+
+Para realizar el proceso de aprendizaje de un modelo de clasificación de clasificación naïve Bayes debemos usar el learner `classif.naive_bayes` que permite obtener de forma automática el clasificador correspondiente a cada situación. Podemos cargar el clasificador con el código siguiente:
+
+```{r}
+#| label: nbayes-004
+#| message: false
+#| warning: false
+
+# Cargamos learner
+learner = lrn("classif.naive_bayes")
+```
+
+Los hiperparámetros de este algoritmo son:
+
+```{r}
+#| label: nbayes-005
+#| warning: false
+#| message: false
+
+# Hiperparámetros para árboles de clasificación
+learner$param_set$ids()
+```
+
+y se interpretan como:
+
+-   `eps`: es un número para especificar un rango épsilon para aplicar el suavizado de Laplace, es decir, para reemplazar probabilidades cero o cercanas a cero por `theshold`.
+
+-   `laplace`: Suavizado de Laplace de doble control que se específica con un valor positivo. El valor predeterminado (0) desactiva el suavizado de Laplace.
+
+-   `threshold`: valor con el que se reemplazan probabilidades dentro del rango dado por `eps`.
+
+En primer lugar obtenemos el clasificador naïve Bayes por defecto para cada banco de datos, lo que nos permitirá tener un modelo de base para comparación. El análisis de estos modelos es similar al de los problemas de clasificación de la regresión logística en cuanto a términos de evaluación y validación de la solución obtenida. A continuación mostramos los resultados obtenidos para las muestras de validación en los modelos de regresión lógistica para poder comparar los resultados.
+
+| Datos  | Modelo             | \% Clasificación correcta | Score de Brier |
+|--------|--------------------|---------------------------|----------------|
+| Cáncer | `classif.log_reg`  | 97.34                     | 0.0265         |
+| Cáncer | `classif.glmnet`   | 96.70                     |                |
+| Iris   | `classif.multinom` | 96.66                     | 0.0667         |
+| Iris   | `classif.glmnet`   | 85.50                     |                |
+
+### Datos Breast Cancer {#sec-90.4.1}
+
+Comenzamos nuestro análisis con el banco de datos breast cancer. Para ello debemos definir el grpahlearner asociado (prerprocesamiento y modelo):
+
+```{r}
+#| label: nbayes-006
+#| message: false
+#| warning: false
+
+# Definimos learner para predecir la probabilidad
+learner = lrn("classif.naive_bayes", predict_type = "prob")
+# Preprocesado
+pp_cancer = po("scale", param_vals = list(center = TRUE, scale = TRUE))
+# Graphlearner
+gr = pp_cancer %>>% learner
+gr = GraphLearner$new(gr)
+```
+
+Para poder entrenar el modelo consideramos la división de muestras (80-20) y estratificamos según la variable `diagnosis` dado que los niveles no están equilibrados (ver tema de regresión logística).
+
+```{r}
+#| label: nbayes-007
+#| message: false
+#| warning: false
+
+# Generamos variable de estrato
+tsk_cancer$col_roles$stratum <- "diagnosis"
+# Fijamos semilla para asegurar la reproducibilidad del modelo
+set.seed(135)
+# Creamos la partición
+splits = mlr3::partition(tsk_cancer, ratio = 0.8)
+# Muestras de entrenamiento y validación
+tsk_train_cancer = tsk_cancer$clone()$filter(splits$train)
+tsk_test_cancer  = tsk_cancer$clone()$filter(splits$test)
+```
+
+Podemos comenzar ahora con el entrenamiento del modelo y su interpretación:
+
+```{r}
+#| label: nbayes-008
+#| message: false
+#| warning: false
+
+# Entrenamiento
+gr$train(tsk_train_cancer)
+```
+
+El entrenamiento de este modelo proporciona dos resultados:
+
+-   `apriori`: probabilidades a priori de cada una de los niveles del factor utilizados en el proceso de clasificación.
+-   `tables`: Una lista de tablas, una para cada variable predictiva. Para cada variable categórica, una tabla que proporciona, para cada nivel de atributo, las probabilidades condicionales dada la clase objetivo. Para cada variable numérica, una tabla que proporciona, para cada clase objetivo, la media y la desviación estándar de la (sub)variable.
+
+Veamos el resultado para este modelo donde todas las predictoras son de tipo numérico:
+
+```{r}
+#| label: nbayes-009
+#| message: false
+#| warning: false
+
+# Tablas
+modelo = gr$model$classif.naive_bayes$model$tables
+modelo
+```
+
+Para cada variable se presenta en la primera columna las medias y en la segunda las desviaciones estándar. Podemos ver los resultados para `area_mean`:
+
+```{r}
+#| label: nbayes-010
+#| message: false
+#| warning: false
+
+modelo$area_mean
+```
+
+Podemos ver como los valores más altos de `area_men` están vinculados con los tumores clasificados como malignos, mientras que los valores más bajos están vinculados a los tumores benignos. Estudiamos ahora la clasificación proporcionada por el algoritmo. En primer lugar calculamos las predicciones tanto para la muestra de entrenamiento como la de validación.
+
+```{r}
+#| label: nbayes-011
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento y validación
+pred_train = gr$predict(tsk_train_cancer)
+pred_test = gr$predict(tsk_test_cancer)
+# Visualizamos las primeras predicciones de la muestra de validación
+pred_test
+```
+
+Consideramos ahora diferentes métricas de evaluación y obtenemos sus valores para las muestras de predicción:
+
+```{r}
+#| label: nbayes-012
+#| message: false
+#| warning: false
+
+# scores de validación
+measures = msrs(c("classif.acc", "classif.bacc", "classif.bbrier", "classif.auc"))
+# Muestra de entrenamiento
+pred_train$score(measures)
+# Muestra de validación
+pred_test$score(measures)
+```
+
+El porcentaje de clasificación correcta para la muestra de validación es del 97.34%, que es igual al mejor que obteníamos para el modelo de regresión logística. Tanto el score de brier como el AUC proporcionan valores que indican que el algoritmo utilizado proporciona una buena clasificación. Podemos ver la tabla de confusión para ver donde se concentran los errores de clasificación cometidos.
+
+```{r}
+#| label: nbayes-013
+#| message: false
+#| warning: false
+
+# Muestra de validación
+pred_test$confusion
+```
+
+En este caso tenemos dos muestras que originalmente correspondían a un tumor maligno pero que el modelo clasifica como benigno. Por contra, hay 1 que originalmente era benigno y que el modelo clasifica como maligno. Representamos gráficamente la matriz de confusión.
+
+```{r}
+#| label: nbayes-0132
+#| message: false
+#| warning: false
+
+# Cargamos la librería para representar la matriz de confusión
+cm = confusion_matrix(pred_test$truth, pred_test$response)
+plot_confusion_matrix(cm$`Confusion Matrix`[[1]]) 
+```
+
+Procedemos ahora con el estudio de validación de la solución mediante un análisis de validación cruzada con 10 folds.
+
+```{r}
+#| label: nbayes-014
+#| message: false
+#| warning: false
+
+# Fijamos semilla
+set.seed(135)
+# Definimos proceso de validación cruzada kfold con k=10
+resamp = rsmp("cv", folds = 10)
+# Remuestreo
+rr = resample(tsk_cancer, gr, resamp, store_models=TRUE)
+```
+
+```{r}
+#| label: nbayes-015
+#| message: false
+#| warning: false
+
+# Resumen Scores individuales
+scores = rr$score(measures)$classif.acc
+skim(scores)
+```
+
+Podemos ver como el promedio del porcentaje de clasificación correcta se sitúa en el 92.95% con una desviación del 3%, lo que indica que tenemos bastante precisión en la solución obtenida. Sin embargo, como la diferencia entre la mediana y la media es de casi un 2% la distribución de los resultados es algo asimétrica lo que puede indicar cierta dependencia de los resultados con respecto a la muestra de entrenamiento utilizada. Analizamos la curva de aprendizaje asociada cargando en primer lugar las funciones correspondientes.
+
+```{r}
+#| label: nbayes-016
+#| echo: false
+#| message: false
+#| warning: false
+
+# Función que nos permite obtener los valores asociados a la curva de aprendizaje
+learningcurve = function(task, learner, score, ptr, rpeats)
+{
+  # Parámetros de la función
+  # task: tarea
+  # learner: algoritmo de aprendizaje
+  # score: nombre del score a utilizar
+  # ptr: vector con las proporciones de tamaños de muestra de entrenamiento
+  # rpeats: número de repeticiones para cada proporción de tamaño de muestra de entrenamiento
+  
+  # Definimos los scores para cada conjunto de muestra
+  mtrain = msr(score, predict_sets = "train")
+  mtest = msr(score, predict_sets = "test")
+  # Configuramos el learner para que evalue los scores en la muestra de validación y test
+  learner$predict_sets = c("train", "test")
+  # Incicializamos vector de scores agregados para la muestra de entrenamiento y validación
+  sco_train = c()
+  sco_test = c()
+  for(i in 1:length(ptr))
+  {
+    # estrucura de muestreo: 5 repeticiones con porcentaje muestra entrenamiento ptr[i]
+    subsam = rsmp("subsampling", repeats = rpeats, ratio = ptr[i])
+    # ejecución de remuestreo
+    rr = resample(task, learner, subsam)
+    sco_train[i] = rr$aggregate(mtrain)
+    sco_test[i] = rr$aggregate(mtest)
+  }
+  # Matriz de resultados
+  res = data.frame(ptr, sco_train, sco_test)
+  resdf = res %>% pivot_longer(!ptr, names_to = "Sample", values_to = "MSR")
+  return(resdf)
+}
+
+
+# Función que nos permite representar la curva de aprendizaje 
+plot_learningcurve = function(task, learner, score, ptr, rpeats)
+{
+  # Parámetros de la función
+  # task: tarea
+  # learner: algoritmo de aprendizaje
+  # score: nombre del score a utilizar
+  # ptr: vector con las proporciones de tamaños de muestra de entrenamiento
+  # rpeats: número de repeticiones para cada proporción de tamaño de muestra de entrenamiento
+
+  lcurve = learningcurve(task, gr, score, ptr, rpeats)
+  # Gráfico
+  ggplot(lcurve, aes(ptr, MSR, color = Sample)) + 
+    geom_line() +
+    labs(x ="Proporción tamaño muestra entrenamiento", y = "MSE",color = "Muestra") +
+    scale_color_hue(labels = c("Validación", "Entrenamiento")) +
+    scale_x_continuous(breaks=ptr)
+}
+```
+
+```{r}
+#| label: nbayes-017
+#| message: false
+#| warning: false
+#| fig-cap: "Curva dea rpendixaje modelo naïve Bayes. task Breast Cancer"
+
+plot_learningcurve(tsk_cancer, gr, "classif.acc", ptr = seq(0.1, 0.9, 0.1), rpeats = 10)
+```
+
+Podemos ver cierta irregularidad en ambas curvas indicando que en este caso no aprece existir una tamaño mejor que otro. De hecho, los valores se mueven entre el 92% y el 95% cualquiera que sea el tamaño de la muestra de entrenamiento.
+
+### Datos iris {#sec-90.4.2}
+
+Vemos ahora el análisis para el banco de datos iris que recordemos tiene tres niveles en su variable respuesta. Comenzamos definiendo la estructura del algoritmo de aprendizaje.
+
+```{r}
+#| label: nbayes-027
+#| message: false
+#| warning: false
+
+# Definimos learner para predecir la probabilidad
+learner = lrn("classif.naive_bayes", predict_type = "prob")
+# Preprocesado
+pp_iris = po("scale", param_vals = list(center = TRUE, scale = TRUE))
+# Graphlearner
+gr = pp_iris %>>% learner
+gr = GraphLearner$new(gr)
+```
+
+Definimos las muestras de entrenamiento y validación
+
+```{r}
+#| label: nbayes-028
+#| message: false
+#| warning: false
+
+# Generamos variable de estrato
+tsk_iris$col_roles$stratum <- "species"
+# Fijamos semilla para asegurar la reproducibilidad del modelo
+set.seed(135)
+# Creamos la partición
+splits = mlr3::partition(tsk_iris, ratio = 0.8)
+# Muestras de entrenamiento y validación
+tsk_train_iris = tsk_iris$clone()$filter(splits$train)
+tsk_test_iris  = tsk_iris$clone()$filter(splits$test)
+```
+
+Ahora podemos comenzar el proceso de aprendizaje asociado con este modelo.
+
+```{r}
+#| label: nbayes-029
+#| message: false
+#| warning: false
+
+# Entrenamiento
+gr$train(tsk_train_iris)
+# Tablas
+modelo = gr$model$classif.naive_bayes$model
+modelo
+```
+
+Estudiamos la capacidad explicativa del modelo propuesto. Calculamos las predicciones:
+
+```{r}
+#| label: nbayes-030
+#| message: false
+#| warning: false
+
+# Predicción de la muestra de entrenamiento y validación
+pred_train = gr$predict(tsk_train_iris)
+pred_test = gr$predict(tsk_test_iris)
+# Visualizamos las primeras predicciones de la muestra de validación
+pred_test
+```
+
+Obtenemos la matriz de confusión para la muestra de validación:
+
+```{r}
+#| label: nbayes-031
+#| message: false
+#| warning: false
+
+# matriz de confusión
+pred_test$confusion
+```
+
+El modelo clasifica correctamente todas las muestras de las dos primeras clases, pero no lo hace para la última clase. En ese caso dos muestras que originalmente eran Iris-virginica se clasifican como Iris versicolor. Vemos la solución gráfica:
+
+```{r}
+#| label: nbayes-0312
+#| message: false
+#| warning: false
+
+# Cargamos la librería para representar la matriz de confusión
+cm = confusion_matrix(pred_test$truth, pred_test$response)
+plot_confusion_matrix(cm$`Confusion Matrix`[[1]]) 
+```
+
+A continuación vemos los scores de clasificación para este problema:
+
+```{r}
+#| label: nbayes-032
+#| message: false
+#| warning: false
+
+# scores de validación
+measures = msrs(c("classif.acc", "classif.mbrier"))
+# Muestra de entrenamiento
+pred_train$score(measures)
+# Muestra de validación
+pred_test$score(measures)
+```
+
+Obtenemos un porcentaje de clasificación correcta para la muestra de validación del 93.33% lo que demuestra que el modelo de aprendizaje propuesto funciona adecuadamente. El resultado es consistente con el proporcionado por el modelo de regresión logística. El score de brier es bastante bajo y similar al del modelo de regresión logística. Procedemos ahora con el estudio de validación de la solución mediante un análisis de validación cruzada con 10 folds.
+
+```{r}
+#| label: nbayes-033
+#| message: false
+#| warning: false
+
+# Fijamos semilla
+set.seed(135)
+# Definimos proceso de validación cruzada kfold con k=10
+resamp = rsmp("cv", folds = 10)
+# Remuestreo
+rr = resample(tsk_iris, gr, resamp, store_models=TRUE)
+```
+
+```{r}
+#| label: nbayes-034
+#| message: false
+#| warning: false
+
+# Resumen Scores individuales
+scores = rr$score(measures)$classif.acc
+skim(scores)
+```
+
+Podemos ver como el promedio del porcentaje de clasificación correcta se sitúa en el 96% con una desviación del 5%, lo que indica que tenemos bastante precisión en la solución obtenida. Analizamos la curva de aprendizaje asociada cargando en primer lugar las funciones correspondientes.
+
+```{r}
+#| label: nbayes-035
+#| message: false
+#| warning: false
+#| fig-cap: "Curva de aprendizaje modelo naïve Bayes. Task Iris"
+
+plot_learningcurve(tsk_iris, gr, "classif.acc", ptr = seq(0.1, 0.9, 0.1), rpeats = 10)
+```
+
+## Ejercicios {#sec-90.5}
+
+1.  Ajustar un modelo de aprendizaje automático basado en un modelo de clasificación naïve Bayes para el banco de datos `Mushroom`[-@sec-mushroom].
+2.  Ajustar un modelo de aprendizaje automático basado en un modelo de clasificación naïve Bayes para el banco de datos `Water potability`[-@sec-waterpot].
+3.  Ajustar un modelo de aprendizaje automático basado en un modelo de clasificación naïve Bayes para el banco de datos `Hepatitis`[-@sec-hepatitis].
+4.  Ajustar un modelo de aprendizaje automático basado en un modelo de clasificación naïve Bayes para el banco de datos `Abalone`[-@sec-abalone].

@@ -1,0 +1,126 @@
+# Introducción a R y RStudio {#sec-30.1}
+
+R y RStudio son dos elementos fundamentales en el ámbito de la programación y análisis de datos en el lenguaje de programación R, y después del python el más usado en el tratamiento de datos.
+
+## R y RStudio {#sec-whatisR}
+
+R es un lenguaje de programación estadística y un entorno de software libre y de código abierto. Fue creado por Ross Ihaka y Robert Gentleman en 1993 (@programR). Este lenguaje es ampliamente utilizado en estadísticas, análisis de datos, investigación científica y campos relacionados. R cuenta con una gran cantidad de paquetes y librerías que facilitan el análisis y manipulación de datos, así como la generación de gráficos y visualizaciones.
+
+R es especialmente popular en el análisis estadístico debido a su flexibilidad, potencia y comunidad activa de usuarios y desarrolladores. Permite realizar operaciones matemáticas y estadísticas avanzadas y se utiliza en áreas como la bioinformática, la economía, la ciencia de datos y la investigación social.
+
+Para instalar el programa R para el que existen versiones tanto para Windows, macOS o Linux se puede acudir a la página web <https://cran.r-project.org/>.
+
+RStudio es un entorno de desarrollo integrado (IDE) para el lenguaje R. Es una aplicación que proporciona una interfaz gráfica amigable y eficiente para trabajar con R. RStudio mejora la experiencia del usuario al programar en R al ofrecer diversas funcionalidades, como un editor de código con resaltado de sintaxis, herramientas para la visualización de objetos y datos, una consola interactiva, y la posibilidad de generar informes en formato RMarkdown, que combinan código, texto y visualizaciones en un solo documento.
+
+La interfaz de RStudio está organizada de manera intuitiva, lo que facilita la programación, depuración y análisis de datos en R. Además, RStudio permite gestionar proyectos y trabajar con diversos archivos y scripts de forma eficiente.
+
+La instalación de RStudio siempre debe ser posterior a la instalación de R y como para este existen versiones para diferentes sistemas operativos. En este caso tenemos también versiones del programa gratuitas y de pago (sólo para usuarios muy avanzados) que se pueden descargar de la página web <https://posit.co/products/open-source/rstudio/>
+
+## Recursos online para R y RStudio {#sec-resourcesR}
+
+Aunque existen una cantidad de recursos inmensos sobre R y Rstudio, en este material hemos hecho una pequeña selección de recursos online que pueden servir de apoyo para la utilización de R y Rstudio. Se recomienda la consulta de los materiales electrónicos siguientes para iniciar la formación sobre ambos programas:
+
+-   Childs, D. Z. 2017. APS 135: Introduction to Exploratory Data Analysis with R. \[Versión electrónica\](<https://dzchilds.github.io/eda-for-bio/>).
+
+-   Grosser, M. 2017. Tidyverse Cookbook. \[Versión electrónica incompleta\](<https://bookdown.org/Tazinho/Tidyverse-Cookbook/>).
+
+-   Wickham, H. 2015. Advanced R. CRC Press. \[Versión electrónica resumida\](<https://adv-r.hadley.nz/>).
+
+-   Wickham, H. 2010. ggplot2. Third Edition. Springer. \[Recursos electrónicos\](<http://ggplot2.org/>).
+
+-   Wickham, H. & Grolemund, G. 2016. R for Data Science. O'Reilly. \[Versión electrónica resumida\](<http://r4ds.had.co.nz/>).
+
+A continuación se presentan unas pequeñas recomendaciones de lectura para los primeros pasos tanto con R como RStudio.
+
+-   **Primeros pasos en R y RStudio**. Leer los capítulos 1, 2, y 3 de Childs (2017), el capítulo 4 de Wickham (2015), y los capítulos 4 y 6 de Wickham (2016) para un desarrollo más amplio. Realizar los ejercicios que van a apareciendo a lo largo de los capítulos.
+
+-   **Estructuras de datos**. Leer los capítulos 4, 5, 6 y 9 de Childs (2017) para una breve introducción y los capítulos 2 y 3 de Wickham (2015) para completar la información. Realiza los ejercicios que van apareciendo.
+
+-   **Instalación y uso de librerías en RStudio**. Leer el capítulo 8 de Childs (2017) para ver como descargar e instalar en RStudio. En el punto siguiente presentamos las librerías iniciales que utilizaremos y veremos como instalarlas y hacerlas accesibles de forma directa en RStudio.
+
+-   **Creación de proyectos y entornos de trabajo**. Leer el capítulo 8 de Wickham (2016). Crea un proyecto para esta unidad, selecciona el directorio de trabajo donde se encuentra situado el proyecto, y guarda el entorno de trabajo.
+
+En los últimos tiempos se ha puesto de modo la creación de informes directos a partir del código utilizado en Rstudio mediante la creación de documentos específicos. Su puede consultar una guía sencilla de uso en [enlace](http://www.unavarra.es/personal/tgoicoa/ESTADISTICA_RMarkdown_tomas/basicRmarkdown/index.html). Un desarrollo más completo se puede ver en este [enlace](https://bookdown.org/yihui/rmarkdown/). También se puede consultar este [vídeo](https://www.youtube.com/watch?v=V0eJE55aTrY).
+
+## Librerias de R {#sec-libraryR}
+
+En R, las "librerías" (también conocidas como "paquetes") son conjuntos de funciones, datos y documentación que extienden las capacidades del lenguaje y proporcionan herramientas adicionales para realizar tareas específicas. Los paquetes son desarrollados por la comunidad de usuarios de R y se encuentran disponibles de forma gratuita en el repositorio oficial de R llamado CRAN (Comprehensive R Archive Network) y en otros repositorios especializados.
+
+Para usar una librería en R, primero se debe instalar y luego hacerla accesible. para instalarla podemos usar el menú Build de Rstudio, que accede al repositorio CRAN para la búsqueda de la librería de interés. Una vez instalada usamos el código \`**library(nombre_del paquete)**\` para acceder a las funciones y características proporcionadas por el paquete para realizar tareas específicas.
+
+En estos momentos la librería más relevante para la ciencia de datos es **tidyverse** [@tidyverse] que es una colección de paquetes R diseñados para la ciencia de datos. Entre los paquetes que forman parte de la colección podemos destacar:
+
+1.  **ggplot2** [@tidyverse]: Esta librería es ampliamente utilizada para crear gráficos elegantes y personalizados. Es una parte fundamental del "Grammar of Graphics" y proporciona una forma fácil y flexible de visualizar datos.
+
+2.  **dplyr** [@dplyr]: Es una librería para manipulación de datos que ofrece funciones eficientes y rápidas para filtrar, ordenar, agrupar y resumir datos.
+
+3.  **tidyr** [@tidyr]: Esta librería se utiliza para transformar datos en un formato "tidy", que es un formato estándar para datos donde cada variable se encuentra en una columna y cada observación se encuentra en una fila.
+
+4.  **readr** [@readr]: Proporciona funciones para leer datos desde diferentes formatos de archivo, como CSV, Excel, y bases de datos, de manera rápida y sencilla.
+
+5.  **lubridate** [@lubridate]: Es útil para el manejo de fechas y horas, facilitando su manipulación y cálculos.
+
+6.  **stringr** [@stringr]: Ofrece funciones para manipulación de cadenas de texto, como búsqueda, reemplazo, y extracción de patrones.
+
+7.  **forcats** [@forcats]: Ofrece un conjunto de herramientas que resuelven problemas comunes con factores, incluido el cambio del orden de los niveles o los valores.
+
+Para instalar todo el compendio de librerías se puede utilizar el código siguiente directamente en la consola de RStudio:
+
+```{r}
+#| label: instalar-tidyverse
+#| eval: false
+
+install.packages("tidyverse")
+```
+
+Para hacer accesible todos lo recursos debemos cargar dicha librería (en la consola de RStudio o el documento de código que estemos creando):
+
+```{r}
+#| label: cargar-tidyverse
+#| results: hide
+#| message: false
+
+library(tidyverse)
+```
+
+o podemos optar por cargar un paquete únicamente:
+
+```{r}
+#| label: cargar-ggplot
+#| results: hide
+#| message: false
+
+library(ggplot2)
+```
+
+Otros paquetes muy interesantes son tidymodels [@tidymodels] y sjPlot [@sjPlot] que nos permiten extraer información numérica o gráfica de nuestros modelos estadísticos de forma mucho más accesible. El código siguiente instala y carga dichas librerías.
+
+```{r}
+#| label: descargar-otras
+#| eval: false
+
+install.packages(c("tidymodels", "sjPlot"))
+```
+
+```{r}
+#| label: cargar-otras
+#| results: hide
+#| message: false
+
+library(tidymodels)
+library(sjPlot)
+```
+
+Utilizamos está última librería para configurar el entorno gráfico que utilizaremos para usar todos los gráficos.
+
+```{r}
+#| label: tema-gráficas
+
+theme_set(theme_sjplot2())
+```
+
+Por último siempre es recomendable indicar la versión tanto del programa R que se está utilizando como de las versiones de las librerías disponibles. Esto se puede hacer con le código siguiente:
+
+```{r}
+sessionInfo()
+```

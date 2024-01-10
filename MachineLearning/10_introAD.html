@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MachineLearning - 1&nbsp; Introducción al análisis de datos</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./20_introAA.html" rel="next">
+<link href="./01_IntroCourse.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos coincidentes",
+    "search-copy-link-title": "Copiar enlace para buscar",
+    "search-hide-matches-text": "Ocultar coincidencias adicionales",
+    "search-more-match-text": "más coincidencia en este documento",
+    "search-more-matches-text": "más coincidencias en este documento",
+    "search-clear-button-title": "Limpiar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Entregar"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MachineLearning</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Prefacio</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./01_IntroCourse.html" class="sidebar-item-text sidebar-link">Parte 1. Introducción</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_introAD.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_introAA.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./30_RandRstudio.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./40_DataBases.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./02_FirstStepsAA.html" class="sidebar-item-text sidebar-link">Parte 2. Primeros pasos</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./50_AED.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./03_SupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 3. Aprendizaje supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./60_RegressionModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regresión</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./70_LogisticModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelos de Regresión Logística</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./80_SurvivalModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./90_BayesianClassif.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./100_kNNmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./110_SVMmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./120_DTmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./130_Ensemblemodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Modelos de conjunto (Ensemble models)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./140_Boostingmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Modelos Boosting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./04_NonSupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 4. Aprendizaje no supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./150_Discriminantmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análisis discriminante (AD)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./160_PrinCompmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./170_MDSmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./180_Clustermodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Análisis cluster</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">Referencias</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#sec-10.1.1" id="toc-sec-10.1.1" class="nav-link active" data-scroll-target="#sec-10.1.1"><span class="toc-section-number">1.1</span>  Conceptos básicos del diseño experimental</a>
+  <ul>
+  <li><a href="#sec-10.1.1.1" id="toc-sec-10.1.1.1" class="nav-link" data-scroll-target="#sec-10.1.1.1"><span class="toc-section-number">1.1.1</span>  Objetivo del diseño experimental</a></li>
+  <li><a href="#sec-10.1.1.2" id="toc-sec-10.1.1.2" class="nav-link" data-scroll-target="#sec-10.1.1.2"><span class="toc-section-number">1.1.2</span>  Población y muestra</a></li>
+  <li><a href="#sec-10.1.1.3" id="toc-sec-10.1.1.3" class="nav-link" data-scroll-target="#sec-10.1.1.3"><span class="toc-section-number">1.1.3</span>  Medidas y escalas de medida</a>
+  <ul class="collapse">
+  <li><a href="#variables-cualitativas" id="toc-variables-cualitativas" class="nav-link" data-scroll-target="#variables-cualitativas"><span class="toc-section-number">1.1.3.1</span>  Variables cualitativas</a></li>
+  <li><a href="#variables-cuantitativas" id="toc-variables-cuantitativas" class="nav-link" data-scroll-target="#variables-cuantitativas"><span class="toc-section-number">1.1.3.2</span>  Variables cuantitativas</a></li>
+  </ul></li>
+  <li><a href="#sec-10.1.1.4" id="toc-sec-10.1.1.4" class="nav-link" data-scroll-target="#sec-10.1.1.4"><span class="toc-section-number">1.1.4</span>  Parámetros poblacionales y estadísticos</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-10.1" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>La importancia de la estadística dentro del campo experimental siempre ha sido muy relevante, ya que para poder extraer conclusiones de un conjunto de datos experimentales se hace necesaria la utilización de procedimientos estadísticos más o menos sofisticados. Con la irrupción de los ordenadores personales y de los programas estadísticos para legos en la materia, así como la explosión tecnológica que estamos viviendo en los últimos años, la importancia de un correcto estudio estadístico de los datos experimentales se hace más necesaria que nunca. Se siguen publicando trabajos de investigación basados en datos experimentales donde el tratamiento estadístico de la información allí recogida puede considerarse como decepcionante. Con esta materia pretendemos guiar al estudiante en un correcto uso y análisis de las técnicas estadísticas más habituales en los diseños experimentales.</p>
+<p>El tratamiento estadístico de datos experimentales se puede caracterizar en dos grandes áreas: <strong>estudios descriptivos</strong> y <strong>análisis y modelización</strong>. Los estudios descriptivos se centran en el procesado de los datos experimentales obtenidos con el objetivo de establecer o reflejar posibles patrones o tendencias en su comportamiento. Se engloban dentro de este ámbito todas la técnicas estadísticas que permiten los resúmenes numéricos y gráficos de la información observada, así como la detección de observaciones anómalas, la transformación y el filtrado de los datos experimentales. Sin embargo, los estudios descriptivos tienen la gran limitación de que sus resultados están circunscritos a los datos observados, y por tanto no se pueden generalizar a la población más general de la que se han obtenido. En el análisis y modelización se pretende generalizar los posibles patrones de comportamiento observados, en la fase descriptiva, mediante la construcción de modelos que nos permiten aproximar el comportamiento de datos experimentales no observados. Evidentemente la construcción de dichos modelos estadísticos no es una tarea rutinaria que debe tomarse a la ligera. La propia naturaleza de los datos observados puede dar una idea de los posibles modelos que se pueden utilizar, pero el modelo final obtenido es el resultados de un proceso iterativo de construcción, verificación y validación que puede resultar costoso en algunas situaciones.</p>
+<p>La modelización estadística resulta relevante para representar el comportamiento de los datos experimentales de la forma más sencilla posible mediante modelos matemáticos donde se introduce de forma natural la incertidumbre de cualquier diseño experimental. Esta asignatura se centrará en la fase de modelización pero para poder llegar a comprender su naturaleza es necesario introducir primero los conceptos básicos de cualquier estudio estadístico, así como los procedimientos de estadística descriptiva y el estudio de la aleatoriedad en los diseños experimentales.</p>
+<p>Este tema establece las definiciones básicas de cualquier estudio estadístico sobre diferentes ejemplos e introduce la nomenclatura básica de los modelos estadísticos que estudiaremos más adelante.</p>
+<div class="warning">
+<p>Usar la estadística no necesariamente es sinónimo de utilizar palabras raras o de hacer cálculos complicados. Significa que deseamos ver la realidad de forma objetiva, a través de datos que reflejen de la mejor manera posible qué es lo que está ocurriendo. Una vez se tienen los datos hay que saber sacarles la información y saberla plasmar de forma clara y convincente.</p>
+</div>
+<section id="sec-10.1.1" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="sec-10.1.1"><span class="header-section-number">1.1</span> Conceptos básicos del diseño experimental</h2>
+<p>En esta sección presentamos los conceptos básicos que utilizaremos a lo largo de la materia. Se trata únicamente de un resumen muy esquemática, pero nos sirve para sentar las bases de los temas siguientes.</p>
+<section id="sec-10.1.1.1" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="sec-10.1.1.1"><span class="header-section-number">1.1.1</span> Objetivo del diseño experimental</h3>
+<p>El objetivo de cualquier diseño experimental es aquellos que pretendemos estudiar en función del tipo de información que se ha recogido y del tipo de premisas establecidas antes de la recolección de los datos. Además es importante establecer el número de repeticiones del experimento que vamos a realizar, ya que eso condicionará el análisis de dichos datos. Si nuestro diseño experimental es muy complejo puede ocurrir que plantemos más de un objetivo.</p>
+<div id="exm-ejemplo1" class="example theorem example">
+<p><span class="theorem-title"><strong>Ejemplo 1.1 </strong></span><strong>Degradación compuesto orgánico</strong>. Se va a realizar un experimento para conocer el tiempo que tarda en degradarse un compuesto orgánico. En este caso nuestro objetivo es el tiempo hasta la degradación. Si el experimento considera diferentes tipos de compuestos nuestro objetivo podría ser comparar el tiempo de degradación en función del tipo de compuesto.</p>
+</div>
+</section>
+<section id="sec-10.1.1.2" class="level3" data-number="1.1.2">
+<h3 data-number="1.1.2" class="anchored" data-anchor-id="sec-10.1.1.2"><span class="header-section-number">1.1.2</span> Población y muestra</h3>
+<p>Se define la población como el conjunto de sujetos u objetos que son de interés para el objetivo u objetivos planteados en nuestro diseño experimental. EL problema principal es que la población de sujetos u objetos suele ser demasiado grande para poder analizarla de forma completa, y por tanto debemos acudir a un subconjunto de dicha población para llevar a cabo nuestro diseño experimental.</p>
+<p>Se define la muestra como el subconjunto de la población a la que accedemos para obtener la información necesaria de cara a responder de la forma más precisa posible al objetivo u objetivos planteados.</p>
+</section>
+<section id="sec-10.1.1.3" class="level3" data-number="1.1.3">
+<h3 data-number="1.1.3" class="anchored" data-anchor-id="sec-10.1.1.3"><span class="header-section-number">1.1.3</span> Medidas y escalas de medida</h3>
+<p>Una medida es un número o atributo que se puede calcular para cada uno de los miembros de la población que está relacionado directamente con el objetivo de interés de la investigación. El conjunto de medidas obtenidas para cada uno de los elementos muestrales se denominan datos muestrales.</p>
+<p>EL conjunto de medidas que se pueden observar y registrar para un conjunto de sujetos u objetos bajo investigación se denominan variables. Por tanto, una variable es el conjunto de valores que puede tomar cierta característica de la población sobre la que se realiza el estudio estadístico. Se distinguen dos tipos que pasamos a describir a continuación.</p>
+<section id="variables-cualitativas" class="level4" data-number="1.1.3.1">
+<h4 data-number="1.1.3.1" class="anchored" data-anchor-id="variables-cualitativas"><span class="header-section-number">1.1.3.1</span> Variables cualitativas</h4>
+<p>Son el tipo de variables que como su nombre lo indica expresan distintas cualidades, características o modalidad. Cada modalidad que se presenta se denomina atributo o categoría, y la medición consiste en una clasificación de dichos atributos. Las variables cualitativas pueden ser dicotómicas cuando sólo pueden tomar dos valores posibles, como sí y no, hombre y mujer o ser politómicas cuando pueden adquirir tres o más valores. Dentro de ellas podemos distinguir:</p>
+<ol type="i">
+<li><strong>Variable cualitativa ordinal</strong>: La variable puede tomar distintos valores ordenados siguiendo una escala establecida, aunque no es necesario que el intervalo entre mediciones sea uniforme, por ejemplo: leve, moderado, fuerte.</li>
+<li><strong>Variable cualitativa nominal</strong>: En esta variable los valores no pueden ser sometidos a un criterio de orden, como por ejemplo los colores.</li>
+</ol>
+</section>
+<section id="variables-cuantitativas" class="level4" data-number="1.1.3.2">
+<h4 data-number="1.1.3.2" class="anchored" data-anchor-id="variables-cuantitativas"><span class="header-section-number">1.1.3.2</span> Variables cuantitativas</h4>
+<p>Son las variables que toman como argumento cantidades numéricas. Las variables cuantitativas además pueden ser:</p>
+<ol type="i">
+<li><strong>Variable discreta</strong>: Es la variable que presenta separaciones o interrupciones en la escala de valores que puede tomar. Estas separaciones o interrupciones indican la ausencia de valores entre los distintos valores específicos que la variable pueda asumir. Ejemplo: El número de hijos (1, 2, 3, 4, 5). En muchas ocasiones una variable cualitativa ordinal puede ser interpretada como una variable discreta asociando a las categorías de la variable valores numéricos respetando el orden o escala establecida. Por ejemplo a la escala leve, moderado y fuerte le podríamos asociar la escala 1, 2 y 3 para mantener el orden.<br>
+</li>
+<li><strong>Variable continua</strong>: Es la variable que puede adquirir cualquier valor dentro de un intervalo especificado de valores. Por ejemplo el peso (2,3 kg, 2,4 kg, 2,5 kg,…), la altura (1,64 m, 1,65 m, 1,66 m,…), o el salario. Solamente se está limitado por la precisión del aparato medidor, en teoría permiten que existan valores infinitos entre dos valores observados.</li>
+</ol>
+<p>De forma habitual, la estructura de cualquier banco de datos (asociado a un diseño experimental) tiene una estructura matricial donde en las filas se colocan los sujetos bajo estudio y en las columnas se sitúan las variables medidas para cada uno de ellos.</p>
+<p>Asociada a cada variable de nuestro banco de datos se puede establecer lo que conocemos como parámetro o parámetros de interés de la variable.</p>
+<div id="exm-ejemplo2" class="example theorem example">
+<p><span class="theorem-title"><strong>Ejemplo 1.2 </strong></span><strong>Variable de interés.</strong> Para el diseño experimental del estudio de la degradación del compuesto orgánico presentado en el ejemplo <a href="#exm-ejemplo1">Ejemplo&nbsp;<span>1.1</span></a>, la variable de interés es de tipo continuo y viene dada por el tiempo de degradación asociado a cada repetición del experimento. Sin embargo, a la hora de extraer conclusiones no podemos presentar todo el conjunto de datos sino que recurrimos a un resumen de dichos datos.</p>
+</div>
+</section>
+</section>
+<section id="sec-10.1.1.4" class="level3" data-number="1.1.4">
+<h3 data-number="1.1.4" class="anchored" data-anchor-id="sec-10.1.1.4"><span class="header-section-number">1.1.4</span> Parámetros poblacionales y estadísticos</h3>
+<p>Asociado a cada variable se puede establecer lo que conocemos como <strong>parámetro o parámetros</strong> de interés de la variable. En el ejemplo anterior el parámetro de interés es el tiempo medio de degradación. Dado que generalmente no es posible examinar toda la población y debemos recurrir a una muestra de dicha población, es imposible conocer el verdadero valor del parámetro asociado con dicha variable. Para sortear este problema definimos el <strong>estadístico</strong> como una realización del parámetro para los datos muestrales observados. Por tanto el valor del estadístico (denominado estimación) varia entre dos muestras de las misma población. Cuanto mayor es la muestra más se parecerá el valor del estadístico al del parámetro.</p>
+<p>En ocasiones ocurrirá que el número de parámetros asociado con una variable no es único, ya que se pueden establecer varios parámetros para estudiar el comportamiento de una variable. En el caso de variables de tipo cuantitativo siempre existen dos parámetros de interés: la media y la desviación típica. El primero nos indica como se sitúan los datos mientras que el segundo nos indica como se reparten los datos muestrales alrededor de la media.</p>
+<div id="exm-ejemplo3" class="example theorem example">
+<p><span class="theorem-title"><strong>Ejemplo 1.3 </strong></span>Para el diseño experimental del estudio de la degradación del compuesto orgánico presentado en el ejemplo <a href="#exm-ejemplo1">Ejemplo&nbsp;<span>1.1</span></a>, el parámetro poblacional de interés es el tiempo medio de degradación, mientras que el estadístico es la media del tiempo de degradación observado para los sujetos de la muestra. Distinguimos entonces entre media poblacional (parámetro) y media muestral (estadístico).</p>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "¡Copiado!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "¡Copiado!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./01_IntroCourse.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Parte 1. Introducción</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./20_introAA.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

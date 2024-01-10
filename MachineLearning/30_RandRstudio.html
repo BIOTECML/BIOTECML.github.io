@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MachineLearning - 3&nbsp; Introducción a R y RStudio</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./40_DataBases.html" rel="next">
+<link href="./20_introAA.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos coincidentes",
+    "search-copy-link-title": "Copiar enlace para buscar",
+    "search-hide-matches-text": "Ocultar coincidencias adicionales",
+    "search-more-match-text": "más coincidencia en este documento",
+    "search-more-matches-text": "más coincidencias en este documento",
+    "search-clear-button-title": "Limpiar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Entregar"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MachineLearning</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Prefacio</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./01_IntroCourse.html" class="sidebar-item-text sidebar-link">Parte 1. Introducción</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_introAD.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_introAA.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./30_RandRstudio.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./40_DataBases.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./02_FirstStepsAA.html" class="sidebar-item-text sidebar-link">Parte 2. Primeros pasos</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./50_AED.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./03_SupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 3. Aprendizaje supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./60_RegressionModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regresión</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./70_LogisticModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelos de Regresión Logística</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./80_SurvivalModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./90_BayesianClassif.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./100_kNNmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./110_SVMmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./120_DTmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./130_Ensemblemodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Modelos de conjunto (Ensemble models)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./140_Boostingmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Modelos Boosting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./04_NonSupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 4. Aprendizaje no supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./150_Discriminantmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análisis discriminante (AD)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./160_PrinCompmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./170_MDSmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./180_Clustermodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Análisis cluster</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">Referencias</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#sec-whatisR" id="toc-sec-whatisR" class="nav-link active" data-scroll-target="#sec-whatisR"><span class="toc-section-number">3.1</span>  R y RStudio</a></li>
+  <li><a href="#sec-resourcesR" id="toc-sec-resourcesR" class="nav-link" data-scroll-target="#sec-resourcesR"><span class="toc-section-number">3.2</span>  Recursos online para R y RStudio</a></li>
+  <li><a href="#sec-libraryR" id="toc-sec-libraryR" class="nav-link" data-scroll-target="#sec-libraryR"><span class="toc-section-number">3.3</span>  Librerias de R</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-30.1" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>R y RStudio son dos elementos fundamentales en el ámbito de la programación y análisis de datos en el lenguaje de programación R, y después del python el más usado en el tratamiento de datos.</p>
+<section id="sec-whatisR" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="sec-whatisR"><span class="header-section-number">3.1</span> R y RStudio</h2>
+<p>R es un lenguaje de programación estadística y un entorno de software libre y de código abierto. Fue creado por Ross Ihaka y Robert Gentleman en 1993 (<span class="citation" data-cites="programR">R Core Team (<a href="references.html#ref-programR" role="doc-biblioref">2021</a>)</span>). Este lenguaje es ampliamente utilizado en estadísticas, análisis de datos, investigación científica y campos relacionados. R cuenta con una gran cantidad de paquetes y librerías que facilitan el análisis y manipulación de datos, así como la generación de gráficos y visualizaciones.</p>
+<p>R es especialmente popular en el análisis estadístico debido a su flexibilidad, potencia y comunidad activa de usuarios y desarrolladores. Permite realizar operaciones matemáticas y estadísticas avanzadas y se utiliza en áreas como la bioinformática, la economía, la ciencia de datos y la investigación social.</p>
+<p>Para instalar el programa R para el que existen versiones tanto para Windows, macOS o Linux se puede acudir a la página web <a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a>.</p>
+<p>RStudio es un entorno de desarrollo integrado (IDE) para el lenguaje R. Es una aplicación que proporciona una interfaz gráfica amigable y eficiente para trabajar con R. RStudio mejora la experiencia del usuario al programar en R al ofrecer diversas funcionalidades, como un editor de código con resaltado de sintaxis, herramientas para la visualización de objetos y datos, una consola interactiva, y la posibilidad de generar informes en formato RMarkdown, que combinan código, texto y visualizaciones en un solo documento.</p>
+<p>La interfaz de RStudio está organizada de manera intuitiva, lo que facilita la programación, depuración y análisis de datos en R. Además, RStudio permite gestionar proyectos y trabajar con diversos archivos y scripts de forma eficiente.</p>
+<p>La instalación de RStudio siempre debe ser posterior a la instalación de R y como para este existen versiones para diferentes sistemas operativos. En este caso tenemos también versiones del programa gratuitas y de pago (sólo para usuarios muy avanzados) que se pueden descargar de la página web <a href="https://posit.co/products/open-source/rstudio/" class="uri">https://posit.co/products/open-source/rstudio/</a></p>
+</section>
+<section id="sec-resourcesR" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="sec-resourcesR"><span class="header-section-number">3.2</span> Recursos online para R y RStudio</h2>
+<p>Aunque existen una cantidad de recursos inmensos sobre R y Rstudio, en este material hemos hecho una pequeña selección de recursos online que pueden servir de apoyo para la utilización de R y Rstudio. Se recomienda la consulta de los materiales electrónicos siguientes para iniciar la formación sobre ambos programas:</p>
+<ul>
+<li><p>Childs, D. Z. 2017. APS 135: Introduction to Exploratory Data Analysis with R. [Versión electrónica](<a href="https://dzchilds.github.io/eda-for-bio/" class="uri">https://dzchilds.github.io/eda-for-bio/</a>).</p></li>
+<li><p>Grosser, M. 2017. Tidyverse Cookbook. [Versión electrónica incompleta](<a href="https://bookdown.org/Tazinho/Tidyverse-Cookbook/" class="uri">https://bookdown.org/Tazinho/Tidyverse-Cookbook/</a>).</p></li>
+<li><p>Wickham, H. 2015. Advanced R. CRC Press. [Versión electrónica resumida](<a href="https://adv-r.hadley.nz/" class="uri">https://adv-r.hadley.nz/</a>).</p></li>
+<li><p>Wickham, H. 2010. ggplot2. Third Edition. Springer. [Recursos electrónicos](<a href="http://ggplot2.org/" class="uri">http://ggplot2.org/</a>).</p></li>
+<li><p>Wickham, H. &amp; Grolemund, G. 2016. R for Data Science. O’Reilly. [Versión electrónica resumida](<a href="http://r4ds.had.co.nz/" class="uri">http://r4ds.had.co.nz/</a>).</p></li>
+</ul>
+<p>A continuación se presentan unas pequeñas recomendaciones de lectura para los primeros pasos tanto con R como RStudio.</p>
+<ul>
+<li><p><strong>Primeros pasos en R y RStudio</strong>. Leer los capítulos 1, 2, y 3 de Childs (2017), el capítulo 4 de Wickham (2015), y los capítulos 4 y 6 de Wickham (2016) para un desarrollo más amplio. Realizar los ejercicios que van a apareciendo a lo largo de los capítulos.</p></li>
+<li><p><strong>Estructuras de datos</strong>. Leer los capítulos 4, 5, 6 y 9 de Childs (2017) para una breve introducción y los capítulos 2 y 3 de Wickham (2015) para completar la información. Realiza los ejercicios que van apareciendo.</p></li>
+<li><p><strong>Instalación y uso de librerías en RStudio</strong>. Leer el capítulo 8 de Childs (2017) para ver como descargar e instalar en RStudio. En el punto siguiente presentamos las librerías iniciales que utilizaremos y veremos como instalarlas y hacerlas accesibles de forma directa en RStudio.</p></li>
+<li><p><strong>Creación de proyectos y entornos de trabajo</strong>. Leer el capítulo 8 de Wickham (2016). Crea un proyecto para esta unidad, selecciona el directorio de trabajo donde se encuentra situado el proyecto, y guarda el entorno de trabajo.</p></li>
+</ul>
+<p>En los últimos tiempos se ha puesto de modo la creación de informes directos a partir del código utilizado en Rstudio mediante la creación de documentos específicos. Su puede consultar una guía sencilla de uso en <a href="http://www.unavarra.es/personal/tgoicoa/ESTADISTICA_RMarkdown_tomas/basicRmarkdown/index.html">enlace</a>. Un desarrollo más completo se puede ver en este <a href="https://bookdown.org/yihui/rmarkdown/">enlace</a>. También se puede consultar este <a href="https://www.youtube.com/watch?v=V0eJE55aTrY">vídeo</a>.</p>
+</section>
+<section id="sec-libraryR" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="sec-libraryR"><span class="header-section-number">3.3</span> Librerias de R</h2>
+<p>En R, las “librerías” (también conocidas como “paquetes”) son conjuntos de funciones, datos y documentación que extienden las capacidades del lenguaje y proporcionan herramientas adicionales para realizar tareas específicas. Los paquetes son desarrollados por la comunidad de usuarios de R y se encuentran disponibles de forma gratuita en el repositorio oficial de R llamado CRAN (Comprehensive R Archive Network) y en otros repositorios especializados.</p>
+<p>Para usar una librería en R, primero se debe instalar y luego hacerla accesible. para instalarla podemos usar el menú Build de Rstudio, que accede al repositorio CRAN para la búsqueda de la librería de interés. Una vez instalada usamos el código `<strong>library(nombre_del paquete)</strong>` para acceder a las funciones y características proporcionadas por el paquete para realizar tareas específicas.</p>
+<p>En estos momentos la librería más relevante para la ciencia de datos es <strong>tidyverse</strong> <span class="citation" data-cites="tidyverse">(<a href="references.html#ref-tidyverse" role="doc-biblioref">Wickham et al. 2019</a>)</span> que es una colección de paquetes R diseñados para la ciencia de datos. Entre los paquetes que forman parte de la colección podemos destacar:</p>
+<ol type="1">
+<li><p><strong>ggplot2</strong> <span class="citation" data-cites="tidyverse">(<a href="references.html#ref-tidyverse" role="doc-biblioref">Wickham et al. 2019</a>)</span>: Esta librería es ampliamente utilizada para crear gráficos elegantes y personalizados. Es una parte fundamental del “Grammar of Graphics” y proporciona una forma fácil y flexible de visualizar datos.</p></li>
+<li><p><strong>dplyr</strong> <span class="citation" data-cites="dplyr">(<a href="references.html#ref-dplyr" role="doc-biblioref">Wickham et al. 2023</a>)</span>: Es una librería para manipulación de datos que ofrece funciones eficientes y rápidas para filtrar, ordenar, agrupar y resumir datos.</p></li>
+<li><p><strong>tidyr</strong> <span class="citation" data-cites="tidyr">(<a href="references.html#ref-tidyr" role="doc-biblioref">Wickham, Vaughan, and Girlich 2023</a>)</span>: Esta librería se utiliza para transformar datos en un formato “tidy”, que es un formato estándar para datos donde cada variable se encuentra en una columna y cada observación se encuentra en una fila.</p></li>
+<li><p><strong>readr</strong> <span class="citation" data-cites="readr">(<a href="references.html#ref-readr" role="doc-biblioref">Wickham, Hester, and Bryan 2023</a>)</span>: Proporciona funciones para leer datos desde diferentes formatos de archivo, como CSV, Excel, y bases de datos, de manera rápida y sencilla.</p></li>
+<li><p><strong>lubridate</strong> <span class="citation" data-cites="lubridate">(<a href="references.html#ref-lubridate" role="doc-biblioref">Grolemund and Wickham 2011</a>)</span>: Es útil para el manejo de fechas y horas, facilitando su manipulación y cálculos.</p></li>
+<li><p><strong>stringr</strong> <span class="citation" data-cites="stringr">(<a href="references.html#ref-stringr" role="doc-biblioref">Wickham 2022</a>)</span>: Ofrece funciones para manipulación de cadenas de texto, como búsqueda, reemplazo, y extracción de patrones.</p></li>
+<li><p><strong>forcats</strong> <span class="citation" data-cites="forcats">(<a href="references.html#ref-forcats" role="doc-biblioref">Wickham 2023</a>)</span>: Ofrece un conjunto de herramientas que resuelven problemas comunes con factores, incluido el cambio del orden de los niveles o los valores.</p></li>
+</ol>
+<p>Para instalar todo el compendio de librerías se puede utilizar el código siguiente directamente en la consola de RStudio:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para hacer accesible todos lo recursos debemos cargar dicha librería (en la consola de RStudio o el documento de código que estemos creando):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>o podemos optar por cargar un paquete únicamente:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Otros paquetes muy interesantes son tidymodels <span class="citation" data-cites="tidymodels">(<a href="references.html#ref-tidymodels" role="doc-biblioref">Kuhn and Wickham 2020</a>)</span> y sjPlot <span class="citation" data-cites="sjPlot">(<a href="references.html#ref-sjPlot" role="doc-biblioref">Lüdecke 2023</a>)</span> que nos permiten extraer información numérica o gráfica de nuestros modelos estadísticos de forma mucho más accesible. El código siguiente instala y carga dichas librerías.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"tidymodels"</span>, <span class="st">"sjPlot"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="fu">library</span>(sjPlot)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Utilizamos está última librería para configurar el entorno gráfico que utilizaremos para usar todos los gráficos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_sjplot2</span>())</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Por último siempre es recomendable indicar la versión tanto del programa R que se está utilizando como de las versiones de las librerías disponibles. Esto se puede hacer con le código siguiente:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>R version 4.3.0 (2023-04-21)
+Platform: x86_64-apple-darwin20 (64-bit)
+Running under: macOS Monterey 12.6.8
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: Europe/Madrid
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] sjPlot_2.8.15      yardstick_1.2.0    workflowsets_1.0.1 workflows_1.1.3   
+ [5] tune_1.1.2         rsample_1.2.0      recipes_1.0.8      parsnip_1.1.1     
+ [9] modeldata_1.2.0    infer_1.0.5        dials_1.2.0        scales_1.2.1      
+[13] broom_1.0.5        tidymodels_1.1.1   lubridate_1.9.3    forcats_1.0.0     
+[17] stringr_1.5.0      dplyr_1.1.3        purrr_1.0.2        readr_2.1.4       
+[21] tidyr_1.3.0        tibble_3.2.1       ggplot2_3.4.4      tidyverse_2.0.0   
+
+loaded via a namespace (and not attached):
+ [1] rlang_1.1.1         magrittr_2.0.3      furrr_0.3.1        
+ [4] compiler_4.3.0      vctrs_0.6.4         lhs_1.1.6          
+ [7] pkgconfig_2.0.3     fastmap_1.1.1       backports_1.4.1    
+[10] utf8_1.2.4          rmarkdown_2.25      prodlim_2023.08.28 
+[13] tzdb_0.4.0          nloptr_2.0.3        xfun_0.40          
+[16] jsonlite_1.8.7      sjmisc_2.8.9        ggeffects_1.3.2    
+[19] parallel_4.3.0      R6_2.5.1            stringi_1.7.12     
+[22] parallelly_1.36.0   boot_1.3-28.1       rpart_4.1.21       
+[25] estimability_1.4.1  Rcpp_1.0.11         iterators_1.0.14   
+[28] knitr_1.45          modelr_0.1.11       future.apply_1.11.0
+[31] Matrix_1.6-1.1      splines_4.3.0       nnet_7.3-19        
+[34] timechange_0.2.0    tidyselect_1.2.0    rstudioapi_0.15.0  
+[37] yaml_2.3.7          timeDate_4022.108   codetools_0.2-19   
+[40] sjlabelled_1.2.0    listenv_0.9.0       lattice_0.22-5     
+[43] withr_2.5.2         bayestestR_0.13.1   evaluate_0.22      
+[46] future_1.33.0       survival_3.5-7      pillar_1.9.0       
+[49] foreach_1.5.2       insight_0.19.6      generics_0.1.3     
+[52] hms_1.1.3           munsell_0.5.0       minqa_1.2.6        
+[55] globals_0.16.2      xtable_1.8-4        class_7.3-22       
+[58] glue_1.6.2          emmeans_1.8.9       tools_4.3.0        
+[61] data.table_1.14.8   lme4_1.1-34         gower_1.0.1        
+[64] mvtnorm_1.2-3       grid_4.3.0          ipred_0.9-14       
+[67] colorspace_2.1-0    nlme_3.1-163        performance_0.10.8 
+[70] cli_3.6.1           DiceDesign_1.9      fansi_1.0.5        
+[73] lava_1.7.2.1        sjstats_0.18.2      gtable_0.3.4       
+[76] GPfit_1.0-8         digest_0.6.33       htmlwidgets_1.6.2  
+[79] htmltools_0.5.6.1   lifecycle_1.0.3     hardhat_1.3.0      
+[82] MASS_7.3-60        </code></pre>
+</div>
+</div>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography" style="display: none">
+<div id="ref-lubridate" class="csl-entry" role="doc-biblioentry">
+Grolemund, Garrett, and Hadley Wickham. 2011. <span>“Dates and Times Made Easy with <span class="nocase">lubridate</span>.”</span> <em>Journal of Statistical Software</em> 40 (3): 1–25. <a href="https://www.jstatsoft.org/v40/i03/">https://www.jstatsoft.org/v40/i03/</a>.
+</div>
+<div id="ref-tidymodels" class="csl-entry" role="doc-biblioentry">
+Kuhn, Max, and Hadley Wickham. 2020. <em>Tidymodels: A Collection of Packages for Modeling and Machine Learning Using Tidyverse Principles.</em> <a href="https://www.tidymodels.org">https://www.tidymodels.org</a>.
+</div>
+<div id="ref-sjPlot" class="csl-entry" role="doc-biblioentry">
+Lüdecke, Daniel. 2023. <em>sjPlot: Data Visualization for Statistics in Social Science</em>. <a href="https://CRAN.R-project.org/package=sjPlot">https://CRAN.R-project.org/package=sjPlot</a>.
+</div>
+<div id="ref-programR" class="csl-entry" role="doc-biblioentry">
+R Core Team. 2021. <em>R: A Language and Environment for Statistical Computing</em>. Vienna, Austria: R Foundation for Statistical Computing. <a href="https://www.R-project.org/">https://www.R-project.org/</a>.
+</div>
+<div id="ref-stringr" class="csl-entry" role="doc-biblioentry">
+Wickham, Hadley. 2022. <em>Stringr: Simple, Consistent Wrappers for Common String Operations</em>. <a href="https://CRAN.R-project.org/package=stringr">https://CRAN.R-project.org/package=stringr</a>.
+</div>
+<div id="ref-forcats" class="csl-entry" role="doc-biblioentry">
+———. 2023. <em>Forcats: Tools for Working with Categorical Variables (Factors)</em>. <a href="https://CRAN.R-project.org/package=forcats">https://CRAN.R-project.org/package=forcats</a>.
+</div>
+<div id="ref-tidyverse" class="csl-entry" role="doc-biblioentry">
+Wickham, Hadley, Mara Averick, Jennifer Bryan, Winston Chang, Lucy D’Agostino McGowan, Romain François, Garrett Grolemund, et al. 2019. <span>“Welcome to the <span class="nocase">tidyverse</span>.”</span> <em>Journal of Open Source Software</em> 4 (43): 1686. <a href="https://doi.org/10.21105/joss.01686">https://doi.org/10.21105/joss.01686</a>.
+</div>
+<div id="ref-dplyr" class="csl-entry" role="doc-biblioentry">
+Wickham, Hadley, Romain François, Lionel Henry, Kirill Müller, and Davis Vaughan. 2023. <em>Dplyr: A Grammar of Data Manipulation</em>. <a href="https://CRAN.R-project.org/package=dplyr">https://CRAN.R-project.org/package=dplyr</a>.
+</div>
+<div id="ref-readr" class="csl-entry" role="doc-biblioentry">
+Wickham, Hadley, Jim Hester, and Jennifer Bryan. 2023. <em>Readr: Read Rectangular Text Data</em>. <a href="https://CRAN.R-project.org/package=readr">https://CRAN.R-project.org/package=readr</a>.
+</div>
+<div id="ref-tidyr" class="csl-entry" role="doc-biblioentry">
+Wickham, Hadley, Davis Vaughan, and Maximilian Girlich. 2023. <em>Tidyr: Tidy Messy Data</em>. <a href="https://CRAN.R-project.org/package=tidyr">https://CRAN.R-project.org/package=tidyr</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "¡Copiado!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "¡Copiado!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./20_introAA.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./40_DataBases.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

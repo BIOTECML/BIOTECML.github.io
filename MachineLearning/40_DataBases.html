@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MachineLearning - 4&nbsp; Bases de datos</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./02_FirstStepsAA.html" rel="next">
+<link href="./30_RandRstudio.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos coincidentes",
+    "search-copy-link-title": "Copiar enlace para buscar",
+    "search-hide-matches-text": "Ocultar coincidencias adicionales",
+    "search-more-match-text": "más coincidencia en este documento",
+    "search-more-matches-text": "más coincidencias en este documento",
+    "search-clear-button-title": "Limpiar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Entregar"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MachineLearning</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Prefacio</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./01_IntroCourse.html" class="sidebar-item-text sidebar-link">Parte 1. Introducción</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_introAD.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_introAA.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./30_RandRstudio.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./40_DataBases.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./02_FirstStepsAA.html" class="sidebar-item-text sidebar-link">Parte 2. Primeros pasos</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./50_AED.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./03_SupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 3. Aprendizaje supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./60_RegressionModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regresión</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./70_LogisticModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelos de Regresión Logística</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./80_SurvivalModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./90_BayesianClassif.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./100_kNNmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./110_SVMmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./120_DTmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./130_Ensemblemodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Modelos de conjunto (Ensemble models)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./140_Boostingmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Modelos Boosting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./04_NonSupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 4. Aprendizaje no supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./150_Discriminantmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análisis discriminante (AD)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./160_PrinCompmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./170_MDSmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./180_Clustermodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Análisis cluster</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">Referencias</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#sec-40.1" id="toc-sec-40.1" class="nav-link active" data-scroll-target="#sec-40.1"><span class="toc-section-number">4.1</span>  Introducción</a></li>
+  <li><a href="#sec-40.1.1" id="toc-sec-40.1.1" class="nav-link" data-scroll-target="#sec-40.1.1"><span class="toc-section-number">4.2</span>  Aprendizaje supervisado: Regresión</a>
+  <ul>
+  <li><a href="#sec-anime" id="toc-sec-anime" class="nav-link" data-scroll-target="#sec-anime"><span class="toc-section-number">4.2.1</span>  Anime ratings</a></li>
+  <li><a href="#sec-diabetes" id="toc-sec-diabetes" class="nav-link" data-scroll-target="#sec-diabetes"><span class="toc-section-number">4.2.2</span>  Diabetes</a></li>
+  <li><a href="#sec-electricity" id="toc-sec-electricity" class="nav-link" data-scroll-target="#sec-electricity"><span class="toc-section-number">4.2.3</span>  Electricity</a></li>
+  <li><a href="#sec-housingCA" id="toc-sec-housingCA" class="nav-link" data-scroll-target="#sec-housingCA"><span class="toc-section-number">4.2.4</span>  Housing in California</a></li>
+  <li><a href="#sec-meatspec" id="toc-sec-meatspec" class="nav-link" data-scroll-target="#sec-meatspec"><span class="toc-section-number">4.2.5</span>  Meat spec</a></li>
+  <li><a href="#sec-penguins" id="toc-sec-penguins" class="nav-link" data-scroll-target="#sec-penguins"><span class="toc-section-number">4.2.6</span>  Penguins</a></li>
+  <li><a href="#sec-usaets" id="toc-sec-usaets" class="nav-link" data-scroll-target="#sec-usaets"><span class="toc-section-number">4.2.7</span>  US economic time series</a></li>
+  <li><a href="#sec-qsar" id="toc-sec-qsar" class="nav-link" data-scroll-target="#sec-qsar"><span class="toc-section-number">4.2.8</span>  QSAR</a></li>
+  </ul></li>
+  <li><a href="#sec-40.1.2" id="toc-sec-40.1.2" class="nav-link" data-scroll-target="#sec-40.1.2"><span class="toc-section-number">4.3</span>  Aprendizaje supervisado: Clasificación</a>
+  <ul>
+  <li><a href="#sec-abalone" id="toc-sec-abalone" class="nav-link" data-scroll-target="#sec-abalone"><span class="toc-section-number">4.3.1</span>  Abalone</a></li>
+  <li><a href="#sec-brestcancer" id="toc-sec-brestcancer" class="nav-link" data-scroll-target="#sec-brestcancer"><span class="toc-section-number">4.3.2</span>  Breast Cancer Wisconsin</a></li>
+  <li><a href="#sec-iris" id="toc-sec-iris" class="nav-link" data-scroll-target="#sec-iris"><span class="toc-section-number">4.3.3</span>  Iris</a></li>
+  <li><a href="#sec-mushroom" id="toc-sec-mushroom" class="nav-link" data-scroll-target="#sec-mushroom"><span class="toc-section-number">4.3.4</span>  Mushroom</a></li>
+  <li><a href="#sec-spam" id="toc-sec-spam" class="nav-link" data-scroll-target="#sec-spam"><span class="toc-section-number">4.3.5</span>  Spam</a></li>
+  <li><a href="#sec-stroke" id="toc-sec-stroke" class="nav-link" data-scroll-target="#sec-stroke"><span class="toc-section-number">4.3.6</span>  Stroke</a></li>
+  <li><a href="#sec-waterpot" id="toc-sec-waterpot" class="nav-link" data-scroll-target="#sec-waterpot"><span class="toc-section-number">4.3.7</span>  Water potability</a></li>
+  <li><a href="#sec-winequality" id="toc-sec-winequality" class="nav-link" data-scroll-target="#sec-winequality"><span class="toc-section-number">4.3.8</span>  Wine quality</a></li>
+  <li><a href="#sec-hepatitis" id="toc-sec-hepatitis" class="nav-link" data-scroll-target="#sec-hepatitis"><span class="toc-section-number">4.3.9</span>  Hepatitis</a></li>
+  <li><a href="#sec-geneexp" id="toc-sec-geneexp" class="nav-link" data-scroll-target="#sec-geneexp"><span class="toc-section-number">4.3.10</span>  Gene expression breast cancer</a></li>
+  <li><a href="#sec-geneexpleu" id="toc-sec-geneexpleu" class="nav-link" data-scroll-target="#sec-geneexpleu"><span class="toc-section-number">4.3.11</span>  Gene expression leukemia</a></li>
+  </ul></li>
+  <li><a href="#sec-40.1.3" id="toc-sec-40.1.3" class="nav-link" data-scroll-target="#sec-40.1.3"><span class="toc-section-number">4.4</span>  Aprendizaje no supervisado: Agrupación</a>
+  <ul>
+  <li><a href="#sec-sales" id="toc-sec-sales" class="nav-link" data-scroll-target="#sec-sales"><span class="toc-section-number">4.4.1</span>  Sales</a></li>
+  <li><a href="#sec-vehicle" id="toc-sec-vehicle" class="nav-link" data-scroll-target="#sec-vehicle"><span class="toc-section-number">4.4.2</span>  Vehicle silhouettes</a></li>
+  <li><a href="#sec-watertre" id="toc-sec-watertre" class="nav-link" data-scroll-target="#sec-watertre"><span class="toc-section-number">4.4.3</span>  Water treatment</a></li>
+  <li><a href="#sec-winerecognition" id="toc-sec-winerecognition" class="nav-link" data-scroll-target="#sec-winerecognition"><span class="toc-section-number">4.4.4</span>  Wine recognition</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-40" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="sec-40.1" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="sec-40.1"><span class="header-section-number">4.1</span> Introducción</h2>
+<p>En esta unidad se detallan brevemente las bases de datos que se van a usar a lo largo de estos materiales. Se realiza una breve descripción de cada una, se indica el número de muestras y variables contenidas en ellas, así como si existen valores perdidos. En todos los casos se proporciona el código correspondiente para su carga en R.</p>
+<p>Para facilitar la visualización de las bases de datos, estas se han organizados según su objetivo principal: regresión, clasificación, y agrupación. Sin embargo, hay que tener en cuenta que en muchas situaciones prácticas los problemas de clasificación pueden ser vistos también como problemas de regresión, lo que se identificara durante la presentación de los materiales. En principio los problemas de reducción de la dimensión suelen estar integrados dentro de los otras tres situaciones como parte del preprocesado de los datos, y no se considera ninguna base de datos específica para ese problema.</p>
+<p>Todos los bancos de datos están alojados en GitHub (<a href="https://github.com/" class="uri">https://github.com/</a>) para que resulten más accesibles. Sin embargo, para que resulte mas fácil la carga de los datos generamos un fichero rds con los datos cargados (que se crea en nuestro directorio de trabajo) que iremos utilizando en el resto de temas.</p>
+<p>Antes de comenzar hay que acordarse de cargar las librerías necesarias para la lectura de datos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(readr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En todos los bancos de datos preparamos los datos para que puedan ser interpretados adecuadamente en nuestros modelos de aprendizaje automático.</p>
+</section>
+<section id="sec-40.1.1" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="sec-40.1.1"><span class="header-section-number">4.2</span> Aprendizaje supervisado: Regresión</h2>
+<p>Consultar <a href="20_introAA.html#sec-Asupervised"><span>Sección&nbsp;4.1</span></a> de la <a href="20_introAA.html"><span>Unidad&nbsp;2</span></a> para los detalles de este tipo de problemas.</p>
+<section id="sec-anime" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="sec-anime"><span class="header-section-number">4.2.1</span> Anime ratings</h3>
+<p>Este conjunto de datos contiene información sobre las preferencias de los usuarios de diferentes animes. Cada usuario puede agregar el anime a su lista de preferencias y darle una calificación.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>target: <code>rating</code></li>
+<li>Valores perdidos: sí</li>
+<li>Número de registros: 12294</li>
+<li>Número de características: 7</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>anime_id</strong>: identificación única de myanimelist.net que identifica un anime.</li>
+<li><strong>name</strong>: nombre completo del anime.</li>
+<li><strong>genre</strong>: lista de géneros separada por comas para el anime.</li>
+<li><strong>type</strong>: película, TV, OVA, etc.</li>
+<li><strong>episodes</strong>: cuántos episodios tiene el programa. (1 si es película).</li>
+<li><strong>rating</strong>: calificación promedio sobre 10 para el anime.</li>
+<li><strong>members</strong>: número de miembros de la comunidad que están en el grupo de este anime.</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>Kaggle: <a href="https://www.kaggle.com/datasets/CooperUnion/anime-recommendations-database">enlace</a></li>
+</ul>
+<p>El código para la lectura de este banco de datos es:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/anime.csv"</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>anime <span class="ot">=</span> <span class="fu">read_csv</span>(url, <span class="at">col_types =</span> <span class="st">"ccccidi"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="fu">write_rds</span>(anime, <span class="st">"anime.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-diabetes" class="level3" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="sec-diabetes"><span class="header-section-number">4.2.2</span> Diabetes</h3>
+<p>En un estudio sobre la diabetes se obtuvieron diez variables basales, edad, sexo, índice de masa corporal, presión arterial media y seis mediciones de suero sanguíneo para 442 pacientes diabéticos, así como la respuesta de interés, una medida cuantitativa de la progresión de la enfermedad un año después de la línea de base. Cada una de estas 10 variables predictoras se ha centrado en la media y se ha escalado por la desviación estándar multiplicada por la raíz cuadrada de n_muestras (es decir, la suma de los cuadrados de cada columna suma 1).</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: Y (progresión de la enfermedad)</li>
+<li>Valores perdidos: no</li>
+<li>Número de registros: 442</li>
+<li>Número de características: 11</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>AGE</strong>: edad (en años)</li>
+<li><strong>SEX</strong>: sexo</li>
+<li><strong>BMI</strong>: índice de masa corporal</li>
+<li><strong>BP</strong>: promedio de la presión sanguínea</li>
+<li><strong>S1</strong>: colesterol sérico total</li>
+<li><strong>S2</strong>: lipoproteínas de baja densidad</li>
+<li><strong>S3</strong>: lipoproteínas de alta densidad</li>
+<li><strong>S4</strong>: colesterol total</li>
+<li><strong>S5</strong>: registro del nivel de triglicéridos en suero</li>
+<li><strong>S6</strong>: nivel de azúcar en sangre</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>Bradley Efron, Trevor Hastie, Iain Johnstone and Robert Tibshirani (2004) “Least Angle Regression,” Annals of Statistics (with discussion), 407-499.</li>
+</ul>
+<p>En este caso el fichero de datos es de tipo txt (no csv como el resto) y el código para la carga de este banco de datos es:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/diabetes.tab.txt"</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>diabetes <span class="ot">=</span> <span class="fu">read_delim</span>(url, <span class="at">col_types =</span> <span class="st">"dfddddddddd"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co"># usamos la función read_delim en lugar de read_csv</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="fu">write_rds</span>(diabetes, <span class="st">"diabetes.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-electricity" class="level3" data-number="4.2.3">
+<h3 data-number="4.2.3" class="anchored" data-anchor-id="sec-electricity"><span class="header-section-number">4.2.3</span> Electricity</h3>
+<p>Una central eléctrica de ciclo combinado (CCPP) está compuesta por turbinas de gas (GT), turbinas de vapor (ST) y generadores de vapor de recuperación de calor. En una CCPP, la electricidad es generada por turbinas de gas y vapor, que se combinan en un ciclo, y se transfiere de una turbina a otra. Mientras que el Vacío se recolecta y tiene efecto sobre la Turbina de Vapor, las otras tres variables ambientales afectan el desempeño del GT. Este conjunto de de datos recogidos se ha recogido de una central eléctrica de ciclo combinado a lo largo de 6 años (2006-2011), cuando la central eléctrica estaba configurada para funcionar a plena carga. Las características consisten en variables ambientales promedio por hora Temperatura (<code>AT</code>), Presión ambiental (<code>AP</code>), Humedad relativa (<code>RH</code>) y Vacío de escape (<code>V</code>) para predecir la producción de energía eléctrica neta por hora (<code>PE</code>) de la planta.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Variable respuesta: <code>PE</code></li>
+<li>Tipo de variable respuesta: numérica</li>
+<li>Tipo de problema que se quiere resolver: regresión</li>
+<li>Valores perdidos: no</li>
+<li>Número de registros: 9568</li>
+<li>Número de variables: 5</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<p>Se recogen la promedios por hora de:</p>
+<ul>
+<li><strong>AT</strong>: temperatura (en grados centígrados)</li>
+<li><strong>V</strong>: vacío de escape (en cm Hg)</li>
+<li><strong>AP</strong>: presión ambiental (en milibares)</li>
+<li><strong>RH</strong>: humedad relativa (en %)</li>
+<li><strong>PE</strong>: producción de energía eléctrica neta (en MW)</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li><p>Pınar Tüfekci, Prediction of full load electrical power output of a base load operated combined cycle power plant using machine learning methods, International Journal of Electrical Power &amp; Energy Systems, Volume 60, September 2014, Pages 126-140, ISSN 0142-0615.</p></li>
+<li><p>Heysem Kaya, Pınar Tüfekci , Sadık Fikret Gürgen: Local and Global Learning Methods for Predicting Power of a Combined Gas &amp; Steam Turbine, Proceedings of the International Conference on Emerging Trends in Computer and Electronics Engineering ICETCEE 2012, pp.&nbsp;13-18 (Mar.&nbsp;2012, Dubai).</p></li>
+<li><p>UCi Machine learning repository: https://archive.ics.uci.edu/ml/datasets/combined+cycle+power+plant</p></li>
+</ul>
+<p>A continuación tenemos el código para la carga de estos datos</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/mult_linear_reg.csv"</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>electricity <span class="ot">=</span> <span class="fu">read_csv</span>(url, <span class="at">col_types =</span> <span class="st">"ddddd"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="fu">write_rds</span>(electricity, <span class="st">"electricity.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-housingCA" class="level3" data-number="4.2.4">
+<h3 data-number="4.2.4" class="anchored" data-anchor-id="sec-housingCA"><span class="header-section-number">4.2.4</span> Housing in California</h3>
+<p>En este ejemplo vamos a utilizar la base de datos <code>HousingCA</code>, que recoge la información sobre el censo viviendas de California en el año 1990. Se está interesado en predecir el valor medio de la vivienda (<code>median_house_value</code>) medido en dólares americanos en función de las predictoras.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: <code>median_house_value</code></li>
+<li>Valores perdidos: sí</li>
+<li>Número de registros: 20640</li>
+<li>Número de variables: 10</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>median_house_value</strong>: valor medio de la vivienda en dólares.</li>
+<li><strong>longitude</strong>: medida de la distancia al oeste de una casa; un valor más alto es más al oeste.</li>
+<li><strong>latitude</strong>: medida de la distancia al norte de una casa; un valor más alto es más al norte.</li>
+<li><strong>housing_median_age</strong>: mediana de edad de una vivienda dentro de una manzana; un número más bajo es un edificio más nuevo (en años)</li>
+<li><strong>total_rooms</strong>: número total de habitaciones dentro de un bloque.</li>
+<li><strong>total_bedrooms</strong>: número total de dormitorios dentro de un bloque.</li>
+<li><strong>population</strong>: Número total de personas que residen en un bloque.</li>
+<li><strong>households</strong>: Número total de hogares, grupo de personas que residen en una unidad de vivienda, para un bloque.</li>
+<li><strong>median_income</strong>: Ingreso medio de los hogares dentro de un bloque de casas (medido en decenas de miles de dólares estadounidenses)</li>
+<li><strong>oceanProximity</strong>: Ubicación de la casa con respecto al océano/mar (<code>&lt;1H OCEAN</code>, <code>INLAND</code>, <code>ISLAND</code>, <code>NEAR BAY</code>, <code>NEAR OCEAN</code>).</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>Pace, R. Kelley and Ronald Barry, Sparse Spatial Autoregressions, Statistics and Probability Letters, 33 (1997) 291-297</li>
+<li>Kaggle: <a href="https://www.kaggle.com/datasets/camnugent/california-housing-prices">enlace</a></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/housing.csv"</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>housingCA <span class="ot">=</span> <span class="fu">read_csv</span>(url, <span class="at">col_types =</span> <span class="st">"dddddddddf"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="fu">write_rds</span>(housingCA, <span class="st">"housingCA.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-meatspec" class="level3" data-number="4.2.5">
+<h3 data-number="4.2.5" class="anchored" data-anchor-id="sec-meatspec"><span class="header-section-number">4.2.5</span> Meat spec</h3>
+<p>El departamento de calidad de una empresa de alimentación se encarga de medir el contenido en grasa de la carne que comercializa. Este estudio se realiza mediante técnicas de analítica química, un proceso relativamente costoso en tiempo y recursos. Una alternativa que permitiría reducir costes y optimizar tiempo es emplear un espectrofotómetro (instrumento capaz de detectar la absorbancia que tiene un material a diferentes tipos de luz en función de sus características) e inferir el contenido en grasa a partir de sus medidas. Por lo tanto, el objetivo que se persigue es predecir el contenido en grasa (<code>fat</code>) a partir de los valores dados por el espectrofotómetro.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: <code>fat</code></li>
+<li>Valores perdidos: no</li>
+<li>Número de registros: 215</li>
+<li>Número de variables: 101</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>Variables desde <em>V1</em> hasta <em>V100</em></strong>: cada una de las variables hace referencia al valor de la muestra para una longitud de onda específica.</li>
+<li><strong>fat</strong>: contenido en grasa de la carne (en gramos)</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/meatspec.csv"</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>meatspec <span class="ot">=</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="fu">write_rds</span>(meatspec, <span class="st">"meatspec.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-penguins" class="level3" data-number="4.2.6">
+<h3 data-number="4.2.6" class="anchored" data-anchor-id="sec-penguins"><span class="header-section-number">4.2.6</span> Penguins</h3>
+<p><code>Penguins</code> es un banco de datos que contiene las mediciones de tamaño, observaciones de nidadas y proporciones de isótopos en sangre de 344 pingüinos adultos de Adelia, Barbijo y Papúa. Estos han sido observados en islas del archipiélago Palmer cerca de la estación Palmer en la Antártida. Los datos fueron recogidos y puestos a disposición por la Dra. Kristen Gorman y el Programa de Investigación Ecológica a Largo Plazo (LTER) de la Estación Palmer, Antártida.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: <code>flipper_length_mm</code></li>
+<li>Valores perdidos: si</li>
+<li>Número de registros: 344</li>
+<li>Número de variables: 9</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>Id</strong>: identificador del animal</li>
+<li><strong>species</strong>: especie de pingüino (Adélie, Chinstrap y Gentoo)</li>
+<li><strong>island</strong>: isla en el Archipiélago Palmer, Antártida (Biscoe, Dream o Torgersen)</li>
+<li><strong>bill_length_mm</strong>: longitud del pico (en milímetros)</li>
+<li><strong>bill_depth_mm</strong>: profundidad del pico (en milímetros)</li>
+<li><strong>flipper_length_mm</strong>: longitud de la aleta (en milímetros)</li>
+<li><strong>body_mass_g</strong>: masa corporal (en gramos)</li>
+<li><strong>sex</strong>: sexo del pingüino (hembra, macho)</li>
+<li><strong>year</strong>: año de la toma de información</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>Data were collected and made available by Dr.&nbsp;Kristen Gorman and the Palmer Station, Antarctica LTER, a member of the Long Term Ecological Research Network.</li>
+<li>Kaggle: https://www.kaggle.com/datasets/larsen0966/penguins</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/penguins.csv"</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>penguins <span class="ot">=</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb7-3"><a href="#cb7-3"></a></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co"># Convertimos variable carácter a factor</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>penguins <span class="ot">=</span> penguins <span class="sc">|&gt;</span> <span class="fu">mutate_if</span>(<span class="fu">sapply</span>(penguins, is.character), as.factor) </span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="fu">write_rds</span>(penguins, <span class="st">"penguins.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-usaets" class="level3" data-number="4.2.7">
+<h3 data-number="4.2.7" class="anchored" data-anchor-id="sec-usaets"><span class="header-section-number">4.2.7</span> US economic time series</h3>
+<p>Esta base de datos contiene datos de series temporales económicas de EE. UU. El objetivo que se persigue es predecir el desempleo (<code>unemploy</code>) dentro la economía de US. El desempleo es una gran preocupación socioeconómica y política para cualquier país y, por lo tanto, gestionarlo es una tarea primordial para todos los gobiernos.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: <code>unemploy</code></li>
+<li>Valores perdidos: no</li>
+<li>Número de registros: 574</li>
+<li>Número de variables: 6</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>date</strong>: mes de recogida de los datos.</li>
+<li><strong>pce</strong>: gastos de consumo personal (en miles de millones de dólares)</li>
+<li><strong>pop</strong>: población total (en miles)</li>
+<li><strong>psavert</strong>: tasa de ahorro personal.</li>
+<li><strong>uempmed</strong>: duración mediana del desempleo (en semanas)</li>
+<li><strong>unemploy</strong>: número de desempleados (en miles)</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li><p>Las series de datos se pueden consultar en https://fred.stlouisfed.org/. Mas concretamente:</p>
+<ul>
+<li>pce: https://fred.stlouisfed.org/series/PCE</li>
+<li>pop: https://fred.stlouisfed.org/series/POP</li>
+<li>psavert: https://fred.stlouisfed.org/series/PSAVERT/</li>
+<li>uempmed: https://fred.stlouisfed.org/series/UEMPMED</li>
+<li>unemploy: https://fred.stlouisfed.org/series/UNEMPLOY</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/US_economic_time_series.csv"</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a>usaets <span class="ot">=</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb8-3"><a href="#cb8-3"></a></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co"># Eliminamos las dos primeras variables para quedarnos con el fichero final</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a>usaets <span class="ot">=</span> usaets[,<span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)]</span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="fu">write_rds</span>(usaets, <span class="st">"usaets.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-qsar" class="level3" data-number="4.2.8">
+<h3 data-number="4.2.8" class="anchored" data-anchor-id="sec-qsar"><span class="header-section-number">4.2.8</span> QSAR</h3>
+<p>Este conjunto de datos se utilizó para desarrollar modelos QSAR de regresión cuantitativa para predecir la toxicidad acuática aguda hacia el pez Pimephales promelas (pececillo de cabeza plana) sobre un conjunto de 908 sustancias químicas. Como variable a predecir se consideraron los datos de la LC50, que es la concentración que provoca la muerte del 50% de sujetos sometidas a prueba durante 48 horas.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: <code>LC50</code></li>
+<li>Valores perdidos: no</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>TPSA</strong> (propiedades moleculares),</li>
+<li><strong>SAacc</strong> (propiedades moleculares),</li>
+<li><strong>H-050</strong> (fragmentos centrados en átomos),</li>
+<li><strong>MLOGP</strong> (propiedades moleculares),</li>
+<li><strong>RDCHI</strong> (índices de conectividad),</li>
+<li><strong>GATS1p</strong> (autocorrelaciones 2D),</li>
+<li><strong>nN</strong> (índices constitucionales),</li>
+<li><strong>C-040</strong> (fragmentos centrados en átomos),</li>
+<li><strong>LC50</strong></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/jmsocuellamos/DatosBIOTEC/master/CaseStudies/Qsar/qsar_aquatic_toxicity.csv"</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>qsar <span class="ot">=</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="fu">write_rds</span>(qsar, <span class="st">"qsar.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="sec-40.1.2" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="sec-40.1.2"><span class="header-section-number">4.3</span> Aprendizaje supervisado: Clasificación</h2>
+<p>Consultar <a href="20_introAA.html#sec-Asupervised"><span>Sección&nbsp;4.1</span></a> de la <a href="20_introAA.html"><span>Unidad&nbsp;2</span></a> para los detalles de este tipo de problemas.</p>
+<section id="sec-abalone" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="sec-abalone"><span class="header-section-number">4.3.1</span> Abalone</h3>
+<p>En este conjunto de datos se recoge información sobre los abulones, de la familia de los moluscos. Se está interesado en medir su desarrollo, que viene determinado principalmente por su desarrollo sexual. Concretamente se consideran tres estados de desarrollo asociados con el atributo <code>Sex</code>: <code>M</code> (machos), <code>F</code> (hembras), e <code>I</code> (infantil o sin desarrollo sexual). Para clasificar cada sujeto se utiliza un conjunto de características que son de tipo numérico.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>target: <code>Sex</code></li>
+<li>Valores perdidos: no</li>
+<li>Número de registros: 4177</li>
+<li>Número de características: 8</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>Sex</strong>: sexo (M = masculino, F = femenino e I = intantil)</li>
+<li><strong>Length</strong>: longitud de la carcasa más larga (en mm)</li>
+<li><strong>Diameter</strong>: diámetro perpendicular a la longitud (en mm)</li>
+<li><strong>Height</strong>: altura con carne en cáscara (en mm)</li>
+<li><strong>Whole weight</strong>: peso completo (en gramos)</li>
+<li><strong>Shucked weight</strong>: peso de la carne (en gramos)</li>
+<li><strong>Viscera weight</strong>: peso de las vísceras después del sangrado (en gramos)</li>
+<li><strong>Shell weight</strong>: peso de la cáscara después de secarse (en gramos)</li>
+<li><strong>Rings</strong>: anillos (+1,5 da la edad en años)</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>Kaggle: <a href="https://www.kaggle.com/datasets/rodolfomendes/abalone-dataset">enlace</a></li>
+</ul>
+<p>El código para la lectura de este banco de datos es:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/abalone.csv"</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>abalone <span class="ot">=</span> <span class="fu">read_csv</span>(url, <span class="at">col_types =</span> <span class="st">"cdddddddd"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3"></a></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="co"># Convertimos variable carácter a factor</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>abalone <span class="ot">=</span> abalone <span class="sc">|&gt;</span> <span class="fu">mutate_if</span>(<span class="fu">sapply</span>(abalone, is.character), as.factor) </span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="fu">write_rds</span>(abalone, <span class="st">"abalone.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-brestcancer" class="level3" data-number="4.3.2">
+<h3 data-number="4.3.2" class="anchored" data-anchor-id="sec-brestcancer"><span class="header-section-number">4.3.2</span> Breast Cancer Wisconsin</h3>
+<p>En esta base de datos se recoge información sobre los cánceres de mama en la ciudad de Wisconsin. Las características de la base de datos se calculan a partir de una imagen digitalizada de un aspiración de aguja fina (FNA) de una masa mamaria. Describen las características de los núcleos celulares presentes en la imagen y el objetivo que se persigue es clasificar un tumor como benigno o maligno en función de las variables predictoras.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Variable respuesta: <code>diagnosis</code></li>
+<li>Tipo de variable respuesta: categórica (binaria)</li>
+<li>Tipo de problema que se quiere resolver: clasificación y regresión</li>
+<li>Valores perdidos: no</li>
+<li>Número de registros: 569</li>
+<li>Número de variables: 32</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>id</strong>: identificador.</li>
+<li><strong>diagnosis</strong>: diagnóstico de tejidos mamarios (M = maligno, B = benigno)</li>
+<li><strong>radius_mean</strong>: media de las distancias del centro a los puntos del perímetro.</li>
+<li><strong>texture_mean</strong>: desviación estándar de los valores de la escala de grises.</li>
+<li><strong>perimeter_mean</strong>:tamaño medio del tumor central.</li>
+<li><strong>area_mean</strong>:</li>
+<li><strong>smoothness_mean</strong>: media de variación local en longitudes de radio</li>
+<li><strong>compactness_mean</strong>: (media de perímetro)^2 / área - 1,0</li>
+<li><strong>concavity_mean</strong>: media de gravedad de las porciones cóncavas del contorno.</li>
+<li><strong>concave points_mean</strong>: media para el número de porciones cóncavas del contorno.</li>
+<li><strong>symmetry_mean</strong>:</li>
+<li><strong>fractal_dimension_mean</strong>: media para “aproximación de la costa” - 1.</li>
+<li><strong>radius_se</strong>: error estándar para la media de distancias desde el centro hasta los puntos en el perímetro.</li>
+<li><strong>texture_se</strong>: error estándar para la desviación estándar de los valores de escala de grises.</li>
+<li><strong>perimeter_se</strong>:</li>
+<li><strong>area_se</strong>:</li>
+<li><strong>smoothness_se</strong>: error estándar para la variación local en las longitudes del radio.</li>
+<li><strong>compactness_se</strong>: (error estándar para perímetro)^2 / área - 1,0.</li>
+<li><strong>concavity_se</strong>: error estándar para la gravedad de las partes cóncavas del contorno.</li>
+<li><strong>concave points_se</strong>: error estándar para el número de porciones cóncavas del contorno.</li>
+<li><strong>symmetry_se</strong>:</li>
+<li><strong>fractal_dimension_se</strong>: error estándar para “aproximación de la costa” - 1.</li>
+<li><strong>radius_worst</strong>: “peor” o mayor valor medio para la media de distancias desde el centro hasta los puntos del perímetro (en cm).</li>
+<li><strong>texture_worst</strong>: “peor” o mayor valor medio para la desviación estándar de los valores de escala de grises.</li>
+<li><strong>perimeter_worst</strong>:</li>
+<li><strong>area_worst</strong>:</li>
+<li><strong>smoothness_worst</strong>: “peor” o mayor valor medio para la variación local en longitudes de radio.</li>
+<li><strong>compactness_worst</strong>: “peor” o mayor valor medio para el perímetro^2 / área - 1,0.</li>
+<li><strong>concavity_worst</strong>: “peor” o mayor valor medio para la gravedad de las porciones cóncavas del contorno.</li>
+<li><strong>concave points_worst</strong>: “peor” o mayor valor medio para el número de porciones cóncavas del contorno.</li>
+<li><strong>symmetry_worst</strong>:</li>
+<li><strong>fractal_dimension_worst</strong>: “peor” o mayor valor medio para “aproximación de la costa” - 1.</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>Kaggle: <a href="https://www.kaggle.com/datasets/uciml/breast-cancer-wisconsin-data">enlace</a></li>
+</ul>
+<p>El código para la lectura de este banco de datos es:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/cancer.csv"</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>breastcancer <span class="ot">=</span> <span class="fu">read_csv</span>(url, <span class="at">col_types =</span> <span class="st">"ccdddddddddddddddddddddddddddddd"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3"></a></span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="co"># Cambíamos solo el tipo de la variable diagnosis</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a>breastcancer<span class="sc">$</span>diagnosis <span class="ot">=</span> <span class="fu">as.factor</span>(breastcancer<span class="sc">$</span>diagnosis)</span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="fu">write_rds</span>(breastcancer, <span class="st">"breastcancer.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-iris" class="level3" data-number="4.3.3">
+<h3 data-number="4.3.3" class="anchored" data-anchor-id="sec-iris"><span class="header-section-number">4.3.3</span> Iris</h3>
+<p>La base de datos iris consta de 50 muestras de cada una de las tres especies de Iris: Iris Setosa, Iris virginica e Iris versicolor. Se escogieron cuatro características de cada muestra: la longitud y el ancho de los sépalos y pétalos, en centímetros. El objetivo que se persigue es predecir la clase de especie (<code>species</code>) que es en función de sus características.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: species</li>
+<li>Valores perdidos: no</li>
+<li>Número de registros: 150</li>
+<li>Número de variables: 5</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>sepal_length</strong>: longitud del sépalo (en cm)</li>
+<li><strong>sepal_width</strong>: anchura del sépalo (en cm)</li>
+<li><strong>petal_length</strong>: longitud del pétalo (en cm)</li>
+<li><strong>petal_width</strong>: anchura del pétalo (en cm)</li>
+<li><strong>species</strong>: especie de la flor (Iris Setosa, Iris virginica e Iris versicolor)</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>Kaggle: <a href="https://www.kaggle.com/datasets/uciml/iris">enlace</a></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/IRIS.csv"</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>iris <span class="ot">=</span> <span class="fu">read_csv</span>(url, <span class="at">col_types =</span> <span class="st">"ddddc"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3"></a></span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="co"># Convertimos carácter en factor</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a>iris<span class="sc">$</span>species <span class="ot">=</span> <span class="fu">as.factor</span>(iris<span class="sc">$</span>species)</span>
+<span id="cb12-6"><a href="#cb12-6"></a><span class="fu">write_rds</span>(iris, <span class="st">"iris.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-mushroom" class="level3" data-number="4.3.4">
+<h3 data-number="4.3.4" class="anchored" data-anchor-id="sec-mushroom"><span class="header-section-number">4.3.4</span> Mushroom</h3>
+<p>La “caza de setas” (también conocida como “shrooming” en inglés) está disfrutando de nuevos picos de popularidad. Conocer qué características significan una muerte segura y cuáles son más apetecibles es un aspecto muy importante en este proceso. El conjunto de datos <code>Mushrooms</code> muestra las características de una muestra muy extensa de diferentes tipos de setas. En concreto se incluyen descripciones de 23 especies de setas con agallas de la familia <em>Agaricus</em> y <em>Lepiota</em>, extraídas de <em>The Audubon Society Field Guide to North American Mushrooms</em> (1981). Cada especie se identifica como: “definitivamente comestible”, “definitivamente venenosa”, o “de comestibilidad desconocida y no recomendada”. Esta última clase se combinó con la venenosa.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: <code>class</code></li>
+<li>Valores perdidos: no</li>
+<li>Número de registros: 8124</li>
+<li>Número de variables: 23</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>class</strong>: clase de seta (“e” = comestible, “p” = venenosa)</li>
+<li><strong>cap-shape</strong>: forma del sombrero (“b” = campana, “c” = cónica, “x” = convexa, “f”= plana, “k” = nudosa, “s” = hundida)</li>
+<li><strong>cap-surface</strong>: superficie del sombrero (“f” = fibrosa, “g” = surcos, “y” = escamosa, “s” = lisa)</li>
+<li><strong>cap-color</strong>: color del sombrero (“n” = marrón, “b” = beige, “c” = canela, “g” = gris, “r” = verde, “p” = rosa, “u” = morado, “r” = rojo, “w” = blanco y “y” = amarillo)</li>
+<li><strong>bruises</strong>: cicatrices (“t” = con rasguños y “f” = sin rasguños)</li>
+<li><strong>odor</strong>: olor (“a” = almendra, “l” = anís, “c” = creosota, “y” = pescado, “f” = asqueroso, “m” = mohoso, “n” = ninguno, “p” = acre= y “s” = especiado)</li>
+<li><strong>gill-attachment</strong>: accesorio branquial (“a” = adjunto, “d” = descendente, “f” = libre y “m” = con muescas)</li>
+<li><strong>gill-spacing</strong>: espacio entre branquias(“c” = cerca, “w” = abarrotado y “d” = distante)</li>
+<li><strong>gill-size</strong>: tamaño branquial (“b” = ancho y “n” = estrecho)</li>
+<li><strong>gill-color</strong>: color de las branquias (“k” = negro, “n” = marrón, “b” = beige, “h” = chocolate, “g” = gris, “r” = verde, “o” = naranja, “p” = rosa, “u” = morado, “r” = rojo, “w” = blanco y “y” = amarillo)</li>
+<li><strong>stalk-shape</strong>: forma de tallo (“e” = agrandando y “t” = disminuyendo)</li>
+<li><strong>stalk-root</strong>: raíz del tallo (“b” = bulboso, “c” = club,“u” = copa, “e” = igual, “z” = rizomorfos y “r” = enraizado)</li>
+<li><strong>stalk-surface-above-ring</strong>: superficie del tallo sobre el anillo (“f” = fibrosa, “y” = escamosa, “k” = sedosa y “s” = lisa)</li>
+<li><strong>stalk-surface-below-ring</strong>: superficie del tallo debajo del anillo (“f” = fibrosa, “y” = escamosa, “k” = sedosa y “s” = lisa)</li>
+<li><strong>stalk-color-above-ring</strong>: color del tallo sobre el anillo (“n” = marrón, “b” = beige, “c” = canela, “g” = gris, “o” = naranja, “p” = rosa, “r” = rojo, “w” = blanco y “y” = amarillo)</li>
+<li><strong>stalk-color-below-ring</strong>: color del tallo debajo del anillo (“n” = marrón, “b” = beige, “c” = canela, “g” = gris, “o” = naranja, “p” = rosa, “r” = rojo, “w” = blanco y “y” = amarillo)</li>
+<li><strong>veil-type</strong>: tipo de velo (“p” = parcial y “u” = universal)</li>
+<li><strong>veil-color</strong>: color del velo (“n” = marrón, “o” = naranja, “w” = blanco y “y” = amarillo)</li>
+<li><strong>ring-number</strong>: número de anillos (“n” = ninguno, “o” = uno y “t” = dos)</li>
+<li><strong>ring-type</strong>: tipo de anillo (“c” = telaraña, “e” = evanescente, “f” = resplandeciente, “l” = grande, “n” = ninguno, “p” = colgante, “s” = revestimiento y “z” = zona)</li>
+<li><strong>spore-print-color</strong>: color de impresión de esporas (“k” = negro, “n” = marrón, “b” = beige, “h” = chocolate, “r” = verde, “o” = naranja, “u” = morado, “w” = blanco y “y” = amarillo)</li>
+<li><strong>population</strong>: población (“a” = abundante, “c” = agrupada, “n” = numerosa, “s” = dispersa, “v” = varia y “y” = solitaria)</li>
+<li><strong>habitat</strong>: hábitat (“g” = pastos, “l” = hojas, “m” = prados, “p” = caminos, “u” = urbano, “w” = desechos y “d” = bosques)</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>Mushroom records drawn from The Audubon Society Field Guide to North American Mushrooms (1981). G. H. Lincoff (Pres.), New York: Alfred A. Knopf.</li>
+<li>UCI Machine learning repository: <a href="https://archive.ics.uci.edu/ml/datasets/mushroom" class="uri">https://archive.ics.uci.edu/ml/datasets/mushroom</a></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/mushrooms.csv"</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>mushroom <span class="ot">=</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb13-3"><a href="#cb13-3"></a></span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="co"># Convertimos variables carácter a factor</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a>mushroom <span class="ot">=</span> mushroom <span class="sc">|&gt;</span> <span class="fu">mutate_if</span>(<span class="fu">sapply</span>(mushroom, is.character), as.factor) </span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="fu">write_rds</span>(mushroom, <span class="st">"mushroom.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-spam" class="level3" data-number="4.3.5">
+<h3 data-number="4.3.5" class="anchored" data-anchor-id="sec-spam"><span class="header-section-number">4.3.5</span> Spam</h3>
+<p>La base de datos trata sobre la detección de spam en una bandeja de entrada de correo electrónico. El banco de datos dispone de dos variables donde la primera es el texto del mail, y la segunda el indicador que nos dice si el correo se ha clasificado como spam o no spam de forma manual.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: <code>label</code></li>
+<li>Valores perdidos: sí (variable email)</li>
+<li>Número de registros: 3000</li>
+<li>Número de variables: 2</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>label</strong>: etiqueta que indica si es spam o no (0 = no spam, 1 = spam)</li>
+<li><strong>email</strong>: contenido del correo electrónico.</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>Kaggle: <a href="https://www.kaggle.com/code/mukulkirti/naive-bayes-theorem/data?select=spam_or_not_spam.csv">enlace</a></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/spam_or_not_spam.csv"</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a>spam <span class="ot">=</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="fu">write_rds</span>(spam, <span class="st">"spam.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-stroke" class="level3" data-number="4.3.6">
+<h3 data-number="4.3.6" class="anchored" data-anchor-id="sec-stroke"><span class="header-section-number">4.3.6</span> Stroke</h3>
+<p>Según la Organización Mundial de la Salud (OMS), el ictus es la segunda causa de muerte en el mundo, responsable de aproximadamente el 11% del total de fallecimientos. El banco de datos <code>Stroke</code> se utiliza para predecir si es probable que un paciente sufra un ictus en función de los parámetros de entrada como el sexo, la edad, diversas enfermedades y estatus de fumador. Cada fila de los datos proporciona información relevante sobre el paciente.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: <code>stroke</code></li>
+<li>Valores perdidos: sí (en la variable <code>bmi</code>)</li>
+<li>Número de registros: 5110</li>
+<li>Número de variables: 12</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>id</strong>: identificador único del sujeto</li>
+<li><strong>gender</strong>: sexo (“Male” = masculino, “Female” = femenino y “Other” = otro)</li>
+<li><strong>age</strong>: edad del paciente (en años)</li>
+<li><strong>hypertension</strong>: el paciente tiene hipertensión (“Yes” = sí y “No”)</li>
+<li><strong>heart_disease</strong>: el paciente tiene una enfermedad del corazón (“Yes” = sí y “No”)</li>
+<li><strong>ever_married</strong>: el paciente se ha casado alguna vez (“Yes” = sí y “No”)</li>
+<li><strong>work_type</strong>: tipo de trabajo (“children” = niños, “Govt_jov” = Gubernamental, “Never_worked” = nunca ha trabajado, “Private” = privado y “Self-employed” = autónomo)</li>
+<li><strong>Residence_type</strong>: tipo de residencia (“Rural” y “Urban” = urbana)</li>
+<li><strong>avg_glucose_level</strong>: media de glucosa en sangre.</li>
+<li><strong>bmi</strong>: índice de masa corporal.</li>
+<li><strong>smoking_status</strong>: nivel de fumador (“formerly smoked” = fumaba, “never smoked” = nunca ha fumado, “smokes” = fuma y “Unknown” = desconocido).</li>
+<li><strong>stroke</strong>: el paciente sufre un ictus (“Yes” = sí y “No”)</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>kaggle: <a href="https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset" class="uri">https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset</a></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/stroke_ori.csv"</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a>stroke <span class="ot">=</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb15-3"><a href="#cb15-3"></a></span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="co"># Convertimos variables carácter a factor</span></span>
+<span id="cb15-5"><a href="#cb15-5"></a>stroke <span class="ot">=</span> stroke <span class="sc">|&gt;</span> <span class="fu">mutate_if</span>(<span class="fu">sapply</span>(stroke, is.character), as.factor) </span>
+<span id="cb15-6"><a href="#cb15-6"></a><span class="fu">write_rds</span>(stroke, <span class="st">"stroke.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-waterpot" class="level3" data-number="4.3.7">
+<h3 data-number="4.3.7" class="anchored" data-anchor-id="sec-waterpot"><span class="header-section-number">4.3.7</span> Water potability</h3>
+<p>El agua potable es el derecho humano más básico y un factor importante para la salud. El conjunto de datos <code>Water potability</code>, tiene por objetivo estudiar la potabilidad del agua utilizando varias propiedades químicas debido a su importancia como cuestión de salud y desarrollo a nivel nacional, regional y local. En algunas regiones, se ha demostrado que las inversiones en abastecimiento de agua y saneamiento pueden producir un beneficio económico neto, ya que la reducción de los efectos adversos para la salud y los costes de la atención sanitaria superan los costes de las intervenciones.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: potability</li>
+<li>Valores perdidos: sí (variables ph, Sulfate y Trihalomethanes)</li>
+<li>Número de registros: 3276</li>
+<li>Número de variables: 10</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>pH</strong>: valor del pH.</li>
+<li><strong>Hardness</strong>: dureza o capacidad del agua para precipitar el jabón causado por el calcio y el magnesio.</li>
+<li><strong>Solids</strong>: sólidos disueltos totales (en partes por millón)</li>
+<li><strong>Chloramines</strong>: cantidad de cloraminas (en partes por millón)</li>
+<li><strong>Sulfate</strong>: cantidad de sulfatos disueltos (en mg/L)</li>
+<li><strong>Conductivity</strong>: conductividad eléctrica del agua (en μS/cm)</li>
+<li><strong>Organic_carbon</strong>: cantidad de carbono orgánico (en partes por millón)</li>
+<li><strong>Trihalomethanes</strong>: cantidad de trihalometanos (en μg/L)</li>
+<li><strong>Turbidity</strong>: medida de la propiedad de emisión de luz del agua en NTU.</li>
+<li><strong>Potability</strong>: indica si el agua es segura para el consumo humano (1 = potable y 0 = no potable)</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>Kaggle: <a href="https://www.kaggle.com/datasets/adityakadiwal/water-potability" class="uri">https://www.kaggle.com/datasets/adityakadiwal/water-potability</a></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/water_potability.csv"</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a>waterpot <span class="ot">=</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="fu">write_rds</span>(waterpot, <span class="st">"waterpot.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-winequality" class="level3" data-number="4.3.8">
+<h3 data-number="4.3.8" class="anchored" data-anchor-id="sec-winequality"><span class="header-section-number">4.3.8</span> Wine quality</h3>
+<p>El conjunto de datos <code>Winequality</code> está relacionado con las variantes rojas del vino portugués “Vinho Verde”. Debido a cuestiones de privacidad y logística, sólo se dispone de variables fisicoquímicas (entradas) y sensoriales (la salida). Por ejemplo, no hay datos sobre tipos de uva, marca de vino, precio de venta del vino, etc. Las variables provienen de tests psicoquímicos y el objetivo es, mediante las predictoras, establecer la calidad del vino (<code>quality</code>), medida en la escala discreta de 0 a 10.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: <code>quality</code></li>
+<li>Valores perdidos: no</li>
+<li>Número de registros: 1599</li>
+<li>Número de variables: 12</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>fixed acidity</strong>: acidez fija.</li>
+<li><strong>volatile acidity</strong>: acidez volátil.</li>
+<li><strong>citric acid</strong>: acidez cítrica.</li>
+<li><strong>residual sugar</strong>: azúcar residual (cantidad de azúcar que queda después de que se detiene la fermentación)</li>
+<li><strong>chlorides</strong>: cloruros (cantidad de sal en el vino)</li>
+<li><strong>free sulfur dioxide</strong>: dióxido de azufre libre.</li>
+<li><strong>total sulfur dioxide</strong>: dióxido de azufre total.</li>
+<li><strong>density</strong>: densidad.</li>
+<li><strong>pH</strong>: ph.</li>
+<li><strong>sulphates</strong>: sulfatos.</li>
+<li><strong>alcohol</strong>: alcohol (porcentaje de contenido de alcohol del vino)</li>
+<li><strong>quality</strong>: calidad (entre 0 y 10)</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis. Modeling wine preferences by data mining from physicochemical properties. In Decision Support Systems, Elsevier, 47(4):547-553, 2009.</li>
+<li>Kaggle: <a href="https://www.kaggle.com/datasets/sh6147782/winequalityred" class="uri">https://www.kaggle.com/datasets/sh6147782/winequalityred</a></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/winequality-red.csv"</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a>winequality <span class="ot">=</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb17-3"><a href="#cb17-3"></a><span class="fu">write_rds</span>(winequality, <span class="st">"winequality.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-hepatitis" class="level3" data-number="4.3.9">
+<h3 data-number="4.3.9" class="anchored" data-anchor-id="sec-hepatitis"><span class="header-section-number">4.3.9</span> Hepatitis</h3>
+<p>Datos de síntomas de hepatitis y resultados en varias personas de ambos sexos de varios grupos de edad. Los síntomas de la hepatitis incluyen fatiga, anorexia, hígado grande, etc. Este archivo informa sobre los diversos síntomas en caso de hepatitis y si la persona que padece hepatitis vivió o murió.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: <code>Class</code></li>
+<li>Valores perdidos: si</li>
+<li>Número de registros: 142</li>
+<li>Número de variables: 20</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>Class</strong>: DIE, LIVE</li>
+<li><strong>AGE</strong>: 10, 20, 30, 40, 50, 60, 70, 80</li>
+<li><strong>SEX</strong>: male, female</li>
+<li><strong>STEROID</strong>: no, yes</li>
+<li><strong>ANTIVIRALS</strong>: no, yes</li>
+<li><strong>FATIGUE</strong>: no, yes</li>
+<li><strong>MALAISE</strong>: no, yes</li>
+<li><strong>ANOREXIA</strong>: no, yes</li>
+<li><strong>LIVER BIG</strong>: no, yes</li>
+<li><strong>LIVER FIRM</strong>: no, yes</li>
+<li><strong>SPLEEN PALPABLE</strong>: no, yes</li>
+<li><strong>SPIDERS</strong>: no, yes</li>
+<li><strong>ASCITES</strong>: no, yes</li>
+<li><strong>VARICES</strong>: no, yes</li>
+<li><strong>BILIRUBIN</strong>: 0.39, 0.80, 1.20, 2.00, 3.00, 4.00</li>
+<li><strong>ALK PHOSPHATE</strong>: 33, 80, 120, 160, 200, 250</li>
+<li><strong>SGOT</strong>: 13, 100, 200, 300, 400, 500,</li>
+<li><strong>ALBUMIN</strong>: 2.1, 3.0, 3.8, 4.5, 5.0, 6.0</li>
+<li><strong>PROTIME</strong>: 10, 20, 30, 40, 50, 60, 70, 80, 90</li>
+<li><strong>HISTOLOGY</strong>: no, yes</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>Kaggle: <a href="https://www.kaggle.com/datasets/harinir/hepatitis" class="uri">https://www.kaggle.com/datasets/harinir/hepatitis</a></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/hepatitis.csv"</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a>hepatitis <span class="ot">=</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb18-3"><a href="#cb18-3"></a><span class="fu">write_rds</span>(hepatitis, <span class="st">"hepatitis.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-geneexp" class="level3" data-number="4.3.10">
+<h3 data-number="4.3.10" class="anchored" data-anchor-id="sec-geneexp"><span class="header-section-number">4.3.10</span> Gene expression breast cancer</h3>
+<p>Este archivo contiene los niveles de expresión génica de 54676 genes (columnas) de 151 muestras (filas). Hay 5 tipos diferentes de cáncer de mama (más tejido sano) representados en este conjunto de datos (columna “type”). Más información sobre este conjunto de datos, así como otros formatos de archivo como TAB y ARFF, visualización de datos y puntos de referencia de clasificación y agrupación están disponibles gratuitamente en el sitio web oficial de CuMiDa con el id GSE45827: http://sbcb.inf.ufrgs.br/cumida</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: <code>type</code></li>
+<li>Valores perdidos: no</li>
+<li>Número de registros: 151</li>
+<li>Número de variables: 54676</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>Kaggle: <a href="https://www.kaggle.com/datasets/brunogrisci/breast-cancer-gene-expression-cumida" class="uri">https://www.kaggle.com/datasets/brunogrisci/breast-cancer-gene-expression-cumida</a></li>
+</ul>
+<p>En este caso el banco de datos es muy grande y no es posible importarlo desde github. Es necesario descargarlo a nuestro máquina y cargarlo desde allí directamente. Para ello se ha generado un fichero en formato rds que se puede cargar fácilmente.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>geneexp <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"geneexpression.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-geneexpleu" class="level3" data-number="4.3.11">
+<h3 data-number="4.3.11" class="anchored" data-anchor-id="sec-geneexpleu"><span class="header-section-number">4.3.11</span> Gene expression leukemia</h3>
+<p>Este archivo que contiene los niveles de expresión génica de 22284 genes (columnas) de 64 muestras (filas). Hay 5 tipos diferentes de leucemia representados en este conjunto de datos (columna “type”). Más información sobre este conjunto de datos, así como otros formatos de archivo como TAB y ARFF, visualización de datos y puntos de referencia de clasificación y agrupación están disponibles gratuitamente en el sitio web oficial de CuMiDa con el id GSE9476: http://sbcb.inf.ufrgs.br /cumida</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: <code>type</code></li>
+<li>Valores perdidos: no</li>
+<li>Número de registros: 64</li>
+<li>Número de variables: 22284</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>Kaggle: <a href="https://www.kaggle.com/datasets/brunogrisci/leukemia-gene-expression-cumida" class="uri">https://www.kaggle.com/datasets/brunogrisci/leukemia-gene-expression-cumida</a></li>
+</ul>
+<p>Como antes el fichero es muy grande y procedemos de igual forma al ejemplo anterior.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>geneexpleu <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"geneexpressionleukemia.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="sec-40.1.3" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="sec-40.1.3"><span class="header-section-number">4.4</span> Aprendizaje no supervisado: Agrupación</h2>
+<p>Consultar <a href="20_introAA.html#sec-Anosupervised"><span>Sección&nbsp;4.2</span></a> de la <a href="20_introAA.html"><span>Unidad&nbsp;2</span></a> para los detalles de este tipo de problemas.</p>
+<section id="sec-sales" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="sec-sales"><span class="header-section-number">4.4.1</span> Sales</h3>
+<p>Contiene las cantidades compradas semanalmente de 800 productos a lo largo de 52 semanas. Todos los atributos son numéricos sin valores perdidos y van identificados mediante W(número de la semana).</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Número de registros: 527</li>
+<li>Número de variables: 38</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>Variables desde <em>W0</em> hasta <em>W51</em></strong>: cada una de las variables hace referencia a las cantidades compradas semanalmente.</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>Tan, Swee Chuan and San Lau, Jess Pei (2014). Time series clustering: A superior alternative for market basket analysis. Proceedings of the First International Conference on Advanced Data and Information Engineering (DaEng-2013), 241–248. Springer.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/Sales_Transactions_Weekly.csv"</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a>sales <span class="ot">=</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb21-3"><a href="#cb21-3"></a><span class="fu">write_rds</span>(sales, <span class="st">"sales.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-vehicle" class="level3" data-number="4.4.2">
+<h3 data-number="4.4.2" class="anchored" data-anchor-id="sec-vehicle"><span class="header-section-number">4.4.2</span> Vehicle silhouettes</h3>
+<p>Este conjunto de datos recoge información de cuatro tipos diferentes de vehículos, utilizando un conjunto de características extraídas de su silueta. Para el experimento se utilizaron cuatro vehículos modelo “Corgie”: un bus de dos pisos, una camioneta Cheverolet, un Saab 9000 y un Opel Manta 400. El objetivo del estudio es clasificar una silueta dada como uno de cuatro tipos diferentes de vehículos. Todos los atributos son numéricos discretos salvo la primera variable que lleva el registro de la observación y muchos de ellos contienen valores perdidos.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Valores perdidos: si</li>
+<li>Número de registros: 946</li>
+<li>Número de variables: 19</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>Comp</strong>: compactness, se calcula mediante la fórmula <span class="math inline">\((perímetro.medio)^2/área\)</span></li>
+<li><strong>Circ</strong>: circularity, se calcula mediante la fórmula <span class="math inline">\((radio. medio)^2/área\)</span></li>
+<li><strong>D.Circ</strong>: distance_circularity, se calcula mediante la fórmula <span class="math inline">\(área/(distancia. media. desde. el. borde)^2\)</span></li>
+<li><strong>Rad.Ra</strong>: radius_ratio, se calcula mediante la fórmula <span class="math inline">\((max.rad-min.rad)/av.radius\)</span></li>
+<li><strong>Pr.axis.Ra</strong>: se calcula mediante la fórmula <span class="math inline">\((eje. menor)/(eje. mayor)\)</span></li>
+<li><strong>Max.L.Ra</strong>: max.length_aspect_ratio, se calcula mediante la fórmula <span class="math inline">\((longitud. perp. longitud. máxima)/(longitud. máxima)\)</span></li>
+<li><strong>Scat.Ra</strong>: scatter_ratio, se calcula mediante la fórmula $ (inercia. sobre. el. eje. menor)/(inercia. sobre. el. eje. mayor)$</li>
+<li><strong>Elong</strong>: elongatedness, se calcula mediante la fórmula <span class="math inline">\(área/(ancho. de. contracción)^2\)</span></li>
+<li><strong>Pr.Axis.Rect</strong>: pr.axis_rectangularity, se calcula mediante la fórmula <span class="math inline">\(área/(longitud. del. eje. pr. * ancho. del. eje. pr.)\)</span></li>
+<li><strong>Max.L.Rect</strong>: max.length_rectangularity, se calcula mediante la fórmula <span class="math inline">\(área/(long. max. * long. perp.)\)</span></li>
+<li><strong>Sc.var.Maxis</strong>: se calcula mediante la fórmula <span class="math inline">\((momento. de. segundo. orden. sobre. el. eje. menor)/área. a. lo. largo. del. eje. mayor\)</span></li>
+<li><strong>Sc.var.maxis</strong>: se calcula mediante la fórmula <span class="math inline">\((momento. de. segundo. orden. sobre. el. eje. mayor)/área. a. lo. largo. del. eje. menor\)</span></li>
+<li><strong>Ra.Gyr</strong>: scaled_radius_of_gyration, se calcula mediante la fórmula <span class="math inline">\((mavar+mivar)/área\)</span></li>
+<li><strong>Skew.Maxis</strong>: se calcula mediante la fórmula <span class="math inline">\((mavar+mivar)/área\)</span></li>
+<li><strong>Skew.maxis</strong>: se calcula mediante la fórmula <span class="math inline">\((momento. de. tercer. orden. sobre. el. eje. principal.)/sigma-min^3 * eje. principal\)</span></li>
+<li><strong>Kurt.maxis</strong>: se calcula mediante la fórmula (momento. de. tercer. orden. sobre. el. eje. menor.)/sigma-maj^3 * eje. menor$</li>
+<li><strong>Kurt.Maxis</strong>: se calcula mediante la fórmula (momento. de. tercer. orden. sobre. el. eje. menor.)/sigma-maj^3 * eje. menor$</li>
+<li><strong>Holl.Ra</strong>: se calcula mediante la fórmula <span class="math inline">\((área. de. huecos)/(área. del. polígono. delimitador)\)</span></li>
+<li><strong>Class</strong>: tipo de vehículo (van, saab, bus y opel)</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li><p>Turing Institute Research Memorandum TIRM-87-018 “Vehicle Recognition Using Rule Based Methods” by Siebert,JP (March 1987).</p></li>
+<li><p>Newman, D.J. &amp; Hettich, S. &amp; Blake, C.L. &amp; Merz, C.J. (1998). UCI Repository of machine learning databases [<a href="http://www.ics.uci.edu/~mlearn/MLRepository.html" class="uri">http://www.ics.uci.edu/~mlearn/MLRepository.html</a>]. Irvine, CA: University of California, Department of Information and Computer Science.</p></li>
+</ul>
+<p>En este banco de datos se encuentra disponible dentro de la librería mlbench (puede ser necesario instalarla), y para acceder al banco de datos basta con usar el código siguiente:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="fu">library</span>(mlbench)</span>
+<span id="cb22-2"><a href="#cb22-2"></a><span class="fu">data</span>(<span class="st">"Vehicle"</span>)</span>
+<span id="cb22-3"><a href="#cb22-3"></a><span class="fu">write_rds</span>(Vehicle, <span class="st">"vehicle.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-watertre" class="level3" data-number="4.4.3">
+<h3 data-number="4.4.3" class="anchored" data-anchor-id="sec-watertre"><span class="header-section-number">4.4.3</span> Water treatment</h3>
+<p>Este conjunto de datos procede de las medidas diarias de los sensores de una planta de tratamiento de aguas residuales urbanas. El objetivo es clasificar el estado operativo de la planta para predecir fallos a través de las variables de estado de la planta en cada una de las etapas del proceso de tratamiento. Todos los atributos son numéricos y continuos salvo la primera variable que lleva el registro de la observación y muchos de ellos contienen valores perdidos.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Valores perdidos: sí (en casi todas las variables)</li>
+<li>Número de registros: 527</li>
+<li>Número de variables: 38</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>Q-E</strong>: caudal de entrada a la planta</li>
+<li><strong>ZN-E</strong>: zinc de entrada a la planta</li>
+<li><strong>PH-E</strong>: pH de entrada a la planta</li>
+<li><strong>DBO-E</strong>: demanda biológica de oxígeno de entrada a la planta</li>
+<li><strong>DQO-E</strong>: demanda química de oxígeno de entrada a la planta</li>
+<li><strong>SS-E</strong>: sólidos en suspensión de entrada a la planta</li>
+<li><strong>SSV-E</strong>: entrada de sólidos volátiles en suspensión a la planta</li>
+<li><strong>SED-E</strong>: entrada de sedimentos a la planta</li>
+<li><strong>COND-E</strong>: entrada de conductividad a la planta</li>
+<li><strong>PH-P</strong>: entrada de pH al decantador primario</li>
+<li><strong>DBO-P</strong>: entrada de demanda biológica de oxígeno al decantador primario</li>
+<li><strong>SS- P</strong>: entrada de sólidos en suspensión al decantador primario</li>
+<li><strong>SSV-P</strong>: entrada de sólidos volátiles en suspensión al decantador primario</li>
+<li><strong>SED-P</strong>: entrada de sedimentos al decantador primario</li>
+<li><strong>COND-P</strong>: entrada de conductividad al decantador primario</li>
+<li><strong>PH-D</strong>: entrada de pH al decantador secundario</li>
+<li><strong>DBO-D</strong>: entrada de demanda biológica de oxígeno al decantador secundario</li>
+<li><strong>DQO-D</strong>: entrada de demanda química de oxígeno al decantador secundario</li>
+<li><strong>SS-D</strong>: entrada de sólidos en suspensión al decantador secundario</li>
+<li><strong>SSV-D</strong>: entrada de sólidos volátiles en suspensión al decantador secundario</li>
+<li><strong>SED-D</strong>: entrada de sedimentos al decantador secundario</li>
+<li><strong>COND-D</strong>: entrada de conductividad al decantador secundario</li>
+<li><strong>PH-S</strong>: salida de pH</li>
+<li><strong>DBO-S</strong>: salida de demanda biológica de oxígeno</li>
+<li><strong>DQO-S</strong>: salida de demanda química de oxígeno</li>
+<li><strong>SS-S</strong>: salida de sólidos en suspensión</li>
+<li><strong>SSV-S</strong>: salida de sólidos volátiles en suspensión)</li>
+<li><strong>SED-S</strong>: salida de sedimentos</li>
+<li><strong>COND-S</strong>: salida de conductividad</li>
+<li><strong>RD-DBO-P</strong>: entrada de rendimiento Demanda biológica de oxígeno en el decantador primario</li>
+<li><strong>RD-SS-P</strong>: entrada de rendimiento de sólidos en suspensión en el decantador primario</li>
+<li><strong>RD- SED-P</strong>: rendimiento de entrada de sedimentos al decantador primario</li>
+<li><strong>RD-DBO-S</strong>: rendimiento de entrada de demanda biológica de oxígeno al decantador secundario</li>
+<li><strong>RD-DQO-S</strong>: rendimiento de entrada de demanda química de oxígeno al decantador secundario</li>
+<li><strong>RD-DBO-G</strong>: rendimiento global de entrada de demanda biológica de oxígeno</li>
+<li><strong>RD-DQO-G</strong>: rendimiento global de entrada de demanda química de oxígeno</li>
+<li><strong>RD-SS-G</strong>: rendimiento global de entrada de sólidos en suspensión</li>
+<li><strong>RD-SED-G</strong>: rendimiento global de entrada de sedimentos</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li><p>J. De Gracia. “Avaluacio de tecniques de classificacio per a la gestio de Bioprocessos: Aplicacio a un reactor de fangs activats’’ Master Thesis. Dept. de Quimica. Unitat d’Enginyeria Quimica. Universitat Autonoma de Barcelona. Bellaterra (Barcelona). 1993.</p></li>
+<li><p>J. Bejar, U. Cortés and M. Poch. “LINNEO+: A Classification Methodology for Ill-structured Domains’’. Research report RT-93-10-R. Dept. Llenguatges i Sistemes Informatics. Barcelona. 1993.</p></li>
+<li><p>Ll. Belanche, U. Cortes and M. Sánchez. “A knowledge-based system for the diagnosis of waste-water treatment plant’’. Proceedings of the 5th international conference of industrial and engineering applications of AI and Expert Systems IEA/AIE-92. Ed Springer-Verlag. Paderborn, Germany, June 92.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/water-treatment.csv"</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a>watertre <span class="ot">=</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb23-3"><a href="#cb23-3"></a></span>
+<span id="cb23-4"><a href="#cb23-4"></a><span class="co"># Eliminamos la variable de registro</span></span>
+<span id="cb23-5"><a href="#cb23-5"></a>watertre <span class="ot">=</span> watertre[,<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb23-6"><a href="#cb23-6"></a><span class="fu">write_rds</span>(watertre, <span class="st">"watertre.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-winerecognition" class="level3" data-number="4.4.4">
+<h3 data-number="4.4.4" class="anchored" data-anchor-id="sec-winerecognition"><span class="header-section-number">4.4.4</span> Wine recognition</h3>
+<p>En este banco de datos se recoge el resultado de un análisis químico de vinos cultivados en la misma región de Italia pero procedentes de tres cultivos distintos. El análisis determinó las cantidades de 13 características que se encuentran en cada una de las muestras de vinos. El objetivo que perseguimos es clasificar cada muestra en una de estas tres clases de vino (<code>Class label</code>) en función de sus características de tipo numérico.</p>
+<p><strong>Características del banco de datos</strong>:</p>
+<ul>
+<li>Target: <code>Class label</code></li>
+<li>Valores perdidos: no</li>
+<li>Número de registros: 178</li>
+<li>Número de variables: 14</li>
+</ul>
+<p><strong>Variables contenidas</strong>:</p>
+<ul>
+<li><strong>Class label</strong>: etiqueta que indica el tipo de vino (1, 2 o 3)</li>
+<li><strong>Alcohol</strong>: alcohol</li>
+<li><strong>Malic acid</strong>: ácido málico</li>
+<li><strong>Ash</strong>: ceniza</li>
+<li><strong>Alcalinity of ash</strong>: alcalinidad de la ceniza</li>
+<li><strong>Magnesium</strong>: magnesio</li>
+<li><strong>Total phenols</strong>: fenoles totales</li>
+<li><strong>Flavanoids</strong>: flavonoides</li>
+<li><strong>Nonflavanoid phenols</strong>: fenoles no flavonoides</li>
+<li><strong>Proanthocyanins</strong>: proantocianinas</li>
+<li><strong>Color intensity</strong>: intensidad de color</li>
+<li><strong>Hue</strong>: matiz</li>
+<li><strong>OD280/OD315 of diluted wines</strong>: OD280/OD315 de vinos diluidos</li>
+<li><strong>Proline</strong>: prolina</li>
+</ul>
+<p><strong>Referencias bibliográficas</strong>:</p>
+<ul>
+<li>Kaggle: <a href="https://www.kaggle.com/datasets/amirhosseinzinati/wine-recognition-data">enlace</a></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>url <span class="ot">=</span> <span class="st">"https://raw.githubusercontent.com/ia4legos/MachineLearning/main/data/Wine.csv"</span></span>
+<span id="cb24-2"><a href="#cb24-2"></a>winerecognition <span class="ot">=</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb24-3"><a href="#cb24-3"></a><span class="fu">write_rds</span>(winerecognition, <span class="st">"winerecognition.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "¡Copiado!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "¡Copiado!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./30_RandRstudio.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./02_FirstStepsAA.html" class="pagination-link">
+        <span class="nav-page-text">Parte 2. Primeros pasos</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

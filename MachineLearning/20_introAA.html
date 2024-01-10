@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MachineLearning - 2&nbsp; Introducción al Aprendizaje Automático (AA)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./30_RandRstudio.html" rel="next">
+<link href="./10_introAD.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos coincidentes",
+    "search-copy-link-title": "Copiar enlace para buscar",
+    "search-hide-matches-text": "Ocultar coincidencias adicionales",
+    "search-more-match-text": "más coincidencia en este documento",
+    "search-more-matches-text": "más coincidencias en este documento",
+    "search-clear-button-title": "Limpiar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Entregar"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MachineLearning</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Prefacio</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./01_IntroCourse.html" class="sidebar-item-text sidebar-link">Parte 1. Introducción</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_introAD.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_introAA.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./30_RandRstudio.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./40_DataBases.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./02_FirstStepsAA.html" class="sidebar-item-text sidebar-link">Parte 2. Primeros pasos</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./50_AED.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./03_SupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 3. Aprendizaje supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./60_RegressionModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regresión</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./70_LogisticModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelos de Regresión Logística</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./80_SurvivalModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./90_BayesianClassif.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./100_kNNmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./110_SVMmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./120_DTmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./130_Ensemblemodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Modelos de conjunto (Ensemble models)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./140_Boostingmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Modelos Boosting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./04_NonSupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 4. Aprendizaje no supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./150_Discriminantmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análisis discriminante (AD)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./160_PrinCompmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./170_MDSmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./180_Clustermodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Análisis cluster</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">Referencias</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#sec-problemsAA" id="toc-sec-problemsAA" class="nav-link active" data-scroll-target="#sec-problemsAA"><span class="toc-section-number">3</span>  Problemas típicos del AA</a>
+  <ul>
+  <li><a href="#sec-useAA" id="toc-sec-useAA" class="nav-link" data-scroll-target="#sec-useAA"><span class="toc-section-number">3.1</span>  Cuándo usar y no usar el AA</a></li>
+  </ul></li>
+  <li><a href="#sec-tiposAA" id="toc-sec-tiposAA" class="nav-link" data-scroll-target="#sec-tiposAA"><span class="toc-section-number">4</span>  Tipos de Aprendizaje Automático</a>
+  <ul>
+  <li><a href="#sec-Asupervised" id="toc-sec-Asupervised" class="nav-link" data-scroll-target="#sec-Asupervised"><span class="toc-section-number">4.1</span>  Aprendizaje supervisado</a></li>
+  <li><a href="#sec-Anosupervised" id="toc-sec-Anosupervised" class="nav-link" data-scroll-target="#sec-Anosupervised"><span class="toc-section-number">4.2</span>  Aprendizaje no supervisado</a></li>
+  <li><a href="#sec-Asemisupervised" id="toc-sec-Asemisupervised" class="nav-link" data-scroll-target="#sec-Asemisupervised"><span class="toc-section-number">4.3</span>  Aprendizaje semi-supervisado</a></li>
+  <li><a href="#sec-Aautosupervised" id="toc-sec-Aautosupervised" class="nav-link" data-scroll-target="#sec-Aautosupervised"><span class="toc-section-number">4.4</span>  Aprendizaje auto-supervisado</a></li>
+  <li><a href="#sec-Areforced" id="toc-sec-Areforced" class="nav-link" data-scroll-target="#sec-Areforced"><span class="toc-section-number">4.5</span>  Aprendizaje por refuerzo</a></li>
+  </ul></li>
+  <li><a href="#sec-conceptsAA" id="toc-sec-conceptsAA" class="nav-link" data-scroll-target="#sec-conceptsAA"><span class="toc-section-number">5</span>  Conceptos básicos en un problema de aprendizaje automático</a></li>
+  <li><a href="#sec-flujoAA" id="toc-sec-flujoAA" class="nav-link" data-scroll-target="#sec-flujoAA"><span class="toc-section-number">6</span>  Flujo de trabajo en un problema de AA</a>
+  <ul>
+  <li><a href="#sec-problemaAA" id="toc-sec-problemaAA" class="nav-link" data-scroll-target="#sec-problemaAA"><span class="toc-section-number">6.1</span>  Definir un problema</a></li>
+  <li><a href="#sec-recogerdatos" id="toc-sec-recogerdatos" class="nav-link" data-scroll-target="#sec-recogerdatos"><span class="toc-section-number">6.2</span>  Recoger datos</a></li>
+  <li><a href="#sec-modelobasal" id="toc-sec-modelobasal" class="nav-link" data-scroll-target="#sec-modelobasal"><span class="toc-section-number">6.3</span>  Establecer un modelo de partida</a></li>
+  <li><a href="#sec-aedenAA" id="toc-sec-aedenAA" class="nav-link" data-scroll-target="#sec-aedenAA"><span class="toc-section-number">6.4</span>  Análisis exploratorio de datos (AED)</a></li>
+  <li><a href="#sec-preprocesado" id="toc-sec-preprocesado" class="nav-link" data-scroll-target="#sec-preprocesado"><span class="toc-section-number">6.5</span>  Preprocesar los datos</a></li>
+  <li><a href="#sec-entrenamiento" id="toc-sec-entrenamiento" class="nav-link" data-scroll-target="#sec-entrenamiento"><span class="toc-section-number">6.6</span>  Seleccionar y entrenar un modelo</a></li>
+  <li><a href="#sec-errores" id="toc-sec-errores" class="nav-link" data-scroll-target="#sec-errores"><span class="toc-section-number">6.7</span>  Análisis de errores</a></li>
+  <li><a href="#sec-evaluar" id="toc-sec-evaluar" class="nav-link" data-scroll-target="#sec-evaluar"><span class="toc-section-number">6.8</span>  Evaluar el modelo</a></li>
+  <li><a href="#sec-automatizar" id="toc-sec-automatizar" class="nav-link" data-scroll-target="#sec-automatizar"><span class="toc-section-number">6.9</span>  Automatizar el modelo</a></li>
+  </ul></li>
+  <li><a href="#sec-metricas" id="toc-sec-metricas" class="nav-link" data-scroll-target="#sec-metricas"><span class="toc-section-number">7</span>  Métricas de evaluación</a>
+  <ul>
+  <li><a href="#sec-metricasregresion" id="toc-sec-metricasregresion" class="nav-link" data-scroll-target="#sec-metricasregresion"><span class="toc-section-number">7.1</span>  Métricas para problemas de regresión</a></li>
+  <li><a href="#sec-metricasclasif" id="toc-sec-metricasclasif" class="nav-link" data-scroll-target="#sec-metricasclasif"><span class="toc-section-number">7.2</span>  Métricas para problemas de clasificación</a></li>
+  </ul></li>
+  <li><a href="#sec-retos" id="toc-sec-retos" class="nav-link" data-scroll-target="#sec-retos"><span class="toc-section-number">8</span>  Retos en los sistemas de aprendizaje automático</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-introAA" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Vivimos en la era de las máquinas inteligentes. En la última década, los sistemas basados en el aprendizaje automático (AA), machine learning (ML) en su nomenclatura en inglés, han pasado de vencer a los mejores jugadores de ajedrez, a influir en la mayoría de nuestras decisiones diarias, como hacen los sistemas de recomendación que encontramos en servicios de streaming como Netlix y Youtube.</p>
+<p>Como habitantes del siglo XXI queremos responder a la pregunta que quizá alguna vez te has hecho, sobre qué es el aprendizaje automático, y también por qué te recomendamos estudiarlo. Trataremos de mostrarte qué tipo de problemas resuelve y cuándo es apropiado, o no, utilizar esta tecnología.</p>
+<p>El aprendizaje automático es un nuevo paradigma de programación en el que, en lugar de programar explícitamente los ordenadores para que realicen algunas tareas, lo hacemos para que aprendan de los datos encontrando los patrones subyacentes en ellos. En pocas palabras, el aprendizaje automático es la ciencia, o la tecnología, que da a la máquina la capacidad de aprender sobre los datos.</p>
+<p>Está intrínsecamente relacionado con el análisis de datos y la estadística. En general, las técnicas de aprendizaje automático son métodos basados en aprovechar al máximo la información disponible en los datos, que utilizan procedimientos y computación informática, junto con conceptos y técnicas de estadística, probabilidad y optimización. El objetivo del aprendizaje automático, la minería de datos o la inteligencia artificial es facilitarnos la vida, para automatizar tareas y tomar mejores decisiones a partir de la información disponible.</p>
+<p>En la programación ordinaria, el trabajo del programador consiste en escribir claramente cada una de las reglas que componen la tarea que intenta realizar para tratar los datos. El aprendizaje automático invierte esta situación. Se utilizan los datos y los resultados (o etiquetas) para generar reglas con las que predecir cómo se relacionan entre sí o qué patrones muestran, y poder aplicar esas reglas a otros datos para predecir sus resultados o patrones.</p>
+<p>Tomemos un ejemplo del mundo real. Si queremos crear una aplicación que, a partir de una foto de una persona, pueda determinar si lleva o no una mascarilla, abasteceremos al modelo de aprendizaje automático con un buen número de imágenes de personas con y sin mascarilla, cada una de ellas convenientemente identificada, y el modelo derivará (aprenderá) las reglas o patrones que relacionan las imágenes con el hecho de llevar o no una mascarilla. Posteriormente se podrán utilizar esas reglas para reconocer mascarillas en otras imágenes distintas para las que no tenemos una identificación dada y que no fueron usadas por el modelo.</p>
+<p>Abordar un problema de reconocimiento de imágenes con programación basada en reglas a definir sería realmente difícil, considerando que hay distintos tipos de máscaras, colores, e infinidad de escenarios posibles sobre los que poder reconocer si hay y dónde empieza y acaba una mascarilla. Con el aprendizaje automático sólo será necesario un buen número de imágenes de personas con y sin mascarillas, en las que de modo manual hayamos identificado si está o no presente una mascarilla. De ahí estaremos a pocos pasos de conseguir un reconocedor de máscaras facial eficaz.</p>
+<p>En la actualidad existen dos lenguajes de programación especialmente preparados para las tareas de aprendizaje automático: R y Python. En estos materiales se ha optado por usar R, aunque en muchos cursos avanzados sobre este tema el lenguaje utilizado es Python por su facilidad para trabajar con banos de datos muy granes o por su facilidad para el acceso mediante web scraping a bases de datos en internet. Si el lector está interesado en la versión de python de estos materiales puede consultar la web http://ia4legos.umh.es.</p>
+<section id="sec-problemsAA" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Problemas típicos del AA</h1>
+<p>El aprendizaje automático ha transformado muchos sectores, desde la banca, la fabricación, el streaming, los vehículos autónomos, la agricultura, etc. De hecho, la mayoría de los productos y servicios tecnológicos que utilizamos a diario poseen algún tipo de algoritmo de aprendizaje automático en su interior.</p>
+<p>Estos son los casos de uso más comunes del aprendizaje automático:</p>
+<ul>
+<li><p><strong>Sistemas de recomendación</strong>. Prácticamente todos los sitios web recopilan información de sus clientes (<em>cookies</em>) para identificar perfiles en función de su comportamiento e intereses al navegar, y ofrecerles, en consecuencia, recomendaciones y anuncios personalizados. Lo mismo ocurre con servicios de streaming como YouTube y Netflix, o de compras como Amazon.</p></li>
+<li><p><strong>Detección de fraudes</strong> en tiempo real, que pueden utilizar los bancos y otras organizaciones financieras.</p></li>
+<li><p><strong>Predicción del reembolso de préstamos</strong> a partir de los datos históricos de los clientes bancarios, para predecir -con antelación a la concesión- si un sujeto concreto será capaz de devolver el crédito.</p></li>
+<li><p><strong>Diagnóstico de enfermedades y predicción de la tasa de supervivencia</strong>. El aprendizaje automático está encontrando cada vez más su valor en la medicina. Puede ayudar a los profesionales de la medicina a diagnosticar enfermedades en unos pocos minutos a partir de las pruebas diagnósticas digitalizadas realizadas. Estos profesionales también pueden utilizar el aprendizaje automático para predecir la probabilidad de sufrir una enfermedad o de sobrevivir, cómo evolucionará una enfermedad, etc.</p></li>
+<li><p><strong>Detección de defectos en la industria</strong>. Algunas empresas de fabricación han automatizado la tarea de inspección y utilizan la visión artificial para revisar los productos en busca de defectos, lo que permite reajustar y mejorar los procesos, y en última instancia acelerar la producción y reducir costes. En <a href="https://landing.ai/wp-content/uploads/2020/11/MachineVisionSurvey.pdf">2020 State of AI-Based Machine Vision by Landing AI</a> se dan más ejemplos del uso de la inteligencia artificial en la industria.</p></li>
+<li><p><strong>Predicción de bajas</strong>. Las empresas de servicios pueden utilizar el aprendizaje automático para predecir el riesgo de que un cliente cancele su cuenta o suscripción, y en consecuencia ayudarles a definir estrategias con las que mejoren la experiencia de usuario y consigan retener mejor a sus clientes. De hecho, esto se ha utilizado en universidades para predecir la renuncia de los estudiantes y abastecerlos, antes de que se produzca, de soluciones para retenerlos.</p></li>
+<li><p><strong>Detección de spam</strong>. Casi todos los proveedores de correo electrónico, como Outlook o Gmail, tienen la capacidad de detectar el spam de todos los correos electrónicos entrantes para proteger a los usuarios de promociones falsas y estafas. Este filtrado está basado en aprendizaje automático.</p></li>
+<li><p><strong>Vehículos autónomos</strong>. Los vehículos autónomos actuales utilizan sistemas de aprendizaje automático y aprendizaje profundo para navegar por las carreteras. Utilizando la visión por ordenador pueden ser capaces de detectar peatones, vehículos, semáforos, así como reconocer señales y otros objetos circundantes.</p></li>
+<li><p><strong>Clasificación de textos o documentos</strong>. Con el aprendizaje automático es viable identificar el tema del que se trata en un texto o documento, o determinar, por ejemplo, si el contenido de una página web es inapropiado.</p></li>
+<li><p><strong>Procesamiento del lenguaje natural (PLN)</strong>. Cada día es más común que nuestro procesador de textos nos sugiera palabras con las que continuar el discurso, o correcciones ortográficas o sintácticas. Estos recursos son resultados de algoritmos de aprendizaje automático para el etiquetado de partes del discurso, el reconocimiento de entidades con nombre, el análisis sintáctico libre de contexto o el análisis sintáctico de dependencias. Se trata de problemas de aprendizaje más ricos, conocidos como “<em>problemas de predicción estructurada</em>”.</p></li>
+<li><p><strong>Aplicaciones de procesamiento del habla</strong>, como las de reconocimiento de patrones de lenguaje, recuperación de fragmentos, clasificación de información, traducción automática, resumen de textos, identificación de emociones, o incluso generación de lenguaje natural en la interacción de máquinas con humanos.</p></li>
+<li><p><strong>Aplicaciones de visión por ordenador</strong>. Incluyen el reconocimiento e identificación de objetos, la detección de rostros, el reconocimiento óptico de caracteres (<em>OCR, Optical Character Recognition</em>), la recuperación de imágenes basada en el contenido, o la estimación de la postura.</p></li>
+<li><p><strong>Aplicaciones de biología computacional</strong>. Incluyen la predicción de la función de las proteínas, la identificación de puntos clave en el metabolismo celular, o el análisis de redes de genes y proteínas.</p></li>
+</ul>
+<p>Hay muchas más aplicaciones del aprendizaje automático y la lista podría resultar infinita. Esperamos que esta introducción te haya servido para percibir, a groso modo, el potencial del aprendizaje automático en el mundo actual.</p>
+<section id="sec-useAA" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="sec-useAA"><span class="header-section-number">3.1</span> Cuándo usar y no usar el AA</h2>
+<p>El aprendizaje automático es una tecnología increíble y ha demostrado muchos éxitos en la resolución de diversos problemas del mundo real. Sin embargo, como cualquier otra tecnología, el aprendizaje automático no es adecuado para resolver todo tipo de problemas. Por lo tanto, es igualmente importante saber cuándo utilizarlo y cuándo no.</p>
+<p>¿Cuándo utilizar el aprendizaje automático? El uso de este tipo de aprendizaje es preferible cuando se abordan:</p>
+<ul>
+<li><p>Problemas que son demasiado complejos para ser resueltos con programación ordinaria, como por ejemplo el reconocimiento de rostros o la detección de correos spam. Es excesivamente complejo confeccionar todas las reglas de inclusión/exclusión. Para este tipo de problemas, probablemente sea seguro probar el aprendizaje automático.</p></li>
+<li><p>Problemas que implican el razonamiento visual y la comprensión del lenguaje, como el reconocimiento de imágenes, el reconocimiento del habla, la traducción automática, etc. Como veremos más adelante, los problemas de percepción a gran escala o los problemas visuales y de lenguaje suelen ser manejados por sistemas de aprendizaje profundo.</p></li>
+<li><p>Problemas que cambian rápidamente y cuyas características cambian con el tiempo, y es necesario que el sistema siga funcionando bien. El aprendizaje automático es adecuado para este tipo de problemas porque estos algoritmos pueden re-entrenarse con nuevos datos.</p></li>
+<li><p>Los problemas que son claros y tienen objetivos sencillos, como una pregunta de sí/no (ante un problema de clasificación: enfermo/no enfermo) o la predicción de un único número continuo (como la cantidad de electricidad que se consumirá en un día).</p></li>
+</ul>
+<p>Dicho esto, es poco recomendable utilizar el aprendizaje automático en:</p>
+<ul>
+<li><p>Problemas de predicción en los que precisas conocer el efecto concreto que tienen las variables que están relacionadas con una respuesta sobre ella. La mayoría de los modelos de aprendizaje automático se consideran cajas negras y no proporcionan reglas fijas para relacionar distintas variables.</p></li>
+<li><p>Problemas de predicción de fenómenos variables y cambiantes con el tiempo y que no siguen patrones preestablecidos fijos, como por ejemplo el comportamiento de la bolsa, que si bien tiene ciertos patrones identificados, su capacidad de fluctuar e invertir de repente una tendencia dada es un fenómeno frecuente.</p></li>
+<li><p>Problemas que puedan ser resueltos con programación ordinaria o con métodos heurísticos simples.</p></li>
+<li><p>Problemas que requieran de una solución única y estable que no precise ser actualizada. Si no va a ser posible capturar de modo continuado información con la que abastecer, re-entrenar los modelos y actualizar las predicciones realizadas por los modelos de aprendizaje automático, carece de sentido utilizarlos. Es preferible acudir a modelos estadísticos clásicos.</p></li>
+</ul>
+<p>El aprendizaje automático sigue transformando procesos que nunca se imaginaron y, sin lugar a dudas, continuará creciendo y aplicándose en más y más ámbitos y problemas.</p>
+</section>
+</section>
+<section id="sec-tiposAA" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Tipos de Aprendizaje Automático</h1>
+<p>En líneas generales, existen 5 tipos principales de sistemas de aprendizaje automático, que son:</p>
+<ul>
+<li>Aprendizaje supervisado</li>
+<li>Aprendizaje no supervisado</li>
+<li>Aprendizaje semi-supervisado</li>
+<li>Aprendizaje auto-supervisado</li>
+<li>Aprendizaje por refuerzo</li>
+</ul>
+<p>Vamos a repasar todos estos tipos para conseguir una comprensión alta de lo que realmente significan.</p>
+<section id="sec-Asupervised" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="sec-Asupervised"><span class="header-section-number">4.1</span> Aprendizaje supervisado</h2>
+<p>La mayoría de las tareas de aprendizaje automático pertenecen al tipo de aprendizaje supervisado. Un modelo de aprendizaje supervisado se entrena con datos etiquetados, esto es, datos que se han observado junto a algún tipo de resultado a predecir, al que llamamos etiqueta (cuando es de tipo categórico) o respuesta (en sentido general o numérico). En otras palabras, un modelo de aprendizaje supervisado utiliza los datos de entrada para establecer una solución que aproxime la respuesta observada (también proporcionada en la entrada).</p>
+<p>El ejemplo de reconocimiento de caras que hemos mencionado anteriormente es un buen ejemplo de aprendizaje supervisado. En general, hay dos tipos principales de problemas de aprendizaje supervisado, a saber:</p>
+<ul>
+<li><p>Los problemas de clasificación, en los que la tarea a resolver consiste en clasificar, esto es, en atribuir una categoría determinada a un sujeto/registro, de entre varias categorías posibles. Por ejemplo, en salud diagnosticar a un sujeto como enfermo/no enfermo; en reconocimiento de textos, identificar su idioma, o si un correo entrante es spam o no. En este caso la variable respuesta es de tipo categórico.</p></li>
+<li><p>Problemas de regresión, en los que el objetivo es predecir un valor numérico de alguna característica o variable. Por ejemplo, predecir el precio de un coche usado según sus características (marca, antigüedad, prestaciones, …). En este caso la variable respuesta es de tipo numérico.</p></li>
+</ul>
+<p>Los algoritmos de aprendizaje supervisado incluyen algoritmos poco profundos como la regresión lineal y logística, los árboles de decisión (conocidos como <em>regression trees</em>, <em>decision trees</em> o <em>classification trees</em>), los bosques aleatorios (<em>random forests</em>), los K-vecinos más próximos, (<em>K-Nearest Neighbors, KNN</em>) y las máquinas de vectores de apoyo (<em>Super Vector Machine, SVM</em>).</p>
+<p>Dicho esto, hay otros problemas “avanzados” que pueden resolverse con técnicas de aprendizaje supervisado, como:</p>
+<ul>
+<li>Subtitulado de imágenes, para predecir el título de una imagen determinada.</li>
+<li>Detección de objetos, para reconocer un objeto en una imagen y dibujar un contorno delimitador a su alrededor.</li>
+<li>Segmentación de imágenes, para identificar los píxeles que componen cada objeto en una imagen.</li>
+</ul>
+<p>Algunas de estas tareas pueden incluir tanto técnicas de clasificación como de regresión. Así por ejemplo, para la detección de objetos es precisa una tarea de clasificación, con la que reconocer el objeto entre los otros en una imagen, y la regresión, para predecir sus coordenadas y poder definir su contorno delimitador.</p>
+</section>
+<section id="sec-Anosupervised" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="sec-Anosupervised"><span class="header-section-number">4.2</span> Aprendizaje no supervisado</h2>
+<p>En este caso disponemos exclusivamente de datos genéricos con los que entrenar el modelo, pero no se ha observado a la par una variable respuesta a predecir, y con la que juzgar la bondad del modelo. El objetivo en este tipo de problemas es establecer o identificar patrones de comportamiento en el conjunto de datos disponible. El resultado de estos modelos suele ser una etiqueta de clasificación, esto es, una clase o categoría, para cada uno de los registros en la muestra, en base a que se haya identificado un patrón de comportamiento común a todos aquellos que comparten la misma etiqueta.</p>
+<p>Los algoritmos de aprendizaje no supervisado se utilizan principalmente para:</p>
+<ul>
+<li>Agrupar datos por patrones, como los algoritmos de K-Medias y de agrupación jerárquica.</li>
+<li>Reducir la dimensión del banco de datos y mejorar su visualización, como el análisis de componentes principales (PCA), o el t-Distributed Stochastic Neighbor Embedding (t-SNE).</li>
+</ul>
+</section>
+<section id="sec-Asemisupervised" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="sec-Asemisupervised"><span class="header-section-number">4.3</span> Aprendizaje semi-supervisado</h2>
+<p>El aprendizaje semi-supervisado se sitúa entre el aprendizaje supervisado y el no supervisado. En el aprendizaje semi-supervisado se etiqueta una pequeña parte de los datos de entrenamiento, mientras que el resto de los datos no se etiquetan.</p>
+<p>El etiquetado de los datos es uno de los mayores retos del aprendizaje automático, dado que requiere de una toma de datos específica para la etiqueta/respuesta, a veces automatizada, pero en otras ocasiones manual, y que obviamente ocasiona costes y puede conllevar errores. Por lo tanto, disponer de procedimientos analíticos que permitan minimizar el número de datos etiquetados, y a la vez utilizar datos no etiquetados para mejorar el ajuste puede generar interesantes beneficios relacionados con la reducción de tiempos y costes vinculados al etiquetado.</p>
+<p>El aprendizaje semi-supervisado es más notable en los problemas que implican trabajar con conjuntos de datos masivos, como las búsquedas de imágenes en Internet, el reconocimiento de imágenes y audio, y la clasificación de páginas web. Como se puede imaginar, nadie en su sano juicio se va a dedicar a etiquetar las millones de imágenes que se suben a diario a plataformas de medios sociales como Instagram, o los miles de páginas web que se crean cada día (252.000 según Sitefy). En estos casos, el aprendizaje semi-supervisado puede generar aproximaciones más eficientes en términos de recursos.</p>
+</section>
+<section id="sec-Aautosupervised" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="sec-Aautosupervised"><span class="header-section-number">4.4</span> Aprendizaje auto-supervisado</h2>
+<p>El aprendizaje auto-supervisado es uno de los tipos de aprendizaje automático más emocionantes por cuanto al tipo de aplicaciones que tiene relacionadas con la visión por ordenador y la robótica. Mientras que el aprendizaje semi-supervisado utiliza una pequeña porción de datos etiquetados, el aprendizaje auto-supervisado utiliza todos los datos sin etiquetar y no requiere de anotaciones manuales, lo que elimina la necesidad de los humanos en el proceso.</p>
+<p>La motivación del aprendizaje auto-supervisado es aprovechar la gran cantidad de datos sin etiquetar, generando con ellos etiquetas según su estructura o características y luego entrenar sobre estos datos etiquetados artificialmente, con técnicas de aprendizaje supervisado.</p>
+</section>
+<section id="sec-Areforced" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="sec-Areforced"><span class="header-section-number">4.5</span> Aprendizaje por refuerzo</h2>
+<p>El aprendizaje por refuerzo es un tipo especial de aprendizaje automático que se aplica sobre todo en robótica y juegos. En el aprendizaje por refuerzo, un sistema de aprendizaje llamado agente puede percibir el entorno, realizar algunas acciones y ser recompensado o penalizado en función de su rendimiento. El objetivo principal del agente es acumular tantas recompensas como sea posible. El agente aprende así la mejor estrategia (política) buscando obtener la máxima recompensa.</p>
+<p>El aprendizaje por refuerzo ha protagonizado algunos de los momentos más históricos de la IA. En 2016, <em>DeepMind AlphaGo</em>, un sistema de aprendizaje por refuerzo, ganó jugando a <em>Go</em>, un complejo juego de mesa que requiere intuición, a Lee Sedol -uno de los mejores jugadores a nivel mundial- en el <em>Google DeepMind Challenge Match</em>.</p>
+<p>Muchos de nosotros puede que no saquemos el máximo partido al aprendizaje por refuerzo, normalmente debido a la limitación de los recursos y su ámbito de aplicación, pero es una herramienta poderosa en los ámbitos de la robótica y los juegos.</p>
+</section>
+</section>
+<section id="sec-conceptsAA" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Conceptos básicos en un problema de aprendizaje automático</h1>
+<p>A continuación, utilizamos el problema de la detección de spam como ejemplo práctico para ilustrar algunas definiciones básicas y describir el uso y la evaluación de los algoritmos de aprendizaje automático en la práctica, incluyendo sus diferentes etapas.</p>
+<p>La detección de spam consiste en clasificar automáticamente los mensajes de correo electrónico como spam o correo regular.</p>
+<ul>
+<li><strong>Muestra</strong>: es el conjunto de datos recopilados para dar respuesta a un problema dado, y que se utilizan para el aprendizaje o la evaluación del modelo con el que conseguir dicha respuesta. Es común en jerga de aprendizaje automático, aludir como “muestras” a las observaciones individualizadas.</li>
+</ul>
+<p>En nuestro problema de spam, las muestras son la colección de mensajes de correo electrónico disponibles para el análisis.</p>
+<ul>
+<li><strong>Variables predictoras</strong>: es el conjunto de atributos o características disponibles sobre cada uno de los datos o registros de la muestra. A menudo se representan, para cada dato con un vector que contiene información sobre las características observadas y que se utilizan como inputs del modelo de aprendizaje. Estas variables pueden ser de tipo numérico o categórico y recibirán tratos distintos en los modelos de aprendizaje. En el lenguaje habitual en aprendizaje automático, las variables predictoras se denominan <strong>características</strong>.</li>
+</ul>
+<p>En el ejemplo de spam, algunas características relevantes pueden ser la longitud del mensaje, el nombre o dominio del remitente, diversas características del encabezado, la presencia de ciertas palabras clave en el cuerpo del mensaje, etc.</p>
+<ul>
+<li><strong>Variable respuesta</strong>: Identifica la característica objetivo observada en la muestra, que tratamos de predecir a partir de las variables predictoras recopiladas mediante un modelo de aprendizaje. También es reconocida como <em>target</em> en la bibliografía. Si la respuesta es de tipo numérico hablamos de problemas de regresión, y si es de tipo categórico hablamos de un problema de clasificación, y se reconoce también como etiqueta. En los modelos de aprendizaje no-supervisado no disponemos de variable respuesta.</li>
+</ul>
+<p>En el problema de correo spam la respuesta es una variable categórica binaria con dos posibles resultados spam y no spam, cuyos valores han sido confirmados a través de una revisión manual de los mensajes disponibles. El objetivo será predecirla en nuevos correos, sin necesidad de hacer un reconocimiento explícito, sino a través de aquellas características con las que se relaciona.</p>
+<ul>
+<li><strong>Parámetros</strong>: son los valores desconocidos del modelo de aprendizaje que pretendemos estimar y que aproximan las relaciones entre las variables predictoras, o explican su relación con la variable respuesta.</li>
+</ul>
+<p>En el problema del correo spam los parámetros se corresponderían con los pesos que el modelo asigna a cada una de las predictoras a la hora de establecer su influencia en la clasificación de un correo como spam o no.</p>
+<ul>
+<li><p><strong>Hiperparámetros</strong>: Se trata de parámetros libres que se pueden variar para reajustar el algoritmo de aprendizaje en busca de soluciones alternativas más adaptadas a las muestras disponibles. Todos los algoritmos utilizan unos valores por defecto para los hiperparámetros.</p></li>
+<li><p><strong>Muestra de entrenamiento</strong>: conjunto de datos utilizados para entrenar un algoritmo de aprendizaje, esto es, para estimar parámetros y generar una primera respuesta al problema planteado. El tamaño recomendado para la muestra de entrenamiento varía en función de los distintos escenarios de aprendizaje, si bien suele representar en torno al 70% del total de los datos disponibles o muestra total del modelo.</p></li>
+</ul>
+<p>En nuestro problema de spam, la muestra de entrenamiento consiste en un conjunto de correos electrónicos que proporcionan datos sobre todas las variables predictoras identificadas como relevantes, y también sobre la variable respuesta, esto es, han sido identificados explícitamente como spam o correo regular.</p>
+<ul>
+<li><p><strong>Muestra de validación</strong>: Es el conjunto de datos utilizado tras el entrenamiento del modelo, para refinar las estimaciones de los parámetros del algoritmo de aprendizaje en muestras con variable respuesta. La muestra de validación se utiliza para reajustar el modelo (en términos de hiperparámetros), para hacerlo más eficiente y preciso en la respuesta que da. Su volumen suele representar en torno al 20% de la muestra disponible.</p></li>
+<li><p><strong>Muestra de test</strong>: Es el conjunto de datos utilizados para evaluar el rendimiento de un algoritmo de aprendizaje, separado de los datos de entrenamiento y validación, y no está disponible en la fase de aprendizaje. Puede representar en torno al 10% del total de datos disponibles.</p></li>
+</ul>
+<p>En el problema del spam, la muestra de test consiste en una serie de muestras de correo electrónico para los que el algoritmo de aprendizaje debe predecir etiquetas basándose en las características. Estas predicciones se comparan con las etiquetas de la muestra de test para medir el rendimiento del algoritmo.</p>
+<ul>
+<li><strong>Función de pérdida</strong>: Función que mide la diferencia, o pérdida, entre el valor de la respuesta predicha por el modelo de aprendizaje y el valor de la respuesta observada. Las funciones de pérdida tienen sentido en los modelos de aprendizaje supervisado pero no así en los de aprendizaje no supervisado.</li>
+</ul>
+</section>
+<section id="sec-flujoAA" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Flujo de trabajo en un problema de AA</h1>
+<p>Aunque cada problema de aprendizaje automático es único, todos siguen un flujo de trabajo similar. En esta sección, aprenderemos a abordar los problemas de aprendizaje automático de forma sistemática.</p>
+<p>En general, el flujo de trabajo típico de un proyecto de aprendizaje automático consiste en:</p>
+<ol type="1">
+<li>Definir y formular un problema.</li>
+<li>Recoger datos.</li>
+<li>Establecer un modelo de partida.</li>
+<li>Análisis exploratorio de datos (AED).</li>
+<li>Preprocesar los datos.</li>
+<li>Seleccionar y entrenar un modelo.</li>
+<li>Realizar un análisis de errores y mejora del modelo.</li>
+<li>Evaluar el modelo.</li>
+<li>Implantar y automatizar el modelo.</li>
+</ol>
+<p>A continuación describimos brevemente cada etapa.</p>
+<section id="sec-problemaAA" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="sec-problemaAA"><span class="header-section-number">6.1</span> Definir un problema</h2>
+<p>Todo comienza aquí. La definición del problema es el paso inicial crucial en cualquier proyecto de aprendizaje automático. Aquí es donde te aseguras de entender el problema realmente bien. Entender el problema te dará las intuiciones adecuadas sobre los pasos a seguir, algoritmos a utilizar, etc. Pero espera, ¿qué significa entender el problema?</p>
+<p>Entender el problema consiste en profundizar en los detalles del problema en cuestión y formular las preguntas adecuadas. En primer lugar, siempre será importante simplificar el problema o seccionarlo en varios problemas más sencillos que nos permitan concretar objetivos claros y abordables. He aquí ejemplos de objetivos sencillos: clasificar productos en diferentes categorías, predecir el precio de un coche usado dadas sus características (como la marca, la edad, etc…), reconocer si una persona lleva una máscara facial, dividir a los clientes en diferentes grupos que comparten comportamientos similares, etc… Formular el objetivo generalmente nos conducirá a formular el problema como un problema de clasificación, de regresión, de agrupación, etc.</p>
+<p>En esta fase es fundamental evitar expresiones vagas para la formulación de las preguntas a responder. Cuanto más simple sea la formulación del problema, mejor irán las cosas en el futuro. También es preciso evaluar si el proyecto es abordable, o no, mediante aprendizaje automático.</p>
+<p>La definición del problema también conlleva reflexionar sobre los datos que se necesitan para resolverlo. Los modelos de aprendizaje automático se basan en datos, y con datos defectuosos sólo conseguiremos modelos defectuosos. ¿Qué información tenemos o de cuál podemos disponer?, ¿tenemos datos para cada una de las preguntas que hemos formulado? Hacernos estas preguntas y reajustar los objetivos o la recogida de datos conforme a ellas será fundamental para garantizar el éxito. Modelizar y resolver problemas con modelos NO es magia. Sólo podremos identificar patrones y predecir eficientemente si los datos que utilizamos contienen información significativamente relevante para ello.</p>
+</section>
+<section id="sec-recogerdatos" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="sec-recogerdatos"><span class="header-section-number">6.2</span> Recoger datos</h2>
+<p>Esta suele ser la siguiente etapa tras la formulación de un problema (no podemos obviar que en ocasiones se recopilan datos y después se plantea qué se puede hacer con ellos). Antes de entrar en detalle sobre la recogida de datos, vamos a repasar el significado de “dato”. Según Wikipedia, “los datos son un conjunto de valores de variables cualitativas o cuantitativas sobre una o varias personas u objetos”. En nuestro caso, cuando hablemos de datos estaremos hablando de una serie de registros recopilados para un conjunto de variables, y a veces también para alguna variable respuesta (que ya identificamos también como “etiqueta”, cuando describimos el aprendizaje supervisado).</p>
+<p>Hay 2 tipos principales de datos que son:</p>
+<ul>
+<li><p><strong>Datos estructurados</strong>, que se pueden organizar/registrar en formato tabular u hoja de cálculo. Ejemplos de datos tabulares son los registros de clientes, las ventas de coches, etc.</p></li>
+<li><p><strong>Datos no estructurados</strong>, como imágenes, textos, sonidos y vídeos. Los datos no estructurados no están organizados como los anteriores.</p></li>
+</ul>
+<p>Hoy en día hay muchas bases de datos en abierto, en plataformas como <a href="https://www.kaggle.com/"><em>Kaggle</em></a>, <a href="https://cloud.google.com/datasets">Conjuntos de datos de Google</a>, <a href="https://archive.ics.uci.edu/ml/datasets.php">UCI Machine Learning Repository</a> y muchos otros sitios web gubernamentales (fuera de España fundamentalmente). Así que, si estás resolviendo un problema que alguien resolvió antes, o alguno similar, es muy probable que encuentres información en algún lugar de esas plataformas o en otras fuentes públicas. Inicia pues tu análisis, buscando.</p>
+<p>Dicho esto, hay veces que tendrás que recoger tus propios datos, especialmente si estás resolviendo un problema específico que nadie ha resuelto antes. En este caso, ten en cuenta el tiempo a dedicar en la recogida de datos y sus costes. Ten también en cuenta que a veces no es necesario tener todos los registros deseados para poder empezar a resolver; adopta la dinámica de Machine Learning desde el inicio para ir aprendiendo si necesitas más datos.</p>
+<p>Además, al recopilar los datos, es siempre preferible la calidad a la cantidad. Hay veces que pocos datos buenos pueden generar soluciones superiores a las que generan muchos datos pobres. La cantidad de datos que necesites va a depender del problema que a resolver y de su alcance, pero ten presente siempre como objetivo el conseguir datos de la mejor calidad posible.</p>
+</section>
+<section id="sec-modelobasal" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="sec-modelobasal"><span class="header-section-number">6.3</span> Establecer un modelo de partida</h2>
+<p>Sin un modelo de partida será inviable evaluar los resultados, y mucho menos las mejoras que se consigan. Un modelo de partida es el modelo más sencillo que puede resolver un problema dado, con unos requisitos mínimos. No tiene por qué ser un modelo estrictamente hablando, y podría ser una aplicación de código abierto existente, un análisis estadístico, o incluso meras intuiciones que se obtienen de los datos a partir de un análisis preliminar.</p>
+<p>El objetivo principal del modelo base o de partida es servir como punto de referencia para comparar el modelo de aprendizaje y evaluar las mejoras que genera. El objetivo final es superar al modelo base, en términos de reducción de pérdidas que se cuantificarán, como veremos más adelante, con la función de pérdida, y nos permitirán evaluar la bondad de un modelo. En caso de no poder mejorar el modelo de partida, deberemos entender que el modelo de aprendizaje no merece la pena, y bastará con asumir el modelo de partida. En ocasiones no serán posibles las mejoras del modelo base porque la recogida de datos no haya sido la adecuada y haya generado datos de mala calidad, o simplemente no se haya identificado ninguna variable predictora que realmente influya en la respuesta. Reiteramos que la calidad de los modelos de aprendizaje que generemos dependerá, en buena parte, de la calidad de los datos disponibles.</p>
+</section>
+<section id="sec-aedenAA" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="sec-aedenAA"><span class="header-section-number">6.4</span> Análisis exploratorio de datos (AED)</h2>
+<p>Antes de manipular los datos, es muy importante inspeccionarlos. Esto podría obviarse, pero hacerlo y hacerlo bien ayudará a identificar mejor estrategias eficaces para limpiar los datos e incrementar su calidad.</p>
+<p>El análisis exploratorio de los datos consiste en revisar los valores para descubrir si hay</p>
+<ul>
+<li>incoherencias o errores</li>
+<li>valores faltantes</li>
+<li>carencias</li>
+<li>valores corrompidos o con formatos no soportados (por ejemplo una imagen en un fichero .txt. y con 0Kb)</li>
+<li>desequilibrios de clase</li>
+<li>duplicados</li>
+<li>sesgos</li>
+</ul>
+<p>Realizar un análisis exploratorio va incluso más allá de estas cuestiones y utiliza representaciones gráficas y numéricas que permitan descubrir cómo son los datos (cómo se distribuyen, qué variabilidad tienen, …), qué tipo de relación y correlación hay entre las variables disponibles, etc.</p>
+<p>Dado que en los modelos de aprendizaje automático se seccionan los datos en tres subconjuntos o muestras, entrenamiento, validación y prueba o testado, hay que asegurar, mediante un análisis exploratorio, que estas tres muestras compartan la misma distribución estadística, pues de no ser así, los resultados obtenidos con los datos de entrenamiento no serán extrapolables al resto y el error se disparará.</p>
+</section>
+<section id="sec-preprocesado" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="sec-preprocesado"><span class="header-section-number">6.5</span> Preprocesar los datos</h2>
+<p>En muchos libros de texto y cursos, el preprocesamiento de datos también se denomina limpieza de datos o preparación de datos.</p>
+<p>El preprocesado de datos es quizás el proceso que consume la mayor parte del tiempo en cualquier proyecto de aprendizaje automático. No es inusual que esta parte consuma alrededor del 80% del tiempo total de la modelización, y esto siempre será así porque los datos del mundo real están desordenados y contienen errores.</p>
+<p>Preprocesar los datos implica convertir los datos en bruto en un formato que pueda ser aceptado por los algoritmos de aprendizaje automático.</p>
+<p>El preprocesamiento de datos es difícil porque hay diferentes tipos de datos y diferentes circunstancias de recogida de datos, y la forma de procesar cada uno generalmente será diferente al resto. Por ejemplo, en datos estructurados, la forma de procesar las características numéricas va a ser diferente a las características categóricas. También en los datos no estructurados, la forma de manipular las imágenes va a ser diferente a la forma de manipular los textos o los sonidos.</p>
+<p>Tratamientos específicos para el procesado de datos los iremos encontrando a lo largo del módulo formativo. En términos generales hay una serie de tareas de preprocesado muy comunes en todos los problemas, que son las que comentamos a continuación.</p>
+<ul>
+<li><p><strong>Imputación de valores perdidos</strong>: los valores perdidos o faltantes en un banco de datos pueden rellenarse, eliminarse o dejarse como están. Con la excepción de los modelos basados en árboles, la mayoría de los modelos de aprendizaje automático no aceptan valores perdidos, con lo cual el hecho de que un banco de datos tenga valores faltantes puede ser un problema. Surge así la imputación como un método interesante para evitar los valores perdidos. Hay varias estrategias de imputación como la media o la mediana de los valores restantes, el relleno hacia atrás y hacia delante con valores colindantes cuando los datos tienen un carácter temporal, y las imputaciones iterativas. La técnica de imputación adecuada dependerá del problema y de las características de los datos, y habitualmente con la práctica el profesional adquiere experiencia para utilizar la técnica óptima.</p></li>
+<li><p><strong>Codificación de características categóricas</strong>: en los modelos de aprendizaje automático las variables de tipo categórico han de contener etiquetas numéricas para identificar las categorías. Esto hace necesario recodificar las variables categóricas, que generalmente no vienen expresadas en términos de números. Las técnicas más comunes de codificación son la codificación por etiquetas y la codificación en caliente. Por ejemplo, la variable de sexo, con categorías Hombre y Mujer, se puede codificar con etiqueta 0 para el Hombre y 1 para la Mujer, o en caliente, en la que se elige una categoría que recibe el 1 (por ejemplo Hombre) y se asigna 0 a todas las restantes.</p></li>
+<li><p><strong>Escalar las características numéricas</strong>: la mayoría de los modelos de aprendizaje automátio funcionan bien cuando los valores de entrada se escalan a valores pequeños, pues de este modo se entrenan y convergen más rápido a una solución. Hay dos técnicas principales de escalado, que son la normalización y la estandarización. La normalización reescala las características a valores entre 0 y 1, mientras que la estandarización reescala las características para que tengan una media de 0 y una desviación estándar de 1. Si los datos tienen una distribución normal, la estandarización puede ser una buena opción; en otro caso, o simplemente si no se sabe cuál es la distribución, la normalización funcionará bien.</p></li>
+<li><p><strong>Definir nuevas variables</strong>: la definición de nuevas variables a partir de las existentes, que contengan información relevante, incluso a veces más significativa que la que contienen algunas variables originales, también forma parte del preprocesamiento de datos. Se trata de una tarea creativa y requiere un conocimiento y experiencia adicional del modelador o analista.</p></li>
+</ul>
+</section>
+<section id="sec-entrenamiento" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="sec-entrenamiento"><span class="header-section-number">6.6</span> Seleccionar y entrenar un modelo</h2>
+<p>Seleccionar, crear y entrenar, esto es, ajustar, un modelo de aprendizaje automático es la parte menor, en cuanto a carga de trabajo, en un proyecto de aprendizaje automático. Hay diferentes tipos de modelos, pero en líneas generales, la mayoría de ellos entran en estas categorías: <strong>modelos lineales</strong> como la regresión lineal y logística, <strong>modelos basados en árboles</strong> como los árboles de clasificación, <strong>modelos de conjunto</strong> como los bosques aleatorios y, por último, las <strong>redes neuronales</strong>.</p>
+<p>Dependiendo del problema, se puede elegir uno de estos modelos, o probar varios. En general hay que experimentar con diferentes modelos alternativos para conseguir, al final, uno que funcione razonablemente bien para el problema y conjunto de datos con el que se está trabajando.</p>
+<p>Para reducir la curva de modelado, esto es, el tiempo que se tarda en conseguir un modelo óptimo, existen una serie de cuestiones a considerar para elegir cómo abordar el aprendizaje automático:</p>
+<ul>
+<li><p><strong>El objetivo y tipo de datos</strong> pueden dar señales importantes sobre qué algoritmo de aprendizaje utilizar. Por ejemplo, si se pretende conseguir un clasificador de imágenes, las redes neuronales (concretamente las redes neuronales convolucionales) son las herramientas preferidas.</p></li>
+<li><p><strong>El tamaño de la base de datos</strong>. Los modelos lineales tienden a funcionar bien en problemas con pocos datos, mientras que los modelos de conjunto y las redes neuronales pueden funcionar bien cuando se dispone de bases con muchos datos y variables.</p></li>
+<li><p><strong>El nivel de interpretabilidad deseado</strong>. Si se pretende que las predicciones del modelo sean explicables, un modelo lineal o de árbol puede dar una buena solución, pero no será así si se elige un modelo de redes neuronales.</p></li>
+<li><p><strong>El tiempo de entrenamiento</strong> y la capacidad computacional para ajustar un modelo. Los modelos complejos, como las redes neuronales y los modelos de conjunto, requieren importantes recursos de memoria y suelen tardar más tiempo en entrenarse. En cambio los modelos lineales suelen entrenarse más rápidamente.</p></li>
+</ul>
+</section>
+<section id="sec-errores" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="sec-errores"><span class="header-section-number">6.7</span> Análisis de errores</h2>
+<p>El análisis de los errores nos debe guiar en el proceso de ajuste para mejorar los resultados del modelo. Las mejoras pueden provenir de los datos o del modelo.</p>
+<p>Una de las mejores maneras de realizar el análisis de errores es trazar la curva de aprendizaje e identificar dónde está fallando el modelo y cuál podría ser la razón, así como las acciones correctas que se pueden tomar para reducir los errores.</p>
+<p>Para mejorar el modelo se pueden probar diferentes alternativas para la configuración del modelo a través de los hiperparámetros. También se pueden probar diferentes modelos hasta encontrar uno que funcione mejor.</p>
+<p>Pero además, hay que tener en cuenta que no puede haber un buen modelo sin unos buenos datos, por lo que es importante dedicar tiempo a examinar los resultados del modelo con respecto a los datos de entrada, inspeccionar si va mal en general o sólo para un subconjunto de los datos, y en general cuál es el margen de mejora.</p>
+<p>A menudo, las mejoras no vendrán de afinar el modelo, sino de dedicar tiempo a aumentar el volumen de la muestra de entrenamiento y la calidad de los datos. Para mejorar los datos también se pueden crear variables artificiales más informativas a partir de las disponibles o aumentar los datos (por ejemplo aplicación de filtros en imágenes), entre otros.</p>
+<p>Con todo es importante tener presente que el análisis de errores es un proceso iterativo basado en el ensayo error hasta conseguir un modelo mejor o quizás simplemente aceptable.</p>
+</section>
+<section id="sec-evaluar" class="level2" data-number="6.8">
+<h2 data-number="6.8" class="anchored" data-anchor-id="sec-evaluar"><span class="header-section-number">6.8</span> Evaluar el modelo</h2>
+<p>En un modelo de aprendizaje automático, los datos se suelen dividir en varios subconjuntos, cada uno de los cuales se utiliza en una etapa de la modelización. El conjunto de datos de entrenamiento se utiliza para entrenar un modelo, el conjunto de validación para evaluar el rendimiento del modelo durante el entrenamiento, con el que sugerir mejoras, y el conjunto de prueba, que se utiliza para evaluar el rendimiento final y la mejora del modelo.</p>
+<p>Cuando se ha seleccionado un modelo que funciona, es habitual evaluarlo con la muestra de validación. Si el modelo ofrece buenos resultados sobre estos datos, ajenos a aquellos con los que se ha ajustado (entrenado) el modelo, es el momento de pasar a la fase de test, si se dispone de una muestra de test, o de implementar el modelo de aprendizaje para que continúe aprendiendo conforme se recoja nueva información.</p>
+<p>Los sistemas de recomendación en plataformas de comercio online son un buen ejemplo de modelos que continúan aprendiendo conforme se nutren de más datos de los usuarios.</p>
+</section>
+<section id="sec-automatizar" class="level2" data-number="6.9">
+<h2 data-number="6.9" class="anchored" data-anchor-id="sec-automatizar"><span class="header-section-number">6.9</span> Automatizar el modelo</h2>
+<p>La automatización o implementación del modelo es la última parte del flujo de trabajo en un análisis abordado con aprendizaje automático. Cuando todos los pasos anteriores han ido bien y se ha alcanzado un modelo con buenos resultados en la muestra de validación, el siguiente paso será implementar el modelo para que los usuarios puedan empezar a hacer uso de él, retroalimentando con nuevos datos con los que obtener mejores predicciones y servicios.</p>
+</section>
+</section>
+<section id="sec-metricas" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Métricas de evaluación</h1>
+<p>Las métricas de evaluación se utilizan para medir el rendimiento de los modelos de aprendizaje automático. Al principio de esta introducción al aprendizaje automático comentamos que la mayoría de los problemas se refieren a regresión y clasificación; en función del objetivo y tipo de respuesta, la evaluación del modelo será diferente. Veamos las alternativas.</p>
+<section id="sec-metricasregresion" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="sec-metricasregresion"><span class="header-section-number">7.1</span> Métricas para problemas de regresión</h2>
+<p>En las tareas de regresión el objetivo es predecir el valor numérico de la variable respuesta (identificada también como <em>target</em> en la literatura). Así pues, las métricas que surgen de manera natural para evaluar estos modelos son las basadas en distancias entre las observaciones y las predicciones.</p>
+<p>La diferencia entre el valor real de la respuesta (<span class="math inline">\(y\)</span>) y el valor predicho (<span class="math inline">\(\hat{y}\)</span>) se llama <strong>error de predicción</strong>:</p>
+<p><span id="eq-error"><span class="math display">\[Error = y - \hat{y} \tag{7.1}\]</span></span></p>
+<p>El cuadrado del error de predicción sobre los datos observados <span class="math inline">\(\{y_1,y_2,..., y_n\}\)</span>, se llama <strong>error cuadrático medio</strong> (MSE o <em>Mean Squared Error</em>, en inglés), y se calcula como:</p>
+<p><span id="eq-MSE"><span class="math display">\[MSE = \frac{\sum_{i=1}^n (y_i - \hat{y}_i)^2}{n} \tag{7.2}\]</span></span></p>
+<p>Otra métrica común es la <strong>raíz cuadrada del error cuadrático medio</strong> (RMSE). El RMSE es la métrica de regresión más utilizada.</p>
+<p><span id="eq-RMSE"><span class="math display">\[RMSE = \sqrt{\frac{\sum_{i=1}^n (y_i - \hat{y}_i)^2}{n}} \tag{7.3}\]</span></span></p>
+<p>Hay veces que se trabaja con conjuntos de datos que contienen valores atípicos. Una métrica adecuada para este tipo de conjuntos de datos es el <strong>error medio absoluto</strong> (MAE, <em>Mean Absolute Error</em>) que se calcula como:</p>
+<p><span id="eq-MAE"><span class="math display">\[MAE = \frac{\sum_{i=1}^n |y_i - \hat{y}_i|}{n} \tag{7.4}\]</span></span></p>
+</section>
+<section id="sec-metricasclasif" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="sec-metricasclasif"><span class="header-section-number">7.2</span> Métricas para problemas de clasificación</h2>
+<p>En los problemas de clasificación el objetivo es predecir correctamente la categoría de clasificación de cada observación. Así pues, las métricas naturales para evaluar estos modelos estarán basadas en contabilizar las coincidencias entre la clasificación correcta y la conseguida o predicha con el modelo.</p>
+<p>Para definir estos indicadores partimos de identificar las clasificaciones posibles, cuestión que salvamos con una <strong>matriz de confusión</strong>, esto es, una tabla que muestra el número de predicciones correctas e incorrectas realizadas por un clasificador en todas las clases disponibles. En el caso de una respuesta binaria, 0=Negativo y 1=Positivo en relación al hecho de que se dé determinada característica, las clasificaciones/predicciones posibles sobre el total de datos o registros disponibles son las que se muestran en la siguiente matriz:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th></th>
+<th>Valor Predicho</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td></td>
+<td><em>Negativo</em></td>
+<td><em>Positivo</em></td>
+</tr>
+<tr class="even">
+<td><strong>Valor observado</strong></td>
+<td><em>Negativo</em></td>
+<td>TN</td>
+<td>FP</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td><em>Positivo</em></td>
+<td>FN</td>
+<td>TP</td>
+</tr>
+</tbody>
+</table>
+<p>Se identifican entonces, las siguientes cantidades de interés:</p>
+<ul>
+<li><p><strong>TP</strong>, <em>True Positive</em> o Verdaderos positivos, que es el número de registros que se clasifican correctamente como positivos.</p></li>
+<li><p><strong>FP</strong>, <em>False Positive</em> o Falsos positivos es el número de registros que siendo negativos (0), se clasifican de modo incorrecto como positivos (1).</p></li>
+<li><p><strong>TN</strong>, <em>True Negative</em> o Verdaderos negativos es el número de registros negativos (0) que con correctamente clasificados como negativos.</p></li>
+<li><p><strong>FN</strong>, <em>False Negative</em> o Falsos negativos es el número de registros positivos (1) que son clasificados incorrectamente (con 0).</p></li>
+</ul>
+<p>En base a estos números se definen las siguientes métricas de evaluación de los modelos de aprendizaje basados en clasificación:</p>
+<ul>
+<li>La <strong>exactitud</strong> (representado en la literatura por A, de <em>accuracy</em>) es la métrica más utilizada y muestra la capacidad del modelo para hacer predicciones correctas, es decir, el ratio de observaciones clasificadas correctamente. Se calcula a partir de la proporción de observaciones clasificadas correctamente (TP + TN sobre el total), esto es,</li>
+</ul>
+<p><span id="eq-accuracy"><span class="math display">\[Exactitud (A)= \frac{TP + TN}{TP + TN + FP + FN}. \tag{7.5}\]</span></span></p>
+<p>La exactitud es un indicador de la bondad del modelo para hacer predicciones correctas, por lo que sólo será útil cuando el conjunto de datos esté repartido de forma equilibrada entre las categorías de respuesta.</p>
+<p>Supongamos que hemos construido un clasificador de imágenes que distingue entre caballos y humanos, con 250 imágenes de caballos y otras 250 de humanos. Si el modelo predice correctamente 400 imágenes en total (caballos y humanos), su exactitud es de 0.8, o lo que es lo mismo, del 80% en términos porcentuales.</p>
+<p>Cuando tenemos un conjunto de datos sesgado o desequilibrado hacia alguna categoría, necesitamos una perspectiva diferente sobre cómo evaluar el modelo. Por ejemplo, si tenemos 450 imágenes de caballos y 50 imágenes de humanos, hay una probabilidad del 90% (450/500) de que el caballo se prediga correctamente porque el conjunto de datos está dominado por los caballos. Y aunque la predicción sea nefasta para los humanos, la exactitud seguirá siendo buena.</p>
+<p>Surgen pues otras métricas que, en estas circunstancias, serán más útiles que la exactitud, como la precisión, el recuerdo y la puntuación F1.</p>
+<p>La <strong>precisión</strong> (representado habitualmente como P, de <em>precision</em>) representa el porcentaje de observaciones correctamente clasificadas, de entre las que se han clasificado como positivas.</p>
+<p><span id="eq-precision"><span class="math display">\[Precisión (P)= \frac{TP}{TP + FP}. \tag{7.6}\]</span></span></p>
+<p>Por ejemplo, nos podría interesar especialmente saber, de las imágenes que se clasificaron como humanos, cuántas eran realmente de humanos.</p>
+<p>Por otro lado, el <strong>recuerdo</strong> (representado por R, de <em>recall</em>) muestra el porcentaje de las observaciones que siendo positivas se clasificaron correctamente, y nos resulta útil cuando nos interesa especialmente la clasificación correcta de una determinada clase.</p>
+<p><span id="eq-recall"><span class="math display">\[Recuerdo (R)= \frac{TP}{TP+FN}. \tag{7.7}\]</span></span></p>
+<p>En el ejemplo de caballos y humanos, descubriríamos, con el recuerdo, de las imágenes que eran de humanos, qué porcentaje fueron correctamente clasificadas como humanos.</p>
+<p>Dado que existe cierta relación entre la precisión y la recuperación, y a menudo el aumento de una conlleva la disminución de la otra, se propuso otra métrica construida a partir de las dos, para conjugar las ventajas de ambas.</p>
+<p>La puntuación F1 (o <em>F1 Score</em>) es la media armónica de la precisión y la recuperación, y muestra lo bueno que es el modelo a la hora de clasificar todas las clases sin tener que equilibrar la precisión y la recuperación. Si la precisión o la recuperación son muy bajas, la puntuación F1 también lo será.</p>
+<p><span id="eq-f1"><span class="math display">\[F1 = \frac{2 \cdot P \cdot R}{P + R}. \tag{7.8}\]</span></span></p>
+</section>
+</section>
+<section id="sec-retos" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Retos en los sistemas de aprendizaje automático</h1>
+<p>Al igual que cualquier otra tecnología, el aprendizaje automático ofrece desafíos relacionados tanto con la mejora de los datos como con la mejora de los modelos de ajuste.</p>
+<p>No puede haber buenos modelos con malos datos, pero es un hecho que en el mundo real es raro encontrar “buenos datos” a la primera. Por lo general los datos presentan desorden, errores, incoherencias, y se convierte en todo un arte la labor de procesarlos (depurar, etiquetar, e incluso crear nuevas variables) para conseguir una base de datos apta para iniciar el ajuste de un modelo.</p>
+<p>Por otro lado, una vez disponemos de una base de datos razonablemente buena, el ajuste del modelo no es una labor trivial. En principio se inicia la labor de elegir qué modelo o modelos son razonables para los objetivos y el tipo de datos. A continuación hay que ajustarlos y compararlos para tomar una decisión.</p>
+<p>Cuando ajustamos un modelo lo haremos sobre una submuestra del banco de datos, la muestra de <strong>entrenamiento</strong>, que si no está bien seleccionada y contiene todas las características de la población que representa, ocasionará sesgos. Otra parte de la muestra se dedica a la <strong>validación</strong>, es decir, a evaluar el error que genera el modelo ajustado en la predicción, y utilizarlo para volver sobre el ajuste y afinarlo en pos de reducirlo. Se puede optar también por utilizar otra parte de la muestra para la evaluación o <strong>testado</strong> del modelo que se ha ajustado. En la bibliografía encontramos diferentes recomendaciones sobre el porcentaje de la muestra que ha de dedicarse a cada parte. Una opción puede ser 70/20/10, pero es el científico de datos el que decide, en función de utilizar el mayor número de datos para entrenar el modelo (y conseguir así una buena representación de las características de la población a ajustar), y también en función de no sobrecargar el aprendizaje con los cálculos del error de validación. La muestra final de testado podría tener una representación mayor si el objetivo es concluir sobre la bondad de un modelo en la predicción de datos que no ha visto antes, esto es, que no ha utilizado para entrenar o validar.</p>
+<p>Ya en el ajuste se nos pueden presentar dos tipos de problemas: el infra-ajuste (<em>underfitting</em>) y el sobre-ajuste (<em>overfitting</em>). Veamos en qué consisten.</p>
+<p>El <strong>infra-ajuste</strong> o infra-adaptación del modelo se produce cuando el modelo da malos resultados (en términos de métricas de error) con los datos de entrenamiento; por ejemplo, una clasificación correcta de sólo el 50% de la muestra. Un problema de infra-ajuste ocasiona un problema de sesgo en la predicción. Esto puede ser causado porque el modelo es demasiado simple para los datos de entrenamiento o los datos no contienen las características que se están tratando de predecir. Para reducir este tipo de problema se puede optar por:</p>
+<ul>
+<li><p>Ajustar modelos más complejos. Modelos más sencillos, como los modelos lineales, pueden dar resultados más simples que los más complejos, como los bosques aleatorios, las máquinas de vectores de apoyo, o las redes neuronales.</p></li>
+<li><p>Añadir más datos de entrenamiento y seleccionar mejor las mejores características para predecir.</p></li>
+<li><p>Aumentar la complejidad de los modelos (lo que se conoce como “reducir el nivel de regularización del modelo”). Por ejemplo, si se utilizan redes neuronales, incrementar el número de épocas o iteraciones de entrenamiento.</p></li>
+</ul>
+<p>El <strong>sobre-ajuste</strong> o sobre-adaptación se produce cuando un modelo funciona muy bien con los datos de entrenamiento, pero no con datos nuevos que el modelo no utilizó para ajustar. Esto repercute en un inflado de la varianza de la muestra de validación.</p>
+<p>El sobre-ajuste se puede deber a que el modelo es demasiado complejo para los datos disponibles o el volumen de la muestra de entrenamiento es demasiado pequeño. Para aliviar este tipo de problema, podemos intentar:</p>
+<ul>
+<li><p>Usar modelos más sencillos, o simplificar el modelo actual a través de los hiperparámetros de los que dependen (reducir el número de capas en las redes neuronales, simplificar el kernel en las máquinas de vectores de apoyo, reducir el número de predictores en los modelos lineales, …).</p></li>
+<li><p>Utilizar más datos de entrenamiento para el ajuste.</p></li>
+<li><p>Aumentar el nivel de regularización del modelo, o lo que es lo mismo, reducir la complejidad del modelo, penalizando a los modelos que generan un error excesivamente pequeño para la muestra de entrenamiento.</p></li>
+</ul>
+<p>Tanto el sobre-ajuste como el infra-ajuste lo podemos detectar evaluando el error en las muestras de entrenamiento y de validación cuando hacemos crecer el tamaño de la muestra de entrenamiento progresivamente, y en consecuencia reducimos la de validación. Lo lógico es que cuando incrementamos la muestra de entrenamiento reduzcamos el error del ajuste en dicha muestra, a cambio de que provoquemos un aumento en el error de validación. Si ambos errores se encuentran (convergen) en un punto, significa que tenemos un problema de infra-ajuste y la curva de aprendizaje se detiene pronto. Si al aumentar el tamaño llega un punto en que ambos se estabilizan pero se mantienen alejados entre sí, tenemos un problema de sobre-ajuste.</p>
+<p>Para terminar, hemos de comentar la necesidad de tener una buena formación en aprendizaje automático. Seremos más capaces de ajustar buenos modelos de aprendizaje automático si tenemos un amplio conocimiento de las distintas opciones en cuanto a modelos, y una comprensión avanzada de cómo funciona cada uno de ellos. Podremos proponer entonces alternativas (quizás a través de hiperparámetros del modelo que trabajamos) que mejoren los resultados previos que vamos consiguiendo. Aunque hay técnicas específicas que nos ayudan y simplifican la búsqueda y elección de hiperparámetros (como el <em>grid search</em>, <em>random search</em>, <em>Keras tuner</em>), es fundamental comprender el modelo para tomar buenas decisiones al respecto.</p>
+<p>Hasta aquí la introducción sobre los fundamentos del aprendizaje automático. A medida que vayamos desarrollando contenidos, entraremos en detalle en los procedimientos y descubriremos sus aplicaciones.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "¡Copiado!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "¡Copiado!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./10_introAD.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./30_RandRstudio.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

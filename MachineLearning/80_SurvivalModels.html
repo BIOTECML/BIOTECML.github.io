@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MachineLearning - 8&nbsp; Modelos de supervivencia</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./90_BayesianClassif.html" rel="next">
+<link href="./70_LogisticModels.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos coincidentes",
+    "search-copy-link-title": "Copiar enlace para buscar",
+    "search-hide-matches-text": "Ocultar coincidencias adicionales",
+    "search-more-match-text": "más coincidencia en este documento",
+    "search-more-matches-text": "más coincidencias en este documento",
+    "search-clear-button-title": "Limpiar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Entregar"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MachineLearning</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Prefacio</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./01_IntroCourse.html" class="sidebar-item-text sidebar-link">Parte 1. Introducción</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_introAD.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_introAA.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción al Aprendizaje Automático (AA)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./30_RandRstudio.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introducción a R y RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./40_DataBases.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bases de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./02_FirstStepsAA.html" class="sidebar-item-text sidebar-link">Parte 2. Primeros pasos</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./50_AED.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introducción al análisis de datos</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./03_SupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 3. Aprendizaje supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./60_RegressionModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regresión</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./70_LogisticModels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelos de Regresión Logística</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./80_SurvivalModels.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./90_BayesianClassif.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./100_kNNmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelo de los k vecinos más cercanos (kNN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./110_SVMmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Máquinas de Vector Soporte (SVM)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./120_DTmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Árboles de decisiónn (DT)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./130_Ensemblemodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Modelos de conjunto (Ensemble models)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./140_Boostingmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Modelos Boosting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./04_NonSupervisedAA.html" class="sidebar-item-text sidebar-link">Parte 4. Aprendizaje no supervisado</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./150_Discriminantmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análisis discriminante (AD)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./160_PrinCompmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Componentes principales (CP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./170_MDSmodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Métodos de escalado multidimensional (MDS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./180_Clustermodels.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Análisis cluster</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">Referencias</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#sec-80.1" id="toc-sec-80.1" class="nav-link active" data-scroll-target="#sec-80.1"><span class="toc-section-number">8.1</span>  Aspectos teóricos de los modelos de supervivencia</a></li>
+  <li><a href="#sec-80.2" id="toc-sec-80.2" class="nav-link" data-scroll-target="#sec-80.2"><span class="toc-section-number">8.2</span>  Task de supervivencia</a></li>
+  <li><a href="#sec-80.3" id="toc-sec-80.3" class="nav-link" data-scroll-target="#sec-80.3"><span class="toc-section-number">8.3</span>  Modelo aprendizaje, predición y tipos de predicción</a></li>
+  <li><a href="#sec-80.4" id="toc-sec-80.4" class="nav-link" data-scroll-target="#sec-80.4"><span class="toc-section-number">8.4</span>  Métricas de evaluación</a></li>
+  <li><a href="#sec-80.5" id="toc-sec-80.5" class="nav-link" data-scroll-target="#sec-80.5"><span class="toc-section-number">8.5</span>  Composición</a>
+  <ul>
+  <li><a href="#sec-80.5.1" id="toc-sec-80.5.1" class="nav-link" data-scroll-target="#sec-80.5.1"><span class="toc-section-number">8.5.1</span>  Composición interna</a></li>
+  <li><a href="#sec-80.5.2" id="toc-sec-80.5.2" class="nav-link" data-scroll-target="#sec-80.5.2"><span class="toc-section-number">8.5.2</span>  Composición explícita y pipelines</a></li>
+  <li><a href="#sec-80.5.3" id="toc-sec-80.5.3" class="nav-link" data-scroll-target="#sec-80.5.3"><span class="toc-section-number">8.5.3</span>  Combinando todas las funciones</a></li>
+  </ul></li>
+  <li><a href="#sec-80.6" id="toc-sec-80.6" class="nav-link" data-scroll-target="#sec-80.6"><span class="toc-section-number">8.6</span>  Casos prácticos</a></li>
+  <li><a href="#sec-80.7" id="toc-sec-80.7" class="nav-link" data-scroll-target="#sec-80.7"><span class="toc-section-number">8.7</span>  Ejercicios</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-80" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelos de supervivencia</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>El análisis de supervivencia es un campo de la estadística que se ocupa de intentar predecir/estimar el tiempo hasta que ocurre un evento. Este problema predictivo es único, ya que los modelos de supervivencia se entrenan y prueban con datos que pueden incluir “censura”, que ocurre cuando el evento de interés no ocurre. El análisis de supervivencia puede ser difícil de explicar en abstracto, por lo que, como ejemplo práctico, consideremos a un corredor de maratón en una carrera. Aquí el “problema de supervivencia” consiste en intentar predecir el momento en que el corredor de maratón termina la carrera. Sin embargo, si el evento de interés no se lleva a cabo (por ejemplo, el corredor de maratón se da por vencido y no termina la carrera), se dice que están censurados. En lugar de descartar información sobre eventos censurados, los conjuntos de datos de análisis de supervivencia incluyen una variable de estado que proporciona información sobre el “estado” de una observación. Entonces, en nuestro ejemplo, podríamos escribir el resultado del corredor como (4,1) si terminan la carrera a las cuatro horas, en caso contrario, si se dan por vencidos a las dos horas escribiríamos (2,0).</p>
+<p>La clave para modelar en el análisis de supervivencia es que asumimos que existe un tiempo hipotético que el corredor de maratón habría terminado si no hubiera sido censurado, entonces es trabajo de un modelo de aprendizaje de supervivencia estimar cuál habría sido el tiempo de supervivencia real para un corredor similar, suponiendo que no estén censurados. Matemáticamente, esto está representado por el evento hipotético tiempo, <span class="math inline">\(Y\)</span>, el hipotético tiempo de censura, <span class="math inline">\(C\)</span>, el tiempo de resultado observado, <span class="math inline">\(T = min(Y, C)\)</span>, el indicador de evento <span class="math inline">\(\Delta = (T = Y)\)</span>, y como de costumbre algunas características, <span class="math inline">\(X\)</span>.</p>
+<p>Los modelos de aprendizaje se entrenan sobre <span class="math inline">\((T, \Delta)\)</span> pero, fundamentalmente, hacen predicciones de <span class="math inline">\(Y\)</span> utilizando la información de las características nunca antes vistas. Esto significa que, a diferencia de la clasificación y la regresión, los modelos de aprendizaje reciben formación sobre dos variables, <span class="math inline">\((T, \Delta)\)</span>, que, en R, a menudo se captura en un objeto <code>Surv</code>. En relación con nuestro ejemplo anterior, el resultado del corredor sería entonces <span class="math inline">\((T = 4, \Delta = 1)\)</span> o <span class="math inline">\((T = 2, \Delta = 0)\)</span>. Otro ejemplo se encuentra en el código siguiente, donde generamos aleatoriamente seis tiempos de supervivencia y seis indicadores de eventos; un resultado con un + indica que el resultado está censurado; de lo contrario, ocurrió el evento de interés. Para poder ejecutar este código necesitamos cargar la librería <code>survival</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(survival)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">Surv</span>(<span class="fu">runif</span>(<span class="dv">6</span>), <span class="fu">rbinom</span>(<span class="dv">6</span>, <span class="dv">1</span>, <span class="fl">0.5</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9779441  0.3984091+ 0.9061501  0.7977790+ 0.1105721+ 0.8754196 </code></pre>
+</div>
+</div>
+<p>Los lectores familiarizados con el análisis de supervivencia reconocerán que la descripción anterior se aplica específicamente a la “censura por la derecha” (right censoring). Actualmente, esta es la única forma de censura disponible en el universo <code>mlr3</code>, por lo que se restringe la discusión a ese escenario. Para obtener una buena introducción al análisis de supervivencia, se puede consultar Collett (2014) o para el aprendizaje automático en el análisis de supervivencia Sonabend y Bender (2023).</p>
+<p>Durante el resto de esta tema, veremos cómo utilizar la librería <code>mlr3proba</code> que amplía los componentes básicos de <code>mlr3</code> para el análisis de supervivencia. Comenzaremos observando los objetos utilizados para construir tareas de aprendizaje automático en el análisis de supervivencia, luego nos centraremos en los modelos de aprendizaje implementados para resolver estas tareas, antes de analizar las medidas para evaluar las predicciones del análisis de supervivencia y, finalmente, considerar cómo transformar los tipos de predicción.</p>
+<p>Ante de comenzar el código siguiente nos permite cargar los paquetes y la configuración básica para este tipo de modelos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Paquetes anteriores</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="fu">library</span>(knitr) <span class="co"># para formatos de tablas</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="fu">library</span>(DataExplorer)</span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="fu">library</span>(survival)</span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="fu">theme_set</span>(<span class="fu">theme_sjplot2</span>())</span>
+<span id="cb3-12"><a href="#cb3-12"></a></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="co"># Paquetes AA</span></span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="fu">library</span>(mlr3verse)</span>
+<span id="cb3-15"><a href="#cb3-15"></a><span class="fu">library</span>(mlr3tuning)</span>
+<span id="cb3-16"><a href="#cb3-16"></a><span class="fu">library</span>(mlr3proba)</span>
+<span id="cb3-17"><a href="#cb3-17"></a><span class="fu">library</span>(mlr3extralearners)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="sec-80.1" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="sec-80.1"><span class="header-section-number">8.1</span> Aspectos teóricos de los modelos de supervivencia</h2>
+<p>Antes de presentar el modelos de supervivencia estableemos la notación y definiciones necesarias para el estudio de este tipo de modelos.</p>
+<p>Si <span class="math inline">\(f(t)\)</span> denota a la función de densidad de probabilidad para la variable aleatoria T, tiempo de supervivencia, y <span class="math inline">\(F(t)\)</span> a la correspondiente función de distribución, entonces se define la función de supervivencia <span class="math inline">\(S(t)\)</span> como la probabilidad de sobrevivir al menos hasta el instante <span class="math inline">\(t\)</span>, esto es,</p>
+<p><span class="math display">\[S(t) = P(T &gt;t) = 1 - F(t)\]</span> Se define el riesgo instantáneo de morir o <strong>función hazard</strong>, <span class="math inline">\(h(t)\)</span>, como el cociente entre la función de densidad y la función de supervivencia, es decir:</p>
+<p><span class="math display">\[h(t) = \frac{f(t)}{S(t)}\]</span></p>
+<p>De hecho, <span class="math inline">\(h(t)dt\)</span> o incremento de la función hazard representa la intensidad del proceso de ocurrencia del evento, o lo que es lo mismo, la probabilidad de que ocurra el evento en un intervalo pequeño de tiempo <span class="math inline">\(dt\)</span> dado que el individuo no ha registrado el evento de interés hasta el instante <span class="math inline">\(t\)</span>.</p>
+<p>Una distribución para los tiempos de supervivencia ha de tener una función hazard con buenas propiedades; por ejemplo, es de esperar que la función hazard no decrezca con <span class="math inline">\(t\)</span>, esto es, a más tiempo transcurrido, mayor riesgo de de que ocurra el evento de interés. Teniendo esto en cuenta, se define la <strong>función hazard acumulada</strong>, <span class="math inline">\(H(t)\)</span> como:</p>
+<p><span class="math display">\[H(t) = - log S(t)\]</span></p>
+<p>Una característica importante de la función de supervivencia es la denominada mediana de supervivencia que es el valor de <span class="math inline">\(t_{0.5}\)</span> de forma que: <span class="math display">\[S(t_{0.5}) = 0.5\]</span>. Asociado con este valor se puede obtener un intervalo de confianza para la mediana de supervivencia.</p>
+</section>
+<section id="sec-80.2" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="sec-80.2"><span class="header-section-number">8.2</span> Task de supervivencia</h2>
+<p>Como vimos en la introducción de esta sección, los algoritmos de supervivencia requieren dos objetivos para el entrenamiento, esto significa que el nuevo objeto <code>TaskSurv</code> espera dos variables objetivo. La forma más sencilla de crear una tarea de supervivencia es utilizar <code>as_task_surv()</code>, como en el siguiente fragmento de código. Hay que tener en cuenta Tenga en cuenta que esta tarea tiene más argumentos que <code>as_task_regr()</code> para reflejar múltiples tipos de objetivos y de censura, los argumentos de tiempo y evento esperan cadenas que representen nombres de columnas donde se almacenan las variables ‘tiempo’ y ‘evento’, el tipo se refiere al tipo de censura (actualmente solo censura derecha compatible, por lo que este es el valor predeterminado). <code>as_task_surv()</code> convierte las columnas de destino en un objeto <code>Surv</code>. En esta sección usaremos el conjunto de datos de <code>rats</code> como ejemplo. Este conjunto de datos busca predecir si un tratamiento farmacológico tuvo éxito en prevenir que 150 ratas desarrollen tumores. El conjunto de datos, según admite él mismo, no es perfecto y, en general, debe tratarse como datos “ficticios”, lo cual es bueno para ejemplos pero no para análisis del mundo real.</p>
+<p>Vamos a ver como crear la tarea de supervivencia vinculado con ese banco de datos, y veremos las primeras muestras.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># Tarea de supervivencia</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>tsk_rats <span class="ot">=</span> <span class="fu">as_task_surv</span>(survival<span class="sc">::</span>rats, <span class="at">time =</span> <span class="st">"time"</span>,</span>
+<span id="cb4-3"><a href="#cb4-3"></a>  <span class="at">event =</span> <span class="st">"status"</span>, <span class="at">type =</span> <span class="st">"right"</span>, <span class="at">id =</span> <span class="st">"rats"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co"># Cabecera del banco de datos</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>tsk_rats<span class="sc">$</span><span class="fu">head</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   time status litter rx sex
+1:  101      0      1  1   f
+2:   49      1      1  0   f
+3:  104      0      1  0   f
+4:   91      0      2  1   m
+5:  104      0      2  0   m
+6:  102      0      2  0   m</code></pre>
+</div>
+</div>
+<p>Representamos la tarea con un autoplot que nos proporciona la curva de Kaplan-Meier, que es un estimador no paramétrico de la probabilidad de supervivencia para la observación promedio.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">autoplot</span>(tsk_rats)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-survival-004" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="80_SurvivalModels_files/figure-html/fig-survival-004-1.png" class="img-fluid figure-img" width="960"></p>
+<p></p><figcaption class="figure-caption">Figura&nbsp;8.1: Autoplot curva supervivencia. Task Rats</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>En este gráfico el eje x representa la variable de tiempo y el eje y es la función de supervivencia, <span class="math inline">\(S(T)\)</span>, definida por <span class="math inline">\(F(T)\)</span> donde <span class="math inline">\(F\)</span> es la función de distribución acumulada. Las cruces en rojo indican los puntos donde se produce la censura.</p>
+<p>Además de crear tus propias tareas, puedes cargar cualquiera de las tareas incluidas con <code>mlr3proba</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">as.data.table</span>(mlr_tasks)[task_type <span class="sc">==</span> <span class="st">"surv"</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            key                  label task_type nrow ncol properties lgl int
+1:         actg               ACTG 320      surv 1151   13              0   3
+2:         gbcs   German Breast Cancer      surv  686   10              0   4
+3:        grace             GRACE 1000      surv 1000    8              0   2
+4:         lung            Lung Cancer      surv  228   10              0   7
+5:         rats                   Rats      surv  300    5              0   2
+6: unemployment  Unemployment Duration      surv 3343    6              0   1
+7:         whas Worcester Heart Attack      surv  481   11              0   4
+   dbl chr fct ord pxc
+1:   4   0   4   0   0
+2:   4   0   0   0   0
+3:   4   0   0   0   0
+4:   0   0   1   0   0
+5:   0   0   1   0   0
+6:   2   0   1   0   0
+7:   3   0   2   0   0</code></pre>
+</div>
+</div>
+</section>
+<section id="sec-80.3" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="sec-80.3"><span class="header-section-number">8.3</span> Modelo aprendizaje, predición y tipos de predicción</h2>
+<p>La interfaz para los objetos <code>LearnerSurv</code> y <code>PredictionSurv</code> es idéntica a otras configuraciones de modelos de aprendizaje. Esto significa que debemos utilizar la función <code>lrn()</code> para construir nuestro modelo de supervivencia. Con el código siguiente podemos ver todos los modelos de aprendizaje para supervivencia disponibles:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>survival_learners <span class="ot">=</span> mlr_learners<span class="sc">$</span><span class="fu">keys</span>()[<span class="fu">startsWith</span>(mlr_learners<span class="sc">$</span><span class="fu">keys</span>(),<span class="st">"surv"</span>)]</span>
+<span id="cb9-2"><a href="#cb9-2"></a>survival_learners</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "surv.akritas"        "surv.aorsf"          "surv.blackboost"    
+ [4] "surv.cforest"        "surv.coxboost"       "surv.coxph"         
+ [7] "surv.coxtime"        "surv.ctree"          "surv.cv_coxboost"   
+[10] "surv.cv_glmnet"      "surv.deephit"        "surv.deepsurv"      
+[13] "surv.dnnsurv"        "surv.flexible"       "surv.gamboost"      
+[16] "surv.gbm"            "surv.glmboost"       "surv.glmnet"        
+[19] "surv.kaplan"         "surv.loghaz"         "surv.mboost"        
+[22] "surv.nelson"         "surv.obliqueRSF"     "surv.parametric"    
+[25] "surv.pchazard"       "surv.penalized"      "surv.priority_lasso"
+[28] "surv.ranger"         "surv.rfsrc"          "surv.rpart"         
+[31] "surv.svm"            "surv.xgboost"       </code></pre>
+</div>
+</div>
+<p>Se pueden consultar los detalles de todos ellos en este <a href="https://mlr-org.com/learners.html">enlace</a>.</p>
+<p><code>mlr3proba</code> tiene una interfaz de predicción diferente a <code>mlr3</code>, ya que todos los tipos posibles de predicción (“’predict types”) se devuelven cuando es posible para todos los modelos de supervivencia; es decir, si un modelo puede calcular un tipo de predicción particular, se devolverá en <code>PredictionSurv</code>. El motivo de esta decisión de diseño es que todos estos tipos de predicción se pueden transformar entre sí y, por lo tanto, es computacionalmente más sencillo devolverlos todos a la vez en lugar de volver a ejecutar los modelos para cambiar el tipo de predicción. En el análisis de supervivencia, se pueden hacer las siguientes predicciones:</p>
+<ul>
+<li><code>response</code>: tiempo de supervivencia previsto.</li>
+<li><code>distr</code>: distribución de supervivencia prevista, ya sea discreta o continua.</li>
+<li><code>lp</code>: predictor lineal calculado como los coeficientes ajustados multiplicados por los datos de prueba.</li>
+<li><code>crank</code>: Clasificación de riesgo continua.</li>
+</ul>
+<p>Analizaremos cada uno de estos tipos de predicción con más detalle y con ejemplos para hacerlos menos abstractos. Usaremos el modelo de aprendizaje <code>lrn("surv.coxph")</code>, basado en un modelo de regresión de Cox de riesgos proporcionales, entrenado sobre el conjunto <code>tsk("rats")</code> como ejemplo de ejecución. Para este modelo, se pueden calcular todos los tipos de predicción excepto la respuesta.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co"># Definimos tarea</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>tsk_rats <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"rats"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="co"># División de muestras</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb11-5"><a href="#cb11-5"></a>split <span class="ot">=</span> <span class="fu">partition</span>(tsk_rats, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="co"># Entrenamiento y predicción sobre la muestra de validación</span></span>
+<span id="cb11-7"><a href="#cb11-7"></a>prediction_cph <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"surv.coxph"</span>)<span class="sc">$</span><span class="fu">train</span>(tsk_rats, split<span class="sc">$</span>train)<span class="sc">$</span></span>
+<span id="cb11-8"><a href="#cb11-8"></a>  <span class="fu">predict</span>(tsk_rats, split<span class="sc">$</span>test)</span>
+<span id="cb11-9"><a href="#cb11-9"></a>prediction_cph</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;PredictionSurv&gt; for 60 observations:
+    row_ids time status      crank         lp     distr
+          3  104  FALSE -0.3944479 -0.3944479 &lt;list[1]&gt;
+          4   91  FALSE -2.5079657 -2.5079657 &lt;list[1]&gt;
+         13  104  FALSE  0.3357268  0.3357268 &lt;list[1]&gt;
+---                                                    
+        211   94   TRUE  0.8704798  0.8704798 &lt;list[1]&gt;
+        241   72   TRUE  0.9515030  0.9515030 &lt;list[1]&gt;
+        297   79   TRUE  0.3995794  0.3995794 &lt;list[1]&gt;</code></pre>
+</div>
+</div>
+<p>En la tabla podemos ver los diferentes tipos de predicción disponibles para este banco de datos. Analizamos con un poco más de detalle cada uno de los tipos de predicción.</p>
+<p><strong><code>predict_type = “response”</code></strong></p>
+<p>Contrariamente a la intuición para muchos, la predicción de respuesta de los tiempos de supervivencia previstos es el tipo de predicción menos común en el análisis de supervivencia. La razón probable de esto se debe a la presencia de censura. Rara vez observamos el tiempo de supervivencia real para muchas observaciones y, por lo tanto, es poco probable que algún modelo de supervivencia pueda hacer predicciones con confianza sobre los tiempos de supervivencia. Esto se ilustra en el código siguiente.</p>
+<p>En el siguiente ejemplo, entrenamos y predecimos desde una SVM de supervivencia <code>(lrn("surv.svm"))</code>, tenga en cuenta que usamos <code>type = "regression"</code> para seleccionar el algoritmo que optimiza las predicciones del tiempo de supervivencia y se selecciona <code>gamma.mu = 1e-3</code>. arbitrariamente ya que este es un parámetro requerido (este parámetro generalmente debe ajustarse). Luego comparamos las predicciones del modelo con los datos reales.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="fu">library</span>(survivalsvm)</span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="co"># Modelo de aprendizaje, entrenamiento y predicción</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a>prediction_svm <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"surv.svm"</span>, <span class="at">type =</span> <span class="st">"regression"</span>, <span class="at">gamma.mu =</span> <span class="fl">1e-3</span>)<span class="sc">$</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a>  <span class="fu">train</span>(tsk_rats, split<span class="sc">$</span>train)<span class="sc">$</span><span class="fu">predict</span>(tsk_rats, split<span class="sc">$</span>test)</span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="co"># Vemos los tres primeros casos</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="fu">data.frame</span>(<span class="at">pred =</span> prediction_svm<span class="sc">$</span>response[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>],</span>
+<span id="cb13-7"><a href="#cb13-7"></a>  <span class="at">truth =</span> prediction_svm<span class="sc">$</span>truth[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      pred truth
+1 89.20804  104+
+2 89.02754   91+
+3 88.48202  104+</code></pre>
+</div>
+</div>
+<p>Como se puede ver en el resultado, todas nuestras predicciones son menores que el tiempo real observado, lo que significa que sabemos que nuestro modelo subestimó la verdad. Sin embargo, debido a que cada uno de los valores verdaderos son tiempos censurados, no tenemos absolutamente ninguna manera de saber si estas predicciones son levemente malas o absolutamente terribles (es decir, los verdaderos tiempos de supervivencia podrían ser 105, 99, 92 o podrían ser 300, 1000, 200). Por lo tanto, sin una forma realista de evaluar estos modelos, las predicciones del tiempo de supervivencia rara vez son útiles.</p>
+<p><strong><code>predict_type = “distr”</code></strong></p>
+<p>A diferencia de la regresión, en la que las predicciones deterministas/puntuales son las más comunes, en el análisis de supervivencia las predicciones de distribución son mucho más comunes. Por lo tanto, encontraremos que la mayoría de los modelos de supervivencia en <code>mlr3proba</code> hacen predicciones de distribución de forma predeterminada. Estas predicciones se implementan utilizando el paquete <code>distr6</code>, que permite la visualización y evaluación de curvas de supervivencia (definidas como función de distribución acumulativa). A continuación extraemos las primeras tres predicciones de <code>$distr</code> de nuestro ejemplo en ejecución y calculamos la probabilidad de supervivencia en <span class="math inline">\(t = 77\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>prediction_cph<span class="sc">$</span>distr[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]<span class="sc">$</span><span class="fu">survival</span>(<span class="dv">77</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        [,1]      [,2]      [,3]
+77 0.9381592 0.9923175 0.8759141</code></pre>
+</div>
+</div>
+<p>El resultado indica que existe una probabilidad del 92,1%, 98,7% y 99,4% de que las tres primeras ratas predichas estén vivas en el momento 77, respectivamente.</p>
+<p><strong><code>predict_type = “lp”</code></strong></p>
+<p><code>lp</code>, a menudo escrito como <span class="math inline">\(\eta\)</span> en escritura académica, es computacionalmente la predicción más simple y tiene un análogo natural en el modelado de regresión. Los lectores familiarizados con la regresión lineal sabrán que al ajustar un modelo de regresión lineal simple, <span class="math inline">\(Y = X\beta\)</span>, estamos estimando los valores para <span class="math inline">\(\beta\)</span>, y el predictor lineal estimado (<code>lp</code>) es entonces <span class="math inline">\(X\hat{\beta}\)</span>, dónde <span class="math inline">\(\hat{\beta}\)</span> son nuestros coeficientes estimados. En los modelos de supervivencia simples, el predictor lineal es la misma cantidad (pero estimada de una manera un poco más complicada). Las implementaciones de aprendizaje en <code>mlr3proba</code> se centran principalmente en el aprendizaje automático y pocos de estos modelos tienen una forma lineal simple, lo que significa que <code>lp</code> no se puede calcular para la mayoría de ellos. En la práctica, cuando se utiliza para la predicción, <code>lp</code> es un indicador de una predicción de riesgo relativo/clasificación continua, que se analiza a continuación.</p>
+<p><strong><code>predict_type = “crank”</code></strong></p>
+<p>El último tipo de predicción, <code>crank</code>, es el más común en el análisis de supervivencia y quizás también el más confuso. Los textos académicos a menudo se refieren a predicciones de “riesgo” en el análisis de supervivencia (de ahí que los modelos de supervivencia a menudo se conozcan como “modelos de predicción de riesgos”), sin definir qué significa “riesgo”. A menudo, el riesgo se define como <span class="math inline">\(exp(\eta)\)</span> ya que esta es una cantidad común que se encuentra en modelos lineales simples de supervivencia. Sin embargo, a veces el riesgo se define como <span class="math inline">\(exp(-\eta)\)</span>, y a veces puede ser una cantidad arbitraria que no tiene una interpretación significativa. Para evitar esta confusión en <code>mlr3proba</code>, definimos el tipo de predicción crank, que significa clasificación continua. Esto se explica mejor con el ejemplo. Continuando con lo anterior, generamos las primeras tres predicciones crank.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>prediction_cph<span class="sc">$</span>crank[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         1          2          3 
+-0.3944479 -2.5079657  0.3357268 </code></pre>
+</div>
+</div>
+<p>Multiplicando los valores por -1, el resultado nos dice que la tercera rata tiene el riesgo más bajo de muerte (los valores más bajos representan un riesgo menor) y la segunda rata tiene el riesgo más alto. La distancia entre las predicciones también nos dice que la diferencia de riesgo entre la primera y la segunda rata es menor que la diferencia entre la segunda y la tercera. Los valores reales en sí mismos no tienen sentido y, por lo tanto, comparar valores de predicción crank entre muestras no tiene sentido.</p>
+<p>El tipo de predicción crank es informativo y común en la práctica porque permite identificar observaciones con menor/mayor riesgo entre sí, lo cual es útil para la asignación de recursos, por ejemplo, qué paciente debe recibir un tratamiento costoso y ensayos clínicos, por ejemplo, son personas. en un grupo de tratamiento con menor riesgo de enfermedad X que las personas en el grupo de control.</p>
+<div class="callout-warning callout callout-style-simple">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container" title="interpretando el riesgo de supervivencia">
+<p><strong>La interpretación de “riesgo” para las predicciones de supervivencia difiere entre los paquetes de R y, a veces, incluso entre los modelos del mismo paquete. En <code>mlr3proba</code> hay una interpretación consistente de crank: los valores más altos representan un riesgo menor de que ocurra el evento y los valores más bajos representan un riesgo mayor.</strong></p>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-80.4" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="sec-80.4"><span class="header-section-number">8.4</span> Métricas de evaluación</h2>
+<p>Los modelos de supervivencia en <code>mlr3proba</code> se evalúan con objetos <code>MeasureSurv</code>, que se construyen de la forma habitual con <code>msr()</code>. En general, las medidas de supervivencia se pueden agrupar en las siguientes:</p>
+<ul>
+<li>Medidas de discriminación: cuantificar si un modelo identifica correctamente si una observación tiene mayor riesgo que otra. Evaluar predicciones <code>crank</code> y/o <code>lp</code>.</li>
+<li>Medidas de calibración: cuantificar si la predicción promedio se acerca a la verdad (desafortunadamente, todas las definiciones de calibración son vagas en un contexto de supervivencia). Evaluar predicciones <code>crank</code> y/o <code>distr</code>.</li>
+<li>Reglas de puntuación: cuantificar si las predicciones probabilísticas se aproximan a los valores verdaderos. Evaluar predicciones <code>distr</code>.</li>
+</ul>
+<p>Podemos ver las métricas más habituales en el código siguiente:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="fu">as.data.table</span>(mlr_measures)[</span>
+<span id="cb19-2"><a href="#cb19-2"></a>  task_type <span class="sc">==</span> <span class="st">"surv"</span>, <span class="fu">c</span>(<span class="st">"key"</span>, <span class="st">"predict_type"</span>)]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   key predict_type
+ 1:         surv.brier        distr
+ 2:   surv.calib_alpha        distr
+ 3:    surv.calib_beta           lp
+ 4: surv.chambless_auc           lp
+ 5:        surv.cindex        crank
+ 6:        surv.dcalib        distr
+ 7:          surv.graf        distr
+ 8:      surv.hung_auc           lp
+ 9:    surv.intlogloss        distr
+10:       surv.logloss        distr
+11:           surv.mae     response
+12:           surv.mse     response
+13:     surv.nagelk_r2           lp
+14:   surv.oquigley_r2           lp
+15:          surv.rcll        distr
+16:          surv.rmse     response
+17:        surv.schmid        distr
+18:      surv.song_auc           lp
+19:      surv.song_tnr           lp
+20:      surv.song_tpr           lp
+21:       surv.uno_auc           lp
+22:       surv.uno_tnr           lp
+23:       surv.uno_tpr           lp
+24:         surv.xu_r2           lp
+                   key predict_type</code></pre>
+</div>
+</div>
+<p>No existe un consenso en la literatura sobre cuáles son las “mejores” medidas de supervivencia a utilizar para evaluar los modelos. Las más habituales son RCLL (logloss censurado por la derecha) (<code>msr("surv.rcll")</code>) para evaluar la calidad de las predicciones de distribución, índice de concordancia (<code>msr("surv.cindex")</code>) para evaluar la discriminación de un modelo, y D-Calibración ( <code>msr("surv.dcalib")</code>) para evaluar la calibración de un modelo.</p>
+<p>Usando estas medidas, ahora podemos evaluar nuestras predicciones del ejemplo anterior.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>prediction_cph<span class="sc">$</span><span class="fu">score</span>(<span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"surv.rcll"</span>, <span class="st">"surv.cindex"</span>, <span class="st">"surv.dcalib"</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  surv.rcll surv.cindex surv.dcalib 
+  3.7395949   0.8312808   0.2342570 </code></pre>
+</div>
+</div>
+<p>El rendimiento del modelo parece bueno ya que RCLL y DCalib son relativamente bajos y el índice C es superior a 0,5; sin embargo, es muy difícil determinar el rendimiento de cualquier modelo de supervivencia sin compararlo con algún modelo basal (generalmente el Kaplan-Meier).</p>
+</section>
+<section id="sec-80.5" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="sec-80.5"><span class="header-section-number">8.5</span> Composición</h2>
+<p>En toda la documentación de <code>mlr3proba</code> se habla de predicciones “nativas (native)” y “compuestas (composed)”. Se define una predicción “nativa” como la predicción realizada por un modelo sin ningún posprocesamiento, mientras que una predicción “compuesta” se devuelve después del posprocesamiento. A continuación se presentan los diferentes tipos de composición.</p>
+<section id="sec-80.5.1" class="level3" data-number="8.5.1">
+<h3 data-number="8.5.1" class="anchored" data-anchor-id="sec-80.5.1"><span class="header-section-number">8.5.1</span> Composición interna</h3>
+<p><code>mlr3proba</code> hace uso de la composición internamente para devolver una predicción “crank” para cada modelo de aprendizaje. Esto es para garantizar que podamos comparar de manera significativa todos los modelos según al menos un criterio. El paquete utiliza las siguientes reglas para crear predicciones “crank”:</p>
+<ul>
+<li>Si un modelo devuelve una predicción de <code>risk``, entonces</code>crank = risk` (podemos multiplicar esto por -1 para garantizar la interpretación de “bajo valor y bajo riesgo”).</li>
+<li>Por otro lado, si un modelo devuelve una predicción <code>resonse`` configuramos</code>crank = -response`.</li>
+<li>Por otro lado, si un modelo devuelve una predicción <code>lp</code>, entonces configuramos <code>crank = lp</code> (o <code>rank = -lp</code> si es necesario).</li>
+<li>Por otro lado, si un modelo devuelve una predicción <code>distr</code>, establecemos <code>crank</code> como la suma de la función de riesgo acumulativo (consultar R. Sonabend, Bender y Vollmer (2022) para una discusión completa de por qué se elige este método).</li>
+</ul>
+</section>
+<section id="sec-80.5.2" class="level3" data-number="8.5.2">
+<h3 data-number="8.5.2" class="anchored" data-anchor-id="sec-80.5.2"><span class="header-section-number">8.5.2</span> Composición explícita y pipelines</h3>
+<p>Al comienzo de esta sección, mencionamos que es posible transformar tipos de predicción entre sí. En <code>mlr3proba</code> esto es posible con pipelines de composición. Hay varios pipelines implementados en el paquete, pero dos en particular se centran en transformar los tipos de predicción:</p>
+<ul>
+<li><code>pipeline_crankcompositor()</code> – Transforma una predicción <code>distr</code> en <code>crank</code></li>
+<li><code>pipeline_distrcompositor()</code> – Transforma una predicción <code>lp</code> en <code>distr</code></li>
+</ul>
+<p>En la práctica, el segundo pipeline es más común ya que usamos internamente una versión del primer pipeline cada vez que devolvemos predicciones de modelos de supervivencia (por lo tanto, solo usamos el primer pipeline para sobrescribir estas predicciones de clasificación), por lo que solo veremos el segundo pipeline.</p>
+<p>En el siguiente ejemplo, cargamos el conjunto de datos de <code>rats</code>, eliminamos columnas de factores y luego dividimos los datos en entrenamiento y prueba. Construimos el pipeline <code>distrcompositor</code> en torno a un modelo de aprendizaje de GLMnet de supervivencia (<code>lrn("surv.glmnet")</code>) que, de forma predeterminada, solo puede hacer predicciones para <code>lp</code> y <code>crank</code>. En el proceso, especificamos que estimaremos la distribución de referencia con un estimador de Kaplan-Meier (<code>estimador = "kaplan"</code>) y que queremos asumir una forma de riesgos proporcionales para nuestra distribución estimada (<code>form = "ph"</code>). Luego entrenamos y predecimos de la forma habitual y en nuestro resultado ahora podemos ver una predicción de distribución.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># Generamos task seleccionando las predictoras</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a>tsk_rats <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"rats"</span>)<span class="sc">$</span><span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"litter"</span>, <span class="st">"rx"</span>))</span>
+<span id="cb23-3"><a href="#cb23-3"></a>split <span class="ot">=</span> <span class="fu">partition</span>(tsk_rats)</span>
+<span id="cb23-4"><a href="#cb23-4"></a><span class="co"># Modelo de aprendizaje</span></span>
+<span id="cb23-5"><a href="#cb23-5"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"surv.glmnet"</span>)</span>
+<span id="cb23-6"><a href="#cb23-6"></a><span class="co"># Predicción sin distr</span></span>
+<span id="cb23-7"><a href="#cb23-7"></a>learner<span class="sc">$</span><span class="fu">train</span>(tsk_rats, split<span class="sc">$</span>train)<span class="sc">$</span><span class="fu">predict</span>(tsk_rats, split<span class="sc">$</span>test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;PredictionSurv&gt; for 99 observations:
+    row_ids time status    crank.1       lp.1
+          1  101  FALSE 0.53989543 0.53989543
+          8  102  FALSE 0.03106737 0.03106737
+         15  104  FALSE 0.05177895 0.05177895
+---                                          
+        235   80   TRUE 1.34764710 1.34764710
+        247   73   TRUE 1.38907026 1.38907026
+        289  103   TRUE 1.53405133 1.53405133</code></pre>
+</div>
+</div>
+<p>Construimos ahora el graphlearner que nos permite obtener la predicción <code>distr</code> utilizando el pipeline seleccionado:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>graph_learner <span class="ot">=</span> <span class="fu">as_learner</span>(<span class="fu">ppl</span>(</span>
+<span id="cb25-2"><a href="#cb25-2"></a>  <span class="st">"distrcompositor"</span>,</span>
+<span id="cb25-3"><a href="#cb25-3"></a>  <span class="at">learner =</span> learner,</span>
+<span id="cb25-4"><a href="#cb25-4"></a>  <span class="at">estimator =</span> <span class="st">"kaplan"</span>,</span>
+<span id="cb25-5"><a href="#cb25-5"></a>  <span class="at">form =</span> <span class="st">"ph"</span></span>
+<span id="cb25-6"><a href="#cb25-6"></a>))</span>
+<span id="cb25-7"><a href="#cb25-7"></a></span>
+<span id="cb25-8"><a href="#cb25-8"></a><span class="co"># now with distr</span></span>
+<span id="cb25-9"><a href="#cb25-9"></a>predicciones <span class="ot">=</span> graph_learner<span class="sc">$</span><span class="fu">train</span>(tsk_rats, split<span class="sc">$</span>train)<span class="sc">$</span><span class="fu">predict</span>(tsk_rats, split<span class="sc">$</span>test)</span>
+<span id="cb25-10"><a href="#cb25-10"></a>predicciones</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;PredictionSurv&gt; for 99 observations:
+    row_ids time status    crank.1       lp.1     distr
+          1  101  FALSE 0.53989543 0.53989543 &lt;list[1]&gt;
+          8  102  FALSE 0.03106737 0.03106737 &lt;list[1]&gt;
+         15  104  FALSE 0.05177895 0.05177895 &lt;list[1]&gt;
+---                                                    
+        235   80   TRUE 1.34764710 1.34764710 &lt;list[1]&gt;
+        247   73   TRUE 1.38907026 1.38907026 &lt;list[1]&gt;
+        289  103   TRUE 1.53405133 1.53405133 &lt;list[1]&gt;</code></pre>
+</div>
+</div>
+<p>Ahora aparece una nueva columna con la predicción <code>distr</code>. Esta columna contiene las funciones de distribución asociadas a diferentes cantidades de interés para todas las muestras. En concreto en este caso tenemos las más destacadas son: <code>survival</code> (función de supervivencia), <code>cumHazard</code> (función hazard acumulada). En el código siguiente extraemos esas dos funciones para el instante de tiempo 100 y todas las muestras.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>distribucion <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">survival =</span> <span class="fu">t</span>(predicciones<span class="sc">$</span>distr<span class="sc">$</span><span class="fu">survival</span>(<span class="dv">100</span>)),</span>
+<span id="cb27-2"><a href="#cb27-2"></a><span class="at">cumhazard =</span> <span class="fu">t</span>(predicciones<span class="sc">$</span>distr<span class="sc">$</span><span class="fu">cumHazard</span>(<span class="dv">100</span>)))</span>
+<span id="cb27-3"><a href="#cb27-3"></a><span class="fu">colnames</span>(distribucion) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Survival"</span> , <span class="st">"CumHazard"</span>)</span>
+<span id="cb27-4"><a href="#cb27-4"></a>distribucion</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Survival CumHazard
+1  0.7824974 0.2452647
+2  0.8629029 0.1474531
+3  0.8602443 0.1505389
+4  0.7723645 0.2582987
+5  0.8588973 0.1521059
+6  0.8575384 0.1536893
+7  0.8575384 0.1536893
+8  0.8505630 0.1618568
+9  0.8491311 0.1635417
+10 0.8476868 0.1652441
+11 0.8462299 0.1669642
+12 0.8432782 0.1704583
+13 0.7464123 0.2924771
+14 0.8417832 0.1722327
+15 0.8402754 0.1740256
+16 0.7418576 0.2985979
+17 0.8387546 0.1758372
+18 0.8372207 0.1776675
+19 0.8356738 0.1795170
+20 0.8356738 0.1795170
+21 0.8341136 0.1813857
+22 0.7325479 0.3112265
+23 0.8309533 0.1851817
+24 0.8277393 0.1890571
+25 0.7229688 0.3243893
+26 0.8261119 0.1910251
+27 0.7180774 0.3311779
+28 0.8228159 0.1950227
+29 0.8228159 0.1950227
+30 0.7106123 0.3416283
+31 0.7080897 0.3451845
+32 0.8160572 0.2032709
+33 0.7029930 0.3524083
+34 0.8108396 0.2096851
+35 0.8036806 0.2185533
+36 0.8036806 0.2185533
+37 0.6846118 0.3789033
+38 0.8000132 0.2231271
+39 0.7944002 0.2301679
+40 0.7944002 0.2301679
+41 0.7924992 0.2325638
+42 0.7924992 0.2325638
+43 0.7905829 0.2349847
+44 0.6681830 0.4031932
+45 0.7886515 0.2374308
+46 0.7867047 0.2399024
+47 0.7847425 0.2423996
+48 0.6568855 0.4202455
+49 0.7807717 0.2474725
+50 0.6482322 0.4335063
+51 0.7746984 0.2552815
+52 0.7726425 0.2579389
+53 0.6423779 0.4425786
+54 0.7705707 0.2606239
+55 0.6364556 0.4518406
+56 0.7642595 0.2688479
+57 0.7556188 0.2802183
+58 0.6182847 0.4808062
+59 0.7512006 0.2860826
+60 0.7512006 0.2860826
+61 0.7467166 0.2920696
+62 0.6058390 0.5011410
+63 0.7444498 0.2951099
+64 0.7421663 0.2981819
+65 0.5995184 0.5116286
+66 0.7328656 0.3107929
+67 0.5866851 0.5332670
+68 0.7257135 0.3206000
+69 0.5736014 0.5558205
+70 0.7208607 0.3273093
+71 0.7184088 0.3307165
+72 0.7134538 0.3376376
+73 0.7058929 0.3482917
+74 0.7007664 0.3555806
+75 0.6981774 0.3592821
+76 0.6955711 0.3630221
+77 0.6955711 0.3630221
+78 0.5363957 0.6228832
+79 0.6929475 0.3668010
+80 0.5259557 0.6425383
+81 0.6849733 0.3783754
+82 0.6795708 0.3862939
+83 0.6768436 0.3903150
+84 0.5082994 0.6766847
+85 0.6685585 0.4026314
+86 0.8655151 0.1444305
+87 0.7618348 0.2720255
+88 0.8519825 0.1601893
+89 0.7531203 0.2835303
+90 0.7301785 0.3144663
+91 0.7253889 0.3210473
+92 0.8072892 0.2140733
+93 0.7726425 0.2579389
+94 0.7684830 0.2633369
+95 0.7599716 0.2744742
+96 0.7281144 0.3172970
+97 0.5768955 0.5500942
+98 0.5636288 0.5733594
+99 0.5153992 0.6628136</code></pre>
+</div>
+</div>
+</section>
+<section id="sec-80.5.3" class="level3" data-number="8.5.3">
+<h3 data-number="8.5.3" class="anchored" data-anchor-id="sec-80.5.3"><span class="header-section-number">8.5.3</span> Combinando todas las funciones</h3>
+<p>Finalmente, pondremos en práctica todo lo anterior en un pequeño experimento de referencia. Primero cargamos <code>tsk("grace")</code> (que solo tiene características numéricas) y tomamos muestras de 500 filas al azar. Luego seleccionamos RCLL, D-Calibration y C-index para evaluar las predicciones, configuramos el mismo pipeline que usamos en el experimento anterior y cargamos un estimador Cox PH y Kaplan-Meier. Realizamos nuestro experimento de validación cruzada con k =3 y agregamos los resultados.</p>
+<p>Mucho del código que aquí se presenta lo estudiaremos más tarde pero por el momento nos sirve para comparar diferentes modelos de aprendizaje de supervivencia.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>tsk_grace <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"grace"</span>)</span>
+<span id="cb29-2"><a href="#cb29-2"></a>tsk_grace<span class="sc">$</span><span class="fu">filter</span>(<span class="fu">sample</span>(tsk_grace<span class="sc">$</span>nrow, <span class="dv">500</span>))</span>
+<span id="cb29-3"><a href="#cb29-3"></a>msr_txt <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"surv.rcll"</span>, <span class="st">"surv.cindex"</span>, <span class="st">"surv.dcalib"</span>)</span>
+<span id="cb29-4"><a href="#cb29-4"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(msr_txt)</span>
+<span id="cb29-5"><a href="#cb29-5"></a></span>
+<span id="cb29-6"><a href="#cb29-6"></a>graph_learner <span class="ot">=</span> <span class="fu">as_learner</span>(<span class="fu">ppl</span>(</span>
+<span id="cb29-7"><a href="#cb29-7"></a>  <span class="st">"distrcompositor"</span>,</span>
+<span id="cb29-8"><a href="#cb29-8"></a>  <span class="at">learner =</span> <span class="fu">lrn</span>(<span class="st">"surv.glmnet"</span>),</span>
+<span id="cb29-9"><a href="#cb29-9"></a>  <span class="at">estimator =</span> <span class="st">"kaplan"</span>,</span>
+<span id="cb29-10"><a href="#cb29-10"></a>  <span class="at">form =</span> <span class="st">"ph"</span></span>
+<span id="cb29-11"><a href="#cb29-11"></a>))</span>
+<span id="cb29-12"><a href="#cb29-12"></a>graph_learner<span class="sc">$</span>id <span class="ot">=</span> <span class="st">"Coxnet"</span></span>
+<span id="cb29-13"><a href="#cb29-13"></a>learners <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">lrns</span>(<span class="fu">c</span>(<span class="st">"surv.coxph"</span>, <span class="st">"surv.kaplan"</span>)), graph_learner)</span>
+<span id="cb29-14"><a href="#cb29-14"></a></span>
+<span id="cb29-15"><a href="#cb29-15"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(<span class="fu">benchmark_grid</span>(tsk_grace, learners,</span>
+<span id="cb29-16"><a href="#cb29-16"></a>  <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO  [17:40:28.525] [mlr3] Running benchmark with 9 resampling iterations
+INFO  [17:40:28.639] [mlr3] Applying learner 'surv.coxph' on task 'grace' (iter 1/3)
+INFO  [17:40:28.685] [mlr3] Applying learner 'surv.coxph' on task 'grace' (iter 2/3)
+INFO  [17:40:28.718] [mlr3] Applying learner 'surv.coxph' on task 'grace' (iter 3/3)
+INFO  [17:40:28.745] [mlr3] Applying learner 'surv.kaplan' on task 'grace' (iter 1/3)
+INFO  [17:40:28.772] [mlr3] Applying learner 'surv.kaplan' on task 'grace' (iter 2/3)
+INFO  [17:40:28.802] [mlr3] Applying learner 'surv.kaplan' on task 'grace' (iter 3/3)
+INFO  [17:40:28.830] [mlr3] Applying learner 'Coxnet' on task 'grace' (iter 1/3)
+INFO  [17:40:28.987] [mlr3] Applying learner 'Coxnet' on task 'grace' (iter 2/3)
+INFO  [17:40:29.111] [mlr3] Applying learner 'Coxnet' on task 'grace' (iter 3/3)
+INFO  [17:40:29.298] [mlr3] Finished benchmark</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>bmr<span class="sc">$</span><span class="fu">aggregate</span>(measures)[, <span class="fu">c</span>(<span class="st">"learner_id"</span>, ..msr_txt)]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    learner_id surv.rcll surv.cindex surv.dcalib
+1:  surv.coxph  4.884953   0.8356144    5.214107
+2: surv.kaplan  5.123078   0.5000000    4.299182
+3:      Coxnet  4.876609   0.8365884    3.653854</code></pre>
+</div>
+</div>
+<p>En este pequeño experimento, Coxnet y Cox PH tienen la mejor discriminación, la línea de base de Kaplan-Meier tiene la mejor calibración y Coxnet y Cox PH tienen una precisión predictiva general similar (con el RCLL más bajo).</p>
+</section>
+</section>
+<section id="sec-80.6" class="level2" data-number="8.6">
+<h2 data-number="8.6" class="anchored" data-anchor-id="sec-80.6"><span class="header-section-number">8.6</span> Casos prácticos</h2>
+</section>
+<section id="sec-80.7" class="level2" data-number="8.7">
+<h2 data-number="8.7" class="anchored" data-anchor-id="sec-80.7"><span class="header-section-number">8.7</span> Ejercicios</h2>
+<ol type="1">
+<li></li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "¡Copiado!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "¡Copiado!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./70_LogisticModels.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelos de Regresión Logística</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./90_BayesianClassif.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de clasificación Naïve Bayes</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

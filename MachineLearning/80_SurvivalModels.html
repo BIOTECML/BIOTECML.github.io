@@ -308,7 +308,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <ul>
   <li><a href="#sec-80.1" id="toc-sec-80.1" class="nav-link active" data-scroll-target="#sec-80.1"><span class="toc-section-number">8.1</span>  Aspectos teóricos de los modelos de supervivencia</a></li>
   <li><a href="#sec-80.2" id="toc-sec-80.2" class="nav-link" data-scroll-target="#sec-80.2"><span class="toc-section-number">8.2</span>  Task de supervivencia</a></li>
-  <li><a href="#sec-80.3" id="toc-sec-80.3" class="nav-link" data-scroll-target="#sec-80.3"><span class="toc-section-number">8.3</span>  Modelo aprendizaje, predición y tipos de predicción</a></li>
+  <li><a href="#sec-80.3" id="toc-sec-80.3" class="nav-link" data-scroll-target="#sec-80.3"><span class="toc-section-number">8.3</span>  Modelo aprendizaje, predición y tipos de predicción</a>
+  <ul>
+  <li><a href="#estimación" id="toc-estimación" class="nav-link" data-scroll-target="#estimación"><span class="toc-section-number">8.3.1</span>  Estimación</a>
+  <ul class="collapse">
+  <li><a href="#hipótesis-del-modelo" id="toc-hipótesis-del-modelo" class="nav-link" data-scroll-target="#hipótesis-del-modelo"><span class="toc-section-number">8.3.1.1</span>  Hipótesis del modelo</a></li>
+  <li><a href="#diagnóstico" id="toc-diagnóstico" class="nav-link" data-scroll-target="#diagnóstico"><span class="toc-section-number">8.3.1.2</span>  Diagnóstico</a></li>
+  </ul></li>
+  <li><a href="#predicción" id="toc-predicción" class="nav-link" data-scroll-target="#predicción"><span class="toc-section-number">8.3.2</span>  Predicción</a></li>
+  </ul></li>
   <li><a href="#sec-80.4" id="toc-sec-80.4" class="nav-link" data-scroll-target="#sec-80.4"><span class="toc-section-number">8.4</span>  Métricas de evaluación</a></li>
   <li><a href="#sec-80.5" id="toc-sec-80.5" class="nav-link" data-scroll-target="#sec-80.5"><span class="toc-section-number">8.5</span>  Composición</a>
   <ul>
@@ -316,8 +324,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#sec-80.5.2" id="toc-sec-80.5.2" class="nav-link" data-scroll-target="#sec-80.5.2"><span class="toc-section-number">8.5.2</span>  Composición explícita y pipelines</a></li>
   <li><a href="#sec-80.5.3" id="toc-sec-80.5.3" class="nav-link" data-scroll-target="#sec-80.5.3"><span class="toc-section-number">8.5.3</span>  Combinando todas las funciones</a></li>
   </ul></li>
-  <li><a href="#sec-80.6" id="toc-sec-80.6" class="nav-link" data-scroll-target="#sec-80.6"><span class="toc-section-number">8.6</span>  Casos prácticos</a></li>
-  <li><a href="#sec-80.7" id="toc-sec-80.7" class="nav-link" data-scroll-target="#sec-80.7"><span class="toc-section-number">8.7</span>  Ejercicios</a></li>
   </ul>
 </nav>
     </div>
@@ -348,7 +354,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(survival)</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">Surv</span>(<span class="fu">runif</span>(<span class="dv">6</span>), <span class="fu">rbinom</span>(<span class="dv">6</span>, <span class="dv">1</span>, <span class="fl">0.5</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.7831270  0.7536015+ 0.6753645  0.7484714+ 0.1652374  0.8780151+</code></pre>
+<pre><code>[1] 0.03029576+ 0.78636400+ 0.14857809+ 0.76664786+ 0.41339882  0.37894958+</code></pre>
 </div>
 </div>
 <p>Los lectores familiarizados con el análisis de supervivencia reconocerán que la descripción anterior se aplica específicamente a la “censura por la derecha” (right censoring). Actualmente, esta es la única forma de censura disponible en el universo <code>mlr3</code>, por lo que se restringe la discusión a ese escenario. Para obtener una buena introducción al análisis de supervivencia, se puede consultar Collett (2014) o para el aprendizaje automático en el análisis de supervivencia Sonabend y Bender (2023).</p>
@@ -365,13 +371,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-8"><a href="#cb3-8"></a><span class="fu">library</span>(gridExtra)</span>
 <span id="cb3-9"><a href="#cb3-9"></a><span class="fu">library</span>(ggpubr)</span>
 <span id="cb3-10"><a href="#cb3-10"></a><span class="fu">library</span>(survival)</span>
-<span id="cb3-11"><a href="#cb3-11"></a><span class="fu">theme_set</span>(<span class="fu">theme_sjplot2</span>())</span>
-<span id="cb3-12"><a href="#cb3-12"></a></span>
-<span id="cb3-13"><a href="#cb3-13"></a><span class="co"># Paquetes AA</span></span>
-<span id="cb3-14"><a href="#cb3-14"></a><span class="fu">library</span>(mlr3verse)</span>
-<span id="cb3-15"><a href="#cb3-15"></a><span class="fu">library</span>(mlr3tuning)</span>
-<span id="cb3-16"><a href="#cb3-16"></a><span class="fu">library</span>(mlr3proba)</span>
-<span id="cb3-17"><a href="#cb3-17"></a><span class="fu">library</span>(mlr3extralearners)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="fu">library</span>(survminer)</span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="fu">theme_set</span>(<span class="fu">theme_sjplot2</span>())</span>
+<span id="cb3-13"><a href="#cb3-13"></a></span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="co"># Paquetes AA</span></span>
+<span id="cb3-15"><a href="#cb3-15"></a><span class="fu">library</span>(mlr3verse)</span>
+<span id="cb3-16"><a href="#cb3-16"></a><span class="fu">library</span>(mlr3tuning)</span>
+<span id="cb3-17"><a href="#cb3-17"></a><span class="fu">library</span>(mlr3proba)</span>
+<span id="cb3-18"><a href="#cb3-18"></a><span class="fu">library</span>(mlr3extralearners)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="sec-80.1" class="level2" data-number="8.1">
 <h2 data-number="8.1" class="anchored" data-anchor-id="sec-80.1"><span class="header-section-number">8.1</span> Aspectos teóricos de los modelos de supervivencia</h2>
@@ -410,16 +417,41 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell-output-display">
 <div id="fig-survival-004" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="80_SurvivalModels_files/figure-html/fig-survival-004-1.png" class="img-fluid figure-img" width="960"></p>
+<p><img src="80_SurvivalModels_files/figure-html/fig-survival-004-1.png" class="img-fluid figure-img" width="480"></p>
 <p></p><figcaption class="figure-caption">Figura&nbsp;8.1: Autoplot curva supervivencia. Task Rats</figcaption><p></p>
 </figure>
 </div>
 </div>
 </div>
 <p>En este gráfico el eje x representa la variable de tiempo y el eje y es la función de supervivencia, <span class="math inline">\(S(T)\)</span>, definida por <span class="math inline">\(F(T)\)</span> donde <span class="math inline">\(F\)</span> es la función de distribución acumulada. Las cruces en rojo indican los puntos donde se produce la censura.</p>
+<p>Ahora podemos representar el efecto de las predictoras:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">autoplot</span>(tsk_rats, <span class="at">rhs=</span><span class="st">"sex"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-survival-004-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="80_SurvivalModels_files/figure-html/fig-survival-004-1-1.png" class="img-fluid figure-img" width="480"></p>
+<p></p><figcaption class="figure-caption">Figura&nbsp;8.2: Autoplot curva supervivencia. Task Rats</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Podemos ver como las supervivencia para ambos sexos es diferente. Veamos que ocurre con `rx``.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">autoplot</span>(tsk_rats, <span class="at">rhs=</span><span class="st">"rx"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-survival-004-2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="80_SurvivalModels_files/figure-html/fig-survival-004-2-1.png" class="img-fluid figure-img" width="480"></p>
+<p></p><figcaption class="figure-caption">Figura&nbsp;8.3: Autoplot curva supervivencia. Task Rats</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>En este caso podemos ver que hay menos diferencia entre lso niveles de este factor.</p>
 <p>Además de crear tus propias tareas, puedes cargar cualquiera de las tareas incluidas con <code>mlr3proba</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">as.data.table</span>(mlr_tasks)[task_type <span class="sc">==</span> <span class="st">"surv"</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">as.data.table</span>(mlr_tasks)[task_type <span class="sc">==</span> <span class="st">"surv"</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            key                  label task_type nrow ncol properties lgl int
 1:         actg               ACTG 320      surv 1151   13              0   3
@@ -444,8 +476,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 data-number="8.3" class="anchored" data-anchor-id="sec-80.3"><span class="header-section-number">8.3</span> Modelo aprendizaje, predición y tipos de predicción</h2>
 <p>La interfaz para los objetos <code>LearnerSurv</code> y <code>PredictionSurv</code> es idéntica a otras configuraciones de modelos de aprendizaje. Esto significa que debemos utilizar la función <code>lrn()</code> para construir nuestro modelo de supervivencia. Con el código siguiente podemos ver todos los modelos de aprendizaje para supervivencia disponibles:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>survival_learners <span class="ot">=</span> mlr_learners<span class="sc">$</span><span class="fu">keys</span>()[<span class="fu">startsWith</span>(mlr_learners<span class="sc">$</span><span class="fu">keys</span>(),<span class="st">"surv"</span>)]</span>
-<span id="cb9-2"><a href="#cb9-2"></a>survival_learners</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>survival_learners <span class="ot">=</span> mlr_learners<span class="sc">$</span><span class="fu">keys</span>()[<span class="fu">startsWith</span>(mlr_learners<span class="sc">$</span><span class="fu">keys</span>(),<span class="st">"surv"</span>)]</span>
+<span id="cb11-2"><a href="#cb11-2"></a>survival_learners</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "surv.akritas"        "surv.aorsf"          "surv.blackboost"    
  [4] "surv.cforest"        "surv.coxboost"       "surv.coxph"         
@@ -461,6 +493,137 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 <p>Se pueden consultar los detalles de todos ellos en este <a href="https://mlr-org.com/learners.html">enlace</a>.</p>
+<section id="estimación" class="level3" data-number="8.3.1">
+<h3 data-number="8.3.1" class="anchored" data-anchor-id="estimación"><span class="header-section-number">8.3.1</span> Estimación</h3>
+<p>En las situaciones experimentales en las que deseamos estudiar la supervivencia de un conjunto de sujetos en función de un conjunto <span class="math inline">\(X = (X_1,...,X_p)\)</span> de variables predictoras, es decir, variables que pueden afectar o caracterizar su supervivencia, es necesario establecer modelos estadísticos capaces de analizar dichas relaciones. La construcción de este tipo de modelos que depende del tiempo y de las predictoras se hace a través el análisis de las función hazard asociada <span class="math inline">\(h(t;X)\)</span>. El modelo más habitual en esta situación es el <strong>modelo hazard proporcional</strong> que separa en dos componentes la función hazard, una correspondiente al tiempo de supervivencia y otra a las variables predictoras, de la forma siguiente: <span class="math display">\[h(t;X) = h(t)exp(X\beta)\]</span></p>
+<p>donde <span class="math inline">\(h(t)\)</span> es la función hazard base y describe el riesgo para individuos cuando las predictoras toman valor 0, es decir <span class="math inline">\(x = O\)</span>; <span class="math inline">\(exp(X\beta)\)</span> es el riesgo relativo, y representa la reducción o incremento del riesgo asociada con el conjunto de características <span class="math inline">\(X\)</span>, que es similar para todas las duraciones <span class="math inline">\(t\)</span>. La exponencial está justificada por la necesidad de positivista y la hipótesis de un efecto multiplicativo de las covariables en los hazards. Este modelo implica que el cociente de hazards (<span class="math inline">\(hr\)</span>) de dos individuos depende de la diferencia entre sus predictores lineales en cualquier instante t, es decir, si <span class="math inline">\(x\)</span> y <span class="math inline">\(x^*\)</span> denotan a los valores de las predictoras para ambos sujetos tendríamos que: <span class="math display">\[hr(x,x^*) = \frac{h(t)exp(x\beta)}{h(t)exp(x^*\beta)} = exp((x-x^*)\beta)\]</span> Si solo tenemos una variable predictora de tipo factor con posibles valores 0 o 1, tendríamos la expresión para la función hazard asociada a cada respuesta: <span class="math display">\[h(t;X = 0) = h(t); \text{ y } h(t;X = 1) = h(t)exp(\beta)\]</span> de forma que el el hazard rate viene dado por <span class="math inline">\(hr(x = 1,x = 0) = exp(\beta)\)</span>. Esto implica que dicho coeficiente representa el incremento en el logaritmo del hazard rate, esto es:</p>
+<p><span class="math display">\[log(hr(x = 1, x = 0)) = \beta\]</span> En este caso cuando <span class="math inline">\(exp(\beta)&gt;0\)</span> tenemos que <span class="math inline">\(hr &gt; 1\)</span> indicando que hay un incremento el riesgo, y por tanto una reducción de la supervivencia. Cuando <span class="math inline">\(exp(\beta) &lt; 0\)</span> tenemos que <span class="math inline">\(hr &lt; 1\)</span> indicando que hay un descenso en el riesgo, y por tanto un aumento de la supervivencia.</p>
+<p>Si la variable predictora es de tipo continuo de forma que <span class="math inline">\(\delta = x -x^*\)</span> es la diferencia entre los valores para dos sujetos, el logaritmo del hazard rate nos da:</p>
+<p><span class="math display">\[log(hr(x,x^*)) = \delta\beta\]</span> Si el incremento entre los dos valores es de un unidad (<span class="math inline">\(\delta = 1\)</span>), <span class="math inline">\(\beta\)</span> representa el incremento en el hazard rate por cada unidad que aumentamos el valor de la variable predictora. La interpretación del <span class="math inline">\(hr\)</span> es igual que el caso de un factor. Si <span class="math inline">\(hr &gt; 1\)</span> aumenta el riesgo y si es menor que uno disminuye el riesgo</p>
+<p>Para facilitar la interpretación de los coeficientes se plantea la modelización del logaritmo del hazard mediante la expresión:</p>
+<p><span class="math display">\[log(h(t;X)) = log(h(t)) + X\beta\]</span> donde queda claro que el efecto de las predictoras afecta de forma lineal a la función hazard. Esta formulación es muy similar a la de los modelos lineales generalizados con función de enlace <span class="math inline">\(log()\)</span> y con un offset dado por <span class="math inline">\(log(h(t))\)</span>. EL problema es que en muchas ocasiones desconocemos la forma de la función <span class="math inline">\(h\)</span>, y por tanto, no podemos determinar de forma exacta el offset asociado. Los modelos de regresión de Cox o de supervivencia no paramétrica no asumen una forma específica para <span class="math inline">\(h\)</span> al estilo de los modelos de suavizado.</p>
+<p>La estimación de este tipo de modelos se hace mediante la función:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>modelo <span class="ot">&lt;-</span> <span class="fu">coxph</span>(<span class="fu">Surv</span>(time,status) <span class="sc">~</span> predictoras, <span class="at">data =</span> dataset)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para el resumen del modelo utilizaremos las funciones <code>summary(modelo)</code> que nos proporciona el proceso de estimación del modelo, y <code>ggforest(modelo)</code> que nos proporciona un resumen gráfico del modelo ajustado (estimaciones del <span class="math inline">\(hr\)</span>, intervalos de confianza y p-valores asociados para cada variable predictora presente en el modelo).</p>
+<p>Para representar le modelo ajustado utilizaremos la función <code>ggcoxadjustedcurves(modelo, dataset, variable)</code> que permite representar la función de supervivencia asociada con la variable de interés o con una factor creado a partir de una de las variables presente en el modelo ajustado.</p>
+<section id="hipótesis-del-modelo" class="level4" data-number="8.3.1.1">
+<h4 data-number="8.3.1.1" class="anchored" data-anchor-id="hipótesis-del-modelo"><span class="header-section-number">8.3.1.1</span> Hipótesis del modelo</h4>
+<p>Las hipótesis de este modelo son:</p>
+<ul>
+<li>Proporcionalidad en la función hazard</li>
+<li>El efecto de las predictoras es lineal sobre el logaritmo de la función hazard (asumiendo que no hay interacciones entre las predictoras)</li>
+</ul>
+<p>Estas hipótesis deben verificarse una vez estimado el modelo de supervivencia a través de la obtención de los residuos del modelo. En este caso trabajamos con los residuos de Schoenfeld. El incumplimiento de alguna de estas hipótesis implicará el planteamiento de un nuevo modelo.</p>
+<p>Para la verificación de las hipótesis utilizamos las funciones:</p>
+<ul>
+<li><code>cox.zph(modelo)</code> que permite verificar la hipótesis de hazards proporcionales mediante los residuos de Schoenfeld. La verificación gráfica se puede realizar mediante la función <code>ggcoxzph(modelo)</code> que representa para cada predictora el gráfico de residuos vs tiempo.</li>
+<li><code>ggcoxdiagnostics(modelo)</code> que permite representar los residuos en función del tiempo, en función del predictor lineal o del tiempo para verificar la hipótesis de linealidad.</li>
+</ul>
+<p>Veamos el análisis del banco de datos de rats. En priemr lugar dividiomos los datos para el ajuste del modelo.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># Definimos tarea</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a>tsk_rats <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"rats"</span>)</span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="co"># División de muestras</span></span>
+<span id="cb14-4"><a href="#cb14-4"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb14-5"><a href="#cb14-5"></a>split <span class="ot">=</span> <span class="fu">partition</span>(tsk_rats, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb14-6"><a href="#cb14-6"></a><span class="co"># Muestras de entrenamiento y validación</span></span>
+<span id="cb14-7"><a href="#cb14-7"></a>tsk_train_rats <span class="ot">=</span> tsk_rats<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(split<span class="sc">$</span>train)</span>
+<span id="cb14-8"><a href="#cb14-8"></a>tsk_test_rats  <span class="ot">=</span> tsk_rats<span class="sc">$</span><span class="fu">clone</span>()<span class="sc">$</span><span class="fu">filter</span>(split<span class="sc">$</span>test)</span>
+<span id="cb14-9"><a href="#cb14-9"></a><span class="co"># Ajuste del modelo por sexo</span></span>
+<span id="cb14-10"><a href="#cb14-10"></a>fit <span class="ot">&lt;-</span> <span class="fu">coxph</span>(<span class="fu">Surv</span>(time, status) <span class="sc">~</span> sex, <span class="at">data =</span> tsk_train_rats<span class="sc">$</span><span class="fu">data</span>())</span>
+<span id="cb14-11"><a href="#cb14-11"></a>fit</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+coxph(formula = Surv(time, status) ~ sex, data = tsk_train_rats$data())
+
+         coef exp(coef) se(coef)      z        p
+sexm -2.79756   0.06096  0.72909 -3.837 0.000125
+
+Likelihood ratio test=32.6  on 1 df, p=1.133e-08
+n= 240, number of events= 34 </code></pre>
+</div>
+</div>
+<p>El hazard rate asociado con le factor (columna exp(coef)) es menor que 1 lo que indica que las mujeres tienen menos supervivencia que los hombres. Además el test de bondad de ajuste del modelo (“likelihood ratio test”) resulta significativo indicando que el sexo contribuye claramente a explicar la supervivencia de los sujetos del estudio. A continuación se muestran gráficamente los intervalos de confianza y pvalores asociados con el modelo estimado.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="co"># Gráfico de la relevancia de los coeficientes</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="fu">ggforest</span>(fit)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="80_SurvivalModels_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Veamos ahora el gráfico de supervivencia ajustado</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># Gráfico de supervivencia</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="fu">ggadjustedcurves</span>(fit, <span class="at">data =</span> tsk_train_rats<span class="sc">$</span><span class="fu">data</span>(), </span>
+<span id="cb17-3"><a href="#cb17-3"></a>                 <span class="at">variable =</span> <span class="st">"sex"</span>, </span>
+<span id="cb17-4"><a href="#cb17-4"></a>                 <span class="at">palette =</span> <span class="st">"lancet"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="80_SurvivalModels_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Ahora el gráfico con intervalos de confianza</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="co"># Gráfico con intervalos de confianza</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a>sex.df <span class="ot">&lt;-</span> <span class="fu">with</span>(tsk_train_rats<span class="sc">$</span><span class="fu">data</span>(), <span class="fu">data.frame</span>(<span class="at">sex =</span> <span class="fu">c</span>(<span class="st">"m"</span>, <span class="st">"f"</span>)))</span>
+<span id="cb18-3"><a href="#cb18-3"></a><span class="fu">ggsurvplot</span>(<span class="fu">survfit</span>(fit,<span class="at">newdata =</span> sex.df), <span class="at">data =</span> tsk_train_rats<span class="sc">$</span><span class="fu">data</span>(),</span>
+<span id="cb18-4"><a href="#cb18-4"></a>           <span class="at">palette =</span> <span class="st">"lancet"</span>,</span>
+<span id="cb18-5"><a href="#cb18-5"></a>           <span class="at">conf.int =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb18-6"><a href="#cb18-6"></a>           <span class="at">conf.int.style =</span> <span class="st">"step"</span>,</span>
+<span id="cb18-7"><a href="#cb18-7"></a>           <span class="at">legend.labs=</span><span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="80_SurvivalModels_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="diagnóstico" class="level4" data-number="8.3.1.2">
+<h4 data-number="8.3.1.2" class="anchored" data-anchor-id="diagnóstico"><span class="header-section-number">8.3.1.2</span> Diagnóstico</h4>
+<p>El modelo de Cox hace varias suposiciones. Por lo tanto, es importante evaluar si un modelo de regresión de Cox ajustado describe adecuadamente los datos. En concreto debemos comprobar:</p>
+<ul>
+<li>Suposición de riesgos proporcionales.</li>
+<li>Existen observaciones influyentes (o valores atípicos).</li>
+<li>Detectar la no linealidad de los efectos de las variables predictoras en la función hazard.</li>
+</ul>
+<p>Para verificar estas suposiciones del modelo, se utilizan diferentes tipos de residuos. Los residuos a considerar son:</p>
+<ul>
+<li>Residuos de Schoenfeld vs time para verificar la suposición de riesgos proporcionales</li>
+<li>Residuos de Schoenfeld vs time para cada predictora para evaluar la no linealidad</li>
+<li>Desviación residual (transformación simétrica de los residuos de Martingale) para examinar observaciones influyentes</li>
+</ul>
+<section id="riesgos-porporcionales" class="level5">
+<h5 class="anchored" data-anchor-id="riesgos-porporcionales">Riesgos porporcionales</h5>
+<p>Utilizamos la función <code>cox.zph()</code> para evaluar mediante tests estadísticos la hipótesis de riesgos proporcionales, y la función <code>ggcoxzph()</code> para el análisis gráfico.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="co"># Tests de riesgos proporcionales</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a>ftest <span class="ot">&lt;-</span> <span class="fu">cox.zph</span>(fit)</span>
+<span id="cb19-3"><a href="#cb19-3"></a>ftest</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       chisq df    p
+sex    0.642  1 0.42
+GLOBAL 0.642  1 0.42</code></pre>
+</div>
+</div>
+<p>Dado que el pvalor asociado del test resulta no significativo no podemos descartar la hipótesis de riesgos proporcionales asociados con la variable sexo.</p>
+</section>
+<section id="observaciones-influyentes" class="level5">
+<h5 class="anchored" data-anchor-id="observaciones-influyentes">Observaciones influyentes</h5>
+<p>La detección de observaciones influyentes se realiza mediante métodos gráficos</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="co"># Observaciones influyentes</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="fu">ggcoxdiagnostics</span>(fit, <span class="at">type =</span> <span class="st">"deviance"</span>,</span>
+<span id="cb21-3"><a href="#cb21-3"></a>                 <span class="at">linear.predictions =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="80_SurvivalModels_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>El patrón de residuos es bastante simétrico respecto de cero. Además no hay residuos con valores claramente fuera del rango (-3, 3), indicando que no hay ninguna observación que pueda identificarse como anómala. En caso de existir alguna deberíamos eliminarla y ajustar el nuevo modelo.</p>
+<p>Ahora podríamos probar a ampliar el modelo añadiendo nuevas predictoras pero dado que el modelo produce valores de supervivencia tan altos no lo hacemos por el momento</p>
+</section>
+</section>
+</section>
+<section id="predicción" class="level3" data-number="8.3.2">
+<h3 data-number="8.3.2" class="anchored" data-anchor-id="predicción"><span class="header-section-number">8.3.2</span> Predicción</h3>
 <p><code>mlr3proba</code> tiene una interfaz de predicción diferente a <code>mlr3</code>, ya que todos los tipos posibles de predicción (“’predict types”) se devuelven cuando es posible para todos los modelos de supervivencia; es decir, si un modelo puede calcular un tipo de predicción particular, se devolverá en <code>PredictionSurv</code>. El motivo de esta decisión de diseño es que todos estos tipos de predicción se pueden transformar entre sí y, por lo tanto, es computacionalmente más sencillo devolverlos todos a la vez en lugar de volver a ejecutar los modelos para cambiar el tipo de predicción. En el análisis de supervivencia, se pueden hacer las siguientes predicciones:</p>
 <ul>
 <li><code>response</code>: tiempo de supervivencia previsto.</li>
@@ -470,15 +633,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p>Analizaremos cada uno de estos tipos de predicción con más detalle y con ejemplos para hacerlos menos abstractos. Usaremos el modelo de aprendizaje <code>lrn("surv.coxph")</code>, basado en un modelo de regresión de Cox de riesgos proporcionales, entrenado sobre el conjunto <code>tsk("rats")</code> como ejemplo de ejecución. Para este modelo, se pueden calcular todos los tipos de predicción excepto la respuesta.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co"># Definimos tarea</span></span>
-<span id="cb11-2"><a href="#cb11-2"></a>tsk_rats <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"rats"</span>)</span>
-<span id="cb11-3"><a href="#cb11-3"></a><span class="co"># División de muestras</span></span>
-<span id="cb11-4"><a href="#cb11-4"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb11-5"><a href="#cb11-5"></a>split <span class="ot">=</span> <span class="fu">partition</span>(tsk_rats, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
-<span id="cb11-6"><a href="#cb11-6"></a><span class="co"># Entrenamiento y predicción sobre la muestra de validación</span></span>
-<span id="cb11-7"><a href="#cb11-7"></a>prediction_cph <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"surv.coxph"</span>)<span class="sc">$</span><span class="fu">train</span>(tsk_rats, split<span class="sc">$</span>train)<span class="sc">$</span></span>
-<span id="cb11-8"><a href="#cb11-8"></a>  <span class="fu">predict</span>(tsk_rats, split<span class="sc">$</span>test)</span>
-<span id="cb11-9"><a href="#cb11-9"></a>prediction_cph</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="co"># Definimos tarea</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a>tsk_rats <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"rats"</span>)</span>
+<span id="cb22-3"><a href="#cb22-3"></a><span class="co"># División de muestras</span></span>
+<span id="cb22-4"><a href="#cb22-4"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb22-5"><a href="#cb22-5"></a>split <span class="ot">=</span> <span class="fu">partition</span>(tsk_rats, <span class="at">ratio =</span> <span class="fl">0.8</span>)</span>
+<span id="cb22-6"><a href="#cb22-6"></a><span class="co"># Entrenamiento y predicción sobre la muestra de validación</span></span>
+<span id="cb22-7"><a href="#cb22-7"></a>prediction_cph <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"surv.coxph"</span>)<span class="sc">$</span><span class="fu">train</span>(tsk_rats, split<span class="sc">$</span>train)<span class="sc">$</span></span>
+<span id="cb22-8"><a href="#cb22-8"></a>  <span class="fu">predict</span>(tsk_rats, split<span class="sc">$</span>test)</span>
+<span id="cb22-9"><a href="#cb22-9"></a>prediction_cph</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;PredictionSurv&gt; for 60 observations:
     row_ids time status      crank         lp     distr
@@ -496,13 +659,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Contrariamente a la intuición para muchos, la predicción de respuesta de los tiempos de supervivencia previstos es el tipo de predicción menos común en el análisis de supervivencia. La razón probable de esto se debe a la presencia de censura. Rara vez observamos el tiempo de supervivencia real para muchas observaciones y, por lo tanto, es poco probable que algún modelo de supervivencia pueda hacer predicciones con confianza sobre los tiempos de supervivencia. Esto se ilustra en el código siguiente.</p>
 <p>En el siguiente ejemplo, entrenamos y predecimos desde una SVM de supervivencia <code>(lrn("surv.svm"))</code>, tenga en cuenta que usamos <code>type = "regression"</code> para seleccionar el algoritmo que optimiza las predicciones del tiempo de supervivencia y se selecciona <code>gamma.mu = 1e-3</code>. arbitrariamente ya que este es un parámetro requerido (este parámetro generalmente debe ajustarse). Luego comparamos las predicciones del modelo con los datos reales.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="fu">library</span>(survivalsvm)</span>
-<span id="cb13-2"><a href="#cb13-2"></a><span class="co"># Modelo de aprendizaje, entrenamiento y predicción</span></span>
-<span id="cb13-3"><a href="#cb13-3"></a>prediction_svm <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"surv.svm"</span>, <span class="at">type =</span> <span class="st">"regression"</span>, <span class="at">gamma.mu =</span> <span class="fl">1e-3</span>)<span class="sc">$</span></span>
-<span id="cb13-4"><a href="#cb13-4"></a>  <span class="fu">train</span>(tsk_rats, split<span class="sc">$</span>train)<span class="sc">$</span><span class="fu">predict</span>(tsk_rats, split<span class="sc">$</span>test)</span>
-<span id="cb13-5"><a href="#cb13-5"></a><span class="co"># Vemos los tres primeros casos</span></span>
-<span id="cb13-6"><a href="#cb13-6"></a><span class="fu">data.frame</span>(<span class="at">pred =</span> prediction_svm<span class="sc">$</span>response[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>],</span>
-<span id="cb13-7"><a href="#cb13-7"></a>  <span class="at">truth =</span> prediction_svm<span class="sc">$</span>truth[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="fu">library</span>(survivalsvm)</span>
+<span id="cb24-2"><a href="#cb24-2"></a><span class="co"># Modelo de aprendizaje, entrenamiento y predicción</span></span>
+<span id="cb24-3"><a href="#cb24-3"></a>prediction_svm <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"surv.svm"</span>, <span class="at">type =</span> <span class="st">"regression"</span>, <span class="at">gamma.mu =</span> <span class="fl">1e-3</span>)<span class="sc">$</span></span>
+<span id="cb24-4"><a href="#cb24-4"></a>  <span class="fu">train</span>(tsk_rats, split<span class="sc">$</span>train)<span class="sc">$</span><span class="fu">predict</span>(tsk_rats, split<span class="sc">$</span>test)</span>
+<span id="cb24-5"><a href="#cb24-5"></a><span class="co"># Vemos los tres primeros casos</span></span>
+<span id="cb24-6"><a href="#cb24-6"></a><span class="fu">data.frame</span>(<span class="at">pred =</span> prediction_svm<span class="sc">$</span>response[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>],</span>
+<span id="cb24-7"><a href="#cb24-7"></a>  <span class="at">truth =</span> prediction_svm<span class="sc">$</span>truth[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      pred truth
 1 89.20804  104+
@@ -514,7 +677,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><strong><code>predict_type = “distr”</code></strong></p>
 <p>A diferencia de la regresión, en la que las predicciones deterministas/puntuales son las más comunes, en el análisis de supervivencia las predicciones de distribución son mucho más comunes. Por lo tanto, encontraremos que la mayoría de los modelos de supervivencia en <code>mlr3proba</code> hacen predicciones de distribución de forma predeterminada. Estas predicciones se implementan utilizando el paquete <code>distr6</code>, que permite la visualización y evaluación de curvas de supervivencia (definidas como función de distribución acumulativa). A continuación extraemos las primeras tres predicciones de <code>$distr</code> de nuestro ejemplo en ejecución y calculamos la probabilidad de supervivencia en <span class="math inline">\(t = 77\)</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>prediction_cph<span class="sc">$</span>distr[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]<span class="sc">$</span><span class="fu">survival</span>(<span class="dv">77</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>prediction_cph<span class="sc">$</span>distr[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]<span class="sc">$</span><span class="fu">survival</span>(<span class="dv">77</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        [,1]      [,2]      [,3]
 77 0.9381592 0.9923175 0.8759141</code></pre>
@@ -526,7 +689,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><strong><code>predict_type = “crank”</code></strong></p>
 <p>El último tipo de predicción, <code>crank</code>, es el más común en el análisis de supervivencia y quizás también el más confuso. Los textos académicos a menudo se refieren a predicciones de “riesgo” en el análisis de supervivencia (de ahí que los modelos de supervivencia a menudo se conozcan como “modelos de predicción de riesgos”), sin definir qué significa “riesgo”. A menudo, el riesgo se define como <span class="math inline">\(exp(\eta)\)</span> ya que esta es una cantidad común que se encuentra en modelos lineales simples de supervivencia. Sin embargo, a veces el riesgo se define como <span class="math inline">\(exp(-\eta)\)</span>, y a veces puede ser una cantidad arbitraria que no tiene una interpretación significativa. Para evitar esta confusión en <code>mlr3proba</code>, definimos el tipo de predicción crank, que significa clasificación continua. Esto se explica mejor con el ejemplo. Continuando con lo anterior, generamos las primeras tres predicciones crank.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>prediction_cph<span class="sc">$</span>crank[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>prediction_cph<span class="sc">$</span>crank[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         1          2          3 
 -0.3944479 -2.5079657  0.3357268 </code></pre>
@@ -545,6 +708,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 </section>
+</section>
 <section id="sec-80.4" class="level2" data-number="8.4">
 <h2 data-number="8.4" class="anchored" data-anchor-id="sec-80.4"><span class="header-section-number">8.4</span> Métricas de evaluación</h2>
 <p>Los modelos de supervivencia en <code>mlr3proba</code> se evalúan con objetos <code>MeasureSurv</code>, que se construyen de la forma habitual con <code>msr()</code>. En general, las medidas de supervivencia se pueden agrupar en las siguientes:</p>
@@ -555,8 +719,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p>Podemos ver las métricas más habituales en el código siguiente:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="fu">as.data.table</span>(mlr_measures)[</span>
-<span id="cb19-2"><a href="#cb19-2"></a>  task_type <span class="sc">==</span> <span class="st">"surv"</span>, <span class="fu">c</span>(<span class="st">"key"</span>, <span class="st">"predict_type"</span>)]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a><span class="fu">as.data.table</span>(mlr_measures)[</span>
+<span id="cb30-2"><a href="#cb30-2"></a>  task_type <span class="sc">==</span> <span class="st">"surv"</span>, <span class="fu">c</span>(<span class="st">"key"</span>, <span class="st">"predict_type"</span>)]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                   key predict_type
  1:         surv.brier        distr
@@ -589,7 +753,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>No existe un consenso en la literatura sobre cuáles son las “mejores” medidas de supervivencia a utilizar para evaluar los modelos. Las más habituales son RCLL (logloss censurado por la derecha) (<code>msr("surv.rcll")</code>) para evaluar la calidad de las predicciones de distribución, índice de concordancia (<code>msr("surv.cindex")</code>) para evaluar la discriminación de un modelo, y D-Calibración ( <code>msr("surv.dcalib")</code>) para evaluar la calibración de un modelo.</p>
 <p>Usando estas medidas, ahora podemos evaluar nuestras predicciones del ejemplo anterior.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>prediction_cph<span class="sc">$</span><span class="fu">score</span>(<span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"surv.rcll"</span>, <span class="st">"surv.cindex"</span>, <span class="st">"surv.dcalib"</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a>prediction_cph<span class="sc">$</span><span class="fu">score</span>(<span class="fu">msrs</span>(<span class="fu">c</span>(<span class="st">"surv.rcll"</span>, <span class="st">"surv.cindex"</span>, <span class="st">"surv.dcalib"</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  surv.rcll surv.cindex surv.dcalib 
   3.7395949   0.8312808   0.2342570 </code></pre>
@@ -620,13 +784,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>En la práctica, el segundo pipeline es más común ya que usamos internamente una versión del primer pipeline cada vez que devolvemos predicciones de modelos de supervivencia (por lo tanto, solo usamos el primer pipeline para sobrescribir estas predicciones de clasificación), por lo que solo veremos el segundo pipeline.</p>
 <p>En el siguiente ejemplo, cargamos el conjunto de datos de <code>rats</code>, eliminamos columnas de factores y luego dividimos los datos en entrenamiento y prueba. Construimos el pipeline <code>distrcompositor</code> en torno a un modelo de aprendizaje de GLMnet de supervivencia (<code>lrn("surv.glmnet")</code>) que, de forma predeterminada, solo puede hacer predicciones para <code>lp</code> y <code>crank</code>. En el proceso, especificamos que estimaremos la distribución de referencia con un estimador de Kaplan-Meier (<code>estimador = "kaplan"</code>) y que queremos asumir una forma de riesgos proporcionales para nuestra distribución estimada (<code>form = "ph"</code>). Luego entrenamos y predecimos de la forma habitual y en nuestro resultado ahora podemos ver una predicción de distribución.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># Generamos task seleccionando las predictoras</span></span>
-<span id="cb23-2"><a href="#cb23-2"></a>tsk_rats <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"rats"</span>)<span class="sc">$</span><span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"litter"</span>, <span class="st">"rx"</span>))</span>
-<span id="cb23-3"><a href="#cb23-3"></a>split <span class="ot">=</span> <span class="fu">partition</span>(tsk_rats)</span>
-<span id="cb23-4"><a href="#cb23-4"></a><span class="co"># Modelo de aprendizaje</span></span>
-<span id="cb23-5"><a href="#cb23-5"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"surv.glmnet"</span>)</span>
-<span id="cb23-6"><a href="#cb23-6"></a><span class="co"># Predicción sin distr</span></span>
-<span id="cb23-7"><a href="#cb23-7"></a>learner<span class="sc">$</span><span class="fu">train</span>(tsk_rats, split<span class="sc">$</span>train)<span class="sc">$</span><span class="fu">predict</span>(tsk_rats, split<span class="sc">$</span>test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a><span class="co"># Generamos task seleccionando las predictoras</span></span>
+<span id="cb34-2"><a href="#cb34-2"></a>tsk_rats <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"rats"</span>)<span class="sc">$</span><span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"litter"</span>, <span class="st">"rx"</span>))</span>
+<span id="cb34-3"><a href="#cb34-3"></a>split <span class="ot">=</span> <span class="fu">partition</span>(tsk_rats)</span>
+<span id="cb34-4"><a href="#cb34-4"></a><span class="co"># Modelo de aprendizaje</span></span>
+<span id="cb34-5"><a href="#cb34-5"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"surv.glmnet"</span>)</span>
+<span id="cb34-6"><a href="#cb34-6"></a><span class="co"># Predicción sin distr</span></span>
+<span id="cb34-7"><a href="#cb34-7"></a>learner<span class="sc">$</span><span class="fu">train</span>(tsk_rats, split<span class="sc">$</span>train)<span class="sc">$</span><span class="fu">predict</span>(tsk_rats, split<span class="sc">$</span>test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;PredictionSurv&gt; for 99 observations:
     row_ids time status    crank.1       lp.1
@@ -641,16 +805,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p>Construimos ahora el graphlearner que nos permite obtener la predicción <code>distr</code> utilizando el pipeline seleccionado:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>graph_learner <span class="ot">=</span> <span class="fu">as_learner</span>(<span class="fu">ppl</span>(</span>
-<span id="cb25-2"><a href="#cb25-2"></a>  <span class="st">"distrcompositor"</span>,</span>
-<span id="cb25-3"><a href="#cb25-3"></a>  <span class="at">learner =</span> learner,</span>
-<span id="cb25-4"><a href="#cb25-4"></a>  <span class="at">estimator =</span> <span class="st">"kaplan"</span>,</span>
-<span id="cb25-5"><a href="#cb25-5"></a>  <span class="at">form =</span> <span class="st">"ph"</span></span>
-<span id="cb25-6"><a href="#cb25-6"></a>))</span>
-<span id="cb25-7"><a href="#cb25-7"></a></span>
-<span id="cb25-8"><a href="#cb25-8"></a><span class="co"># now with distr</span></span>
-<span id="cb25-9"><a href="#cb25-9"></a>predicciones <span class="ot">=</span> graph_learner<span class="sc">$</span><span class="fu">train</span>(tsk_rats, split<span class="sc">$</span>train)<span class="sc">$</span><span class="fu">predict</span>(tsk_rats, split<span class="sc">$</span>test)</span>
-<span id="cb25-10"><a href="#cb25-10"></a>predicciones</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a>graph_learner <span class="ot">=</span> <span class="fu">as_learner</span>(<span class="fu">ppl</span>(</span>
+<span id="cb36-2"><a href="#cb36-2"></a>  <span class="st">"distrcompositor"</span>,</span>
+<span id="cb36-3"><a href="#cb36-3"></a>  <span class="at">learner =</span> learner,</span>
+<span id="cb36-4"><a href="#cb36-4"></a>  <span class="at">estimator =</span> <span class="st">"kaplan"</span>,</span>
+<span id="cb36-5"><a href="#cb36-5"></a>  <span class="at">form =</span> <span class="st">"ph"</span></span>
+<span id="cb36-6"><a href="#cb36-6"></a>))</span>
+<span id="cb36-7"><a href="#cb36-7"></a></span>
+<span id="cb36-8"><a href="#cb36-8"></a><span class="co"># now with distr</span></span>
+<span id="cb36-9"><a href="#cb36-9"></a>predicciones <span class="ot">=</span> graph_learner<span class="sc">$</span><span class="fu">train</span>(tsk_rats, split<span class="sc">$</span>train)<span class="sc">$</span><span class="fu">predict</span>(tsk_rats, split<span class="sc">$</span>test)</span>
+<span id="cb36-10"><a href="#cb36-10"></a>predicciones</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;PredictionSurv&gt; for 99 observations:
     row_ids time status    crank.1       lp.1     distr
@@ -665,10 +829,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p>Ahora aparece una nueva columna con la predicción <code>distr</code>. Esta columna contiene las funciones de distribución asociadas a diferentes cantidades de interés para todas las muestras. En concreto en este caso tenemos las más destacadas son: <code>survival</code> (función de supervivencia), <code>cumHazard</code> (función hazard acumulada). En el código siguiente extraemos esas dos funciones para el instante de tiempo 100 y todas las muestras.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>distribucion <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">survival =</span> <span class="fu">t</span>(predicciones<span class="sc">$</span>distr<span class="sc">$</span><span class="fu">survival</span>(<span class="dv">100</span>)),</span>
-<span id="cb27-2"><a href="#cb27-2"></a><span class="at">cumhazard =</span> <span class="fu">t</span>(predicciones<span class="sc">$</span>distr<span class="sc">$</span><span class="fu">cumHazard</span>(<span class="dv">100</span>)))</span>
-<span id="cb27-3"><a href="#cb27-3"></a><span class="fu">colnames</span>(distribucion) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Survival"</span> , <span class="st">"CumHazard"</span>)</span>
-<span id="cb27-4"><a href="#cb27-4"></a>distribucion</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a>distribucion <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">survival =</span> <span class="fu">t</span>(predicciones<span class="sc">$</span>distr<span class="sc">$</span><span class="fu">survival</span>(<span class="dv">100</span>)),</span>
+<span id="cb38-2"><a href="#cb38-2"></a><span class="at">cumhazard =</span> <span class="fu">t</span>(predicciones<span class="sc">$</span>distr<span class="sc">$</span><span class="fu">cumHazard</span>(<span class="dv">100</span>)))</span>
+<span id="cb38-3"><a href="#cb38-3"></a><span class="fu">colnames</span>(distribucion) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Survival"</span> , <span class="st">"CumHazard"</span>)</span>
+<span id="cb38-4"><a href="#cb38-4"></a>distribucion</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    Survival CumHazard
 1  0.7824974 0.2452647
@@ -778,36 +942,36 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Finalmente, pondremos en práctica todo lo anterior en un pequeño experimento de referencia. Primero cargamos <code>tsk("grace")</code> (que solo tiene características numéricas) y tomamos muestras de 500 filas al azar. Luego seleccionamos RCLL, D-Calibration y C-index para evaluar las predicciones, configuramos el mismo pipeline que usamos en el experimento anterior y cargamos un estimador Cox PH y Kaplan-Meier. Realizamos nuestro experimento de validación cruzada con k =3 y agregamos los resultados.</p>
 <p>Mucho del código que aquí se presenta lo estudiaremos más tarde pero por el momento nos sirve para comparar diferentes modelos de aprendizaje de supervivencia.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>tsk_grace <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"grace"</span>)</span>
-<span id="cb29-2"><a href="#cb29-2"></a>tsk_grace<span class="sc">$</span><span class="fu">filter</span>(<span class="fu">sample</span>(tsk_grace<span class="sc">$</span>nrow, <span class="dv">500</span>))</span>
-<span id="cb29-3"><a href="#cb29-3"></a>msr_txt <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"surv.rcll"</span>, <span class="st">"surv.cindex"</span>, <span class="st">"surv.dcalib"</span>)</span>
-<span id="cb29-4"><a href="#cb29-4"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(msr_txt)</span>
-<span id="cb29-5"><a href="#cb29-5"></a></span>
-<span id="cb29-6"><a href="#cb29-6"></a>graph_learner <span class="ot">=</span> <span class="fu">as_learner</span>(<span class="fu">ppl</span>(</span>
-<span id="cb29-7"><a href="#cb29-7"></a>  <span class="st">"distrcompositor"</span>,</span>
-<span id="cb29-8"><a href="#cb29-8"></a>  <span class="at">learner =</span> <span class="fu">lrn</span>(<span class="st">"surv.glmnet"</span>),</span>
-<span id="cb29-9"><a href="#cb29-9"></a>  <span class="at">estimator =</span> <span class="st">"kaplan"</span>,</span>
-<span id="cb29-10"><a href="#cb29-10"></a>  <span class="at">form =</span> <span class="st">"ph"</span></span>
-<span id="cb29-11"><a href="#cb29-11"></a>))</span>
-<span id="cb29-12"><a href="#cb29-12"></a>graph_learner<span class="sc">$</span>id <span class="ot">=</span> <span class="st">"Coxnet"</span></span>
-<span id="cb29-13"><a href="#cb29-13"></a>learners <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">lrns</span>(<span class="fu">c</span>(<span class="st">"surv.coxph"</span>, <span class="st">"surv.kaplan"</span>)), graph_learner)</span>
-<span id="cb29-14"><a href="#cb29-14"></a></span>
-<span id="cb29-15"><a href="#cb29-15"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(<span class="fu">benchmark_grid</span>(tsk_grace, learners,</span>
-<span id="cb29-16"><a href="#cb29-16"></a>  <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a>tsk_grace <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"grace"</span>)</span>
+<span id="cb40-2"><a href="#cb40-2"></a>tsk_grace<span class="sc">$</span><span class="fu">filter</span>(<span class="fu">sample</span>(tsk_grace<span class="sc">$</span>nrow, <span class="dv">500</span>))</span>
+<span id="cb40-3"><a href="#cb40-3"></a>msr_txt <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"surv.rcll"</span>, <span class="st">"surv.cindex"</span>, <span class="st">"surv.dcalib"</span>)</span>
+<span id="cb40-4"><a href="#cb40-4"></a>measures <span class="ot">=</span> <span class="fu">msrs</span>(msr_txt)</span>
+<span id="cb40-5"><a href="#cb40-5"></a></span>
+<span id="cb40-6"><a href="#cb40-6"></a>graph_learner <span class="ot">=</span> <span class="fu">as_learner</span>(<span class="fu">ppl</span>(</span>
+<span id="cb40-7"><a href="#cb40-7"></a>  <span class="st">"distrcompositor"</span>,</span>
+<span id="cb40-8"><a href="#cb40-8"></a>  <span class="at">learner =</span> <span class="fu">lrn</span>(<span class="st">"surv.glmnet"</span>),</span>
+<span id="cb40-9"><a href="#cb40-9"></a>  <span class="at">estimator =</span> <span class="st">"kaplan"</span>,</span>
+<span id="cb40-10"><a href="#cb40-10"></a>  <span class="at">form =</span> <span class="st">"ph"</span></span>
+<span id="cb40-11"><a href="#cb40-11"></a>))</span>
+<span id="cb40-12"><a href="#cb40-12"></a>graph_learner<span class="sc">$</span>id <span class="ot">=</span> <span class="st">"Coxnet"</span></span>
+<span id="cb40-13"><a href="#cb40-13"></a>learners <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">lrns</span>(<span class="fu">c</span>(<span class="st">"surv.coxph"</span>, <span class="st">"surv.kaplan"</span>)), graph_learner)</span>
+<span id="cb40-14"><a href="#cb40-14"></a></span>
+<span id="cb40-15"><a href="#cb40-15"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(<span class="fu">benchmark_grid</span>(tsk_grace, learners,</span>
+<span id="cb40-16"><a href="#cb40-16"></a>  <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>INFO  [11:14:46.911] [mlr3] Running benchmark with 9 resampling iterations
-INFO  [11:14:47.069] [mlr3] Applying learner 'surv.coxph' on task 'grace' (iter 1/3)
-INFO  [11:14:47.103] [mlr3] Applying learner 'surv.coxph' on task 'grace' (iter 2/3)
-INFO  [11:14:47.128] [mlr3] Applying learner 'surv.coxph' on task 'grace' (iter 3/3)
-INFO  [11:14:47.153] [mlr3] Applying learner 'surv.kaplan' on task 'grace' (iter 1/3)
-INFO  [11:14:47.176] [mlr3] Applying learner 'surv.kaplan' on task 'grace' (iter 2/3)
-INFO  [11:14:47.200] [mlr3] Applying learner 'surv.kaplan' on task 'grace' (iter 3/3)
-INFO  [11:14:47.224] [mlr3] Applying learner 'Coxnet' on task 'grace' (iter 1/3)
-INFO  [11:14:47.353] [mlr3] Applying learner 'Coxnet' on task 'grace' (iter 2/3)
-INFO  [11:14:47.464] [mlr3] Applying learner 'Coxnet' on task 'grace' (iter 3/3)
-INFO  [11:14:47.630] [mlr3] Finished benchmark</code></pre>
+<pre><code>INFO  [13:14:03.174] [mlr3] Running benchmark with 9 resampling iterations
+INFO  [13:14:03.301] [mlr3] Applying learner 'surv.coxph' on task 'grace' (iter 1/3)
+INFO  [13:14:03.378] [mlr3] Applying learner 'surv.coxph' on task 'grace' (iter 2/3)
+INFO  [13:14:03.403] [mlr3] Applying learner 'surv.coxph' on task 'grace' (iter 3/3)
+INFO  [13:14:03.439] [mlr3] Applying learner 'surv.kaplan' on task 'grace' (iter 1/3)
+INFO  [13:14:03.472] [mlr3] Applying learner 'surv.kaplan' on task 'grace' (iter 2/3)
+INFO  [13:14:03.496] [mlr3] Applying learner 'surv.kaplan' on task 'grace' (iter 3/3)
+INFO  [13:14:03.519] [mlr3] Applying learner 'Coxnet' on task 'grace' (iter 1/3)
+INFO  [13:14:03.686] [mlr3] Applying learner 'Coxnet' on task 'grace' (iter 2/3)
+INFO  [13:14:03.856] [mlr3] Applying learner 'Coxnet' on task 'grace' (iter 3/3)
+INFO  [13:14:03.964] [mlr3] Finished benchmark</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>bmr<span class="sc">$</span><span class="fu">aggregate</span>(measures)[, <span class="fu">c</span>(<span class="st">"learner_id"</span>, ..msr_txt)]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>bmr<span class="sc">$</span><span class="fu">aggregate</span>(measures)[, <span class="fu">c</span>(<span class="st">"learner_id"</span>, ..msr_txt)]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    learner_id surv.rcll surv.cindex surv.dcalib
 1:  surv.coxph  4.884953   0.8356144    5.214107
@@ -816,18 +980,9 @@ INFO  [11:14:47.630] [mlr3] Finished benchmark</code></pre>
 </div>
 </div>
 <p>En este pequeño experimento, Coxnet y Cox PH tienen la mejor discriminación, la línea de base de Kaplan-Meier tiene la mejor calibración y Coxnet y Cox PH tienen una precisión predictiva general similar (con el RCLL más bajo).</p>
-</section>
-</section>
-<section id="sec-80.6" class="level2" data-number="8.6">
-<h2 data-number="8.6" class="anchored" data-anchor-id="sec-80.6"><span class="header-section-number">8.6</span> Casos prácticos</h2>
-</section>
-<section id="sec-80.7" class="level2" data-number="8.7">
-<h2 data-number="8.7" class="anchored" data-anchor-id="sec-80.7"><span class="header-section-number">8.7</span> Ejercicios</h2>
-<ol type="1">
-<li></li>
-</ol>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

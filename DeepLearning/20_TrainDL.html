@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MachineLearning - 2&nbsp; Entrenamiento de la red neuronal</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./10_IntroDL.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Entrenamiento de la red neuronal</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MachineLearning</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Deep Learning</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_IntroDL.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_TrainDL.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Entrenamiento de la red neuronal</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">References</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#preprocesado-de-inputs" id="toc-preprocesado-de-inputs" class="nav-link active" data-scroll-target="#preprocesado-de-inputs"><span class="toc-section-number">2.1</span>  Preprocesado de inputs</a></li>
+  <li><a href="#funciones-de-activación" id="toc-funciones-de-activación" class="nav-link" data-scroll-target="#funciones-de-activación"><span class="toc-section-number">2.2</span>  Funciones de activación</a>
+  <ul>
+  <li><a href="#sigmoide" id="toc-sigmoide" class="nav-link" data-scroll-target="#sigmoide"><span class="toc-section-number">2.2.1</span>  Sigmoide</a></li>
+  <li><a href="#tangente-hiperbólica" id="toc-tangente-hiperbólica" class="nav-link" data-scroll-target="#tangente-hiperbólica"><span class="toc-section-number">2.2.2</span>  Tangente hiperbólica</a></li>
+  <li><a href="#relu-rectified-linear-unit" id="toc-relu-rectified-linear-unit" class="nav-link" data-scroll-target="#relu-rectified-linear-unit"><span class="toc-section-number">2.2.3</span>  ReLU (Rectified linear Unit)</a></li>
+  <li><a href="#softmax" id="toc-softmax" class="nav-link" data-scroll-target="#softmax"><span class="toc-section-number">2.2.4</span>  Softmax</a></li>
+  <li><a href="#otras-funciones-de-activación" id="toc-otras-funciones-de-activación" class="nav-link" data-scroll-target="#otras-funciones-de-activación"><span class="toc-section-number">2.2.5</span>  Otras funciones de activación</a></li>
+  </ul></li>
+  <li><a href="#funciones-de-pérdida" id="toc-funciones-de-pérdida" class="nav-link" data-scroll-target="#funciones-de-pérdida"><span class="toc-section-number">2.3</span>  Funciones de pérdida</a>
+  <ul>
+  <li><a href="#clasificación-binaria" id="toc-clasificación-binaria" class="nav-link" data-scroll-target="#clasificación-binaria"><span class="toc-section-number">2.3.1</span>  Clasificación binaria</a></li>
+  <li><a href="#clasificación-múltiple" id="toc-clasificación-múltiple" class="nav-link" data-scroll-target="#clasificación-múltiple"><span class="toc-section-number">2.3.2</span>  Clasificación múltiple</a></li>
+  <li><a href="#predicción" id="toc-predicción" class="nav-link" data-scroll-target="#predicción"><span class="toc-section-number">2.3.3</span>  Predicción</a>
+  <ul class="collapse">
+  <li><a href="#error-cuadrático-medio" id="toc-error-cuadrático-medio" class="nav-link" data-scroll-target="#error-cuadrático-medio"><span class="toc-section-number">2.3.3.1</span>  Error cuadrático medio</a></li>
+  <li><a href="#error-absoluto-medio" id="toc-error-absoluto-medio" class="nav-link" data-scroll-target="#error-absoluto-medio"><span class="toc-section-number">2.3.3.2</span>  Error absoluto medio</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#proceso-de-optimización" id="toc-proceso-de-optimización" class="nav-link" data-scroll-target="#proceso-de-optimización"><span class="toc-section-number">2.4</span>  Proceso de optimización</a>
+  <ul>
+  <li><a href="#arquitectura-de-red-con-una-capa-oculta" id="toc-arquitectura-de-red-con-una-capa-oculta" class="nav-link" data-scroll-target="#arquitectura-de-red-con-una-capa-oculta"><span class="toc-section-number">2.4.1</span>  Arquitectura de red con una capa oculta</a></li>
+  <li><a href="#arquitectura-de-red-con-múltiples-capas-ocultas" id="toc-arquitectura-de-red-con-múltiples-capas-ocultas" class="nav-link" data-scroll-target="#arquitectura-de-red-con-múltiples-capas-ocultas"><span class="toc-section-number">2.4.2</span>  Arquitectura de red con múltiples capas ocultas</a></li>
+  </ul></li>
+  <li><a href="#algoritmo-de-backpropagation" id="toc-algoritmo-de-backpropagation" class="nav-link" data-scroll-target="#algoritmo-de-backpropagation"><span class="toc-section-number">2.5</span>  Algoritmo de backpropagation</a></li>
+  <li><a href="#algoritmos-de-optimización" id="toc-algoritmos-de-optimización" class="nav-link" data-scroll-target="#algoritmos-de-optimización"><span class="toc-section-number">2.6</span>  Algoritmos de optimización</a>
+  <ul>
+  <li><a href="#descenso-del-gradiente" id="toc-descenso-del-gradiente" class="nav-link" data-scroll-target="#descenso-del-gradiente"><span class="toc-section-number">2.6.1</span>  Descenso del gradiente</a></li>
+  <li><a href="#descenso-del-gradiente-estocástico" id="toc-descenso-del-gradiente-estocástico" class="nav-link" data-scroll-target="#descenso-del-gradiente-estocástico"><span class="toc-section-number">2.6.2</span>  Descenso del gradiente estocástico</a></li>
+  <li><a href="#descenso-del-gradiente-por-mini-lotes" id="toc-descenso-del-gradiente-por-mini-lotes" class="nav-link" data-scroll-target="#descenso-del-gradiente-por-mini-lotes"><span class="toc-section-number">2.6.3</span>  Descenso del gradiente por mini lotes</a></li>
+  <li><a href="#descenso-del-gradiente-adaptativo-adagrad" id="toc-descenso-del-gradiente-adaptativo-adagrad" class="nav-link" data-scroll-target="#descenso-del-gradiente-adaptativo-adagrad"><span class="toc-section-number">2.6.4</span>  Descenso del gradiente adaptativo (Adagrad)</a></li>
+  <li><a href="#rms-prop" id="toc-rms-prop" class="nav-link" data-scroll-target="#rms-prop"><span class="toc-section-number">2.6.5</span>  RMS Prop</a></li>
+  <li><a href="#adadelta" id="toc-adadelta" class="nav-link" data-scroll-target="#adadelta"><span class="toc-section-number">2.6.6</span>  AdaDelta</a></li>
+  <li><a href="#adam" id="toc-adam" class="nav-link" data-scroll-target="#adam"><span class="toc-section-number">2.6.7</span>  Adam</a></li>
+  </ul></li>
+  <li><a href="#hiperparámetros-de-la-red" id="toc-hiperparámetros-de-la-red" class="nav-link" data-scroll-target="#hiperparámetros-de-la-red"><span class="toc-section-number">2.7</span>  Hiperparámetros de la red</a>
+  <ul>
+  <li><a href="#número-y-tamaño-de-capas" id="toc-número-y-tamaño-de-capas" class="nav-link" data-scroll-target="#número-y-tamaño-de-capas"><span class="toc-section-number">2.7.1</span>  Número y tamaño de capas</a></li>
+  <li><a href="#ratio-de-aprendizaje" id="toc-ratio-de-aprendizaje" class="nav-link" data-scroll-target="#ratio-de-aprendizaje"><span class="toc-section-number">2.7.2</span>  Ratio de aprendizaje</a></li>
+  </ul></li>
+  <li><a href="#regularización" id="toc-regularización" class="nav-link" data-scroll-target="#regularización"><span class="toc-section-number">2.8</span>  Regularización</a>
+  <ul>
+  <li><a href="#parada-temprana-early-stopping" id="toc-parada-temprana-early-stopping" class="nav-link" data-scroll-target="#parada-temprana-early-stopping"><span class="toc-section-number">2.8.1</span>  Parada temprana (early stopping)</a>
+  <ul class="collapse">
+  <li><a href="#métricas-de-validación" id="toc-métricas-de-validación" class="nav-link" data-scroll-target="#métricas-de-validación"><span class="toc-section-number">2.8.1.1</span>  Métricas de validación</a></li>
+  </ul></li>
+  <li><a href="#aumento-de-datos-data-augmentation" id="toc-aumento-de-datos-data-augmentation" class="nav-link" data-scroll-target="#aumento-de-datos-data-augmentation"><span class="toc-section-number">2.8.2</span>  Aumento de datos (data augmentation)</a></li>
+  <li><a href="#penalización-de-pesos" id="toc-penalización-de-pesos" class="nav-link" data-scroll-target="#penalización-de-pesos"><span class="toc-section-number">2.8.3</span>  Penalización de pesos</a>
+  <ul class="collapse">
+  <li><a href="#regularización-l2" id="toc-regularización-l2" class="nav-link" data-scroll-target="#regularización-l2"><span class="toc-section-number">2.8.3.1</span>  Regularización L2</a></li>
+  <li><a href="#regularización-l1" id="toc-regularización-l1" class="nav-link" data-scroll-target="#regularización-l1"><span class="toc-section-number">2.8.3.2</span>  Regularización L1</a></li>
+  <li><a href="#decaimiento-de-pesos-weight-decay" id="toc-decaimiento-de-pesos-weight-decay" class="nav-link" data-scroll-target="#decaimiento-de-pesos-weight-decay"><span class="toc-section-number">2.8.3.3</span>  Decaimiento de pesos (weight decay)</a></li>
+  </ul></li>
+  <li><a href="#drop-out" id="toc-drop-out" class="nav-link" data-scroll-target="#drop-out"><span class="toc-section-number">2.8.4</span>  Drop out</a></li>
+  <li><a href="#normalización-por-lotes" id="toc-normalización-por-lotes" class="nav-link" data-scroll-target="#normalización-por-lotes"><span class="toc-section-number">2.8.5</span>  Normalización por lotes</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Entrenamiento de la red neuronal</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>El proceso de entrenamiento de una red neuronal consiste en ajustar el valor de los pesos y sesgos (umbrales) de forma que, las predicciones que se generen, tengan el menor error posible. Gracias a esto, el modelo es capaz de identificar qué predictores tienen mayor influencia y de qué forma están relacionados entre ellos y con la variable respuesta.</p>
+<p>La idea intuitiva de cómo entrenar una red neuronal es la siguiente:</p>
+<ol type="1">
+<li><p>Iniciar la red con valores aleatorios de los pesos y sesgos.</p></li>
+<li><p>Para cada conjunto de entrenamiento definido por los <em>inputs</em> y la respuesta <span class="math inline">\((𝑋, 𝑦)\)</span>, se debe calcular el error que comete la red al hacer sus predicciones, promediando los errores de todas las observaciones.</p></li>
+<li><p>Identificar la responsabilidad que ha tenido cada peso y sesgo en el error de la predicción.</p></li>
+<li><p>Modificar ligeramente los pesos y sesgos de la red (de forma proporcional a su responsabilidad en el error) en la dirección correcta para que se reduzca el error.</p></li>
+<li><p>Repetir los pasos 2, 3, 4 y 5 hasta que la red sea suficientemente buena.</p></li>
+</ol>
+<p>Si bien la idea parece sencilla, alcanzar una forma de implementarla ha requerido la combinación de múltiples métodos matemáticos, en concreto, el algoritmo de retropropagación (<em>backpropagation</em>) y la optimización por descenso del gradiente (<em>gradient descent</em>).</p>
+<p>En este tema profundizaremos en los conceptos relacionados con el entrenamiento de una red neuronal.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Paquetes anteriores</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(knitr) <span class="co"># para formatos de tablas</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">theme_set</span>(<span class="fu">theme_sjplot2</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="preprocesado-de-inputs" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="preprocesado-de-inputs"><span class="header-section-number">2.1</span> Preprocesado de inputs</h2>
+<p>A la hora de entrenar modelos basados en redes neuronales es necesario realizar, al menos, dos tipos de transformaciones de los datos. Procedemos igual que en cualquier otro algoritmo de aprendizaje automático.</p>
+<p><strong>Codificación (<em>One hot ecoding</em>) de las variables categóricas</strong></p>
+<p>La binarización (<em>one-hot-encoding</em>) consiste en crear nuevas variables <em>dummy</em> con cada uno de los niveles de las variables cualitativas. Por ejemplo, una variable llamada color que contenga los niveles rojo, verde y azul, se convertirá en tres nuevas variables (color_rojo, color_verde, color_azul), todas con el valor 0 excepto la que coincide con la observación, que toma el valor 1.</p>
+<p><strong>Estandarización y escalado de variables numéricas</strong></p>
+<p>Cuando los predictores son numéricos, la escala en la que se miden, así como la magnitud de su varianza, pueden influir en gran medida en el modelo. Si no se igualan de alguna forma los predictores, aquellos que se midan en una escala mayor o que tengan más varianza dominarán el modelo aunque no sean los que más relación tengan con la variable respuesta. Existen principalmente dos estrategias para evitarlo:</p>
+<ul>
+<li><p>Centrado: consiste en restarle a cada valor la media del predictor al que pertenece. Si los datos están almacenados en un <em>dataframe</em>, el centrado se consigue restándole a cada valor la media de la columna en la que se encuentra. Como resultado de esta transformación, todos los predictores pasan a tener una media de cero, es decir, los valores se centran en torno al origen.</p></li>
+<li><p>Normalización (estandarización): consiste en transformar los datos de forma que todos los predictores estén aproximadamente en la misma escala. Las dos opciones habituales son:</p>
+<ul>
+<li>Normalización Z-score (<em>StandardScaler</em>): dividir cada predictor entre su desviación típica después de haber sido centrado, de esta forma, los datos pasan a tener una distribución normal.</li>
+<li>Estandarización max-min (<em>MinMaxScaler</em>): transformar los datos de forma que estén dentro del rango [0, 1].</li>
+</ul></li>
+</ul>
+</section>
+<section id="funciones-de-activación" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="funciones-de-activación"><span class="header-section-number">2.2</span> Funciones de activación</h2>
+<p>Como ya vimos en el tema anterior, las funciones de activación controlan en gran medida qué información se propaga desde una capa a la siguiente (<em>forward propagation</em>). Estas funciones convierten el valor neto de entrada a la red neuronal, combinación de los <em>inputs</em>, pesos y sesgos, en un nuevo valor. En el cuaderno anterior ya vimos el comportamiento de la función de activación de salto, pero no es la única existente. En concreto, el uso de funciones de activación no lineales con múltiples capas es lo que permite que los modelos de redes sean capaces de aprender relaciones no lineales.</p>
+<p>La gran mayoría de funciones de activación convierten el valor de entrada neto de la neurona en un valor dentro del rango (0, 1) o (-1, 1). Cuando el valor de activación de una neurona (salida de su función de activación) es cero, se dice que la neurona está inactiva, ya que no pasa ningún tipo de información a las siguientes neuronas. A continuación, se describen las funciones de activación más empleadas así como la derivada de dicha función que será utilizada en el proceso de entrenamiento de la red.</p>
+<section id="sigmoide" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="sigmoide"><span class="header-section-number">2.2.1</span> Sigmoide</h3>
+<p>La función de activación sigmoide acepta un número como entrada y devuelve un número entre 0 y 1. Es fácil de usar y tiene todas las cualidades deseables de las funciones de activación: no linealidad, diferenciación continua, monotonicidad y un rango de salida establecido.</p>
+<p>Se utiliza principalmente en problemas de clasificación binaria, ya que su salida puede interpretarse como probabilidades, ya que nos proporciona la probabilidad de existencia de una clase determinada. Matemáticamente se define como:</p>
+<p><span class="math display">\[sigmoid(s) = S(s) = \frac{1}{1+e^{-s}}.\]</span> La derivada de la función viene dada por la expresión:</p>
+<p><span class="math display">\[S'(s) = S(s)(1-S(s))\]</span></p>
+<p>Entre las ventajas y desventajas del uso de esta función podemos mencionar:</p>
+<ul>
+<li>Es de naturaleza no lineal. Las combinaciones de esta función también son no lineales, y dará una activación analógica, a diferencia de la función de activación de salto. Además, esta función presenta un gradiente suave y es efectiva para el problema de clasificación.</li>
+<li>El resultado de la función de activación siempre va a estar en el rango <span class="math inline">\((0,1)\)</span> en comparación con <span class="math inline">\((-∞, ∞)\)</span> de la función de activación lineal. Como resultado, hemos definido un rango para nuestras activaciones.</li>
+<li>La función sigmoide da lugar a un problema de “gradientes evanescentes” (<em>“Vanishing gradients”</em>) y los sigmoides saturan y matan los gradientes. El problema de “gradientes evanescentes” es frecuente en el entrenamiento de redes neuronales. Dado que la función de activación tiene un rango de salida pequeño (de 0 a 1), un gran cambio en el <em>input</em> de la función de activación creará una pequeña modificación en la salida. Por lo tanto, la derivada también se vuelve pequeña. Estas funciones de activación sólo se utilizan en redes poco profundas con pocas capas. Cuando estas funciones de activación se aplican a una red multicapa, el gradiente puede llegar a ser demasiado pequeño para el entrenamiento esperado.</li>
+<li>Su resultado no está centrado en cero, y hace que las actualizaciones del gradiente fluctúen lejos en diferentes direcciones.</li>
+<li>El valor de salida está entre cero y uno, por lo que dificulta la optimización.</li>
+<li>En ocasiones la red se niega a aprender más o es extremadamente lenta.</li>
+</ul>
+</section>
+<section id="tangente-hiperbólica" class="level3" data-number="2.2.2">
+<h3 data-number="2.2.2" class="anchored" data-anchor-id="tangente-hiperbólica"><span class="header-section-number">2.2.2</span> Tangente hiperbólica</h3>
+<p>La función tangente hiperbólica comprime un número real al rango [-1, 1]. Es no lineal, pero es diferente de la anterior (<em>Sigmoid</em>), y su salida está centrada en cero. Su definición formal es:</p>
+<p><span class="math display">\[TanH(s) = \frac{e^s-e^{-s}}{e^s+e^{-s}}\]</span></p>
+<p>La ventaja que tiene esta función de activación es que los <em>inputs</em> negativos se convierten en valores fuertemente negativos y los <em>inputs</em> positivos se convierten en valores fuertemente positivos. Los resultados tienden a los extremos. Al igual que en la función sigmoide, es diferenciable y monótona mientras que su derivada no lo es. Esta función de activación se utiliza principalmente para la clasificación entre dos clases, ya que si la tendencia es hacia uno de los lados la función lo arrastrará más aún para ese lado.</p>
+<p>La derivada de la función viene dada por la expresión:</p>
+<p><span class="math display">\[TanH'(s) = 1-Tanh^2(s)\]</span> Entre sus ventajas e inconvenientes podemos destacar:</p>
+<ul>
+<li>TanH también tiene el problema del gradiente evanescente, pero el gradiente es más fuerte en TanH que en sigmoide (las derivadas son más pronunciadas).</li>
+<li>TanH está centrada en cero, y los gradientes no tienen que moverse en una dirección específica.</li>
+</ul>
+</section>
+<section id="relu-rectified-linear-unit" class="level3" data-number="2.2.3">
+<h3 data-number="2.2.3" class="anchored" data-anchor-id="relu-rectified-linear-unit"><span class="header-section-number">2.2.3</span> ReLU (Rectified linear Unit)</h3>
+<p>ReLU significa Unidad Lineal Rectificada y es una de las funciones de activación más utilizadas en las aplicaciones. Ha resuelto el problema del gradiente evanescente porque el valor máximo del gradiente de la función ReLU es uno. También resuelve el problema de la saturación de la neurona, ya que la pendiente nunca es cero para la función ReLU. El rango de ReLU está entre 0 e infinito.</p>
+<p>Formalmente se define como:</p>
+<p><span class="math display">\[ReLU(s) = max\{0,s\}\]</span></p>
+<p>¿Cuál es la diferencia de esta función con la de salto que la hace tan interesante? La clave está en que todos los valores negativos se vuelven cero, y eso significa que cualquier entrada negativa dada a la función de activación de ReLU convierte el valor en cero inmediatamente. Esto puede ayudar mucho en la simplificación computacional ya que todos los valores iguales a 0 son inmediatamente descartados (dichas neuronas son irrelevantes). A su vez esto puede disminuir la capacidad del modelo para ajustarse o entrenarse a partir de los datos correctamente. Es el motivo por el que su uso esta muy extendido en las redes convolucionales.</p>
+<p>En este caso la derivada de la función ReLU toma el valor 1 si <span class="math inline">\(s&gt;0\)</span> y <span class="math inline">\(0\)</span> en otro caso.</p>
+<p>Entre las ventajas e incovenientes de esta función podemos destacar:</p>
+<ul>
+<li>Dado que sólo se activa un cierto número de neuronas, la función ReLU es mucho más eficiente desde el punto de vista computacional que las funciones sigmoide y TanH.</li>
+<li>ReLU acelera la convergencia del descenso gradiente hacia el mínimo global de la función de pérdida gracias a su propiedad lineal y no saturante.</li>
+<li>Una de sus limitaciones es que sólo debe utilizarse dentro de las capas ocultas de un modelo de red neuronal artificial.</li>
+<li>Algunos gradientes pueden ser frágiles durante el entrenamiento. En otras palabras, para activaciones en la región (<span class="math inline">\(x&lt;0\)</span>) de ReLU, el gradiente será 0 debido a lo cual los pesos no se ajustarán durante el descenso. Es decir, las neuronas que entren en ese estado dejarán de responder a las variaciones en la entrada (simplemente porque el gradiente es 0, nada cambia). A esto se le llama el problema del ReLU moribundo.</li>
+</ul>
+</section>
+<section id="softmax" class="level3" data-number="2.2.4">
+<h3 data-number="2.2.4" class="anchored" data-anchor-id="softmax"><span class="header-section-number">2.2.4</span> Softmax</h3>
+<p>La función <em>Softmax</em> es una de las funciones estrella en la última capa de la red, ya que permite realizar una clasificación categórica multiclase.</p>
+<p>Es una combinación de muchos sigmoides. Al igual que la función sigmoide, devuelve una probabilidad, sólo que en este caso lo hace para cada clase/etiqueta. Más concretamente la función <em>Softmax</em> devuelve la probabilidad de la clase actual con respecto a las demás. Esto significa que también tiene en cuenta la posibilidad de que existan otras clases.</p>
+<p>Si <span class="math inline">\(s_i\)</span> donde <span class="math inline">\(i\)</span> identifica la clase <span class="math inline">\(i\)</span> de un conjunto de <span class="math inline">\(k\)</span> clases esta función se puede expresar como:</p>
+<p><span class="math display">\[Softmax(s_i) = \frac{exp(s_i)}{\sum_{j=1}^k exp(s_j)}\]</span></p>
+<p>Entre las ventajas e inconvenientes podemos destacar que:</p>
+<ul>
+<li>Imita mejor la etiqueta codificada que los valores absolutos.</li>
+<li>Se perdería información si se utilizaran valores absolutos (módulo), pero la exponencial se encarga de esto por sí sola.</li>
+<li>Debería utilizarse también para tareas de clasificación y regresión multietiqueta.</li>
+</ul>
+</section>
+<section id="otras-funciones-de-activación" class="level3" data-number="2.2.5">
+<h3 data-number="2.2.5" class="anchored" data-anchor-id="otras-funciones-de-activación"><span class="header-section-number">2.2.5</span> Otras funciones de activación</h3>
+<p>Existen más funciones de activación pero hemos preferido centrarnos en estas porque son las de uso más habitual. Más adelante introduciremos nuevas funciones de activación cuando sea necesario.</p>
+</section>
+</section>
+<section id="funciones-de-pérdida" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="funciones-de-pérdida"><span class="header-section-number">2.3</span> Funciones de pérdida</h2>
+<p>Cuando se trabaja en un problema de aprendizaje automático o aprendizaje profundo se utilizan funciones de pérdida/coste para optimizar el modelo durante el entrenamiento. El objetivo es casi siempre minimizar la función de pérdida. Cuanto menor sea la pérdida, mejor será el modelo. En las redes neuronales este aspecto resulta muy relevante ya que la predición o salida de la red depende de la estructura de la red (nodos y capas ocultas). En este apartado se presenta la notación y las funciones utilizadas en las redes neuronales tanto para las tareas de clasificación como de regresión.</p>
+<p>Para ejemplificar supongamos que tenemos una red con una arquitectura <span class="math inline">\([p,m,1]\)</span>, es decir con <span class="math inline">\(p\)</span> <em>inputs</em>, <span class="math inline">\(m\)</span> neuronas artificiales en una única capa, y un nodo de salida. Consideramos:</p>
+<ul>
+<li><span class="math inline">\((X,y)\)</span> el conjunto de valores (<em>inputs</em> y respuesta) observados para <span class="math inline">\(n\)</span> muestras, de forma que <span class="math inline">\(x^{(i)}\)</span> e <span class="math inline">\(y^{(i)}\)</span> son los <em>inputs</em> y respuesta de la muestra <span class="math inline">\(i\)</span> con <span class="math inline">\(i=1,...,n\)</span>.</li>
+<li><span class="math inline">\(W\)</span> la matriz de pesos de la red.</li>
+<li><span class="math inline">\(f\)</span> la función de activación utilizada para obtener la respuesta para un <em>input</em> dado como</li>
+</ul>
+<p><span class="math display">\[\hat{y}^{(i)} = f(x^{(i)};W)\]</span></p>
+<p>Definimos entonces la función de pérdida (<span class="math inline">\(L\)</span>) para una muestra específica como</p>
+<p><span class="math display">\[L(\hat{y}^{(i)}, y^{(i)})= L(f(x^{(i)};W), y^{(i)})\]</span></p>
+<p>de forma que la pérdida empírica para el conjunto de muestras dado viene dada para una matriz de pesos <span class="math inline">\(W\)</span> como</p>
+<p><span class="math display">\[J(W)=\frac{1}{n} \sum_{i=1}^n L(f(x^{(i)};W), y^{(i)})\]</span></p>
+<p>A continuación, veremos la expresión específica para la pérdida empírica en función del tipo de repuesta que tratamos de predecir con la red o tipo de tarea que deseamos resolver: clasificación binaria, regresión o clasificación múltiple.</p>
+<section id="clasificación-binaria" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="clasificación-binaria"><span class="header-section-number">2.3.1</span> Clasificación binaria</h3>
+<p>Para tareas de clasificación binaria donde la respuesta observada <span class="math inline">\(y^{(i)}\)</span> para cada una de las muestras consideradas sólo toma valores 0 o 1, se define la pérdida de entropía cruzada binaria (“<em>Binary Cross-Entropy</em>”) como:</p>
+<span class="math display">\[\begin{eqnarray}
+J(W) =&amp;-\frac{1}{n}\sum_{i=1}^n \left [ y^{(i)}log(f(x^{(i)};W)) + (1-y^{(i)})log(1-f(x^{(i)};W))\right ]\\
+=&amp;-\frac{1}{n}\sum_{i=1}^n \left [ y^{(i)}log(p^{(i)}) + (1-y^{(i)})log(1-p^{(i)})\right ]
+\end{eqnarray}\]</span>
+<p>donde <span class="math inline">\(p^{(i)} = f(x^{(i)};W)\)</span> es la probabilidad predicha de clasificación de la clase 1 mediante la red neuronal considerada con pesos estimados <span class="math inline">\(W\)</span>.</p>
+<p>La principal ventaja de esta función de pérdida es que es diferenciable, pero entre las deventajas debemos destacar que tiene múltiples mínimos locales y que no es una medida de error muy intuitiva.</p>
+</section>
+<section id="clasificación-múltiple" class="level3" data-number="2.3.2">
+<h3 data-number="2.3.2" class="anchored" data-anchor-id="clasificación-múltiple"><span class="header-section-number">2.3.2</span> Clasificación múltiple</h3>
+<p>Para tareas de clasificación múltiple donde la respuesta observada <span class="math inline">\(y^{(i)}\)</span> para cada una de las muestras consideradas puede tomar valores en el conjunto <span class="math inline">\(\{1, 2,...,M\}\)</span>, se define la pérdida de entropía cruzada binaria para clasificaciones múltiples (“<em>Binary Cross Entropy for Multi-Class classification</em>”) como:</p>
+<span class="math display">\[\begin{eqnarray}
+J(W) =&amp;-\frac{1}{n}\sum_{i=1}^n \sum_{j=1}^M \left [ y^{(i,j)}log(f(x^{(i)};W)) \right ]\\
+&amp;-\frac{1}{n}\sum_{i=1}^n \sum_{j=1}^M \left [ y^{(i,j)}log(p^{(i,j)}) \right ]
+\end{eqnarray}\]</span>
+<p>donde <span class="math inline">\(y^{(i,j)}\)</span> es el elento <span class="math inline">\(j\)</span> del vector <span class="math inline">\((y^{(i,1)}, y^{(i,2)},..., y^{(i,M)})\)</span> que representa la codificación <em>hot-encoding</em> para la respuesta <span class="math inline">\(y^{(i)}\)</span>, y <span class="math inline">\(p^{(i,j)}\)</span> representa la probabilidad predicha por la red neuronal de que la muestra <span class="math inline">\(i\)</span> pertenezca a la clase <span class="math inline">\(j\)</span>.</p>
+</section>
+<section id="predicción" class="level3" data-number="2.3.3">
+<h3 data-number="2.3.3" class="anchored" data-anchor-id="predicción"><span class="header-section-number">2.3.3</span> Predicción</h3>
+<p>En tareas de predicción podemos considerar diferentes funciones de pérdida.</p>
+<section id="error-cuadrático-medio" class="level4" data-number="2.3.3.1">
+<h4 data-number="2.3.3.1" class="anchored" data-anchor-id="error-cuadrático-medio"><span class="header-section-number">2.3.3.1</span> Error cuadrático medio</h4>
+<p>El error cuadrático medio o <em>mean squared error</em> (MSE) es la función de pérdida más sencilla y común para evaluar la solución obtenida en una tarea de predicción. Si <span class="math inline">\(y^{(i)}\)</span> denota el valor real de la repuesta e <span class="math inline">\(\hat{y}^{(i)}\)</span> el valor predicho mediante la red considerada con pesos W, para calcular el MSE, se toma la diferencia entre el valor real y la predicción del modelo, se eleva al cuadrado y se calcula la media de todo el conjunto de datos:</p>
+<span class="math display">\[\begin{eqnarray}
+J(W) =&amp;-\frac{1}{n}\sum_{i=1}^n \left ( y^{(i)}-f(x^{(i)};W) \right )^2\\
+&amp;-\frac{1}{n}\sum_{i=1}^n \left ( y^{(i)}-\hat{y}^{(i)} \right )^2
+\end{eqnarray}\]</span>
+<p>Las principales ventajas de esta función de pérdida son que es muy fácil de interpretar, siempre es diferenciable y sólo tiene un mínimo local. Entre las desventajas podemos decir que el error está en unidades al cuadrado, y que es muy sensible a la presencia de observaciones anómalas.</p>
+</section>
+<section id="error-absoluto-medio" class="level4" data-number="2.3.3.2">
+<h4 data-number="2.3.3.2" class="anchored" data-anchor-id="error-absoluto-medio"><span class="header-section-number">2.3.3.2</span> Error absoluto medio</h4>
+<p>El error absoluto medio o <em>mean absolute error</em> (MAE) es otra función de pérdida muy sencilla. Si <span class="math inline">\(y^{(i)}\)</span> denota el valor real de la repuesta e <span class="math inline">\(\hat{y}^{(i)}\)</span> el valor predicho mediante la red considerada con pesos W, para calcular el MAE, se toma la diferencia en valor absoluto entre el valor real y la predicción del modelo, promediando para todo el conjunto de datos:</p>
+<span class="math display">\[\begin{eqnarray}
+J(W) =&amp;-\frac{1}{n}\sum_{i=1}^n  \left |y^{(i)}-f(x^{(i)};W) \right |\\
+&amp;-\frac{1}{n}\sum_{i=1}^n \left | y^{(i)}-\hat{y}^{(i)} \right |
+\end{eqnarray}\]</span>
+<p>Las principales ventajas de esta función de pérdida son que su resultado está en las mismas unidades que la variable respuesta, y que es insensible a observaciones anómalas. La principal desventaja es que la función de pérdida no es diferenciable y no se puede utilizar directamente en procesos de optimización.</p>
+</section>
+</section>
+</section>
+<section id="proceso-de-optimización" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="proceso-de-optimización"><span class="header-section-number">2.4</span> Proceso de optimización</h2>
+<p>Como hemos visto en el punto anterior todas las funciones de pérdida dependen de los valores de los pesos <span class="math inline">\(W\)</span> de la arquitectura de red considerada. Por tanto, para optimizar la arquitectura de dicha red es necesario obtener los valores de <span class="math inline">\(W\)</span> que minimicen el error de predicción o clasificación dependiendo de la tarea de interés. En el cuaderno siguiente estudiaremos con detalle los algoritmos de optimización utilizados habitualmente, pero en este presentanmos las ideas generales. Distinguimos entre arquitecturas de redes con una única capa y otras con múltiples capas ocultas.</p>
+<section id="arquitectura-de-red-con-una-capa-oculta" class="level3" data-number="2.4.1">
+<h3 data-number="2.4.1" class="anchored" data-anchor-id="arquitectura-de-red-con-una-capa-oculta"><span class="header-section-number">2.4.1</span> Arquitectura de red con una capa oculta</h3>
+<p>Supongamos que disponemos de <span class="math inline">\(n\)</span> muestras con una arquitectura de red <span class="math inline">\([p,m,1]\)</span> con matriz de datos <span class="math inline">\((X,y)\)</span>, <span class="math inline">\(W\)</span> matriz de pesos, y <span class="math inline">\(f\)</span> la función de activación. Independientemente de si la tarea es de clasificación o predicción, para obtener los valores óptimos de la matriz de pesos de la red, <span class="math inline">\(W^*\)</span>, debemos minimizar la función de pérdida empírica considerada con respecto a <span class="math inline">\(W\)</span>, es decir:</p>
+<p><span class="math display">\[W^* = \underset{W}{argmin} \quad J(W)\]</span></p>
+<p><span class="math display">\[W^* = \underset{W}{argmin} \quad \frac{1}{n} L(f(x^{(i)};W),y^{(i)})\]</span></p>
+<p>Por tanto, para encontrar el óptimo queda claro que necesitamos la derivadas de la función de activación considerada.</p>
+</section>
+<section id="arquitectura-de-red-con-múltiples-capas-ocultas" class="level3" data-number="2.4.2">
+<h3 data-number="2.4.2" class="anchored" data-anchor-id="arquitectura-de-red-con-múltiples-capas-ocultas"><span class="header-section-number">2.4.2</span> Arquitectura de red con múltiples capas ocultas</h3>
+<p>Si tenemos una arquitectura de red con múltiples capas ocultas la matriz de pesos se organiza para las diferentes capas consideradas, es decir consideramos:</p>
+<p><span class="math display">\[W = \{W^{(0)}, W^{(1)},...\}\]</span></p>
+<p>donde <span class="math inline">\(W^{(i)}\)</span> es la matriz de pesos correspondiente a la capa oculta <span class="math inline">\(i+1\)</span>. Recordemos que el proceso de propagación hacia adelante utiliza la salida de una capa oculta para valorar la activación de la capa siguiente en función de los pesos de dicha capa. En esta situación el proceso de optimización viene dado por:</p>
+<p><span class="math display">\[W^* = \underset{W}{argmin} \quad J(W)\]</span></p>
+<p><span class="math display">\[W^* = \underset{W}{argmin} \quad \frac{1}{n} L(f(x^{(i)};W),y^{(i)})\]</span></p>
+<p>donde <span class="math inline">\(W = \{W^{(0)}, W^{(1)},...\}\)</span>.</p>
+<p>En este caso el proceso de optimización resulta algo más complejo, ya que debemos enlazar las derivadas de las funciones de activación en cada una de las capas ocultas para obtener los pesos de la arquitectura de la red. Es lo que denominamos como algortimo de <em>Backpropagation</em> para combinar el proceso de optimización de las diferentes capas, mientras que utilizamos el método del gradiente descendente para estimar los pesos de una capa en específico.</p>
+</section>
+</section>
+<section id="algoritmo-de-backpropagation" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="algoritmo-de-backpropagation"><span class="header-section-number">2.5</span> Algoritmo de backpropagation</h2>
+<p><code>Backpropagation</code> es el algoritmo que permite cuantificar la influencia que tiene cada peso y bias de la red en sus predicciones. Para conseguirlo, hace uso de la regla de la cadena (<em>chain rule</em>) para calcular el gradiente, que no es más que el vector formado por las derivadas parciales de una función.</p>
+<p>En el caso de las redes, la derivada parcial del error respecto a un parámetro (peso o bias) mide cuanta “responsabilidad” ha tenido ese parámetro en el error cometido. Gracias a esto, se puede identificar qué pesos de la red hay que modificar para mejorarla.</p>
+<p>De hecho el objetivo principal de este algoritmo es encontrar las derivadas de la pérdida o el error con respecto a cada peso de la red, y actualizar estos pesos en la dirección opuesta a sus derivadas respetadas, de modo que se muevan hacia los mínimos globales o locales de la función de coste o error.</p>
+<p>Para entender mejor el funcionamiento de este algoritmo, y ver cómo integrar los algortimos de optimización de pesos en el proceso, presentamos su funcionamiento teórico para una arquitectura de red con una capa oculta.</p>
+<p>Por simplicidad consideramos la red que viene representada en la figura siguiente:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/Deeplearning/main/images/Backward001.png" width="650" height="100" class="figure-img"></p>
+</figure>
+</div>
+<p>donde tenemos una red con una única capa coculta, y con función de pérdida empírica para la matriz de pesos <span class="math inline">\(W=\{W1,W2\}\)</span> dada por <span class="math inline">\(J(W)\)</span>. Como ya vimos en el cuaderno anterior el objetivo es encontrar los valores de <span class="math inline">\(W\)</span> que minimizan la función de pérdida. Utilizando la regla de la cadena el proceso de optimización se puede escribir como:</p>
+<p><span class="math display">\[\frac{\partial J(W)}{\partial W1} = \frac{\partial J(W)}{\partial \hat{y}} \frac{\partial \hat{y}}{\partial Z} \frac{\partial Z}{\partial W1}\]</span></p>
+<p>Este proceso se repite para cada peso de la red utilizando los gradientes de capas posteriores.</p>
+<p>Por tanto, para resolver el entrenamiento del modelo es necesario determinar los gradientes anteriores actualizando los pesos de cada capa de la red para reducir la función de pérdida considerada.</p>
+</section>
+<section id="algoritmos-de-optimización" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="algoritmos-de-optimización"><span class="header-section-number">2.6</span> Algoritmos de optimización</h2>
+<p>Los algoritmos optimizadores son métodos de optimización que ayudan a mejorar el rendimiento de un modelo de aprendizaje profundo. Estos algoritmos de optimización u optimizadores afectan en gran medida a la precisión y la velocidad de entrenamiento del modelo de aprendizaje profundo. Pero antes de nada, surge la pregunta de qué es un optimizador.</p>
+<p>Mientras se entrena el modelo de aprendizaje profundo los optimizadores modifican los pesos de cada iteración (<em>epoch</em>) y minimizan la función de pérdida. Un optimizador es una función o un algoritmo que ajusta los atributos de la red neuronal, como los pesos y las tasas de aprendizaje. De este modo, ayuda a reducir la pérdida global y a mejorar la precisión. El problema de elegir los pesos adecuados para el modelo es una tarea de enormes proporciones, ya que un modelo de aprendizaje profundo suele constar de millones de parámetros. Esto plantea la necesidad de elegir un algoritmo de optimización adecuado para su aplicación. De ahí que la comprensión de estos algoritmos de aprendizaje automático sea necesaria para los científicos de datos antes de sumergirse a fondo en este campo.</p>
+<p>Se pueden utilizar diferentes optimizadores en el modelo de aprendizaje automático para cambiar sus pesos y su tasa de aprendizaje. Sin embargo, elegir el mejor optimizador depende de la aplicación. Como principiante, un mal pensamiento que nos viene a la mente es que probamos todas las posibilidades y elegimos la que muestra los mejores resultados. Esto puede estar bien al principio, pero cuando se trata de cientos de gigabytes de datos, incluso una sola <em>epoch</em> puede llevar un tiempo considerable. Así que elegir un algoritmo al azar puede resultar en una pérdida de tiempo.</p>
+<p>Este apartado cubrirá varios optimizadores de aprendizaje profundo, como Gradient Descent, Stochastic Gradient Descent, Mini-Batch Gradient Descent, Adagrad, RMSProp, AdaDelta, y Adam.</p>
+<p>Antes de continuar, recordemos algunos términos con los que nos debemos familiarizar:</p>
+<ul>
+<li><em>Epoch</em> (Época) - Denota el número de veces que el algoritmo se ejecuta en todo el conjunto de datos de entrenamiento.</li>
+<li><em>Batch</em> (Lote) - Número de muestras que se tomarán para actualizar los parámetros del modelo.</li>
+<li><em>Learning rate</em> (Tasa de aprendizaje) - Es un parámetro que proporciona al modelo una escala de cuánto deben actualizarse los pesos del modelo.</li>
+</ul>
+<section id="descenso-del-gradiente" class="level3" data-number="2.6.1">
+<h3 data-number="2.6.1" class="anchored" data-anchor-id="descenso-del-gradiente"><span class="header-section-number">2.6.1</span> Descenso del gradiente</h3>
+<p>El algortimo de descenso del gradiente puede considerarse como el más famoso de todos los optimizadores. En concreto permite minimizar una función haciendo actualizaciones de sus parámetros en la dirección del valor negativo de su gradiente. Aplicado a las redes neuronales y, como ya vimos en el cuaderno de introducción a las redes neuronales, este algoritmo se implementa de la forma siguiente:</p>
+<ol type="1">
+<li><p>Fijamos unos pesos inciales <span class="math inline">\(W\)</span> y evaluamos la función de pérdida correspondiente.</p></li>
+<li><p>Hasta alcanzar convergencia, es decir, hasta alcanzar un mínimo local, procedemos de la siguiente forma fijando una tasa de aprendizaje <span class="math inline">\(\eta\)</span>:</p></li>
+</ol>
+<ul>
+<li>Calcular el gradiente <span class="math inline">\(\frac{\partial J(W)}{\partial W_t}\)</span></li>
+<li>Actualizar los pesos mediante la expresión siguiente y reevaluar la función de pérdida</li>
+</ul>
+<p><span class="math display">\[ W_{t+1} = W_t - \eta  \frac{\partial J(W)}{\partial W_t}\]</span></p>
+<ol start="3" type="1">
+<li>Una vez alcanzada la convergencia devolvemos los pesos de la última iteración y el valor de la función de pérdida corrrespondiente.</li>
+</ol>
+<p>El algoritmo de descenso del gradiente funciona bien en la mayoría de situaciones pero, sin embargo, también tiene algunos inconvenientes:</p>
+<ul>
+<li>Es costoso calcular los gradientes si el tamaño de los datos es enorme.</li>
+<li>El descenso de gradiente funciona bien para funciones convexas, pero no sabe qué distancia recorrer a lo largo del gradiente para funciones no convexas.</li>
+<li>Hay que fijar una tasa de aprendizaje que puede afectar en gran medida al proceso de optimización, ya que en ocasiones puede ralentizar mucho el proceso o nos puede llevar a un mínimo local que no es óptimo.</li>
+</ul>
+<p>La función siguiente nos permite ver el funcionamiento del descenso del gradiente para un learning rate y función específica.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Función para visualizar el algoritmo del gradiente descendente</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>ver_descenso_gradiente <span class="ot">=</span> <span class="cf">function</span>(learning_rate, f)</span>
+<span id="cb2-3"><a href="#cb2-3"></a>{</span>
+<span id="cb2-4"><a href="#cb2-4"></a>    <span class="co"># Visualización gráfica del método del descenso del gradiente</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a></span>
+<span id="cb2-6"><a href="#cb2-6"></a>    <span class="co"># learning_rate: ratio de aprendizaje</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a>    <span class="co"># f: función a optimizar</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a></span>
+<span id="cb2-9"><a href="#cb2-9"></a>    <span class="co"># return: solución gráfica del algoritmo</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a>    </span>
+<span id="cb2-11"><a href="#cb2-11"></a>      <span class="co"># Número máximo de iteraciones</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a>      maximum_iterations <span class="ot">=</span> <span class="dv">1000</span></span>
+<span id="cb2-13"><a href="#cb2-13"></a>      <span class="co"># Iteración actual</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a>      current_iteration <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a>      <span class="co"># precisión de la solución</span></span>
+<span id="cb2-16"><a href="#cb2-16"></a>      precision_value<span class="ot">=</span><span class="fl">1e-6</span></span>
+<span id="cb2-17"><a href="#cb2-17"></a>      previous_step_size <span class="ot">=</span> <span class="fl">0.5</span></span>
+<span id="cb2-18"><a href="#cb2-18"></a>      current_x_value <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb2-19"><a href="#cb2-19"></a>      h <span class="ot">=</span> <span class="fl">0.01</span></span>
+<span id="cb2-20"><a href="#cb2-20"></a>      x_iterativo<span class="ot">=</span><span class="fu">c</span>()</span>
+<span id="cb2-21"><a href="#cb2-21"></a>      fx_iterativo<span class="ot">=</span><span class="fu">c</span>()</span>
+<span id="cb2-22"><a href="#cb2-22"></a>      <span class="cf">while</span>((previous_step_size<span class="sc">&gt;</span>precision_value) <span class="sc">&amp;</span> (current_iteration<span class="sc">&lt;</span>maximum_iterations))</span>
+<span id="cb2-23"><a href="#cb2-23"></a>      {</span>
+<span id="cb2-24"><a href="#cb2-24"></a>            previous_x_value <span class="ot">=</span> current_x_value</span>
+<span id="cb2-25"><a href="#cb2-25"></a>            <span class="co">#versión numérica</span></span>
+<span id="cb2-26"><a href="#cb2-26"></a>            gradient_of_y<span class="ot">=</span>(<span class="fu">f</span>(current_x_value <span class="sc">+</span> h) <span class="sc">-</span> <span class="fu">f</span>(current_x_value <span class="sc">-</span> h))<span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>h)</span>
+<span id="cb2-27"><a href="#cb2-27"></a>            current_x_value <span class="ot">=</span> current_x_value <span class="sc">-</span> learning_rate <span class="sc">*</span> gradient_of_y</span>
+<span id="cb2-28"><a href="#cb2-28"></a>            x_iterativo <span class="ot">=</span> <span class="fu">c</span>(x_iterativo, current_x_value)</span>
+<span id="cb2-29"><a href="#cb2-29"></a>            previous_step_size <span class="ot">=</span> <span class="fu">abs</span>(current_x_value <span class="sc">-</span> previous_x_value)</span>
+<span id="cb2-30"><a href="#cb2-30"></a>            fx_iterativo <span class="ot">=</span> <span class="fu">c</span>(fx_iterativo, <span class="fu">f</span>(current_x_value))</span>
+<span id="cb2-31"><a href="#cb2-31"></a>            current_iteration <span class="ot">=</span> current_iteration <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb2-32"><a href="#cb2-32"></a>        }</span>
+<span id="cb2-33"><a href="#cb2-33"></a>        x <span class="ot">=</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">5</span>, <span class="at">length=</span><span class="dv">100</span>)</span>
+<span id="cb2-34"><a href="#cb2-34"></a>        <span class="fu">plot</span>(x, <span class="fu">f</span>(x),<span class="st">"l"</span>, <span class="at">xlab=</span><span class="st">"x"</span>,<span class="at">ylab=</span><span class="st">"f(x)"</span>, <span class="at">main =</span><span class="fu">paste</span>(<span class="st">"LR= "</span>,learning_rate))</span>
+<span id="cb2-35"><a href="#cb2-35"></a>        <span class="fu">lines</span>(x_iterativo, fx_iterativo,<span class="at">col=</span><span class="st">"red"</span>,<span class="at">lwd=</span><span class="dv">3</span>)</span>
+<span id="cb2-36"><a href="#cb2-36"></a>        <span class="fu">points</span>(x_iterativo, fx_iterativo,<span class="at">col=</span><span class="st">"red"</span>,<span class="at">pch=</span><span class="dv">16</span>)</span>
+<span id="cb2-37"><a href="#cb2-37"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Veamos si el algoritmo es capaz de llegar al mínimo de la función <span class="math inline">\(f(x) = x^2-6x+5\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Definimos la función objetivo</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>f1x <span class="ot">=</span> <span class="cf">function</span>(x)</span>
+<span id="cb3-3"><a href="#cb3-3"></a>{</span>
+<span id="cb3-4"><a href="#cb3-4"></a>  <span class="fu">return</span>(x<span class="sc">*</span>x<span class="dv">-6</span><span class="sc">*</span>x<span class="sc">+</span><span class="dv">5</span>)</span>
+<span id="cb3-5"><a href="#cb3-5"></a>}</span>
+<span id="cb3-6"><a href="#cb3-6"></a></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co"># Descenso del gradiente para diferentes tasas de aprendizaje</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a>lr <span class="ot">=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="fl">0.9</span>,<span class="fl">0.5</span>,<span class="fl">0.1</span>,<span class="fl">0.01</span>,<span class="fl">0.001</span>, <span class="fl">0.0001</span>,<span class="fl">0.00001</span>)</span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(lr))</span>
+<span id="cb3-10"><a href="#cb3-10"></a>{</span>
+<span id="cb3-11"><a href="#cb3-11"></a>  <span class="fu">ver_descenso_gradiente</span>(lr[i], f1x)</span>
+<span id="cb3-12"><a href="#cb3-12"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="20_TrainDL_files/figure-html/trainDL-002-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="20_TrainDL_files/figure-html/trainDL-002-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="20_TrainDL_files/figure-html/trainDL-002-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="20_TrainDL_files/figure-html/trainDL-002-4.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="20_TrainDL_files/figure-html/trainDL-002-5.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="20_TrainDL_files/figure-html/trainDL-002-6.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="20_TrainDL_files/figure-html/trainDL-002-7.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="20_TrainDL_files/figure-html/trainDL-002-8.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>De los resultados obtenidos podemos ver que la tasa de aprendizaje juega un papel relevante en la convergencia del algoritmo, ya que en ocasiones necesitamos las 1000 iteraciones prefijadas y no alcanzamos el óptimo, mientras que en otras situaciones con pocas iteraciones somos capaces de alcanzar el óptimo. Incluso con una función tan sencilla como esta el algoritmo muestra comportamientos inadecuados.</p>
+</section>
+<section id="descenso-del-gradiente-estocástico" class="level3" data-number="2.6.2">
+<h3 data-number="2.6.2" class="anchored" data-anchor-id="descenso-del-gradiente-estocástico"><span class="header-section-number">2.6.2</span> Descenso del gradiente estocástico</h3>
+<p>Al final de la sección anterior, vimos que utilizar el descenso de gradiente podría no ser la mejor opción para encontrar el óptimo de la función. Para abordar el problema se plantea el algoritmo del descenso de gradiente estocástico. El término estocástico proviene de la aleatoriedad en la que se basa el algoritmo. En el descenso del gradiente estocástico, en lugar de tomar todo el conjunto de datos para cada iteración, seleccionamos aleatoriamente los lotes de datos. Esto significa que sólo tomamos unas pocas muestras del conjunto de datos.</p>
+<p>El procedimiento consiste en seleccionar primero los parámetros iniciales y la tasa de aprendizaje para, a continuación, barajar aleatoriamente los datos en cada iteración para alcanzar un mínimo aproximado.</p>
+<p>Dado que no utilizamos todo el conjunto de datos, el camino que recorre el algoritmo está lleno de ruido en comparación con el algoritmo del descenso del gradiente. Por lo tanto, SGD utiliza un mayor número de iteraciones para alcanzar los mínimos locales. Al aumentar el número de iteraciones, aumenta el tiempo total de cálculo. Pero incluso después de aumentar el número de iteraciones, el coste computacional sigue siendo menor que el del optimizador de descenso del gradiente.</p>
+<p>A continuación vemos la estructura del algoritmo:</p>
+<ol type="1">
+<li><p>Fijamos unos pesos inciales <span class="math inline">\(W\)</span> y evaluamos la función de pérdida correspondiente.</p></li>
+<li><p>Hasta alcanzar convergencia, es decir, hasta alcanzar un mínimo local, procedemos de la siguiente forma fijando una tasa de aprendizaje <span class="math inline">\(\eta\)</span>:</p></li>
+</ol>
+<ul>
+<li>Elegimos aleatoriamente un punto <span class="math inline">\(i\)</span> de la muestra.</li>
+<li>Calcular el gradiente sobre dicho punto <span class="math inline">\(\frac{\partial J_i(W)}{\partial W_t}\)</span></li>
+<li>Actualizar los pesos</li>
+</ul>
+<p><span class="math display">\[ W_{t+1} = W_{t} - \eta  \frac{\partial J_i(W)}{\partial W_t}\]</span></p>
+<ol start="3" type="1">
+<li>Una vez alcanzada la convergencia devolvemos los pesos de la última iteración y el valor de la función de pérdida correspondiente.</li>
+</ol>
+</section>
+<section id="descenso-del-gradiente-por-mini-lotes" class="level3" data-number="2.6.3">
+<h3 data-number="2.6.3" class="anchored" data-anchor-id="descenso-del-gradiente-por-mini-lotes"><span class="header-section-number">2.6.3</span> Descenso del gradiente por mini lotes</h3>
+<p>En esta variante del algortimo de descenso del gradiente, en lugar de tomar todos los datos de entrenamiento, sólo se utiliza un subconjunto del conjunto de datos para calcular la función de pérdida. Dado que utilizamos un lote de datos en lugar de todo el conjunto de datos, se necesitan menos iteraciones. Por este motivo, el algoritmo de descenso del gradiente por mini lotes es más rápido que los algoritmos de descenso del gradiente anteriores. Además es más eficiente y robusto que las variantes anteriores del descenso del gradiente. Como el algoritmo utiliza el procesamiento por lotes, no es necesario cargar todos los datos de entrenamiento en la memoria, lo que hace que el proceso sea más eficiente de implementar. Además, la función de coste del algoritmo de descenso del gradiente contiene más variabilidad que las de los algortimos anteriores pero es más suave que la del algoritmo de descenso del gradiente estocástico. Por todo ello, el descenso del gradiente por mini lotes es ideal y proporciona un buen equilibrio entre velocidad y precisión.</p>
+<p>Otra ventaja importante es que la estructura del algoritmo permite la paralelización de cálculos, lo que permite acelerar todavía más el proceso de aprendizaje.</p>
+<p>A pesar de todo, el algoritmo de descenso del gradiente por mini lotes también tiene algunas desventajas. Necesita un hiperparámetro que es el “tamaño de mini lotes”, que debe ajustarse para lograr la precisión requerida. Aunque el tamaño de lote de 32 se considera adecuado para casi todos los casos. Además, en algunos casos, resulta en una precisión final pobre. Por ello, es necesario buscar también otras alternativas.</p>
+<p>A continuación vemos la estructura del algoritmo:</p>
+<ol type="1">
+<li><p>Fijamos unos pesos inciales <span class="math inline">\(W\)</span> y evaluamos la función de pérdida correspondiente.</p></li>
+<li><p>Hasta alcanzar convergencia, es decir, hasta alcanzar un mínimo local, procedemos de la siguiente forma fijando una tasa de aprendizaje <span class="math inline">\(\eta\)</span>:</p></li>
+</ol>
+<ul>
+<li>Elegimos aleatoriamente un lote de tamaño <span class="math inline">\(B\)</span> de muestras.</li>
+<li>Calcular el gradiente como</li>
+</ul>
+<p><span class="math display">\[\frac{\partial J_i(W)}{\partial W_t} = \frac{1}{B} \sum_{k=1}^B \frac{\partial J_k(W)}{\partial W_t}\]</span></p>
+<ul>
+<li>Actualizar los pesos</li>
+</ul>
+<p><span class="math display">\[ W_{t+1} = W_{t} - \eta  \frac{\partial J_i(W)}{\partial W_t}\]</span></p>
+<ol start="3" type="1">
+<li>Una vez alcanzada la convergencia devolvemos los pesos de la última iteración y el valor de la función de pérdida corrrespondiente.</li>
+</ol>
+</section>
+<section id="descenso-del-gradiente-adaptativo-adagrad" class="level3" data-number="2.6.4">
+<h3 data-number="2.6.4" class="anchored" data-anchor-id="descenso-del-gradiente-adaptativo-adagrad"><span class="header-section-number">2.6.4</span> Descenso del gradiente adaptativo (Adagrad)</h3>
+<p>El algoritmo de descenso del gradiente adaptativo es ligeramente diferente de otros algoritmos de descenso del gradiente. Esto se debe a que utiliza diferentes tasas de aprendizaje para cada iteración. El cambio en la tasa de aprendizaje depende de la diferencia en los parámetros durante el entrenamiento. Cuanto más cambian los parámetros, menos cambia la tasa de aprendizaje. Esta modificación es muy beneficiosa porque los conjuntos de datos del mundo real contienen características tanto dispersas como densas. Por lo tanto, es injusto tener el mismo valor de tasa de aprendizaje para todas las características.</p>
+<p>El algoritmo Adagrad utiliza la siguiente fórmula para actualizar los pesos, donde <span class="math inline">\(\eta_t\)</span> denota las diferentes tasas de aprendizaje en cada iteración, <span class="math inline">\(\eta\)</span> es la tasa de aprendizaje inicial que actúa como una constante, y <span class="math inline">\(\epsilon\)</span> es un valor positivo pequeño para evitar la división por 0:</p>
+<p><span class="math display">\[W_t = W_{t-1} - \alpha_t \frac{\partial J(W)}{\partial W_{t-1}}\]</span></p>
+<p><span class="math display">\[\alpha_t = \frac{\eta}{\sqrt{\eta_t + \epsilon}}\]</span></p>
+<p>El algoritmo completo queda de la forma siguiente:</p>
+<ol type="1">
+<li><p>Fijamos unos pesos inciales <span class="math inline">\(W\)</span>, una tasa de aprendizaje <span class="math inline">\(\eta\)</span>, un valor de <span class="math inline">\(\epsilon\)</span> y evaluamos la función de pérdida correspondiente.</p></li>
+<li><p>Hasta alcanzar convergencia, es decir, hasta alcanzar un mínimo local, procedemos de la siguiente forma en cada iteración <span class="math inline">\(t\)</span>:</p></li>
+</ol>
+<ul>
+<li>Calcular el gradiente</li>
+</ul>
+<p><span class="math display">\[\frac{\partial J(W)}{\partial W_{t}}\]</span></p>
+<ul>
+<li>Actualizar las tasas de aprendizaje <span class="math inline">\(\alpha_t\)</span></li>
+</ul>
+<p><span class="math display">\[\alpha_{t+1} = \frac{\eta}{\sqrt{\eta_t + \epsilon}}\]</span></p>
+<ul>
+<li>Actualizar los pesos</li>
+</ul>
+<p><span class="math display">\[ W_{t+1} = W_{t} - \alpha_t \frac{\partial J(W)}{\partial W_{t}}\]</span></p>
+<ol start="3" type="1">
+<li>Una vez alcanzada la convergencia devolvemos los pesos de la última iteración y el valor de la función de pérdida corrrespondiente.</li>
+</ol>
+<p>La ventaja de utilizar Adagrad es que elimina la necesidad de modificar manualmente la tasa de aprendizaje. Es más fiable que los algoritmos de descenso gradiente y sus variantes, y alcanza la convergencia a mayor velocidad.</p>
+<p>Un inconveniente del optimizador AdaGrad es que disminuye la tasa de aprendizaje de forma agresiva y monotónica. Puede llegar un momento en que la tasa de aprendizaje sea extremadamente pequeña. Esto se debe a que los gradientes al cuadrado en el denominador siguen acumulándose y, por tanto, la parte del denominador sigue aumentando. Debido a las pequeñas tasas de aprendizaje, el modelo acaba siendo incapaz de adquirir más conocimientos y, por tanto, la precisión del modelo se ve comprometida.</p>
+</section>
+<section id="rms-prop" class="level3" data-number="2.6.5">
+<h3 data-number="2.6.5" class="anchored" data-anchor-id="rms-prop"><span class="header-section-number">2.6.5</span> RMS Prop</h3>
+<p>RMS Prop es uno de los optimizadores más populares entre los entusiastas del aprendizaje profundo. Esto se debe quizás a que no ha sido publicado pero sigue siendo muy conocido en la comunidad. RMS Prop es idealmente una extensión del trabajo RPPROP. Resuelve el problema de los gradientes variables. El problema de los gradientes es que algunos son pequeños mientras que otros pueden ser enormes. Por lo tanto, definir una única tasa de aprendizaje puede no ser la mejor idea. RPPROP utiliza el signo del gradiente, adaptando el tamaño del paso individualmente para cada peso. En este algoritmo, primero se comparan los signos de los dos gradientes. Si tienen el mismo signo, vamos en la dirección correcta, aumentando el tamaño del paso en una pequeña fracción. Si tienen signos opuestos, debemos disminuir el tamaño del paso. Entonces limitamos el tamaño del paso y ya podemos pasar a la actualización del peso.</p>
+<p>El problema con RPPROP es que no funciona bien con grandes conjuntos de datos y cuando queremos realizar actualizaciones en mini lotes. Por lo tanto, lograr la robustez de RPPROP y la eficiencia de los mini-lotes simultáneamente fue la principal motivación detrás del surgimiento de RMS Prop. RMS Prop es un avance en el optimizador AdaGrad, ya que reduce la tasa de aprendizaje monotónicamente decreciente.</p>
+<p>El algoritmo se centra principalmente en acelerar el proceso de optimización disminuyendo el número de evaluaciones de la función para alcanzar el mínimo local. El algoritmo mantiene la media móvil de los gradientes al cuadrado para cada peso y divide el gradiente por la raíz cuadrada del cuadrado medio. La actualización de los pesos se obtiene como:</p>
+<p><span class="math display">\[W_{t+1} = W_{t} - \eta_t \frac{\partial J(W)}{\partial W_t}\]</span></p>
+<p>con</p>
+<p><span class="math display">\[\eta_t = \frac{\eta}{\sqrt{v_{t+1}}+\epsilon}\]</span></p>
+<p><span class="math display">\[v_{t+1} = \alpha v_t + \left(1-\alpha \left[\frac{\partial J(W)}{\partial W_t}\right]^2\right)\]</span></p>
+<p>donde <span class="math inline">\(\eta\)</span> es la taza global de aprendizaje, <span class="math inline">\(\epsilon\)</span> es un valor infinitesimal (del orden de <span class="math inline">\(10^{-7}\)</span> o <span class="math inline">\(10^{-8}\)</span>) para evitar errores de división por cero, y <span class="math inline">\(v_{t+1}\)</span> es la estimación del segundo momento.</p>
+<p>En términos más sencillos, si existe un parámetro debido al cual la función de coste oscila mucho, queremos penalizar la actualización de este parámetro. Supongamos que ha construido un modelo para clasificar una variedad de peces. El modelo se basa principalmente en el factor “color” para diferenciar los peces. Debido a esto, comete muchos errores. Lo que hace RMS Prop es penalizar el parámetro “color” para que pueda basarse también en otras características. Esto evita que el algoritmo se adapte demasiado rápido a los cambios en el parámetro “color” en comparación con otros parámetros. Este algoritmo tiene varias ventajas en comparación con las versiones anteriores de los algoritmos de descenso del gradiente. El algoritmo converge rápidamente y requiere menos ajustes que los algoritmos de descenso del gradiente y sus variantes.</p>
+<p>El problema con RMS Prop es que la tasa de aprendizaje tiene que definirse manualmente, y el valor sugerido no funciona para todas las aplicaciones.</p>
+</section>
+<section id="adadelta" class="level3" data-number="2.6.6">
+<h3 data-number="2.6.6" class="anchored" data-anchor-id="adadelta"><span class="header-section-number">2.6.6</span> AdaDelta</h3>
+<p>AdaDelta puede considerarse una versión más robusta del optimizador AdaGrad. Se basa en el aprendizaje adaptativo y está diseñado para hacer frente a importantes inconvenientes del optimizador AdaGrad y RMS Prop. El principal problema de los dos optimizadores anteriores es que la tasa de aprendizaje inicial debe definirse manualmente. Otro problema es la tasa de aprendizaje decreciente, que llega a ser infinitesimalmente pequeña en algún momento. Debido a esto, un cierto número de iteraciones más tarde, el modelo ya no puede aprender nuevos conocimientos.</p>
+</section>
+<section id="adam" class="level3" data-number="2.6.7">
+<h3 data-number="2.6.7" class="anchored" data-anchor-id="adam"><span class="header-section-number">2.6.7</span> Adam</h3>
+<p>El nombre Adam procede de <em>adaptive moment estimation</em> (estimación adaptativa del momento). Este algoritmo de optimización es una extensión del descenso del gradiente estocástico para actualizar los pesos de la red durante el entrenamiento. A diferencia de mantener una única tasa de aprendizaje durante el entrenamiento con el descenso del gradiente estocástico (SGD), el optimizador Adam actualiza la tasa de aprendizaje para cada peso de red individualmente. Los creadores del algoritmo de optimización Adam conocen las ventajas de los algoritmos AdaGrad y RMSProp, que también son extensiones de los algoritmos de descenso del gradiente estocástico. De ahí que los optimizadores Adam hereden las características de los algoritmos Adagrad y RMSProp. En Adam, en lugar de adaptar las tasas de aprendizaje basándose en el primer momento (media) como en RMS Prop, también utiliza el segundo momento de los gradientes. Nos referimos a la varianza no centrada por el segundo momento de los gradientes (no restamos la media).</p>
+<p>El optimizador Adam tiene varias ventajas, por lo que se utiliza ampliamente. Se ha adaptado como punto de referencia para trabajos de aprendizaje profundo y se recomienda como algoritmo de optimización por defecto. Además, el algoritmo es fácil de implementar, tiene un tiempo de ejecución más rápido, bajos requisitos de memoria y requiere menos ajustes que cualquier otro algoritmo de optimización.</p>
+<p>La actualización de los pesos viene dada por la expresión:</p>
+<p><span class="math display">\[w_{t+1} = w_t - \eta \frac{m_t}{\sqrt{v_{t+1} + \epsilon}}\]</span></p>
+<p>donde</p>
+<p><span class="math display">\[m_{t+1}  = \beta m_t + (1-\beta)\frac{\partial J(W)}{\partial W_t}\]</span></p>
+<p><span class="math display">\[v_{t+1} = \alpha v_t + (1-\alpha)\left[\frac{\partial J(W)}{\partial W_t}\right]^2\]</span></p>
+<p>con <span class="math inline">\(v_{t+1}\)</span> es la estimación del segundo momento, y <span class="math inline">\(m_{t+1}\)</span> es el promedio exponencial del momento.</p>
+<div class="callout-note callout callout-style-simple">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container" title="algoritmos">
+<p><strong>Para complemetar los aspectos teóricos de los diferentes algortimos de optimización y otros que no hemos presentado en este apartado se puede consultar el libro gratuito que aparece en este enlace http://d2l.ai/chapter_optimization/index.html..</strong></p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="hiperparámetros-de-la-red" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="hiperparámetros-de-la-red"><span class="header-section-number">2.7</span> Hiperparámetros de la red</h2>
+<p>La gran “flexibilidad” que tienen las redes neuronales es un arma de doble filo. Por un lado, son capaces de generar modelos que aprenden relaciones muy complejas, sin embargo, sufren fácilmente el problema de sobreajuste (<em>overfitting</em>) lo que los incapacita al tratar de predecir nuevas observaciones. La forma de minimizar este problema y conseguir modelos útiles pasa por configurar de forma adecuada sus hiperparámetros.</p>
+<section id="número-y-tamaño-de-capas" class="level3" data-number="2.7.1">
+<h3 data-number="2.7.1" class="anchored" data-anchor-id="número-y-tamaño-de-capas"><span class="header-section-number">2.7.1</span> Número y tamaño de capas</h3>
+<p>La arquitectura de una red, el número de capas y el número de neuronas que forman parte de cada capa, determinan en gran medida la complejidad del modelo y con ello su potencial capacidad de aprendizaje.</p>
+<p>Las capas de entrada y salida son sencillas de establecer. La capa de entrada tiene tantas neuronas como predictores y la capa de salida tiene una neurona en problemas de regresión y tantas como clases en problemas de clasificación. En la mayoría de implementaciones, estos valores se establecen automáticamente en función del conjunto de entrenamiento. El usuario suele especificar únicamente el número de capas intermedias (ocultas) y el tamaño de las mismas.</p>
+<p>Cuantas más neuronas y capas, mayor la complejidad de las relaciones que puede aprender el modelo. Sin embargo, dado que en cada neurona está conectada por pesos al resto de neuronas de las capas adyacentes, el número de parámetros a aprender aumenta y con ello el tiempo de entrenamiento.</p>
+</section>
+<section id="ratio-de-aprendizaje" class="level3" data-number="2.7.2">
+<h3 data-number="2.7.2" class="anchored" data-anchor-id="ratio-de-aprendizaje"><span class="header-section-number">2.7.2</span> Ratio de aprendizaje</h3>
+<p>El <em>learning rate</em> o ratio de aprendizaje establece cómo de rápido pueden cambiar los parámetros de un modelo a medida que se optimiza (aprende). Este hiperparámetro es uno de los más complicados de establecer, ya que depende mucho de los datos e interacciona con el resto de hiperparámetros. Si el <em>learning rate</em> es muy grande, el proceso de optimización puede ir saltando de una región a otra sin que el modelo sea capaz de aprender. Si por el contrario, el <em>learning rate</em> es muy pequeño, el proceso de entrenamiento puede tardar demasiado y no llegar a completarse. Algunas de las recomendaciones heurísticas basadas en prueba y error son:</p>
+<ul>
+<li><p>Utilizar un <em>learning rate</em> lo más pequeño posible siempre y cuando el tiempo de entrenamiento no supere las limitaciones temporales disponibles.</p></li>
+<li><p>No utilizar un valor constante de <em>learning rate</em> durante todo el proceso de entrenamiento. Por lo general, utilizar valores mayores al inicio y pequeños al final.</p></li>
+</ul>
+<p>De hecho, el algoritmo de optimización establecido para el proceso de entrenamiento ya implementa las diferentes posibilidades de ratio de aprendizaje.</p>
+</section>
+</section>
+<section id="regularización" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="regularización"><span class="header-section-number">2.8</span> Regularización</h2>
+<p>Las redes neuronales pueden aprender a representar relaciones complejas entre las entradas y salidas de la red. Este poder de representación las ayuda a rendir mejor que los algoritmos tradicionales de aprendizaje automático en tareas de visión por ordenador y procesamiento del lenguaje natural. Sin embargo, uno de los retos asociados al entrenamiento de redes neuronales es el sobreajuste.</p>
+<p>Cuando una red neuronal se adapta en exceso al conjunto de datos de entrenamiento, aprende una representación excesivamente compleja que modela el conjunto de datos de entrenamiento demasiado bien. Como resultado, su rendimiento es excepcional en el conjunto de datos de entrenamiento, pero su generalización a los datos de prueba es deficiente.</p>
+<p>Las técnicas de regularización ayudan a mejorar la capacidad de generalización de una red neuronal reduciendo el sobreajuste. Para ello, minimizan la complejidad innecesaria y exponen la red a datos más diversos. A continuación hacemos un repaso de las técnicas de regularización más habituales en el periodo de entrenamiento de la red.</p>
+<section id="parada-temprana-early-stopping" class="level3" data-number="2.8.1">
+<h3 data-number="2.8.1" class="anchored" data-anchor-id="parada-temprana-early-stopping"><span class="header-section-number">2.8.1</span> Parada temprana (early stopping)</h3>
+<p>La parada temprana es una de las técnicas de regularización más sencillas e intuitivas. Consiste en detener el entrenamiento de la red neuronal en una época anterior, de ahí su nombre.</p>
+<p>Pero, ¿cómo y cuándo se detiene? A medida que se entrena la red neuronal durante muchas épocas, el error de entrenamiento disminuye.</p>
+<p>Si el error de entrenamiento es demasiado bajo y se acerca arbitrariamente a cero, la red se ajustará en exceso al conjunto de datos de entrenamiento. Una red neuronal de este tipo es un modelo de alta varianza que funciona mal en datos de prueba que nunca ha visto antes a pesar de su rendimiento casi perfecto en las muestras de entrenamiento.</p>
+<p>Por lo tanto, heurísticamente, si podemos evitar que la pérdida de entrenamiento sea arbitrariamente baja, es menos probable que el modelo se ajuste en exceso al conjunto de datos de entrenamiento y generalizará mejor.</p>
+<p>¿Cómo lo hacemos en la práctica?</p>
+<section id="métricas-de-validación" class="level4" data-number="2.8.1.1">
+<h4 data-number="2.8.1.1" class="anchored" data-anchor-id="métricas-de-validación"><span class="header-section-number">2.8.1.1</span> Métricas de validación</h4>
+<p>Un método sencillo consiste en controlar métricas como el error de validación y la precisión de validación a medida que avanza el entrenamiento de la red neuronal, y utilizarlas para decidir cuándo parar.</p>
+<p>Si vemos que el error de validación no disminuye significativamente o aumenta en un intervalo de épocas, digamos p épocas, podemos detener el entrenamiento. También podemos reducir la tasa de aprendizaje y entrenar unas cuantas épocas más antes de parar. En la imagen siguiente (extraída de https://www.pinecone.io/learn/regularization-in-neural-networks/) podemos ver el cambio en las métricas y el punto de parada temprana.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/Deeplearning/main/images/earlystop01.png" width="650" height="300" class="figure-img"></p>
+</figure>
+</div>
+<p>De forma equivalente, se puede pensar en términos de la precisión de la red neuronal en los conjuntos de datos de entrenamiento y validación. Detenerse antes de tiempo cuando el error de validación empieza a aumentar (o deja de disminuir) equivale a detenerse cuando la precisión de validación empieza a disminuir.</p>
+<p><img src="https://raw.githubusercontent.com/ia4legos/Deeplearning/main/images/earlystop02.png" data-fig-align="center" width="650" height="300"> #### Monitorizando el cambio en el vector de pesos</p>
+<p>Otra forma de saber cuándo parar es controlar el cambio en los pesos de la red. Sean <span class="math inline">\(w^{(t)}\)</span> y <span class="math inline">\(w^{(t-k)}\)</span> los vectores de pesos en las épocas <span class="math inline">\(t\)</span> y <span class="math inline">\(t-k\)</span> respectivamente. Podemos calcular la norma l2 para la diferencia de los vectores anteriores y detener el entrenamiento cuando esta sea suficientemente pequeña, digamos una cantidad <span class="math inline">\(epsilon\)</span>, es decir:</p>
+<p><span class="math display">\[||w^{(t)} - w^{(t-k)}|| &lt; \epsilon\]</span></p>
+<p>Pero este enfoque de utilizar la norma del vector diferencia no es muy fiable. ¿Por qué? Algunos pesos pueden haber cambiado mucho en las últimas k épocas, mientras que otros pueden haber sufrido cambios insignificantes. Por lo tanto, la norma del vector diferencia resultante puede ser pequeña a pesar del cambio drástico en ciertos componentes del vector peso.</p>
+<p>Un enfoque mejor es calcular el cambio en componentes individuales del vector de pesos. Si el cambio máximo (en todos los componentes) es inferior a <span class="math inline">\(\epsilon\)</span> podemos concluir que los pesos no están cambiando significativamente, por lo que podemos detener el entrenamiento de la red neuronal. Matemáticamente:</p>
+<p><span class="math display">\[\underset{i}{max} |w_i^{(t)} - w_i^{(t-k)}| &lt; \epsilon\]</span></p>
+</section>
+</section>
+<section id="aumento-de-datos-data-augmentation" class="level3" data-number="2.8.2">
+<h3 data-number="2.8.2" class="anchored" data-anchor-id="aumento-de-datos-data-augmentation"><span class="header-section-number">2.8.2</span> Aumento de datos (data augmentation)</h3>
+<p>El aumento de datos es una técnica de regularización que ayuda a una red neuronal a generalizar mejor exponiéndola a un conjunto más diverso de ejemplos de entrenamiento. Como las redes neuronales profundas requieren un gran conjunto de datos de entrenamiento, el aumento de datos también es útil cuando no tenemos datos suficientes para entrenar una red neuronal.</p>
+<p>Tomemos el ejemplo del aumento de datos de imágenes. Supongamos que tenemos un conjunto de datos con N ejemplos de entrenamiento en C clases. Podemos aplicar ciertas transformaciones a estas N imágenes para construir un conjunto de datos mayor.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/Deeplearning/main/images/dataaugmentation01.png" width="650" height="200" class="figure-img"></p>
+</figure>
+</div>
+<p>¿Qué es una transformación válida? Es cualquier operación que no altere la etiqueta original de los datos. Por ejemplo, un panda es un panda, esté mirando a la derecha o a la izquierda, situado cerca del centro de la imagen o en una de las esquinas.</p>
+<p>En resumen: podemos aplicar cualquier transformación invariante de la etiqueta para realizar el aumento de datos. He aquí algunos ejemplos:</p>
+<ul>
+<li>Transformaciones del espacio de color, como el cambio de las intensidades de los píxeles.</li>
+<li>Rotación y reflejo.</li>
+<li>Inyección de ruido, distorsión y desenfoque.</li>
+</ul>
+<p>Además de las transformaciones básicas del espacio de color y de la imagen geométrica, existen nuevas técnicas de aumento de la imagen. Mixup es una técnica de regularización que utiliza una combinación convexa de entradas existentes para aumentar el conjunto de datos.</p>
+<p>Supongamos que <span class="math inline">\(x_i\)</span> y <span class="math inline">\(x_j\)</span> son muestras de entrada pertenecientes a las clases <span class="math inline">\(i\)</span> y <span class="math inline">\(j\)</span>, respectivamente; <span class="math inline">\(y_i\)</span> y <span class="math inline">\(y_j\)</span> son los vectores unidireccionales correspondientes a las etiquetas de clase <span class="math inline">\(i\)</span> y <span class="math inline">\(j\)</span>, respectivamente. Se puede formar forma una nueva imagen tomando una combinación convexa de <span class="math inline">\(x_i\)</span> y <span class="math inline">\(x_j\)</span>:</p>
+<span class="math display">\[\begin{eqnarray}
+\tilde{x} = &amp;\lambda x_i +(1-\lambda)x_j\\
+\tilde{y} = &amp;\lambda y_i +(1-\lambda)y_j\\
+\end{eqnarray}\]</span>
+<p>con <span class="math inline">\(\lambda \in [0,1]\)</span>.</p>
+<p>Otros métodos de aumento de datos son Cutout, CutMix y AugMix. Cutout implica la eliminación aleatoria de partes de una imagen de entrada durante el entrenamiento. CutMix sustituye las secciones eliminadas por partes de otra imagen. AugMix es una técnica de regularización que hace que una red neuronal sea robusta a los cambios de distribución. A diferencia de Mixup, que utiliza imágenes de dos clases diferentes, AugMix realiza una serie de transformaciones en la misma imagen y, a continuación, utiliza una composición de estas imágenes transformadas para obtener la imagen resultante.</p>
+</section>
+<section id="penalización-de-pesos" class="level3" data-number="2.8.3">
+<h3 data-number="2.8.3" class="anchored" data-anchor-id="penalización-de-pesos"><span class="header-section-number">2.8.3</span> Penalización de pesos</h3>
+<p>En este caso actuamos como en otros muchos algoritmos de aprendiaje automático donde se añaden restricciones o penalizaciones sobre los coeficientes del modelo utilizado. En este caso se trata de introducir penalizaciones sobre los pesos de la red neuronal.</p>
+<section id="regularización-l2" class="level4" data-number="2.8.3.1">
+<h4 data-number="2.8.3.1" class="anchored" data-anchor-id="regularización-l2"><span class="header-section-number">2.8.3.1</span> Regularización L2</h4>
+<p>La idea detrás de este tipo de regularización es reducir el valor de los parámetros para que sean pequeños. Esta técnica introduce un término adicional de penalización en la función de coste original, añadiendo a su valor la suma de los cuadrados de los parámetros, es decir, consideramos una nueva función de coste que viene dada por:</p>
+<p><span class="math display">\[J_2(W) = J(W) + \lambda \sum w_i^2\]</span></p>
+<p>La mala noticia es que este nuevo término puede ser alto; tanto que la red minimizaría la función de coste haciendo los parámetros muy cercanos a 0, lo que no sería nada conveniente. Es por ello que multiplicaremos ese sumando por una constante (<span class="math inline">\(\lambda\)</span>) pequeña, cuyo valor escogeremos de forma arbitraria (0.1, 0.01, …). La actualización de pesos en el proceso de entrenamiento de la red viene dado entonces (para SGD) por:</p>
+<p><span class="math display">\[ W_{t+1} = W_{t} - \eta  \left[\frac{\partial J(W)}{\partial W_t} +2\lambda W_t\right]\]</span></p>
+<p>El parámetro <span class="math inline">\(\lambda\)</span> controla la regularización, de forma que si deseamos más podemos aumentar el valor de <span class="math inline">\(\lambda\)</span>.</p>
+</section>
+<section id="regularización-l1" class="level4" data-number="2.8.3.2">
+<h4 data-number="2.8.3.2" class="anchored" data-anchor-id="regularización-l1"><span class="header-section-number">2.8.3.2</span> Regularización L1</h4>
+<p>Existe otra técnica muy parecida a la anterior denominada regularización L1 donde los parámetros en el sumatorio del término de penalización no se elevan al cuadrado, sino que se usa su valor absoluto:</p>
+<p><span class="math display">\[J_1(W) = J(W) + \lambda \sum |w_i|\]</span></p>
+<p>de forma que la actualización de pesos viene dada por:</p>
+<p><span class="math display">\[W_{t+1} = W_{t} - \eta  \left[\frac{\partial J(W)}{\partial W_t} +\lambda sgn(W_t)\right]\]</span></p>
+<p>donde <span class="math inline">\(sgn()\)</span> es la función signo.</p>
+<p>Esta variante empuja el valor de los parámetros hacia valores más pequeños, haciendo incluso que la influencia de algunas variables de entrada sea nula en la salida de la red, lo que supone una selección de variables automática. El resultado es una una mejor generalización, pero sólo hasta cierto punto (la elección del valor de λ cobra más importancia en este caso).</p>
+</section>
+<section id="decaimiento-de-pesos-weight-decay" class="level4" data-number="2.8.3.3">
+<h4 data-number="2.8.3.3" class="anchored" data-anchor-id="decaimiento-de-pesos-weight-decay"><span class="header-section-number">2.8.3.3</span> Decaimiento de pesos (weight decay)</h4>
+<p>Esta técnica podríamos decir que es idéntica a la regularización L2, pero aplicada en otro punto. En lugar de introducir la penalización como un sumando en la función de coste, la añadimos como un término extra en la fórmula de actualización de los pesos:</p>
+<p><span class="math display">\[W_{t+1} = W_{t} - \eta  \left[\frac{\partial J(W)}{\partial W_t} +\lambda W_t\right]\]</span></p>
+<p>Como vemos esta actualización es prácticamente igual a la actualización de los pesos en la regularización L2, salvo que en este caso no aparece un 2 multiplicando en el término añadido.</p>
+</section>
+</section>
+<section id="drop-out" class="level3" data-number="2.8.4">
+<h3 data-number="2.8.4" class="anchored" data-anchor-id="drop-out"><span class="header-section-number">2.8.4</span> Drop out</h3>
+<p><em>Drop out</em> es uno de los tipos de técnicas de regularización más interesantes. También produce muy buenos resultados y, en consecuencia, es la técnica de regularización más utilizada en el campo del aprendizaje profundo.</p>
+<p>Para entender cómo funciona el abandono, conviene repasar el concepto de modelos de conjunto.</p>
+<p>En el aprendizaje automático tradicional, los modelos de conjunto ayudan a reducir el sobreajuste y a mejorar el rendimiento del modelo. Para un problema de clasificación simple, podemos adoptar uno de los siguientes enfoques:</p>
+<ul>
+<li>Entrenar varios clasificadores para resolver la misma tarea.</li>
+<li>Entrenar diferentes instancias del mismo clasificador para diferentes subconjuntos del conjunto de datos de entrenamiento.</li>
+</ul>
+<p>Para un modelo de clasificación simple, una técnica de conjunto como el <em>bagging</em> implica entrenar el mismo clasificador en diferentes subconjuntos de datos de entrenamiento, muestreados con reemplazo. Supongamos que hay N instancias. En el momento de la prueba, cada clasificador pasa por la muestra de prueba y se utiliza un conjunto de sus predicciones.</p>
+<p>En general, el rendimiento de un conjunto es al menos tan bueno como el de los modelos individuales; no puede ser peor que el de los modelos individuales.</p>
+<p>Si trasladáramos esta idea a las redes neuronales, podríamos intentar hacer lo siguiente (identificando al mismo tiempo las limitaciones de este enfoque):</p>
+<ul>
+<li>Entrenar varias redes neuronales con diferentes arquitecturas. Entrenar una red neuronal en diferentes subconjuntos de los datos de entrenamiento. Sin embargo, entrenar múltiples redes neuronales es prohibitivamente caro.</li>
+<li>Incluso si entrenamos N redes neuronales diferentes, ejecutar el punto de datos a través de cada uno de los N modelos -en el momento de la prueba- introduce una sobrecarga computacional sustancial.</li>
+</ul>
+<p>Para entender el <em>drop out</em>, digamos que la estructura de nuestra red neuronal es parecida a la que se muestra a continuación (red densa donde todas las neuronas están interconectadas):</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/Deeplearning/main/images/dropout01.png" width="300" height="200" class="figure-img"></p>
+</figure>
+</div>
+<p>¿Qué hace <em>drop out</em>? En cada iteración, selecciona aleatoriamente algunos nodos y los elimina junto con todas sus conexiones entrantes y salientes, como se muestra a continuación</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/Deeplearning/main/images/dropout02.png" width="275" height="200" class="figure-img"></p>
+</figure>
+</div>
+<p>Así, cada iteración tiene un conjunto diferente de nodos, lo que da lugar a un conjunto diferente de resultados. También puede considerarse una técnica de conjunto en el aprendizaje automático. Los modelos de conjunto suelen funcionar mejor que un modelo único, ya que capturan más aleatoriedad. Del mismo modo, el abandono también funciona mejor que un modelo de red neuronal normal.</p>
+<p>Con un abandono de 0,5, hay un 50% de posibilidades de que cada neurona participe en el entrenamiento dentro de cada lote de entrenamiento. El resultado es una arquitectura de red ligeramente diferente para cada lote. Equivale a entrenar redes neuronales diferentes en subconjuntos diferentes de los datos de entrenamiento.</p>
+<p>Esta probabilidad de elegir cuántos nodos deben abandonarse es el hiperparámetro de la función de abandono. Como se ve en la imagen anterior, el <em>drop out</em> puede aplicarse tanto a las capas ocultas como a las capas de entrada.</p>
+<p>La matriz de pesos se inicializa una vez al principio del entrenamiento. En general, para el lote k-ésimo, la retropropagación se produce sólo a lo largo de los caminos de las neuronas presentes para ese lote. Esto significa que sólo se actualizan los pesos correspondientes a las neuronas que están presentes.</p>
+<p>En el momento de la prueba, todas las neuronas están presentes en la red. Entonces, ¿cómo tenemos en cuenta los abandonos durante el entrenamiento? Ponderamos la salida de cada neurona con la misma probabilidad p, proporcional a la fracción de tiempo que la neurona estuvo presente durante el entrenamiento.</p>
+</section>
+<section id="normalización-por-lotes" class="level3" data-number="2.8.5">
+<h3 data-number="2.8.5" class="anchored" data-anchor-id="normalización-por-lotes"><span class="header-section-number">2.8.5</span> Normalización por lotes</h3>
+<p>La normalización en lotes consiste básicamente en añadir un paso extra, habitualmente entre las neuronas y la función de activación, con la idea de normalizar las activaciones de salida. Lo ideal es que la normalización se hiciera usando la media y la varianza de todo el conjunto de entrenamiento, pero si estamos aplicando el descenso del gradiente estocástico para entrenar la red, se usará la media y la varianza de cada mini-lote de entrada.</p>
+<p>Nota: cada salida de cada neurona se normalizará de forma independiente, lo que quiere decir que en cada iteración se calculará la media y la varianza de cada salida para el mini-lote en curso.</p>
+<p>A continuación de la normalización se añaden 2 parámetros: un bias como sumando, y otra constante similar a un bias pero que aparece multiplicando cada activación. Esto se hace para que el rango de la entrada escale fácilmente hasta el rango de salida, lo que ayudará mucho a nuestra red a la hora de ajustar a los datos de entrada, y reducirá las oscilaciones de la función de coste. Como consecuencia de esto podremos aumentar la tasa de aprendizaje (no hay tanto riesgo de acabar en un mínimo local) y la convergencia hacia el mínimo global se producirá más rápidamente.</p>
+<p>La normalización por lotes es más una técnica de ayuda al entrenamiento que una estrategia de regularización en sí misma. Esto último se logra realmente aplicando algo adicional conocido como <em>momentum</em>. La idea de este <em>momentum</em> es que cuando introduzcamos un nuevo mini-lote de entrada (N muestras procesadas en paralelo) no se usen una media y una desviación muy distintas a las de la iteración anterior, para lo que se tendrá en cuenta el histórico, y se elegirá una constante que pondere la importancia de los valores del mini-lote actual frente a los valores del anterior. Gracias a todo esto se conseguirá reducir el sobreajuste.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./10_IntroDL.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

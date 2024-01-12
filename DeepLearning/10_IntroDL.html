@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MachineLearning - 1&nbsp; Introducción</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./20_TrainDL.html" rel="next">
+<link href="./index.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MachineLearning</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Deep Learning</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_IntroDL.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_TrainDL.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Entrenamiento de la red neuronal</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">References</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#conceptos-fundamentales-del-dl" id="toc-conceptos-fundamentales-del-dl" class="nav-link active" data-scroll-target="#conceptos-fundamentales-del-dl"><span class="toc-section-number">1.1</span>  Conceptos fundamentales del DL</a>
+  <ul>
+  <li><a href="#neurona-artificial" id="toc-neurona-artificial" class="nav-link" data-scroll-target="#neurona-artificial"><span class="toc-section-number">1.1.1</span>  Neurona artificial</a></li>
+  <li><a href="#red-neuronal-artificial" id="toc-red-neuronal-artificial" class="nav-link" data-scroll-target="#red-neuronal-artificial"><span class="toc-section-number">1.1.2</span>  Red neuronal artificial</a></li>
+  </ul></li>
+  <li><a href="#tipos-redes-neuronales" id="toc-tipos-redes-neuronales" class="nav-link" data-scroll-target="#tipos-redes-neuronales"><span class="toc-section-number">1.2</span>  Tipos redes neuronales</a></li>
+  <li><a href="#terminología-básica" id="toc-terminología-básica" class="nav-link" data-scroll-target="#terminología-básica"><span class="toc-section-number">1.3</span>  Terminología básica</a></li>
+  <li><a href="#el-perceptrón-lineal" id="toc-el-perceptrón-lineal" class="nav-link" data-scroll-target="#el-perceptrón-lineal"><span class="toc-section-number">1.4</span>  El perceptrón lineal</a>
+  <ul>
+  <li><a href="#regla-conocida" id="toc-regla-conocida" class="nav-link" data-scroll-target="#regla-conocida"><span class="toc-section-number">1.4.1</span>  Regla conocida</a></li>
+  <li><a href="#regla-desconocida" id="toc-regla-desconocida" class="nav-link" data-scroll-target="#regla-desconocida"><span class="toc-section-number">1.4.2</span>  Regla desconocida</a>
+  <ul class="collapse">
+  <li><a href="#algoritmo-perceptrón" id="toc-algoritmo-perceptrón" class="nav-link" data-scroll-target="#algoritmo-perceptrón"><span class="toc-section-number">1.4.2.1</span>  Algoritmo perceptrón</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>En este tema se presentan los conceptos fundamentales de aprendizaje profundo o deep learning (DL), los tipos de rede neuronales así como su terminología, y finalizamos mostrando como usar el perceptrón lineal en un problema de clasificación binario.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Paquetes anteriores</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(knitr) <span class="co"># para formatos de tablas</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">theme_set</span>(<span class="fu">theme_sjplot2</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="conceptos-fundamentales-del-dl" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="conceptos-fundamentales-del-dl"><span class="header-section-number">1.1</span> Conceptos fundamentales del DL</h2>
+<p>Comenzamos con los conceptos matemáticos de neurona artificial y red neuronal.</p>
+<section id="neurona-artificial" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="neurona-artificial"><span class="header-section-number">1.1.1</span> Neurona artificial</h3>
+<p>Para poder modelizar de forma matemática el funcionamiento de una neurona es necesario conocer su funcionamiento biológico. De esta forma nos resultará posible construir la denominada neurona artificial que trata de replicar el funcionamiento de una neurona real. El comportamiento de una neurona se puede representar mediante este sencillo esquema:</p>
+<ol type="1">
+<li>La señal entra en el núcleo de la neurona vía las dendritas o través de otra neurona.</li>
+<li>La conexión sináptica de cada dendrita puede tener una fuerza (peso) diferente y ajustable.</li>
+<li>En el núcleo, la señal de todas las dendritas (<em>inputs</em>) se combina (generalmente de forma aditiva) en un único efecto.</li>
+<li>Si la señal combinada es más fuerte que un umbral dado, entonces la neurona se activa a lo largo del axón, en el caso contrario permanece quieta, es decir, en la realización más sencilla, la intensidad de la señal tiene dos niveles posibles: encendido o apagado, es decir, 1 o 0, en función del valor del umbral. No se necesitan valores intermedios.</li>
+<li>Si la neurona se ha activado, el terminal del axón se conecta a las dendritas de otras neuronas o produce un estímulo de salida.</li>
+</ol>
+<p>Traduciendo esto a una receta matemática, se asignan a las celdas de entrada los números <span class="math inline">\(x_1,...,x_n\)</span> (punto de datos de entrada). La fuerza de las conexiones sinápticas se controla con los pesos <span class="math inline">\(w_1,...,w_n\)</span>. A continuación, la señal combinada se define como la suma ponderada:</p>
+<p><span class="math display">\[s=\sum_{i=1}^n x_iw_i\]</span></p>
+<p>La señal se convierte en un argumento de la función de activación (<span class="math inline">\(f\)</span>), que, en el caso más sencillo, adopta la forma de la función de salto (<em>step</em>), es decir, cuando la señal combinada <span class="math inline">\(s\)</span> es mayor que el sesgo (umbral) <span class="math inline">\(b\)</span>, la señal que pasa por el axón es 1. En el caso contrario, el valor de la señal generada es 0 (no hay activación):</p>
+<p><span class="math display">\[f(s,b) =
+\begin{cases}
+1 \text{ para } s \geq b \\
+0 \text{ para } s &lt; b \\
+\end{cases}\]</span></p>
+<p>Esta representeción matemática es precisamente lo que necesitamos para imitar el prototipo biológico.</p>
+<p>Existe una conveniente convención notacional que se utiliza con frecuencia. En lugar de separar el sesgo de los datos de entrada, podemos tratarlos todos uniformemente. La condición de activación puede transformarse trivialmente como:</p>
+<p><span class="math display">\[s\geq b \rightarrow \sum_{i=1}^n x_iw_i - b \geq 0 \rightarrow \sum_{i=1}^n x_iw_i - x_0w_0 \geq 0 \rightarrow \sum_{i=0}^n x_iw_i \geq 0,\]</span></p>
+<p>donde <span class="math inline">\(x_0 = 1\)</span> y <span class="math inline">\(w_0 = -b\)</span>. En otras palabras, podemos tratar el sesgo como un peso en la arista conectada a una celda adicional con la entrada siempre fija a 1:</p>
+<p><span class="math display">\[f(s,b) =
+\begin{cases}
+1 \text{ para } s \geq 0 \\
+0 \text{ para } s &lt; 0 \\
+\end{cases}\]</span></p>
+<p>con <span class="math inline">\(s=\sum_{i=0}^n x_iw_i\)</span>. En la figura siguiente viene representado el comportamiento de la neurona artificial:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/Deeplearning/main/images/neurona_art.png" width="550" height="250" class="figure-img"></p>
+</figure>
+</div>
+<p>Las ponderaciones <span class="math inline">\(w_0,w_1,...,w_n\)</span> se denominan generalmente hiperparámetros. Determinan la funcionalidad de la neurona artificial y pueden modificarse durante el proceso de aprendizaje (entrenamiento, que analizaremos más adelante). Sin embargo, se mantienen fijos cuando se utiliza la neurona entrenada en una muestra de datos de entrada concreta.</p>
+<p>Una propiedad esencial de las neuronas artificiales es la no linealidad de la función de activación, lo que permite la construcción de estructuras neuronales muy complejas con gran capacidad de aprendizaje.</p>
+<p>A continuación vamos a ver como podemos implementar una neurona artificial utilizando una función muy simple, donde fijaremos los valores de <span class="math inline">\(x\)</span> y <span class="math inline">\(w\)</span>, así como el balor de <span class="math inline">\(b\)</span> para la activación de la neurona. En primer lugar definimos la función <em>salto</em> de activación de la neurona.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Función de activación</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>salto <span class="ot">=</span> <span class="cf">function</span>(s)</span>
+<span id="cb2-3"><a href="#cb2-3"></a>{</span>
+<span id="cb2-4"><a href="#cb2-4"></a>  activ <span class="ot">=</span> <span class="fu">ifelse</span>(s<span class="sc">&gt;</span><span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>)</span>
+<span id="cb2-5"><a href="#cb2-5"></a>  <span class="fu">return</span>(activ)</span>
+<span id="cb2-6"><a href="#cb2-6"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Representamos la función de activación para una secuencia de valores de s:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Valores a evalaur</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>sval <span class="ot">=</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>,<span class="at">length=</span><span class="dv">100</span>)</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co"># Función de activación</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>res <span class="ot">=</span> <span class="fu">salto</span>(sval)</span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="fu">plot</span>(sval,res,<span class="at">type=</span><span class="st">"l"</span>, <span class="at">xlab=</span><span class="st">"s"</span>,<span class="at">ylab=</span><span class="st">"Activación"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10_IntroDL_files/figure-html/introDL-002-1.png" class="img-fluid figure-img" width="576"></p>
+<p></p><figcaption class="figure-caption">Función de activación</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Definimos ahora nuestra neurona artificail teniendo en cuenta que dada la construcción matemática se debe fijar que <span class="math inline">\(x_0 = 0\)</span> y <span class="math inline">\(w_0 = -b\)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># Función de activación</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>neurona <span class="ot">=</span> <span class="cf">function</span>(x,w,b,<span class="at">f=</span>salto)</span>
+<span id="cb4-3"><a href="#cb4-3"></a>{</span>
+<span id="cb4-4"><a href="#cb4-4"></a>  <span class="co"># Neurona artificial</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>  </span>
+<span id="cb4-6"><a href="#cb4-6"></a>  <span class="co"># Entradas</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a>  <span class="co">#   x: array de entradas  [x1, x2,...,xn]</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a>  <span class="co">#   w: array de pesos [w1, w2,...,wn]</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a>  <span class="co">#   f: función de activación. Por defecto función de salto</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a></span>
+<span id="cb4-11"><a href="#cb4-11"></a>  <span class="co"># Return</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a>  <span class="co">#   signal = x.w</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a>  </span>
+<span id="cb4-14"><a href="#cb4-14"></a>  x <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>,x)</span>
+<span id="cb4-15"><a href="#cb4-15"></a>  w <span class="ot">=</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span><span class="sc">*</span>b,w)</span>
+<span id="cb4-16"><a href="#cb4-16"></a>  <span class="fu">return</span>(<span class="fu">f</span>(<span class="fu">sum</span>(x<span class="sc">*</span>w)))</span>
+<span id="cb4-17"><a href="#cb4-17"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos ver el funcionamiento de nuestra neurona con un ejemplo de muestra. la nerurona se activará cuando el resultado sea igual a 1, y no lo hará si el resultado es igual a cero.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>x <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="fl">1.5</span>,<span class="sc">-</span><span class="fl">0.7</span>)</span>
+<span id="cb5-2"><a href="#cb5-2"></a>w <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="fl">2.5</span>,<span class="sc">-</span><span class="fl">0.2</span>)</span>
+<span id="cb5-3"><a href="#cb5-3"></a>b <span class="ot">=</span> <span class="dv">4</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co"># Evaluamos</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="fu">neurona</span>(x, w, b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+</div>
+<p>En este caso la neurona se ha activado. Si cambiamos los valores de <span class="math inline">\(b\)</span> podríamos tener diferentes representaciones de la activación de la neurona.</p>
+</section>
+<section id="red-neuronal-artificial" class="level3" data-number="1.1.2">
+<h3 data-number="1.1.2" class="anchored" data-anchor-id="red-neuronal-artificial"><span class="header-section-number">1.1.2</span> Red neuronal artificial</h3>
+<p>Las redes neuronales artificiales (RNA) son modelos computacionales que procesan información imitando el funcionamiento de las neuronas biológicas. El objetivo de las RNA es ayudar a que los sistemas informáticos puedan funcionar tal como un cerebro humano en cuanto a aprendizaje y pensamiento. De esta idea parte el concepto de “inteligencia artificial”.</p>
+<p>La forma más común de representar la estructura de una red neuronal es mediante el uso de capas (<em>layers</em>), formadas a su vez por neuronas (unidades, <em>units</em> o <em>neurons</em>). Cada neurona, realiza una operación sencilla y está conectada a las neuronas de la capa anterior y de la capa siguiente mediante pesos, cuya función es regular la información que se propaga de una neurona a otra.</p>
+<p>Las redes neuronales artificiales están conformadas por 3 tipos de nodos o neuronas:</p>
+<ul>
+<li>Nodos de entrada: reciben la información desde el exterior de la red (<em>input</em>).</li>
+<li>Nodos de salida: envían la información hacia el exterior de la red (<em>output</em>).</li>
+<li>Nodos ocultos: transmiten la información entre los nodos de la red. Por lo tanto, se encuentran en el medio de los nodos de entrada y de salida y no tienen contacto con el exterior.</li>
+</ul>
+<p>Las RNA suelen estar conformadas por múltiples capas de nodos ocultos, a estas se les llaman “capas de aprendizaje”. A mayor cantidad de capas, mayor es la profundidad de la red y mayor es la capacidad de aprendizaje. En este contexto, los nodos de entrada reciben una serie de datos desde el exterior, estos datos son enviados al interior de la red hacia los nodos ocultos. Los nodos ocultos van procesando, modificando y transfiriendo la información de una capa a otra. Este proceso es lo que se conoce como “aprendizaje”, pues cada capa de nodos ocultos va aprendiendo de las capas más externas. Dicha secuencia de aprendizaje es lo que da origen al <em>Deep Learning</em>. De aquí la inseparable relación entre redes neuronales artificiales y <em>Deep Learning</em>.</p>
+<p>Cuando las redes neuronales son entrenadas, cada red crea, modifica o elimina conexiones entre los nodos con el fin de dar respuestas más acertadas ante el problema que se busca resolver.</p>
+<p>En este punto una red neuronal formada por una única neurona (neurona artificial) se caracteriza por:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/Deeplearning/main/images/RNAsimple.png" width="550" height="250" class="figure-img"></p>
+</figure>
+</div>
+<ul>
+<li>Una capa de entrada que recibe los datos en bruto, es decir, el valor de los predictores.</li>
+<li>Una capa oculta que recibe los valores de la capa de entrada, ponderados por los pesos.</li>
+<li>Una capa de salida que combina los valores que salen de la capa intermedia y cuya información se propaga a otra capa si la función de activación así lo determina.</li>
+</ul>
+<p>Las funciones de activación convierten el valor neto de entrada en un nuevo valor, combinación de los <em>input</em>, pesos y bias. Es gracias a combinar funciones de activación no lineales con múltiples capas que los modelos de redes son capaces de aprender relaciones no lineales. La gran mayoría de funciones de activación convierten el valor de entrada neto de la neurona en un valor dentro del rango (0, 1) o (-1, 1). Cuando el valor de activación de una neurona (salida de su función de activación) es cero, se dice que la neurona está inactiva, ya que no pasa ningún tipo de información a las siguientes neuronas.</p>
+<p>El modelo de red neuronal con una única capa (<em>single-layer perceptron</em>), aunque supuso un gran avance en el campo del <em>Machine Learning</em>, solo es capaz de aprender patrones sencillos. Para superar esta limitación, los investigadores descubrieron que, combinando múltiples capas ocultas, la red puede aprender relaciones mucho más complejas entre los predictores y la variable respuesta. A esta estructura se le conoce como perceptrón multicapa o <em>multilayer perceptron</em> (MLP), y puede considerarse como el primer modelo de <em>Deep Learning</em>.</p>
+<p>La estructura de un perceptón multicapa consta de varias capas de neuronas ocultas. Cada neurona está conectada a todas las neuronas de la capa anterior y a las de la capa posterior. Aunque no es estrictamente necesario, todas las neuronas que forman parte de una misma capa suelen emplear la misma función de activación.</p>
+<p>Combinando múltiples capas ocultas y funciones de activación no lineales los modelos de redes pueden aprender prácticamente cualquier patrón. De hecho, está demostrado que, con suficientes neuronas, un MLP es un aproximador universal para cualquier función. A continuación, se muestra la estructura de un MLP con tres capas ocultas con 6, 6, y 8 neuronas en cada una de ellas y con cuatro capas de salida o valores de predicción de la red:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/Deeplearning/main/images/RNAcompleta.png" width="550" height="550" class="figure-img"></p>
+</figure>
+</div>
+</section>
+</section>
+<section id="tipos-redes-neuronales" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="tipos-redes-neuronales"><span class="header-section-number">1.2</span> Tipos redes neuronales</h2>
+<p>Dentro de las redes neuronales encontramos diferentes tipos, distinguiéndose estos por sus características y aplicaciones particulares. A continuación, detallamos las que vamos a desarrollar en próximos cuadernos:</p>
+<ol type="1">
+<li><strong>Redes neuronales monocapa</strong>. También conocidas como perceptrones simples, son las redes neuronales más simples y están compuestas por una única capa de neuronas que realizan una combinación lineal sobre las entradas. Una vez modificadas, las trasladan a una capa de neuronas de salida donde se aplica una función de activación para generar una salida. Este tipo de redes se utilizan cuando se pretende realizar una clasificación binaria o linealmente separable.</li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/Deeplearning/main/images/monocapa.png" width="450" height="350" class="figure-img"></p>
+</figure>
+</div>
+<ol start="2" type="1">
+<li><strong>Redes neuronales multicapa</strong>. Son una generalización de las anteriores, compuestas por dos o más capas de neuronas. En estas se introducen las capas ocultas, las cuales permiten que la red neuronal aprenda características más complejas de los datos de entrada y se combinan con la capa de entrada y la capa de salida para formar una arquitectura de red más compleja. En este caso no podemos especificar una aplicación concreta, pues se utilizan en una amplia variedad de aplicaciones en diversas áreas.</li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/Deeplearning/main/images/multicapa.png" width="650" height="350" class="figure-img"></p>
+</figure>
+</div>
+<ol start="3" type="1">
+<li><p><strong>Redes neuronales convolucionales</strong> (CNN). Son una variante de las redes neuronales multicapa en las que cada neurona no se une con todas y cada una de las capas siguientes, sino que solo lo hace con un subgrupo de estas. Con esto se consigue reducir el número de neuronas y la complejidad computacional necesarias para su ejecución. Se utilizan para tareas de clasificación y detección de objetos en imágenes.</p></li>
+<li><p><strong>Redes neuronales recurrentes</strong> (RNN). Son redes neuronales que no tienen la típica estructura de capas, sino que permiten conexiones arbitrarias entre las neuronas, incluso pudiendo crear ciclos. Esto les permite tener memoria y retroalimentación de información, lo que las hace útiles en tareas que requieren un contexto o una memoria de largo plazo. Son especialmente útiles en tareas que involucren secuencias de datos, como el procesamiento del lenguaje natural y el reconocimiento de voz.</p></li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/Deeplearning/main/images/recurrente.png" width="650" height="350" class="figure-img"></p>
+</figure>
+</div>
+<ol start="5" type="1">
+<li><strong>Redes neuronales de base radial</strong> (RBF). Son redes neuronales multicapa que utilizan funciones radiales para calcular la distancia entre los datos y un conjunto de puntos denominados centros. La salida proporcionada consiste en una combinación lineal de las funciones de activación radiales utilizadas por las neuronas de manera individual. Se utilizan comúnmente en tareas de regresión y clasificación, siendo especialmente adecuadas en problemas de alta dimensionalidad.</li>
+</ol>
+</section>
+<section id="terminología-básica" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="terminología-básica"><span class="header-section-number">1.3</span> Terminología básica</h2>
+<ol type="1">
+<li><strong>Neurona o perceptrón</strong>: unidad básica de procesamiento en una red neuronal que procesa información mediante la aplicación de pesos y umbrales o sesgos para producir una salida.</li>
+<li><strong>Capa</strong>: conjunto de neuronas que procesan la información de entrada y realizan una transformación no lineal para extraer características relevantes que sean útiles para la tarea que se esté abordando. En una red neuronal profunda distinguimos tres tipos de capas, las de entrada, las ocultas y las de salida, cumpliendo cada una su función específica en el procesamiento de la información.</li>
+<li><strong>Función de activación</strong>: función que se aplica a la salida de una neurona o de un conjunto de neuronas y transmite la información generada por la combinación lineal de los pesos y las entradas. Esto permite que la red pueda aprender y modelar relaciones entre los datos de entrada y la salida deseada.</li>
+<li><strong>Pesos</strong>: parámetros ajustables que se utilizan en una red neuronal para transformar las entradas en salidas. Se utilizan para ponderar la importancia de cada entrada en la salida de la neurona y, durante el entrenamiento de la red, se ajustan mediante un algoritmo de optimización para minimizar la función de pérdida.</li>
+<li><strong>Época</strong>: ciclo completo a través de todo el conjunto de datos de entrenamiento a través de una red neuronal. Durante una época, la red neuronal procesa las entradas de entrenamiento y ajusta los pesos correspondientes.</li>
+<li><strong>Característica</strong>: representación numérica de una variable, imagen, texto, sonido u otro tipo de dato. Se utiliza como entrada, y su objetivo es capturar información relevante y discriminativa que permita al modelo realizar una tarea específica.</li>
+<li><strong>Batch o lote</strong>: cantidad de datos que se utilizan para entrenar una red neuronal en cada iteración de aprendizaje.</li>
+</ol>
+</section>
+<section id="el-perceptrón-lineal" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="el-perceptrón-lineal"><span class="header-section-number">1.4</span> El perceptrón lineal</h2>
+<p>Antes de profundizar más en el proceso de entrenamiento de una red neuronal, que trataremos en los temas siguientes, vamos a ver cómo la neurona artificial definida anteriormente se puede utilizar como un clasificador binario. Distinguimos dos situaciones:</p>
+<ul>
+<li>se conoce de partida la regla de clasificación,</li>
+<li>no se conoce de partida la regla de clasificación.</li>
+</ul>
+<section id="regla-conocida" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="regla-conocida"><span class="header-section-number">1.4.1</span> Regla conocida</h3>
+<p>Para empezar, generamos 100 datos de entrenamiento como puntos aleatorios en un cuadrado unidad. Así, las coordenadas del punto <span class="math inline">\(x_1\)</span> y <span class="math inline">\(x_2\)</span> se toman en el intervalo <span class="math inline">\([0,1]\)</span>. Definimos dos categorías: una para los puntos situados por encima de la línea <span class="math inline">\(x_1=x_2\)</span> y otra para los puntos situados por debajo. Durante la generación, comprobamos si <span class="math inline">\(x_2 &gt; x_1\)</span> o no, y asignamos una etiqueta 1 o 0 en función de que se cumpla la condición de clasificación establecida. Estas etiquetas son las respuestas “verdaderas” de la clasificación.</p>
+<p>Para la regla de clasificación establecida tenemos por tanto que:</p>
+<p><span class="math display">\[x_2 &gt; x_1 \rightarrow s=-x_1+x_2&gt;0\]</span></p>
+<p>que en términos de una neurona artificial con función de activación de salto nos proporciona los pesos:</p>
+<p><span class="math display">\[w_0 = -b = 0, w_1 = -1, w_2 = 1\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Valores simulados</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>x1 <span class="ot">=</span> <span class="fu">runif</span>(<span class="dv">100</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb7-3"><a href="#cb7-3"></a>x2 <span class="ot">=</span> <span class="fu">runif</span>(<span class="dv">100</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb7-4"><a href="#cb7-4"></a>x <span class="ot">=</span> <span class="fu">cbind</span>(x1, x2)</span>
+<span id="cb7-5"><a href="#cb7-5"></a></span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="co"># Parámetros de la neurona </span></span>
+<span id="cb7-7"><a href="#cb7-7"></a>w <span class="ot">=</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb7-8"><a href="#cb7-8"></a>b <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a></span>
+<span id="cb7-10"><a href="#cb7-10"></a><span class="co"># Valores de activación</span></span>
+<span id="cb7-11"><a href="#cb7-11"></a>valor <span class="ot">=</span> <span class="fu">c</span>()</span>
+<span id="cb7-12"><a href="#cb7-12"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(x1))</span>
+<span id="cb7-13"><a href="#cb7-13"></a>{</span>
+<span id="cb7-14"><a href="#cb7-14"></a>  valor[i] <span class="ot">=</span> <span class="fu">neurona</span>(x[i,], w, b)</span>
+<span id="cb7-15"><a href="#cb7-15"></a>}</span>
+<span id="cb7-16"><a href="#cb7-16"></a><span class="co"># Resultado</span></span>
+<span id="cb7-17"><a href="#cb7-17"></a>df <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">x1=</span>x1,<span class="at">x2=</span>x2,<span class="at">activ=</span><span class="fu">as.factor</span>(valor))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Veamos la representación gráfica de los puntos junto con el valor de activación. Además añadimos la recta que determina la regla de clasificación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(x1,x2,<span class="at">color=</span>activ)) <span class="sc">+</span> </span>
+<span id="cb8-2"><a href="#cb8-2"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Activación"</span>) <span class="sc">+</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">labels=</span><span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Si"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10_IntroDL_files/figure-html/introDL-006-1.png" class="img-fluid figure-img" width="480"></p>
+<p></p><figcaption class="figure-caption">Clasificación binaria lineal</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Como era de esperar la neurona artificial proporciona el resultado adecuado en términos de la regla de clasificación dado que las muestras son separables linealmente. El problema aparece cuando queremos resolver el problema de clasificación de dos clases cuando estas no son separables linealmente como podemos ver en la imagen siguiente donde introducimos los hiperplanos de separación <span class="math inline">\(x_2=x_1\)</span> y <span class="math inline">\(x_2=0.1*x_1+0.5\)</span>, es decir la regla de clasificación vieen dada por la combinación de las regiones que determinan los hiperplanos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># Valores simulados</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>x1 <span class="ot">=</span> <span class="fu">runif</span>(<span class="dv">100</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb9-3"><a href="#cb9-3"></a>x2 <span class="ot">=</span> <span class="fu">runif</span>(<span class="dv">100</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb9-4"><a href="#cb9-4"></a>x <span class="ot">=</span> <span class="fu">cbind</span>(x1, x2)</span>
+<span id="cb9-5"><a href="#cb9-5"></a></span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="co"># Valores de activación en función d elas regiones definidas</span></span>
+<span id="cb9-7"><a href="#cb9-7"></a>valor <span class="ot">=</span> <span class="dv">1</span><span class="sc">*</span>((x2<span class="sc">&gt;</span>x1) <span class="sc">&amp;</span> (x2<span class="sc">&gt;</span><span class="fl">0.1</span><span class="sc">*</span>x1<span class="fl">+0.5</span>))</span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="co"># Resultado</span></span>
+<span id="cb9-9"><a href="#cb9-9"></a>df <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">x1=</span>x1,<span class="at">x2=</span>x2,<span class="at">activ=</span><span class="fu">as.factor</span>(valor))</span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="co"># Grafico</span></span>
+<span id="cb9-11"><a href="#cb9-11"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(x1,x2,<span class="at">color=</span>activ)) <span class="sc">+</span> </span>
+<span id="cb9-12"><a href="#cb9-12"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb9-13"><a href="#cb9-13"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb9-14"><a href="#cb9-14"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fl">0.5</span>, <span class="at">slope =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb9-15"><a href="#cb9-15"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Activación"</span>) <span class="sc">+</span></span>
+<span id="cb9-16"><a href="#cb9-16"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">labels=</span><span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Si"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10_IntroDL_files/figure-html/introDL-007-1.png" class="img-fluid figure-img" width="480"></p>
+<p></p><figcaption class="figure-caption">Clasificación binaria no lineal</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Este problema se puede resolver fácilmente si consideramos que una parte de los datos son separados por una neurona y otra parte por otra, y así sucesivamente hasta conseguir separar los dos grupos de la forma más precisa posible. Podemos establecer tantas neuronas como sean necesarias para tener en cuenta todas las posibles ecuaciones lineales necesarias para separar los datos de ambas muestras.</p>
+<p>Imaginemos ahora que tenemos más condiciones de este tipo: dos, tres, etc., en general <span class="math inline">\(k\)</span> condiciones independientes. Tomando una conjunción de estas condiciones podemos construir regiones como se muestra, por ejemplo, en la figura siguiente:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/Deeplearning/main/images/convexos.png" width="450" height="100" class="figure-img"></p>
+</figure>
+</div>
+<p>que no son más que regiones convexas en el plano obtenidas, de izquierda a derecha, con una condición de desigualdad, y una conjunción de 2, 3 o 4 condiciones de desigualdad, obteniéndose polígonos con las dos últimas. Claramente <span class="math inline">\(k\)</span> condiciones de desigualdad se pueden imponer con <span class="math inline">\(k\)</span> neuronas artificiales.</p>
+<p>En la situación del ejemplo anterior utilizando la función de activación de salto tendríamos dos neuronas:</p>
+<ol type="1">
+<li>Neurona 1 con pesos <span class="math inline">\(w_0 =0, w_1=-1, w_2=1\)</span><br>
+</li>
+<li>Neurona 2 con pesos <span class="math inline">\(w_0 =-0.5, w_1=-0.1, w_2=1\)</span></li>
+</ol>
+<p>Ahora sólo nos resta combinar la información de esas dos neuronas en una tercera para deteminar la clasificación de cada punto. Esta neurona final actúa como un operador lógico con cuatro posibilidades en función de la activación o no activación de las dos primeras neuronas. Podemos considerar esta neurona 3 con pesos <span class="math inline">\(w_0=1.5, w_1=1, w_2=1\)</span> para reflejar el hecho de que combinamos las dos anteriores y que sólo una de las cuatro opciones lógicas nos activará esta última neurona. Las situaciones lógicas son:</p>
+<ul>
+<li>No se activa la neurona 1 ni la neurona 2.</li>
+<li>Se activa la neurona 1 y no se activa la neurona 2.</li>
+<li>No se activa la neurona 1 y se activa la neurona 2.</li>
+<li>Se activan ambas neuronas.</li>
+</ul>
+<p>Se pude crear ahora un función que evalué de acuerdo al algoritmo establecido con las dos neuronas construyendo así nuestra primera red neuronal.</p>
+<p>Las arquitecturas de redes para <span class="math inline">\(k\)</span> = 1, 2, 3 ó 4 condiciones se muestran en la figura siguiente. Yendo de izquierda a derecha desde el segundo panel, tenemos redes con dos capas de neuronas y con neuronas en la capa intermedia, que proporcionan las condiciones de desigualdad, y una neurona en la capa de salida (ya que sólo debemos clasificar en dos grupos).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/Deeplearning/main/images/redes001.png" width="450" height="100" class="figure-img"></p>
+</figure>
+</div>
+<p>En la interpretación geométrica, la primera capa de neuronas representa los <span class="math inline">\(k\)</span> semiplanos, y la neurona de la segunda capa corresponde a una región convexa con <span class="math inline">\(k\)</span> lados. La situación se generaliza de forma obvia a los datos en más dimensiones. En ese caso tenemos más puntos negros en las entradas de la figura anterior. Geométricamente, para <span class="math inline">\(n=3\)</span> tratamos con planos divisorios y poliedros convexos, y para <span class="math inline">\(n&gt;3\)</span> con hiperplanos divisores y polítopos convexos.</p>
+</section>
+<section id="regla-desconocida" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="regla-desconocida"><span class="header-section-number">1.4.2</span> Regla desconocida</h3>
+<p>Llegados a este punto, puede parecer que los resultados que hemos obtenido en el punto anterior son bastante triviales. Esto se debe a que conocíamos la regla de clasificación y por tanto era posible obtener los pesos asociados con la neurona de la red. En situaciones reales disponemos de los datos de entrada pero se desconocen la regla o reglas de clasificación. En otras palabras, necesitamos encontrar la regla o reglas de clasificación correspondientes, lo que equivale a encontrar los pesos de las neuronas artificiales consideradas que nos permitan una mejor clasificación.</p>
+<p>En el punto siguiente vemos el proceso de estimación de los pesos de la neurona artificial para el problema de clasificación binaria con una única neurona artificial. En próximos temas veremos como estimar los pesos en estructuras de redes con capas ocultas y donde incorporamos más de una neurona.</p>
+<section id="algoritmo-perceptrón" class="level4" data-number="1.4.2.1">
+<h4 data-number="1.4.2.1" class="anchored" data-anchor-id="algoritmo-perceptrón"><span class="header-section-number">1.4.2.1</span> Algoritmo perceptrón</h4>
+<p>La solución para el problema de clasificación binario pasa por disponer de un procedimiento algorítmico sistemático que funcione sin esfuerzo para ésta y cualquier otra situación similar. La respuesta es el ya mencionado algoritmo del perceptrón.</p>
+<p>En la situación del ejemplo anterior, y antes de presentar el algoritmo de estimación de los pesos, observemos que la neurona artificial con algún conjunto de pesos <span class="math inline">\(w_0, w_1,w_2\)</span> siempre da alguna respuesta para un punto de datos etiquetado, correcta o incorrecta. Consideramos el conjunto de datos inicial y vemos qué clasificación obtenemos cuando fijamos unos pesos que no se corresponden con los correspondientes con la regla de clasificación.</p>
+<p>La idea general del algortimo perceptrón es utilizar las respuestas erróneas para ajustar inteligentemente, en pequeños pasos, los pesos, de forma que después de un número suficiente de iteraciones obtengamos todas las respuestas correctas para la muestra de entrenamiento.</p>
+<p>La base del algoritmo (que estudiaremos con más detalle en el próximo cuaderno) se basa en el método del descenso del gradiente y viene dado por el siguiente proceso iterativo:</p>
+<ol type="1">
+<li><p>Se hace una primera iteración con los pesos iniciales y se obtiene la clasificación con ellos.</p></li>
+<li><p>Si para un punto dado el resultado obtenido <span class="math inline">\(y_0\)</span> es igual al valor verdadero <span class="math inline">\(y_t\)</span> (la etiqueta), es decir, la respuesta es correcta, no hacemos nada. Sin embargo, si es incorrecta, cambiamos un poco los pesos, de forma que disminuya la probabilidad de obtener una respuesta errónea. Si consideramos <span class="math inline">\(\epsilon\)</span> (tasa de aprendizaje) como un valor pequeño que debemos fijar al inicio, y <span class="math inline">\(x_i\)</span> como los <em>inputs</em> de la muestra <span class="math inline">\(i\)</span> con <span class="math inline">\(i=1,...,n\)</span>.valor pequeño, entonces la regla iterativa viene dada por:</p></li>
+</ol>
+<p><span class="math display">\[w_i \rightarrow w_i + \epsilon(y_t-y_0)x_i,\]</span></p>
+<ol start="3" type="1">
+<li>El proceso se detiene cuando la diferencia de los pesos entre dos iteraciones seguidas está por debajo de un umbral prefijado.</li>
+</ol>
+<p>Veamos como funciona el algoritmo en la práctica. Supongamos que <span class="math inline">\(x_i &gt;0\)</span>. Si la etiqueta predicha para dicha muestra es <span class="math inline">\(y_t = 1\)</span> mientras que la etiqueta original era <span class="math inline">\(y_0=0\)</span>, el peso <span class="math inline">\(w_i\)</span> se incrementa. Entonces <span class="math inline">\(wx\)</span> se incrementa e <span class="math inline">\(y_0=f(wx)\)</span> está más cerca de obtener el verdadero valor de 1 (ya que estamos utilizando la función de salto). Por otro lado, si la etiqueta <span class="math inline">\(y_t=0\)</span> es menor que la respuesta encontrada <span class="math inline">\(y_0=1\)</span>, entonces el peso <span class="math inline">\(w_i\)</span> decrece mientras que <span class="math inline">\(wx\)</span> crece, e <span class="math inline">\(y_0=f(wx)\)</span> esta más cerca de obtener el verdadero valor de 0. Si <span class="math inline">\(x_i &lt; 0\)</span> podemos ver que el funcionamiento es análogo. Cuando la respuesta es correcta, <span class="math inline">\(y_t =y_0\)</span> entonces no es necesario cambiar los pesos.</p>
+<p>La fórmula anterior puede utilizarse muchas veces para el mismo punto de la muestra de entrenamiento. A continuación, hacemos un bucle sobre todos los puntos de la muestra, y todo el procedimiento se puede seguir repitiendo en muchas rondas para obtener pesos estables (que no cambien más a medida que continuamos el procedimiento, o que cambien ligeramente).</p>
+<p>Normalmente, en este tipo de algoritmos la velocidad de aprendizaje <span class="math inline">\(\epsilon\)</span> disminuye en las rondas sucesivas. Esto es técnicamente muy importante, porque unas actualizaciones demasiado grandes podrían estropear la solución obtenida.</p>
+<p>Gráficamente podemos ver el funcionamiento del algoritmo:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/ia4legos/Deeplearning/main/images/alg_perceptron.png" width="750" height="300" class="figure-img"></p>
+</figure>
+</div>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./index.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Deep Learning</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./20_TrainDL.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Entrenamiento de la red neuronal</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, IA4LEGOS. Universidad Miguel Hernández de Elche</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

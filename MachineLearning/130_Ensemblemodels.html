@@ -550,18 +550,18 @@ p_{L,1} &amp; p_{L,2} &amp;...&amp; p_{L,k}
 <span id="cb9-9"><a href="#cb9-9"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(<span class="fu">benchmark_grid</span>(tsk_stroke, learners,</span>
 <span id="cb9-10"><a href="#cb9-10"></a>  <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">5</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>INFO  [17:55:56.328] [mlr3] Running benchmark with 10 resampling iterations
-INFO  [17:55:56.461] [mlr3] Applying learner 'TreeDecision' on task 'stroke' (iter 1/5)
-INFO  [17:55:56.670] [mlr3] Applying learner 'TreeDecision' on task 'stroke' (iter 2/5)
-INFO  [17:55:56.866] [mlr3] Applying learner 'TreeDecision' on task 'stroke' (iter 3/5)
-INFO  [17:55:57.052] [mlr3] Applying learner 'TreeDecision' on task 'stroke' (iter 4/5)
-INFO  [17:55:57.193] [mlr3] Applying learner 'TreeDecision' on task 'stroke' (iter 5/5)
-INFO  [17:55:57.362] [mlr3] Applying learner 'Bagging' on task 'stroke' (iter 1/5)
-INFO  [17:55:59.388] [mlr3] Applying learner 'Bagging' on task 'stroke' (iter 2/5)
-INFO  [17:56:01.161] [mlr3] Applying learner 'Bagging' on task 'stroke' (iter 3/5)
-INFO  [17:56:02.705] [mlr3] Applying learner 'Bagging' on task 'stroke' (iter 4/5)
-INFO  [17:56:04.235] [mlr3] Applying learner 'Bagging' on task 'stroke' (iter 5/5)
-INFO  [17:56:05.830] [mlr3] Finished benchmark</code></pre>
+<pre><code>INFO  [18:09:30.192] [mlr3] Running benchmark with 10 resampling iterations
+INFO  [18:09:30.338] [mlr3] Applying learner 'TreeDecision' on task 'stroke' (iter 1/5)
+INFO  [18:09:30.547] [mlr3] Applying learner 'TreeDecision' on task 'stroke' (iter 2/5)
+INFO  [18:09:31.158] [mlr3] Applying learner 'TreeDecision' on task 'stroke' (iter 3/5)
+INFO  [18:09:31.461] [mlr3] Applying learner 'TreeDecision' on task 'stroke' (iter 4/5)
+INFO  [18:09:31.708] [mlr3] Applying learner 'TreeDecision' on task 'stroke' (iter 5/5)
+INFO  [18:09:31.940] [mlr3] Applying learner 'Bagging' on task 'stroke' (iter 1/5)
+INFO  [18:09:35.013] [mlr3] Applying learner 'Bagging' on task 'stroke' (iter 2/5)
+INFO  [18:09:37.522] [mlr3] Applying learner 'Bagging' on task 'stroke' (iter 3/5)
+INFO  [18:09:39.906] [mlr3] Applying learner 'Bagging' on task 'stroke' (iter 4/5)
+INFO  [18:09:42.508] [mlr3] Applying learner 'Bagging' on task 'stroke' (iter 5/5)
+INFO  [18:09:44.880] [mlr3] Finished benchmark</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co"># Resultados individuales</span></span>
 <span id="cb11-2"><a href="#cb11-2"></a>bmr<span class="sc">$</span><span class="fu">score</span>(<span class="fu">msr</span>(<span class="st">"classif.bacc"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -656,18 +656,18 @@ Hidden columns: resample_result</code></pre>
 <span id="cb21-9"><a href="#cb21-9"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(<span class="fu">benchmark_grid</span>(tsk_water, learners,</span>
 <span id="cb21-10"><a href="#cb21-10"></a>  <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">5</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>INFO  [17:56:09.782] [mlr3] Running benchmark with 10 resampling iterations
-INFO  [17:56:09.788] [mlr3] Applying learner 'LogisticReg' on task 'waterpot' (iter 1/5)
-INFO  [17:56:10.247] [mlr3] Applying learner 'LogisticReg' on task 'waterpot' (iter 2/5)
-INFO  [17:56:10.644] [mlr3] Applying learner 'LogisticReg' on task 'waterpot' (iter 3/5)
-INFO  [17:56:11.007] [mlr3] Applying learner 'LogisticReg' on task 'waterpot' (iter 4/5)
-INFO  [17:56:11.369] [mlr3] Applying learner 'LogisticReg' on task 'waterpot' (iter 5/5)
-INFO  [17:56:11.740] [mlr3] Applying learner 'Bagging' on task 'waterpot' (iter 1/5)
-INFO  [17:56:15.812] [mlr3] Applying learner 'Bagging' on task 'waterpot' (iter 2/5)
-INFO  [17:56:19.856] [mlr3] Applying learner 'Bagging' on task 'waterpot' (iter 3/5)
-INFO  [17:56:23.724] [mlr3] Applying learner 'Bagging' on task 'waterpot' (iter 4/5)
-INFO  [17:56:27.592] [mlr3] Applying learner 'Bagging' on task 'waterpot' (iter 5/5)
-INFO  [17:56:31.640] [mlr3] Finished benchmark</code></pre>
+<pre><code>INFO  [18:09:49.843] [mlr3] Running benchmark with 10 resampling iterations
+INFO  [18:09:49.851] [mlr3] Applying learner 'LogisticReg' on task 'waterpot' (iter 1/5)
+INFO  [18:09:50.402] [mlr3] Applying learner 'LogisticReg' on task 'waterpot' (iter 2/5)
+INFO  [18:09:50.853] [mlr3] Applying learner 'LogisticReg' on task 'waterpot' (iter 3/5)
+INFO  [18:09:51.304] [mlr3] Applying learner 'LogisticReg' on task 'waterpot' (iter 4/5)
+INFO  [18:09:51.976] [mlr3] Applying learner 'LogisticReg' on task 'waterpot' (iter 5/5)
+INFO  [18:09:52.555] [mlr3] Applying learner 'Bagging' on task 'waterpot' (iter 1/5)
+INFO  [18:09:56.946] [mlr3] Applying learner 'Bagging' on task 'waterpot' (iter 2/5)
+INFO  [18:10:02.478] [mlr3] Applying learner 'Bagging' on task 'waterpot' (iter 3/5)
+INFO  [18:10:08.481] [mlr3] Applying learner 'Bagging' on task 'waterpot' (iter 4/5)
+INFO  [18:10:13.913] [mlr3] Applying learner 'Bagging' on task 'waterpot' (iter 5/5)
+INFO  [18:10:18.298] [mlr3] Finished benchmark</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># Resultados individuales</span></span>
 <span id="cb23-2"><a href="#cb23-2"></a>bmr<span class="sc">$</span><span class="fu">score</span>(<span class="fu">msr</span>(<span class="st">"classif.bacc"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -735,18 +735,18 @@ Hidden columns: resample_result</code></pre>
 <span id="cb29-9"><a href="#cb29-9"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(<span class="fu">benchmark_grid</span>(tsk_housing, learners,</span>
 <span id="cb29-10"><a href="#cb29-10"></a>  <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">5</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>INFO  [17:56:37.895] [mlr3] Running benchmark with 10 resampling iterations
-INFO  [17:56:37.902] [mlr3] Applying learner 'TreeDecision' on task 'housingCA' (iter 1/5)
-INFO  [17:56:38.256] [mlr3] Applying learner 'TreeDecision' on task 'housingCA' (iter 2/5)
-INFO  [17:56:38.631] [mlr3] Applying learner 'TreeDecision' on task 'housingCA' (iter 3/5)
-INFO  [17:56:39.014] [mlr3] Applying learner 'TreeDecision' on task 'housingCA' (iter 4/5)
-INFO  [17:56:39.456] [mlr3] Applying learner 'TreeDecision' on task 'housingCA' (iter 5/5)
-INFO  [17:56:39.800] [mlr3] Applying learner 'Bagging' on task 'housingCA' (iter 1/5)
-INFO  [17:56:43.281] [mlr3] Applying learner 'Bagging' on task 'housingCA' (iter 2/5)
-INFO  [17:56:46.854] [mlr3] Applying learner 'Bagging' on task 'housingCA' (iter 3/5)
-INFO  [17:56:50.040] [mlr3] Applying learner 'Bagging' on task 'housingCA' (iter 4/5)
-INFO  [17:56:53.265] [mlr3] Applying learner 'Bagging' on task 'housingCA' (iter 5/5)
-INFO  [17:56:56.952] [mlr3] Finished benchmark</code></pre>
+<pre><code>INFO  [18:10:24.037] [mlr3] Running benchmark with 10 resampling iterations
+INFO  [18:10:24.044] [mlr3] Applying learner 'TreeDecision' on task 'housingCA' (iter 1/5)
+INFO  [18:10:24.402] [mlr3] Applying learner 'TreeDecision' on task 'housingCA' (iter 2/5)
+INFO  [18:10:24.775] [mlr3] Applying learner 'TreeDecision' on task 'housingCA' (iter 3/5)
+INFO  [18:10:25.157] [mlr3] Applying learner 'TreeDecision' on task 'housingCA' (iter 4/5)
+INFO  [18:10:25.603] [mlr3] Applying learner 'TreeDecision' on task 'housingCA' (iter 5/5)
+INFO  [18:10:26.009] [mlr3] Applying learner 'Bagging' on task 'housingCA' (iter 1/5)
+INFO  [18:10:31.175] [mlr3] Applying learner 'Bagging' on task 'housingCA' (iter 2/5)
+INFO  [18:10:37.142] [mlr3] Applying learner 'Bagging' on task 'housingCA' (iter 3/5)
+INFO  [18:10:43.292] [mlr3] Applying learner 'Bagging' on task 'housingCA' (iter 4/5)
+INFO  [18:10:48.688] [mlr3] Applying learner 'Bagging' on task 'housingCA' (iter 5/5)
+INFO  [18:10:54.347] [mlr3] Finished benchmark</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a><span class="co"># Resultados individuales</span></span>
 <span id="cb31-2"><a href="#cb31-2"></a>bmr<span class="sc">$</span><span class="fu">score</span>(<span class="fu">msr</span>(<span class="st">"regr.smape"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>

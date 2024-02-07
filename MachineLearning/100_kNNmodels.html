@@ -1059,16 +1059,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb65-12"><a href="#cb65-12"></a><span class="co"># Remuestreo</span></span>
 <span id="cb65-13"><a href="#cb65-13"></a>rr <span class="ot">=</span> <span class="fu">resample</span>(tsk_cancer, gr, resamp, <span class="at">store_models=</span><span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>INFO  [17:42:29.738] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 1/10)
-INFO  [17:42:30.027] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 2/10)
-INFO  [17:42:30.187] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 3/10)
-INFO  [17:42:30.354] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 4/10)
-INFO  [17:42:30.546] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 5/10)
-INFO  [17:42:30.812] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 6/10)
-INFO  [17:42:30.967] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 7/10)
-INFO  [17:42:31.130] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 8/10)
-INFO  [17:42:31.390] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 9/10)
-INFO  [17:42:31.643] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 10/10)</code></pre>
+<pre><code>INFO  [17:57:30.565] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 1/10)
+INFO  [17:57:30.713] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 2/10)
+INFO  [17:57:30.837] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 3/10)
+INFO  [17:57:30.960] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 4/10)
+INFO  [17:57:31.094] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 5/10)
+INFO  [17:57:31.231] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 6/10)
+INFO  [17:57:31.356] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 7/10)
+INFO  [17:57:31.480] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 8/10)
+INFO  [17:57:31.609] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 9/10)
+INFO  [17:57:31.756] [mlr3] Applying learner 'scale.classif.kknn' on task 'breastcancer[, -1]' (iter 10/10)</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1"></a><span class="co"># Análisis de los valores obtenidos con los scores definidos anteriormente</span></span>
 <span id="cb67-2"><a href="#cb67-2"></a><span class="fu">skim</span>(rr<span class="sc">$</span><span class="fu">score</span>(measure)[,<span class="st">"classif.bacc"</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>

@@ -1015,16 +1015,16 @@ F-statistic: 44.38 on 9 and 343 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb37-5"><a href="#cb37-5"></a><span class="co"># Remuestreo</span></span>
 <span id="cb37-6"><a href="#cb37-6"></a>rr <span class="ot">=</span> <span class="fu">resample</span>(tsk_diabetes, gr, resamp, <span class="at">store_models=</span><span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>INFO  [17:35:28.925] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
-INFO  [17:35:29.089] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
-INFO  [17:35:29.952] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
-INFO  [17:35:30.060] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
-INFO  [17:35:30.171] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
-INFO  [17:35:30.283] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
-INFO  [17:35:30.407] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
-INFO  [17:35:30.518] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
-INFO  [17:35:30.638] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
-INFO  [17:35:30.781] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)</code></pre>
+<pre><code>INFO  [17:51:45.850] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
+INFO  [17:51:46.015] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
+INFO  [17:51:46.130] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
+INFO  [17:51:46.236] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
+INFO  [17:51:46.362] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
+INFO  [17:51:46.508] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
+INFO  [17:51:46.677] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
+INFO  [17:51:46.803] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
+INFO  [17:51:46.937] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
+INFO  [17:51:47.071] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)</code></pre>
 </div>
 </div>
 <p>En primer lugar estudiamos los scores de validación (en este caso el <code>MSE</code>) tanto para cada fold como de forma agregada.</p>
@@ -1211,96 +1211,96 @@ sd     2.437234  11.97597  0.2180697  0.3324235</code></pre>
 <span id="cb49-8"><a href="#cb49-8"></a></span>
 <span id="cb49-9"><a href="#cb49-9"></a><span class="fu">plot_learningcurve</span>(tsk_diabetes, gr, <span class="st">"regr.mse"</span>, <span class="at">ptr =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span>), <span class="at">rpeats =</span> <span class="dv">10</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>INFO  [17:35:38.585] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
-INFO  [17:35:38.879] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
-INFO  [17:35:39.331] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
-INFO  [17:35:39.564] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
-INFO  [17:35:39.827] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
-INFO  [17:35:40.041] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
-INFO  [17:35:40.287] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
-INFO  [17:35:40.535] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
-INFO  [17:35:40.778] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
-INFO  [17:35:41.017] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
-INFO  [17:35:41.352] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
-INFO  [17:35:41.547] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
-INFO  [17:35:41.760] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
-INFO  [17:35:41.959] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
-INFO  [17:35:42.134] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
-INFO  [17:35:42.336] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
-INFO  [17:35:42.528] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
-INFO  [17:35:42.697] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
-INFO  [17:35:42.892] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
-INFO  [17:35:43.072] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
-INFO  [17:35:43.365] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
-INFO  [17:35:43.591] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
-INFO  [17:35:43.770] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
-INFO  [17:35:43.959] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
-INFO  [17:35:44.137] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
-INFO  [17:35:44.325] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
-INFO  [17:35:44.515] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
-INFO  [17:35:44.725] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
-INFO  [17:35:45.061] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
-INFO  [17:35:45.359] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
-INFO  [17:35:45.747] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
-INFO  [17:35:45.953] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
-INFO  [17:35:46.138] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
-INFO  [17:35:46.362] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
-INFO  [17:35:46.557] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
-INFO  [17:35:46.736] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
-INFO  [17:35:47.022] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
-INFO  [17:35:47.198] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
-INFO  [17:35:47.376] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
-INFO  [17:35:47.548] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
-INFO  [17:35:47.833] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
-INFO  [17:35:48.004] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
-INFO  [17:35:48.180] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
-INFO  [17:35:48.359] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
-INFO  [17:35:48.566] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
-INFO  [17:35:48.736] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
-INFO  [17:35:48.909] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
-INFO  [17:35:49.084] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
-INFO  [17:35:49.285] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
-INFO  [17:35:49.461] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
-INFO  [17:35:49.717] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
-INFO  [17:35:49.891] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
-INFO  [17:35:50.110] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
-INFO  [17:35:50.286] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
-INFO  [17:35:50.460] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
-INFO  [17:35:50.632] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
-INFO  [17:35:50.846] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
-INFO  [17:35:51.026] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
-INFO  [17:35:51.200] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
-INFO  [17:35:51.376] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
-INFO  [17:35:51.705] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
-INFO  [17:35:51.935] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
-INFO  [17:35:52.128] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
-INFO  [17:35:52.359] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
-INFO  [17:35:52.624] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
-INFO  [17:35:52.861] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
-INFO  [17:35:53.075] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
-INFO  [17:35:53.281] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
-INFO  [17:35:53.488] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
-INFO  [17:35:53.878] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
-INFO  [17:35:55.063] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
-INFO  [17:35:55.707] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
-INFO  [17:35:56.183] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
-INFO  [17:35:56.445] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
-INFO  [17:35:56.639] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
-INFO  [17:35:56.855] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
-INFO  [17:35:57.337] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
-INFO  [17:35:57.977] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
-INFO  [17:35:58.574] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
-INFO  [17:35:59.095] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
-INFO  [17:36:00.357] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
-INFO  [17:36:00.660] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
-INFO  [17:36:01.059] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
-INFO  [17:36:01.380] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
-INFO  [17:36:01.860] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
-INFO  [17:36:02.662] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
-INFO  [17:36:03.361] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
-INFO  [17:36:03.962] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
-INFO  [17:36:04.572] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
-INFO  [17:36:05.201] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)</code></pre>
+<pre><code>INFO  [17:51:53.485] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
+INFO  [17:51:53.705] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
+INFO  [17:51:53.908] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
+INFO  [17:51:54.104] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
+INFO  [17:51:54.325] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
+INFO  [17:51:54.534] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
+INFO  [17:51:54.710] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
+INFO  [17:51:54.914] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
+INFO  [17:51:55.086] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
+INFO  [17:51:55.264] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
+INFO  [17:51:55.577] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
+INFO  [17:51:55.733] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
+INFO  [17:51:55.905] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
+INFO  [17:51:56.087] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
+INFO  [17:51:56.242] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
+INFO  [17:51:56.419] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
+INFO  [17:51:56.636] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
+INFO  [17:51:56.889] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
+INFO  [17:51:57.071] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
+INFO  [17:51:57.265] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
+INFO  [17:51:57.613] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
+INFO  [17:51:57.791] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
+INFO  [17:51:57.980] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
+INFO  [17:51:58.187] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
+INFO  [17:51:58.365] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
+INFO  [17:51:58.540] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
+INFO  [17:51:58.704] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
+INFO  [17:51:58.885] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
+INFO  [17:51:59.045] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
+INFO  [17:51:59.207] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
+INFO  [17:51:59.468] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
+INFO  [17:51:59.620] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
+INFO  [17:51:59.787] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
+INFO  [17:51:59.980] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
+INFO  [17:52:00.148] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
+INFO  [17:52:00.306] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
+INFO  [17:52:00.467] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
+INFO  [17:52:00.649] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
+INFO  [17:52:00.811] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
+INFO  [17:52:00.982] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
+INFO  [17:52:01.244] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
+INFO  [17:52:01.404] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
+INFO  [17:52:01.568] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
+INFO  [17:52:01.760] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
+INFO  [17:52:01.928] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
+INFO  [17:52:02.090] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
+INFO  [17:52:02.258] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
+INFO  [17:52:02.438] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
+INFO  [17:52:02.604] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
+INFO  [17:52:02.769] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
+INFO  [17:52:03.148] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
+INFO  [17:52:03.305] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
+INFO  [17:52:03.468] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
+INFO  [17:52:03.635] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
+INFO  [17:52:03.818] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
+INFO  [17:52:03.983] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
+INFO  [17:52:04.144] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
+INFO  [17:52:04.301] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
+INFO  [17:52:04.487] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
+INFO  [17:52:04.645] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
+INFO  [17:52:04.891] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
+INFO  [17:52:05.077] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
+INFO  [17:52:05.242] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
+INFO  [17:52:05.402] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
+INFO  [17:52:05.563] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
+INFO  [17:52:05.723] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
+INFO  [17:52:05.914] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
+INFO  [17:52:06.076] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
+INFO  [17:52:06.237] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
+INFO  [17:52:06.394] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
+INFO  [17:52:06.652] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
+INFO  [17:52:06.828] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
+INFO  [17:52:07.042] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
+INFO  [17:52:07.228] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
+INFO  [17:52:07.390] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
+INFO  [17:52:07.551] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
+INFO  [17:52:07.711] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
+INFO  [17:52:07.904] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
+INFO  [17:52:08.064] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
+INFO  [17:52:08.225] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)
+INFO  [17:52:08.467] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 1/10)
+INFO  [17:52:08.648] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 2/10)
+INFO  [17:52:08.810] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 3/10)
+INFO  [17:52:08.983] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 4/10)
+INFO  [17:52:09.144] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 5/10)
+INFO  [17:52:09.324] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 6/10)
+INFO  [17:52:09.488] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 7/10)
+INFO  [17:52:09.647] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 8/10)
+INFO  [17:52:09.814] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 9/10)
+INFO  [17:52:10.003] [mlr3] Applying learner 'modelmatrix.regr.lm' on task 'diabetes' (iter 10/10)</code></pre>
 </div>
 <div class="cell-output-display">
 <div id="fig-regmod-30" class="quarto-figure quarto-figure-center anchored">
@@ -1424,16 +1424,16 @@ F-statistic: 2.487e+04 on 4 and 7650 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb59-5"><a href="#cb59-5"></a><span class="co"># Remuestreo</span></span>
 <span id="cb59-6"><a href="#cb59-6"></a>rr <span class="ot">=</span> <span class="fu">resample</span>(tsk_electricity, gr, resamp, <span class="at">store_models=</span><span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>INFO  [17:36:17.770] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
-INFO  [17:36:18.604] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
-INFO  [17:36:19.303] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
-INFO  [17:36:19.638] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
-INFO  [17:36:20.063] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
-INFO  [17:36:20.520] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
-INFO  [17:36:20.745] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
-INFO  [17:36:21.507] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
-INFO  [17:36:21.967] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
-INFO  [17:36:22.802] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)</code></pre>
+<pre><code>INFO  [17:52:14.371] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
+INFO  [17:52:14.507] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
+INFO  [17:52:14.654] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
+INFO  [17:52:14.823] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
+INFO  [17:52:14.958] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
+INFO  [17:52:15.088] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
+INFO  [17:52:15.237] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
+INFO  [17:52:15.360] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
+INFO  [17:52:15.485] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
+INFO  [17:52:15.630] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)</code></pre>
 </div>
 </div>
 <p>En primer lugar estudiamos los scores de validación (en este caso el <code>MSE</code>) tanto para cada fold como de forma agregada.</p>
@@ -1495,96 +1495,96 @@ sd      0.05576518 0.01483879   0.04663677  0.01723981  0.02888723</code></pre>
 <span id="cb67-6"><a href="#cb67-6"></a></span>
 <span id="cb67-7"><a href="#cb67-7"></a><span class="fu">plot_learningcurve</span>(tsk_electricity, gr, <span class="st">"regr.mse"</span>, <span class="at">ptr =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span>), <span class="at">rpeats =</span> <span class="dv">10</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>INFO  [17:36:34.113] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
-INFO  [17:36:34.728] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
-INFO  [17:36:35.137] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
-INFO  [17:36:35.508] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
-INFO  [17:36:35.954] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
-INFO  [17:36:36.341] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
-INFO  [17:36:36.622] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
-INFO  [17:36:36.894] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
-INFO  [17:36:37.210] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
-INFO  [17:36:37.526] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
-INFO  [17:36:38.015] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
-INFO  [17:36:38.295] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
-INFO  [17:36:38.688] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
-INFO  [17:36:38.913] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
-INFO  [17:36:39.423] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
-INFO  [17:36:39.716] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
-INFO  [17:36:40.043] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
-INFO  [17:36:40.332] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
-INFO  [17:36:40.565] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
-INFO  [17:36:40.847] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
-INFO  [17:36:41.350] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
-INFO  [17:36:41.627] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
-INFO  [17:36:41.978] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
-INFO  [17:36:42.301] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
-INFO  [17:36:42.508] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
-INFO  [17:36:42.854] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
-INFO  [17:36:43.057] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
-INFO  [17:36:43.343] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
-INFO  [17:36:43.526] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
-INFO  [17:36:43.766] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
-INFO  [17:36:44.118] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
-INFO  [17:36:44.367] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
-INFO  [17:36:44.637] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
-INFO  [17:36:45.020] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
-INFO  [17:36:45.674] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
-INFO  [17:36:46.207] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
-INFO  [17:36:46.800] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
-INFO  [17:36:47.362] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
-INFO  [17:36:47.612] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
-INFO  [17:36:47.858] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
-INFO  [17:36:48.261] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
-INFO  [17:36:48.478] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
-INFO  [17:36:48.687] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
-INFO  [17:36:48.885] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
-INFO  [17:36:49.061] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
-INFO  [17:36:49.490] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
-INFO  [17:36:50.144] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
-INFO  [17:36:50.630] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
-INFO  [17:36:50.827] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
-INFO  [17:36:51.047] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
-INFO  [17:36:52.081] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
-INFO  [17:36:52.911] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
-INFO  [17:36:53.460] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
-INFO  [17:36:54.153] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
-INFO  [17:36:54.528] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
-INFO  [17:36:55.153] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
-INFO  [17:36:55.435] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
-INFO  [17:36:55.781] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
-INFO  [17:36:56.024] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
-INFO  [17:36:56.275] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
-INFO  [17:36:56.649] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
-INFO  [17:36:56.838] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
-INFO  [17:36:57.636] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
-INFO  [17:36:58.135] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
-INFO  [17:36:58.419] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
-INFO  [17:36:58.630] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
-INFO  [17:36:58.817] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
-INFO  [17:36:59.044] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
-INFO  [17:36:59.230] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
-INFO  [17:36:59.407] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
-INFO  [17:36:59.748] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
-INFO  [17:36:59.949] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
-INFO  [17:37:00.469] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
-INFO  [17:37:01.172] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
-INFO  [17:37:01.539] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
-INFO  [17:37:01.946] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
-INFO  [17:37:02.769] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
-INFO  [17:37:03.204] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
-INFO  [17:37:03.539] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
-INFO  [17:37:03.816] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
-INFO  [17:37:04.267] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
-INFO  [17:37:04.499] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
-INFO  [17:37:04.803] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
-INFO  [17:37:05.128] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
-INFO  [17:37:05.320] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
-INFO  [17:37:05.559] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
-INFO  [17:37:05.839] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
-INFO  [17:37:06.436] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
-INFO  [17:37:06.671] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
-INFO  [17:37:06.855] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)</code></pre>
+<pre><code>INFO  [17:52:18.610] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
+INFO  [17:52:18.799] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
+INFO  [17:52:18.987] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
+INFO  [17:52:19.153] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
+INFO  [17:52:19.319] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
+INFO  [17:52:19.483] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
+INFO  [17:52:19.748] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
+INFO  [17:52:19.950] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
+INFO  [17:52:20.138] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
+INFO  [17:52:20.318] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
+INFO  [17:52:20.678] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
+INFO  [17:52:20.843] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
+INFO  [17:52:21.018] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
+INFO  [17:52:21.208] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
+INFO  [17:52:21.398] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
+INFO  [17:52:21.590] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
+INFO  [17:52:21.784] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
+INFO  [17:52:21.998] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
+INFO  [17:52:22.204] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
+INFO  [17:52:22.383] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
+INFO  [17:52:22.685] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
+INFO  [17:52:22.891] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
+INFO  [17:52:23.060] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
+INFO  [17:52:23.231] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
+INFO  [17:52:23.417] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
+INFO  [17:52:23.602] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
+INFO  [17:52:23.767] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
+INFO  [17:52:23.940] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
+INFO  [17:52:24.141] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
+INFO  [17:52:24.302] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
+INFO  [17:52:24.607] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
+INFO  [17:52:24.779] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
+INFO  [17:52:24.954] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
+INFO  [17:52:25.122] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
+INFO  [17:52:25.321] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
+INFO  [17:52:25.487] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
+INFO  [17:52:25.682] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
+INFO  [17:52:25.886] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
+INFO  [17:52:26.055] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
+INFO  [17:52:26.308] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
+INFO  [17:52:26.602] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
+INFO  [17:52:26.775] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
+INFO  [17:52:26.954] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
+INFO  [17:52:27.196] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
+INFO  [17:52:27.389] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
+INFO  [17:52:27.579] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
+INFO  [17:52:27.752] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
+INFO  [17:52:27.970] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
+INFO  [17:52:28.152] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
+INFO  [17:52:28.321] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
+INFO  [17:52:28.655] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
+INFO  [17:52:28.833] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
+INFO  [17:52:29.013] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
+INFO  [17:52:29.186] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
+INFO  [17:52:29.403] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
+INFO  [17:52:29.573] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
+INFO  [17:52:29.767] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
+INFO  [17:52:29.977] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
+INFO  [17:52:30.157] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
+INFO  [17:52:30.330] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
+INFO  [17:52:30.656] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
+INFO  [17:52:30.832] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
+INFO  [17:52:31.014] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
+INFO  [17:52:31.229] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
+INFO  [17:52:31.398] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
+INFO  [17:52:31.576] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
+INFO  [17:52:31.785] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
+INFO  [17:52:31.974] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
+INFO  [17:52:32.147] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
+INFO  [17:52:32.355] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
+INFO  [17:52:32.651] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
+INFO  [17:52:32.898] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
+INFO  [17:52:33.092] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
+INFO  [17:52:33.264] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
+INFO  [17:52:33.444] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
+INFO  [17:52:33.658] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
+INFO  [17:52:33.849] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
+INFO  [17:52:34.027] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
+INFO  [17:52:34.224] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
+INFO  [17:52:34.415] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)
+INFO  [17:52:34.718] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 1/10)
+INFO  [17:52:34.950] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 2/10)
+INFO  [17:52:35.132] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 3/10)
+INFO  [17:52:35.313] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 4/10)
+INFO  [17:52:35.531] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 5/10)
+INFO  [17:52:35.726] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 6/10)
+INFO  [17:52:35.917] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 7/10)
+INFO  [17:52:36.153] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 8/10)
+INFO  [17:52:36.343] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 9/10)
+INFO  [17:52:36.524] [mlr3] Applying learner 'scale.regr.lm' on task 'electricity' (iter 10/10)</code></pre>
 </div>
 <div class="cell-output-display">
 <div id="fig-regmod-39" class="quarto-figure quarto-figure-center anchored">
@@ -1944,16 +1944,16 @@ F-statistic: 852.4 on 40 and 16470 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb82-5"><a href="#cb82-5"></a><span class="co"># Remuestreo</span></span>
 <span id="cb82-6"><a href="#cb82-6"></a>rr <span class="ot">=</span> <span class="fu">resample</span>(tsk_housing, gr, resamp, <span class="at">store_models=</span><span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>INFO  [17:37:33.318] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 1/10)
-INFO  [17:37:35.035] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 2/10)
-INFO  [17:37:36.093] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 3/10)
-INFO  [17:37:37.390] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 4/10)
-INFO  [17:37:38.696] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 5/10)
-INFO  [17:37:39.712] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 6/10)
-INFO  [17:37:40.645] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 7/10)
-INFO  [17:37:41.466] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 8/10)
-INFO  [17:37:42.613] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 9/10)
-INFO  [17:37:43.775] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 10/10)</code></pre>
+<pre><code>INFO  [17:52:45.143] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 1/10)
+INFO  [17:52:46.303] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 2/10)
+INFO  [17:52:47.358] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 3/10)
+INFO  [17:52:48.293] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 4/10)
+INFO  [17:52:49.612] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 5/10)
+INFO  [17:52:50.463] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 6/10)
+INFO  [17:52:51.634] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 7/10)
+INFO  [17:52:52.491] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 8/10)
+INFO  [17:52:53.338] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 9/10)
+INFO  [17:52:54.177] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.regr.lm' on task 'housingCA' (iter 10/10)</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb84"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1"></a><span class="co"># Análisis de los valores obtenidos</span></span>
 <span id="cb84-2"><a href="#cb84-2"></a><span class="fu">skim</span>(rr<span class="sc">$</span><span class="fu">score</span>()<span class="sc">$</span>regr.mse)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -2621,146 +2621,146 @@ INFO  [17:37:43.775] [mlr3] Applying learner 'scale.imputemedian.modelmatrix.reg
 <span id="cb122-3"><a href="#cb122-3"></a><span class="co"># Optimización</span></span>
 <span id="cb122-4"><a href="#cb122-4"></a>tuner<span class="sc">$</span><span class="fu">optimize</span>(instance)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>INFO  [17:37:56.114] [bbotk] Starting to optimize 1 parameter(s) with '&lt;OptimizerRandomSearch&gt;' and '&lt;TerminatorEvals&gt; [n_evals=15, k=0]'
-INFO  [17:37:56.155] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:37:56.307] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:37:56.318] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:37:57.902] [mlr3] Finished benchmark
-INFO  [17:37:57.939] [bbotk] Result of batch 1:
-INFO  [17:37:57.943] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
-INFO  [17:37:57.943] [bbotk]             0.2162548 12.95327        0      0            1.573
-INFO  [17:37:57.943] [bbotk]                                 uhash
-INFO  [17:37:57.943] [bbotk]  efc37cf0-b170-46dd-9b91-5146cb938907
-INFO  [17:37:57.949] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:37:58.000] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:37:58.006] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:37:59.321] [mlr3] Finished benchmark
-INFO  [17:37:59.387] [bbotk] Result of batch 2:
-INFO  [17:37:59.389] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
-INFO  [17:37:59.389] [bbotk]             0.7008531 13.67589        0      0            1.293
-INFO  [17:37:59.389] [bbotk]                                 uhash
-INFO  [17:37:59.389] [bbotk]  af6319e9-0fb6-48f2-8815-421c17965845
-INFO  [17:37:59.395] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:37:59.445] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:37:59.451] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:00.439] [mlr3] Finished benchmark
-INFO  [17:38:00.474] [bbotk] Result of batch 3:
-INFO  [17:38:00.476] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:00.476] [bbotk]             0.8209513 12.35682        0      0            0.979
-INFO  [17:38:00.476] [bbotk]                                 uhash
-INFO  [17:38:00.476] [bbotk]  3bbdd0f1-41aa-44ff-a170-857c0bbf39a3
-INFO  [17:38:00.480] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:00.526] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:00.533] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:01.414] [mlr3] Finished benchmark
-INFO  [17:38:01.453] [bbotk] Result of batch 4:
-INFO  [17:38:01.454] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:01.454] [bbotk]             0.9611048 16.82053        0      0            0.872
-INFO  [17:38:01.454] [bbotk]                                 uhash
-INFO  [17:38:01.454] [bbotk]  0e9fd57e-d5b0-425c-b9ed-b6fd1a7ab1c2
-INFO  [17:38:01.457] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:01.499] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:01.506] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:03.173] [mlr3] Finished benchmark
-INFO  [17:38:03.205] [bbotk] Result of batch 5:
-INFO  [17:38:03.207] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:03.207] [bbotk]            0.05284394 14.10114        0      0             1.66
-INFO  [17:38:03.207] [bbotk]                                 uhash
-INFO  [17:38:03.207] [bbotk]  7f8a46e5-129d-46bd-905a-f6697ab6303b
-INFO  [17:38:03.210] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:03.256] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:03.262] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:04.141] [mlr3] Finished benchmark
-INFO  [17:38:04.171] [bbotk] Result of batch 6:
-INFO  [17:38:04.173] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:04.173] [bbotk]             0.5602533 16.48643        0      0             0.87
-INFO  [17:38:04.173] [bbotk]                                 uhash
-INFO  [17:38:04.173] [bbotk]  f3398338-c165-4301-9dee-4bb2b17a185c
-INFO  [17:38:04.177] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:04.220] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:04.226] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:04.926] [mlr3] Finished benchmark
-INFO  [17:38:04.964] [bbotk] Result of batch 7:
-INFO  [17:38:04.966] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:04.966] [bbotk]             0.6183512 12.73543        0      0            0.692
-INFO  [17:38:04.966] [bbotk]                                 uhash
-INFO  [17:38:04.966] [bbotk]  f4621b34-694c-4453-8811-220cda6d4551
-INFO  [17:38:04.969] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:05.016] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:05.022] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:06.707] [mlr3] Finished benchmark
-INFO  [17:38:06.738] [bbotk] Result of batch 8:
-INFO  [17:38:06.740] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:06.740] [bbotk]            0.05847849 14.47908        0      0            1.677
-INFO  [17:38:06.740] [bbotk]                                 uhash
-INFO  [17:38:06.740] [bbotk]  80fa73be-af36-40bc-8e72-8baa8f7b4f29
-INFO  [17:38:06.743] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:06.784] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:06.791] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:07.901] [mlr3] Finished benchmark
-INFO  [17:38:07.933] [bbotk] Result of batch 9:
-INFO  [17:38:07.935] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:07.935] [bbotk]             0.1977447 13.48541        0      0            1.101
-INFO  [17:38:07.935] [bbotk]                                 uhash
-INFO  [17:38:07.935] [bbotk]  7e09b013-9438-4f1e-98c3-ae22b644f480
-INFO  [17:38:07.938] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:07.983] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:07.990] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:08.748] [mlr3] Finished benchmark
-INFO  [17:38:08.779] [bbotk] Result of batch 10:
-INFO  [17:38:08.781] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:08.781] [bbotk]             0.8034185 15.94768        0      0             0.75
-INFO  [17:38:08.781] [bbotk]                                 uhash
-INFO  [17:38:08.781] [bbotk]  36ae17b5-3f3c-40e4-aaa4-c58e80d59465
-INFO  [17:38:08.784] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:08.828] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:08.834] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:10.129] [mlr3] Finished benchmark
-INFO  [17:38:10.160] [bbotk] Result of batch 11:
-INFO  [17:38:10.162] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:10.162] [bbotk]             0.1716985 14.42765        0      0            1.286
-INFO  [17:38:10.162] [bbotk]                                 uhash
-INFO  [17:38:10.162] [bbotk]  f3ee1a18-1bf6-4562-a532-36955880f932
-INFO  [17:38:10.165] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:10.210] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:10.217] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:11.036] [mlr3] Finished benchmark
-INFO  [17:38:11.067] [bbotk] Result of batch 12:
-INFO  [17:38:11.069] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:11.069] [bbotk]             0.7245543 12.53504        0      0            0.812
-INFO  [17:38:11.069] [bbotk]                                 uhash
-INFO  [17:38:11.069] [bbotk]  b2a14988-2a5b-47d2-97c8-6ea50ba0205a
-INFO  [17:38:11.072] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:11.116] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:11.122] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:11.965] [mlr3] Finished benchmark
-INFO  [17:38:11.997] [bbotk] Result of batch 13:
-INFO  [17:38:12.000] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:12.000] [bbotk]             0.9673984 15.30346        0      0            0.834
-INFO  [17:38:12.000] [bbotk]                                 uhash
-INFO  [17:38:12.000] [bbotk]  e72be6f8-4a3e-430b-a5d2-995ee81f181d
-INFO  [17:38:12.003] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:12.046] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:12.052] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:13.094] [mlr3] Finished benchmark
-INFO  [17:38:13.125] [bbotk] Result of batch 14:
-INFO  [17:38:13.127] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:13.127] [bbotk]             0.2217879 16.35465        0      0            1.033
-INFO  [17:38:13.127] [bbotk]                                 uhash
-INFO  [17:38:13.127] [bbotk]  c9975e2a-9b2d-43be-a582-a7fe9b9c606e
-INFO  [17:38:13.130] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:13.172] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:13.178] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:14.027] [mlr3] Finished benchmark
-INFO  [17:38:14.059] [bbotk] Result of batch 15:
-INFO  [17:38:14.061] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:14.061] [bbotk]             0.5310704 13.38162        0      0            0.839
-INFO  [17:38:14.061] [bbotk]                                 uhash
-INFO  [17:38:14.061] [bbotk]  a9495419-342b-4c50-9180-73ba2e945e58
-INFO  [17:38:14.071] [bbotk] Finished optimizing after 15 evaluation(s)
-INFO  [17:38:14.072] [bbotk] Result:
-INFO  [17:38:14.073] [bbotk]  regr.cv_glmnet.alpha learner_param_vals  x_domain regr.mse
-INFO  [17:38:14.073] [bbotk]             0.8209513          &lt;list[5]&gt; &lt;list[1]&gt; 12.35682</code></pre>
+<pre><code>INFO  [17:53:05.002] [bbotk] Starting to optimize 1 parameter(s) with '&lt;OptimizerRandomSearch&gt;' and '&lt;TerminatorEvals&gt; [n_evals=15, k=0]'
+INFO  [17:53:05.014] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:05.068] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:05.074] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:06.216] [mlr3] Finished benchmark
+INFO  [17:53:06.250] [bbotk] Result of batch 1:
+INFO  [17:53:06.251] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:06.251] [bbotk]             0.2162548 12.95327        0      0            1.133
+INFO  [17:53:06.251] [bbotk]                                 uhash
+INFO  [17:53:06.251] [bbotk]  4fe5b7cd-1758-4df1-8208-5378f090763e
+INFO  [17:53:06.255] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:06.300] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:06.307] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:07.129] [mlr3] Finished benchmark
+INFO  [17:53:07.161] [bbotk] Result of batch 2:
+INFO  [17:53:07.163] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:07.163] [bbotk]             0.7008531 13.67589        0      0            0.813
+INFO  [17:53:07.163] [bbotk]                                 uhash
+INFO  [17:53:07.163] [bbotk]  237d6546-6605-42d5-a0dc-0e6ed9f496c7
+INFO  [17:53:07.168] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:07.211] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:07.218] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:08.079] [mlr3] Finished benchmark
+INFO  [17:53:08.114] [bbotk] Result of batch 3:
+INFO  [17:53:08.116] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:08.116] [bbotk]             0.8209513 12.35682        0      0            0.852
+INFO  [17:53:08.116] [bbotk]                                 uhash
+INFO  [17:53:08.116] [bbotk]  ba14d4bf-a6f0-4196-a00f-93da41b20ff7
+INFO  [17:53:08.120] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:08.166] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:08.173] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:09.124] [mlr3] Finished benchmark
+INFO  [17:53:09.159] [bbotk] Result of batch 4:
+INFO  [17:53:09.161] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:09.161] [bbotk]             0.9611048 16.82053        0      0            0.942
+INFO  [17:53:09.161] [bbotk]                                 uhash
+INFO  [17:53:09.161] [bbotk]  472ace59-7aa5-46cc-b128-cf2bb3b70acd
+INFO  [17:53:09.165] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:09.213] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:09.219] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:10.880] [mlr3] Finished benchmark
+INFO  [17:53:10.911] [bbotk] Result of batch 5:
+INFO  [17:53:10.913] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:10.913] [bbotk]            0.05284394 14.10114        0      0            1.652
+INFO  [17:53:10.913] [bbotk]                                 uhash
+INFO  [17:53:10.913] [bbotk]  1568abf2-378b-4789-9f43-bc59822e98bb
+INFO  [17:53:10.916] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:10.959] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:10.965] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:11.832] [mlr3] Finished benchmark
+INFO  [17:53:11.867] [bbotk] Result of batch 6:
+INFO  [17:53:11.869] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:11.869] [bbotk]             0.5602533 16.48643        0      0            0.859
+INFO  [17:53:11.869] [bbotk]                                 uhash
+INFO  [17:53:11.869] [bbotk]  5484f3eb-c2d6-4ff4-80d6-f6c4199cfcfc
+INFO  [17:53:11.872] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:11.922] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:11.928] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:12.614] [mlr3] Finished benchmark
+INFO  [17:53:12.645] [bbotk] Result of batch 7:
+INFO  [17:53:12.647] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:12.647] [bbotk]             0.6183512 12.73543        0      0            0.677
+INFO  [17:53:12.647] [bbotk]                                 uhash
+INFO  [17:53:12.647] [bbotk]  8e31a034-e2ff-4326-8a24-264ffb543627
+INFO  [17:53:12.650] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:12.693] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:12.700] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:14.349] [mlr3] Finished benchmark
+INFO  [17:53:14.381] [bbotk] Result of batch 8:
+INFO  [17:53:14.383] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:14.383] [bbotk]            0.05847849 14.47908        0      0            1.641
+INFO  [17:53:14.383] [bbotk]                                 uhash
+INFO  [17:53:14.383] [bbotk]  cdebae25-4266-4da6-ac05-b1ed4b6fed7a
+INFO  [17:53:14.386] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:14.429] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:14.435] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:15.552] [mlr3] Finished benchmark
+INFO  [17:53:15.582] [bbotk] Result of batch 9:
+INFO  [17:53:15.584] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:15.584] [bbotk]             0.1977447 13.48541        0      0            1.108
+INFO  [17:53:15.584] [bbotk]                                 uhash
+INFO  [17:53:15.584] [bbotk]  b35e16f0-1b2a-42cb-b0a5-330556cf4534
+INFO  [17:53:15.587] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:15.630] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:15.636] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:16.472] [mlr3] Finished benchmark
+INFO  [17:53:16.503] [bbotk] Result of batch 10:
+INFO  [17:53:16.505] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:16.505] [bbotk]             0.8034185 15.94768        0      0            0.826
+INFO  [17:53:16.505] [bbotk]                                 uhash
+INFO  [17:53:16.505] [bbotk]  3d57b53b-ce50-426e-96c0-9b9f8f642127
+INFO  [17:53:16.508] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:16.551] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:16.557] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:17.895] [mlr3] Finished benchmark
+INFO  [17:53:17.931] [bbotk] Result of batch 11:
+INFO  [17:53:17.933] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:17.933] [bbotk]             0.1716985 14.42765        0      0            1.326
+INFO  [17:53:17.933] [bbotk]                                 uhash
+INFO  [17:53:17.933] [bbotk]  c4e0f638-2e29-4647-9614-5549adcb1a9d
+INFO  [17:53:17.936] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:17.981] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:17.988] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:18.797] [mlr3] Finished benchmark
+INFO  [17:53:18.832] [bbotk] Result of batch 12:
+INFO  [17:53:18.834] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:18.834] [bbotk]             0.7245543 12.53504        0      0            0.802
+INFO  [17:53:18.834] [bbotk]                                 uhash
+INFO  [17:53:18.834] [bbotk]  deff4644-5dbd-42d4-b41e-6fbbdec10bf6
+INFO  [17:53:18.840] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:18.885] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:18.891] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:19.708] [mlr3] Finished benchmark
+INFO  [17:53:19.740] [bbotk] Result of batch 13:
+INFO  [17:53:19.742] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:19.742] [bbotk]             0.9673984 15.30346        0      0            0.809
+INFO  [17:53:19.742] [bbotk]                                 uhash
+INFO  [17:53:19.742] [bbotk]  c10f427f-ef5e-451e-be48-695f48c69269
+INFO  [17:53:19.745] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:19.809] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:19.817] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:20.874] [mlr3] Finished benchmark
+INFO  [17:53:20.906] [bbotk] Result of batch 14:
+INFO  [17:53:20.908] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:20.908] [bbotk]             0.2217879 16.35465        0      0            1.049
+INFO  [17:53:20.908] [bbotk]                                 uhash
+INFO  [17:53:20.908] [bbotk]  3bb0475e-9935-4e13-81be-c3db208c6827
+INFO  [17:53:20.911] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:20.954] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:20.960] [mlr3] Applying learner 'scale.regr.cv_glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:21.797] [mlr3] Finished benchmark
+INFO  [17:53:21.832] [bbotk] Result of batch 15:
+INFO  [17:53:21.834] [bbotk]  regr.cv_glmnet.alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:21.834] [bbotk]             0.5310704 13.38162        0      0             0.83
+INFO  [17:53:21.834] [bbotk]                                 uhash
+INFO  [17:53:21.834] [bbotk]  5b3b70d5-1380-41a4-8f1f-60fd8d8581e1
+INFO  [17:53:21.847] [bbotk] Finished optimizing after 15 evaluation(s)
+INFO  [17:53:21.848] [bbotk] Result:
+INFO  [17:53:21.849] [bbotk]  regr.cv_glmnet.alpha learner_param_vals  x_domain regr.mse
+INFO  [17:53:21.849] [bbotk]             0.8209513          &lt;list[5]&gt; &lt;list[1]&gt; 12.35682</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   regr.cv_glmnet.alpha learner_param_vals  x_domain regr.mse
@@ -2889,101 +2889,101 @@ Call:  (if (cv) glmnet::cv.glmnet else glmnet::glmnet)(x = data, y = target,    
 <span id="cb138-18"><a href="#cb138-18"></a>  <span class="at">term_evals =</span> <span class="dv">10</span></span>
 <span id="cb138-19"><a href="#cb138-19"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>INFO  [17:38:16.965] [bbotk] Starting to optimize 2 parameter(s) with '&lt;OptimizerRandomSearch&gt;' and '&lt;TerminatorEvals&gt; [n_evals=10, k=0]'
-INFO  [17:38:16.991] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:17.031] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:17.037] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:17.199] [mlr3] Finished benchmark
-INFO  [17:38:17.228] [bbotk] Result of batch 1:
-INFO  [17:38:17.230] [bbotk]         s      alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:17.230] [bbotk]  3.212132 0.04766363 188.1079        0      0            0.153
-INFO  [17:38:17.230] [bbotk]                                 uhash
-INFO  [17:38:17.230] [bbotk]  f713caba-8f58-4491-9cba-23d13a45c4fb
-INFO  [17:38:17.234] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:17.294] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:17.305] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:17.400] [mlr3] Finished benchmark
-INFO  [17:38:17.506] [bbotk] Result of batch 2:
-INFO  [17:38:17.514] [bbotk]          s     alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:17.514] [bbotk]  -1.677314 0.8209513 26.56825        0      0            0.066
-INFO  [17:38:17.514] [bbotk]                                 uhash
-INFO  [17:38:17.514] [bbotk]  9e8bedd1-d233-468d-a465-aeaa1a076a90
-INFO  [17:38:17.522] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:17.697] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:17.705] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:17.813] [mlr3] Finished benchmark
-INFO  [17:38:17.846] [bbotk] Result of batch 3:
-INFO  [17:38:17.848] [bbotk]         s     alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:17.848] [bbotk]  8.493864 0.7283944 215.7396        0      0            0.097
-INFO  [17:38:17.848] [bbotk]                                 uhash
-INFO  [17:38:17.848] [bbotk]  7c46b4be-6dc2-4aac-aac5-d6a39f7ad12d
-INFO  [17:38:17.852] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:17.887] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:17.894] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:17.995] [mlr3] Finished benchmark
-INFO  [17:38:18.040] [bbotk] Result of batch 4:
-INFO  [17:38:18.045] [bbotk]          s     alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:18.045] [bbotk]  -1.930116 0.4778454 20.78844        0      0            0.093
-INFO  [17:38:18.045] [bbotk]                                 uhash
-INFO  [17:38:18.045] [bbotk]  baf334e5-c34b-4e8c-bf45-407b8059f349
-INFO  [17:38:18.053] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:18.096] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:18.103] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:18.165] [mlr3] Finished benchmark
-INFO  [17:38:18.262] [bbotk] Result of batch 5:
-INFO  [17:38:18.265] [bbotk]         s     alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:18.265] [bbotk]  7.657174 0.6183512 215.7396        0      0            0.053
-INFO  [17:38:18.265] [bbotk]                                 uhash
-INFO  [17:38:18.265] [bbotk]  abc372aa-ddf9-43e1-83b9-f70689ad2000
-INFO  [17:38:18.270] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:18.446] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:18.453] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:18.590] [mlr3] Finished benchmark
-INFO  [17:38:18.627] [bbotk] Result of batch 6:
-INFO  [17:38:18.629] [bbotk]          s     alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:18.629] [bbotk]  -8.133127 0.2608569 11.02533        0      0            0.128
-INFO  [17:38:18.629] [bbotk]                                 uhash
-INFO  [17:38:18.629] [bbotk]  9b177472-fc73-4b2c-bba9-6cb960aca868
-INFO  [17:38:18.633] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:18.669] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:18.677] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:18.810] [mlr3] Finished benchmark
-INFO  [17:38:18.847] [bbotk] Result of batch 7:
-INFO  [17:38:18.849] [bbotk]         s     alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:18.849] [bbotk]  6.114332 0.1528872 215.7396        0      0            0.122
-INFO  [17:38:18.849] [bbotk]                                 uhash
-INFO  [17:38:18.849] [bbotk]  74f738ff-e7f0-4f63-ab34-0c9ca9a27f97
-INFO  [17:38:18.853] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:18.891] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:18.899] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:19.169] [mlr3] Finished benchmark
-INFO  [17:38:19.205] [bbotk] Result of batch 8:
-INFO  [17:38:19.207] [bbotk]         s     alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:19.207] [bbotk]  2.990001 0.1716985 192.1284        0      0            0.261
-INFO  [17:38:19.207] [bbotk]                                 uhash
-INFO  [17:38:19.207] [bbotk]  230a9987-4ba9-4765-8b96-ce22c834e466
-INFO  [17:38:19.212] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:19.269] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:19.281] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:19.382] [mlr3] Finished benchmark
-INFO  [17:38:19.422] [bbotk] Result of batch 9:
-INFO  [17:38:19.425] [bbotk]         s     alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:19.425] [bbotk]  4.136444 0.3989398 215.7396        0      0            0.092
-INFO  [17:38:19.425] [bbotk]                                 uhash
-INFO  [17:38:19.425] [bbotk]  1485e514-6615-4d39-b4a1-cdc5930c6b46
-INFO  [17:38:19.430] [bbotk] Evaluating 1 configuration(s)
-INFO  [17:38:19.471] [mlr3] Running benchmark with 1 resampling iterations
-INFO  [17:38:19.480] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
-INFO  [17:38:19.622] [mlr3] Finished benchmark
-INFO  [17:38:19.656] [bbotk] Result of batch 10:
-INFO  [17:38:19.658] [bbotk]         s     alpha regr.mse warnings errors runtime_learners
-INFO  [17:38:19.658] [bbotk]  4.176015 0.2572167 215.7396        0      0            0.132
-INFO  [17:38:19.658] [bbotk]                                 uhash
-INFO  [17:38:19.658] [bbotk]  b9141802-691c-4986-989b-91ee89d31a7e
-INFO  [17:38:19.668] [bbotk] Finished optimizing after 10 evaluation(s)
-INFO  [17:38:19.669] [bbotk] Result:
-INFO  [17:38:19.671] [bbotk]          s     alpha learner_param_vals  x_domain regr.mse
-INFO  [17:38:19.671] [bbotk]  -8.133127 0.2608569          &lt;list[3]&gt; &lt;list[2]&gt; 11.02533</code></pre>
+<pre><code>INFO  [17:53:24.256] [bbotk] Starting to optimize 2 parameter(s) with '&lt;OptimizerRandomSearch&gt;' and '&lt;TerminatorEvals&gt; [n_evals=10, k=0]'
+INFO  [17:53:24.273] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:24.306] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:24.312] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:24.467] [mlr3] Finished benchmark
+INFO  [17:53:24.494] [bbotk] Result of batch 1:
+INFO  [17:53:24.496] [bbotk]         s      alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:24.496] [bbotk]  3.212132 0.04766363 188.1079        0      0            0.147
+INFO  [17:53:24.496] [bbotk]                                 uhash
+INFO  [17:53:24.496] [bbotk]  3dadde53-ba82-4026-9a01-ef015a6663fd
+INFO  [17:53:24.499] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:24.542] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:24.549] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:24.607] [mlr3] Finished benchmark
+INFO  [17:53:24.638] [bbotk] Result of batch 2:
+INFO  [17:53:24.640] [bbotk]          s     alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:24.640] [bbotk]  -1.677314 0.8209513 26.56825        0      0             0.05
+INFO  [17:53:24.640] [bbotk]                                 uhash
+INFO  [17:53:24.640] [bbotk]  f54d1d74-8ad0-421c-968d-e08b5feb3aee
+INFO  [17:53:24.643] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:24.676] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:24.682] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:24.776] [mlr3] Finished benchmark
+INFO  [17:53:24.806] [bbotk] Result of batch 3:
+INFO  [17:53:24.808] [bbotk]         s     alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:24.808] [bbotk]  8.493864 0.7283944 215.7396        0      0            0.087
+INFO  [17:53:24.808] [bbotk]                                 uhash
+INFO  [17:53:24.808] [bbotk]  833397ea-6ed9-4039-aa6e-e20cde67d4c0
+INFO  [17:53:24.814] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:24.854] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:24.861] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:24.959] [mlr3] Finished benchmark
+INFO  [17:53:24.990] [bbotk] Result of batch 4:
+INFO  [17:53:24.992] [bbotk]          s     alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:24.992] [bbotk]  -1.930116 0.4778454 20.78844        0      0            0.091
+INFO  [17:53:24.992] [bbotk]                                 uhash
+INFO  [17:53:24.992] [bbotk]  fdc144e1-3259-466a-aae0-9670a1e7ba14
+INFO  [17:53:24.996] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:25.033] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:25.039] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:25.108] [mlr3] Finished benchmark
+INFO  [17:53:25.154] [bbotk] Result of batch 5:
+INFO  [17:53:25.157] [bbotk]         s     alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:25.157] [bbotk]  7.657174 0.6183512 215.7396        0      0             0.06
+INFO  [17:53:25.157] [bbotk]                                 uhash
+INFO  [17:53:25.157] [bbotk]  c8d2dfaf-1f41-4cad-95a4-bd02cdccf958
+INFO  [17:53:25.163] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:25.211] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:25.219] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:25.361] [mlr3] Finished benchmark
+INFO  [17:53:25.393] [bbotk] Result of batch 6:
+INFO  [17:53:25.395] [bbotk]          s     alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:25.395] [bbotk]  -8.133127 0.2608569 11.02533        0      0            0.133
+INFO  [17:53:25.395] [bbotk]                                 uhash
+INFO  [17:53:25.395] [bbotk]  1b7f1167-9d0d-4baf-9918-9331756061af
+INFO  [17:53:25.399] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:25.433] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:25.439] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:25.562] [mlr3] Finished benchmark
+INFO  [17:53:25.594] [bbotk] Result of batch 7:
+INFO  [17:53:25.596] [bbotk]         s     alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:25.596] [bbotk]  6.114332 0.1528872 215.7396        0      0            0.114
+INFO  [17:53:25.596] [bbotk]                                 uhash
+INFO  [17:53:25.596] [bbotk]  d4b6f3a4-98c9-4af1-8dda-135e74cbf793
+INFO  [17:53:25.600] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:25.634] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:25.640] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:25.787] [mlr3] Finished benchmark
+INFO  [17:53:25.826] [bbotk] Result of batch 8:
+INFO  [17:53:25.828] [bbotk]         s     alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:25.828] [bbotk]  2.990001 0.1716985 192.1284        0      0            0.129
+INFO  [17:53:25.828] [bbotk]                                 uhash
+INFO  [17:53:25.828] [bbotk]  23d9ca6d-b0ee-4505-9cd1-1b0e8f0729f3
+INFO  [17:53:25.832] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:25.871] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:25.880] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:25.968] [mlr3] Finished benchmark
+INFO  [17:53:26.001] [bbotk] Result of batch 9:
+INFO  [17:53:26.003] [bbotk]         s     alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:26.003] [bbotk]  4.136444 0.3989398 215.7396        0      0             0.08
+INFO  [17:53:26.003] [bbotk]                                 uhash
+INFO  [17:53:26.003] [bbotk]  540dac7e-9d73-4826-b1cf-a5eb99359973
+INFO  [17:53:26.007] [bbotk] Evaluating 1 configuration(s)
+INFO  [17:53:26.045] [mlr3] Running benchmark with 1 resampling iterations
+INFO  [17:53:26.051] [mlr3] Applying learner 'regr.glmnet' on task 'meatspec' (iter 1/1)
+INFO  [17:53:26.288] [mlr3] Finished benchmark
+INFO  [17:53:26.331] [bbotk] Result of batch 10:
+INFO  [17:53:26.334] [bbotk]         s     alpha regr.mse warnings errors runtime_learners
+INFO  [17:53:26.334] [bbotk]  4.176015 0.2572167 215.7396        0      0            0.227
+INFO  [17:53:26.334] [bbotk]                                 uhash
+INFO  [17:53:26.334] [bbotk]  21c2ba51-6163-4e65-93cb-025877d8e24c
+INFO  [17:53:26.347] [bbotk] Finished optimizing after 10 evaluation(s)
+INFO  [17:53:26.348] [bbotk] Result:
+INFO  [17:53:26.349] [bbotk]          s     alpha learner_param_vals  x_domain regr.mse
+INFO  [17:53:26.349] [bbotk]  -8.133127 0.2608569          &lt;list[3]&gt; &lt;list[2]&gt; 11.02533</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb140"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb140-1"><a href="#cb140-1"></a><span class="co"># Valoramos si el proceso de optimización ha finalizado</span></span>
 <span id="cb140-2"><a href="#cb140-2"></a>instance<span class="sc">$</span>is_terminated</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -3384,16 +3384,16 @@ GCV = 18.556  Scale est. = 18.521    n = 7655</code></pre>
 <span id="cb168-5"><a href="#cb168-5"></a><span class="co"># Remuestreo</span></span>
 <span id="cb168-6"><a href="#cb168-6"></a>rr <span class="ot">=</span> <span class="fu">resample</span>(tsk_electricity, gr2, resamp, <span class="at">store_models=</span><span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>INFO  [17:38:28.277] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
-INFO  [17:38:28.519] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
-INFO  [17:38:28.764] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
-INFO  [17:38:28.983] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
-INFO  [17:38:29.274] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
-INFO  [17:38:29.459] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
-INFO  [17:38:29.633] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
-INFO  [17:38:29.803] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
-INFO  [17:38:29.986] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
-INFO  [17:38:30.246] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)</code></pre>
+<pre><code>INFO  [17:53:32.894] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
+INFO  [17:53:33.103] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
+INFO  [17:53:33.305] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
+INFO  [17:53:33.533] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
+INFO  [17:53:33.734] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
+INFO  [17:53:33.949] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
+INFO  [17:53:34.126] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
+INFO  [17:53:34.305] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
+INFO  [17:53:34.531] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
+INFO  [17:53:34.706] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb170"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb170-1"><a href="#cb170-1"></a><span class="co"># Scores individuales</span></span>
 <span id="cb170-2"><a href="#cb170-2"></a><span class="fu">skim</span>(rr<span class="sc">$</span><span class="fu">score</span>()<span class="sc">$</span>regr.mse)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -3488,96 +3488,96 @@ INFO  [17:38:30.246] [mlr3] Applying learner 'scale.regr.gam' on task 'electrici
 <div class="sourceCode cell-code" id="cb171"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb171-1"><a href="#cb171-1"></a><span class="co"># Curva de aprendizaje</span></span>
 <span id="cb171-2"><a href="#cb171-2"></a><span class="fu">plot_learningcurve</span>(tsk_electricity, gr2, <span class="st">"regr.mse"</span>, <span class="at">ptr =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span>), <span class="at">rpeats =</span> <span class="dv">10</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>INFO  [17:38:31.179] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
-INFO  [17:38:31.465] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
-INFO  [17:38:31.743] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
-INFO  [17:38:32.018] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
-INFO  [17:38:32.363] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
-INFO  [17:38:32.670] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
-INFO  [17:38:32.966] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
-INFO  [17:38:33.312] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
-INFO  [17:38:33.574] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
-INFO  [17:38:33.832] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
-INFO  [17:38:34.307] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
-INFO  [17:38:34.609] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
-INFO  [17:38:34.956] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
-INFO  [17:38:35.264] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
-INFO  [17:38:35.570] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
-INFO  [17:38:35.860] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
-INFO  [17:38:36.148] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
-INFO  [17:38:36.472] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
-INFO  [17:38:36.762] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
-INFO  [17:38:37.032] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
-INFO  [17:38:37.607] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
-INFO  [17:38:37.951] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
-INFO  [17:38:38.294] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
-INFO  [17:38:38.595] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
-INFO  [17:38:38.874] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
-INFO  [17:38:39.193] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
-INFO  [17:38:39.469] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
-INFO  [17:38:39.807] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
-INFO  [17:38:40.125] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
-INFO  [17:38:40.410] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
-INFO  [17:38:40.968] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
-INFO  [17:38:41.258] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
-INFO  [17:38:41.594] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
-INFO  [17:38:41.899] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
-INFO  [17:38:42.192] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
-INFO  [17:38:42.520] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
-INFO  [17:38:42.832] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
-INFO  [17:38:43.116] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
-INFO  [17:38:43.486] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
-INFO  [17:38:43.805] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
-INFO  [17:38:44.219] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
-INFO  [17:38:44.571] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
-INFO  [17:38:44.872] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
-INFO  [17:38:45.175] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
-INFO  [17:38:45.537] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
-INFO  [17:38:45.832] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
-INFO  [17:38:46.128] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
-INFO  [17:38:46.573] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
-INFO  [17:38:47.128] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
-INFO  [17:38:47.491] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
-INFO  [17:38:48.015] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
-INFO  [17:38:48.340] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
-INFO  [17:38:48.708] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
-INFO  [17:38:49.062] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
-INFO  [17:38:49.453] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
-INFO  [17:38:49.847] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
-INFO  [17:38:50.276] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
-INFO  [17:38:50.643] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
-INFO  [17:38:51.026] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
-INFO  [17:38:51.340] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
-INFO  [17:38:51.855] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
-INFO  [17:38:52.177] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
-INFO  [17:38:52.499] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
-INFO  [17:38:52.876] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
-INFO  [17:38:53.201] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
-INFO  [17:38:53.587] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
-INFO  [17:38:53.914] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
-INFO  [17:38:54.237] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
-INFO  [17:38:54.619] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
-INFO  [17:38:54.937] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
-INFO  [17:38:55.456] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
-INFO  [17:38:55.792] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
-INFO  [17:38:56.183] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
-INFO  [17:38:56.535] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
-INFO  [17:38:56.917] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
-INFO  [17:38:57.295] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
-INFO  [17:38:58.235] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
-INFO  [17:38:58.836] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
-INFO  [17:38:59.975] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
-INFO  [17:39:00.458] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
-INFO  [17:39:00.936] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
-INFO  [17:39:01.436] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
-INFO  [17:39:01.797] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
-INFO  [17:39:02.264] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
-INFO  [17:39:02.745] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
-INFO  [17:39:03.230] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
-INFO  [17:39:04.367] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
-INFO  [17:39:04.862] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
-INFO  [17:39:05.315] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
-INFO  [17:39:05.734] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)</code></pre>
+<pre><code>INFO  [17:53:35.515] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
+INFO  [17:53:35.866] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
+INFO  [17:53:36.188] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
+INFO  [17:53:36.483] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
+INFO  [17:53:36.835] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
+INFO  [17:53:37.098] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
+INFO  [17:53:37.369] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
+INFO  [17:53:37.671] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
+INFO  [17:53:38.011] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
+INFO  [17:53:38.321] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
+INFO  [17:53:38.709] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
+INFO  [17:53:39.083] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
+INFO  [17:53:39.381] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
+INFO  [17:53:39.677] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
+INFO  [17:53:40.014] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
+INFO  [17:53:40.295] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
+INFO  [17:53:40.577] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
+INFO  [17:53:40.897] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
+INFO  [17:53:41.160] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
+INFO  [17:53:41.427] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
+INFO  [17:53:41.862] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
+INFO  [17:53:42.149] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
+INFO  [17:53:42.463] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
+INFO  [17:53:42.751] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
+INFO  [17:53:43.080] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
+INFO  [17:53:43.356] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
+INFO  [17:53:43.628] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
+INFO  [17:53:43.960] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
+INFO  [17:53:44.273] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
+INFO  [17:53:44.550] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
+INFO  [17:53:45.004] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
+INFO  [17:53:45.296] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
+INFO  [17:53:45.716] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
+INFO  [17:53:46.008] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
+INFO  [17:53:46.303] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
+INFO  [17:53:46.644] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
+INFO  [17:53:46.938] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
+INFO  [17:53:47.271] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
+INFO  [17:53:47.645] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
+INFO  [17:53:47.993] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
+INFO  [17:53:48.461] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
+INFO  [17:53:48.767] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
+INFO  [17:53:49.074] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
+INFO  [17:53:49.486] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
+INFO  [17:53:49.887] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
+INFO  [17:53:50.259] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
+INFO  [17:53:50.702] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
+INFO  [17:53:51.092] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
+INFO  [17:53:51.416] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
+INFO  [17:53:51.881] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
+INFO  [17:53:52.464] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
+INFO  [17:53:52.847] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
+INFO  [17:53:53.273] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
+INFO  [17:53:53.741] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
+INFO  [17:53:54.182] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
+INFO  [17:53:54.686] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
+INFO  [17:53:55.086] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
+INFO  [17:53:55.458] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
+INFO  [17:53:55.847] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
+INFO  [17:53:56.170] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
+INFO  [17:53:56.685] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
+INFO  [17:53:57.010] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
+INFO  [17:53:57.337] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
+INFO  [17:53:57.729] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
+INFO  [17:53:58.099] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
+INFO  [17:53:58.432] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
+INFO  [17:53:58.809] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
+INFO  [17:53:59.142] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
+INFO  [17:53:59.514] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
+INFO  [17:53:59.862] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
+INFO  [17:54:00.342] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
+INFO  [17:54:00.730] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
+INFO  [17:54:01.079] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
+INFO  [17:54:01.469] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
+INFO  [17:54:01.812] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
+INFO  [17:54:02.219] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
+INFO  [17:54:02.562] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
+INFO  [17:54:02.935] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
+INFO  [17:54:03.340] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
+INFO  [17:54:03.683] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)
+INFO  [17:54:04.223] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 1/10)
+INFO  [17:54:04.570] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 2/10)
+INFO  [17:54:05.025] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 3/10)
+INFO  [17:54:05.382] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 4/10)
+INFO  [17:54:05.792] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 5/10)
+INFO  [17:54:06.162] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 6/10)
+INFO  [17:54:06.723] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 7/10)
+INFO  [17:54:07.113] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 8/10)
+INFO  [17:54:07.553] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 9/10)
+INFO  [17:54:07.919] [mlr3] Applying learner 'scale.regr.gam' on task 'electricity' (iter 10/10)</code></pre>
 </div>
 <div class="cell-output-display">
 <div id="fig-regmod-91" class="quarto-figure quarto-figure-center anchored">

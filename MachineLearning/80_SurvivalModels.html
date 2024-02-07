@@ -354,7 +354,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(survival)</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">Surv</span>(<span class="fu">runif</span>(<span class="dv">6</span>), <span class="fu">rbinom</span>(<span class="dv">6</span>, <span class="dv">1</span>, <span class="fl">0.5</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.03029576+ 0.78636400+ 0.14857809+ 0.76664786+ 0.41339882  0.37894958+</code></pre>
+<pre><code>[1] 0.33314866  0.07171104  0.58622223+ 0.53955659+ 0.08385212  0.29729275+</code></pre>
 </div>
 </div>
 <p>Los lectores familiarizados con el análisis de supervivencia reconocerán que la descripción anterior se aplica específicamente a la “censura por la derecha” (right censoring). Actualmente, esta es la única forma de censura disponible en el universo <code>mlr3</code>, por lo que se restringe la discusión a ese escenario. Para obtener una buena introducción al análisis de supervivencia, se puede consultar Collett (2014) o para el aprendizaje automático en el análisis de supervivencia Sonabend y Bender (2023).</p>
@@ -959,17 +959,17 @@ GLOBAL 0.642  1 0.42</code></pre>
 <span id="cb40-15"><a href="#cb40-15"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(<span class="fu">benchmark_grid</span>(tsk_grace, learners,</span>
 <span id="cb40-16"><a href="#cb40-16"></a>  <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>INFO  [13:14:03.174] [mlr3] Running benchmark with 9 resampling iterations
-INFO  [13:14:03.301] [mlr3] Applying learner 'surv.coxph' on task 'grace' (iter 1/3)
-INFO  [13:14:03.378] [mlr3] Applying learner 'surv.coxph' on task 'grace' (iter 2/3)
-INFO  [13:14:03.403] [mlr3] Applying learner 'surv.coxph' on task 'grace' (iter 3/3)
-INFO  [13:14:03.439] [mlr3] Applying learner 'surv.kaplan' on task 'grace' (iter 1/3)
-INFO  [13:14:03.472] [mlr3] Applying learner 'surv.kaplan' on task 'grace' (iter 2/3)
-INFO  [13:14:03.496] [mlr3] Applying learner 'surv.kaplan' on task 'grace' (iter 3/3)
-INFO  [13:14:03.519] [mlr3] Applying learner 'Coxnet' on task 'grace' (iter 1/3)
-INFO  [13:14:03.686] [mlr3] Applying learner 'Coxnet' on task 'grace' (iter 2/3)
-INFO  [13:14:03.856] [mlr3] Applying learner 'Coxnet' on task 'grace' (iter 3/3)
-INFO  [13:14:03.964] [mlr3] Finished benchmark</code></pre>
+<pre><code>INFO  [17:55:35.522] [mlr3] Running benchmark with 9 resampling iterations
+INFO  [17:55:35.604] [mlr3] Applying learner 'surv.coxph' on task 'grace' (iter 1/3)
+INFO  [17:55:35.638] [mlr3] Applying learner 'surv.coxph' on task 'grace' (iter 2/3)
+INFO  [17:55:35.663] [mlr3] Applying learner 'surv.coxph' on task 'grace' (iter 3/3)
+INFO  [17:55:35.690] [mlr3] Applying learner 'surv.kaplan' on task 'grace' (iter 1/3)
+INFO  [17:55:35.713] [mlr3] Applying learner 'surv.kaplan' on task 'grace' (iter 2/3)
+INFO  [17:55:35.737] [mlr3] Applying learner 'surv.kaplan' on task 'grace' (iter 3/3)
+INFO  [17:55:35.761] [mlr3] Applying learner 'Coxnet' on task 'grace' (iter 1/3)
+INFO  [17:55:35.877] [mlr3] Applying learner 'Coxnet' on task 'grace' (iter 2/3)
+INFO  [17:55:36.001] [mlr3] Applying learner 'Coxnet' on task 'grace' (iter 3/3)
+INFO  [17:55:36.111] [mlr3] Finished benchmark</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>bmr<span class="sc">$</span><span class="fu">aggregate</span>(measures)[, <span class="fu">c</span>(<span class="st">"learner_id"</span>, ..msr_txt)]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">

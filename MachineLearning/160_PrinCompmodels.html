@@ -590,36 +590,36 @@ x_{n1}&amp;...&amp;x_{np}
 <span id="cb6-5"><a href="#cb6-5"></a><span class="fu">get_eigenvalue</span>(cancer_cp)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         eigenvalue variance.percent cumulative.variance.percent
-Dim.1  4.544424e+05     9.827174e+01                    98.27174
-Dim.2  7.084840e+03     1.532074e+00                    99.80381
-Dim.3  8.073646e+02     1.745900e-01                    99.97840
-Dim.4  5.462594e+01     1.181269e-02                    99.99021
-Dim.5  3.989682e+01     8.627561e-03                    99.99884
-Dim.6  3.008991e+00     6.506848e-04                    99.99949
-Dim.7  1.700384e+00     3.677027e-04                    99.99986
-Dim.8  3.540018e-01     7.655177e-05                    99.99994
-Dim.9  1.575402e-01     3.406757e-05                    99.99997
-Dim.10 8.705421e-02     1.882520e-05                    99.99999
-Dim.11 3.047705e-02     6.590566e-06                   100.00000
-Dim.12 7.526044e-03     1.627483e-06                   100.00000
-Dim.13 2.940581e-03     6.358914e-07                   100.00000
-Dim.14 2.283617e-03     4.938249e-07                   100.00000
-Dim.15 1.278475e-03     2.764661e-07                   100.00000
-Dim.16 6.294514e-04     1.361169e-07                   100.00000
-Dim.17 3.922398e-04     8.482061e-08                   100.00000
-Dim.18 2.448805e-04     5.295464e-08                   100.00000
-Dim.19 1.917317e-04     4.146138e-08                   100.00000
-Dim.20 1.695831e-04     3.667181e-08                   100.00000
-Dim.21 8.352442e-05     1.806189e-08                   100.00000
-Dim.22 5.695513e-05     1.231637e-08                   100.00000
-Dim.23 3.683906e-05     7.966331e-09                   100.00000
-Dim.24 2.868066e-05     6.202103e-09                   100.00000
-Dim.25 1.609069e-05     3.479560e-09                   100.00000
-Dim.26 1.375499e-05     2.974472e-09                   100.00000
-Dim.27 3.696495e-06     7.993554e-10                   100.00000
-Dim.28 2.830228e-06     6.120279e-10                   100.00000
-Dim.29 1.984835e-06     4.292142e-10                   100.00000
-Dim.30 7.516780e-07     1.625480e-10                   100.00000</code></pre>
+Dim.1  4.724067e+05     9.816486e+01                    98.16486
+Dim.2  7.930232e+03     1.647881e+00                    99.81274
+Dim.3  7.983762e+02     1.659005e-01                    99.97864
+Dim.4  5.523615e+01     1.147793e-02                    99.99011
+Dim.5  4.198669e+01     8.724724e-03                    99.99884
+Dim.6  3.086609e+00     6.413891e-04                    99.99948
+Dim.7  1.815771e+00     3.773124e-04                    99.99986
+Dim.8  3.844723e-01     7.989233e-05                    99.99994
+Dim.9  1.566380e-01     3.254896e-05                    99.99997
+Dim.10 9.089122e-02     1.888696e-05                    99.99999
+Dim.11 3.354426e-02     6.970409e-06                   100.00000
+Dim.12 7.648355e-03     1.589308e-06                   100.00000
+Dim.13 3.372351e-03     7.007657e-07                   100.00000
+Dim.14 2.189256e-03     4.549215e-07                   100.00000
+Dim.15 1.384934e-03     2.877857e-07                   100.00000
+Dim.16 6.425930e-04     1.335291e-07                   100.00000
+Dim.17 4.002389e-04     8.316859e-08                   100.00000
+Dim.18 2.319635e-04     4.820140e-08                   100.00000
+Dim.19 1.799548e-04     3.739413e-08                   100.00000
+Dim.20 1.644363e-04     3.416942e-08                   100.00000
+Dim.21 7.809155e-05     1.622722e-08                   100.00000
+Dim.22 5.909583e-05     1.227996e-08                   100.00000
+Dim.23 3.466080e-05     7.202424e-09                   100.00000
+Dim.24 2.719517e-05     5.651085e-09                   100.00000
+Dim.25 1.674328e-05     3.479210e-09                   100.00000
+Dim.26 1.275515e-05     2.650487e-09                   100.00000
+Dim.27 3.583272e-06     7.445944e-10                   100.00000
+Dim.28 2.805219e-06     5.829170e-10                   100.00000
+Dim.29 2.168836e-06     4.506785e-10                   100.00000
+Dim.30 7.124197e-07     1.480389e-10                   100.00000</code></pre>
 </div>
 </div>
 <p>Con las dos primeras CP alcanzamos un 99.80% de variabilidad explicada lo que nos da un solución muy precisa. Si nos quedamos con tres componentes tendríamos un 99.97% de variabilidad explicada. Sin embargo, para poder representar la solución en gráficos dimensionales nos quedaremos solo con las dos primeras componentes. Generamos el scree plot asociado a este modelo:</p>
@@ -638,36 +638,36 @@ Dim.30 7.516780e-07     1.625480e-10                   100.00000</code></pre>
 <span id="cb9-3"><a href="#cb9-3"></a>var_pca<span class="sc">$</span>coord[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                                Dim.1         Dim.2
-radius_mean              3.433801e+00  7.454521e-01
-texture_mean             1.480468e+00 -1.928105e-01
-perimeter_mean           2.367916e+01  4.978667e+00
-area_mean                3.510156e+02  7.148080e+01
-smoothness_mean          2.970629e-03 -1.418917e-03
-compactness_mean         2.696521e-02 -2.543761e-03
-concavity_mean           5.446966e-02  3.903219e-03
-concave_points_mean      3.219301e-02  2.924041e-03
-symmetry_mean            4.519380e-03 -3.281438e-03
-fractal_dimension_mean  -1.916002e-03 -1.534539e-03
-radius_se                2.156650e-01 -3.947865e-04
-texture_se              -3.967902e-02  3.367215e-02
-perimeter_se             1.527836e+00  9.242231e-02
-area_se                  3.845229e+01  1.846987e+00
-smoothness_se           -4.888490e-04  2.349369e-04
-compactness_se           3.541010e-03  5.660275e-04
-concavity_se             5.173307e-03  1.751959e-03
-concave_points_se        2.073223e-03  5.720825e-04
-symmetry_se             -8.231274e-04  1.132139e-03
-fractal_dimension_se    -1.138313e-04 -2.232285e-05
-radius_worst             4.799605e+00 -1.205125e-01
-texture_worst            2.042503e+00 -1.079647e+00
-perimeter_worst          3.312295e+01 -5.914483e-01
-area_worst               5.727569e+02 -4.410217e+01
-smoothness_worst         4.179783e-03 -7.238337e-03
-compactness_worst        6.699417e-02 -3.004328e-02
-concavity_worst          1.089645e-01 -2.509081e-02
-concave_points_worst     4.899289e-02 -5.216096e-03
-symmetry_worst           1.092528e-02 -1.647904e-02
-fractal_dimension_worst  7.422932e-04 -5.467551e-03</code></pre>
+radius_mean              3.473701e+00  8.149310e-01
+texture_mean             1.372135e+00 -2.722670e-01
+perimeter_mean           2.393305e+01  5.483085e+00
+area_mean                3.555185e+02  7.582263e+01
+smoothness_mean          2.897324e-03 -1.390315e-03
+compactness_mean         2.697637e-02 -9.761880e-04
+concavity_mean           5.539208e-02  5.597836e-03
+concave_points_mean      3.228197e-02  3.579394e-03
+symmetry_mean            5.334518e-03 -2.646903e-03
+fractal_dimension_mean  -1.869193e-03 -1.514326e-03
+radius_se                2.199966e-01 -9.663006e-04
+texture_se              -4.185874e-02  2.811828e-02
+perimeter_se             1.563568e+00  8.073997e-02
+area_se                  3.944348e+01  1.200831e+00
+smoothness_se           -4.613434e-04  1.523948e-04
+compactness_se           3.826366e-03  9.849109e-04
+concavity_se             6.135476e-03  2.494096e-03
+concave_points_se        2.290673e-03  7.524606e-04
+symmetry_se             -6.397179e-04  1.056048e-03
+fractal_dimension_se    -8.835660e-05  3.928928e-06
+radius_worst             4.876502e+00 -5.244594e-02
+texture_worst            1.916725e+00 -1.189233e+00
+perimeter_worst          3.369953e+01 -1.995741e-01
+area_worst               5.854102e+02 -4.634059e+01
+smoothness_worst         4.441497e-03 -6.770173e-03
+compactness_worst        6.712067e-02 -2.369473e-02
+concavity_worst          1.131408e-01 -1.765121e-02
+concave_points_worst     4.955294e-02 -3.610191e-03
+symmetry_worst           1.240080e-02 -1.460326e-02
+fractal_dimension_worst  8.006854e-04 -5.037872e-03</code></pre>
 </div>
 </div>
 <p>Los valores en valor absoluto más grandes en cada componente nos indican las características que más contribuyen en cada componente. Estos valores son los coeficientes asociados con las características consideradas en cada una de las componentes. Sin embargo, como el número de variables es grande nos va a resultar más útil presentar la solución mediante un gráfico. En concreto realizamos el gráfico de contribución de las características sobre las componentes:</p>
@@ -773,14 +773,14 @@ fractal_dimension_worst  7.422932e-04 -5.467551e-03</code></pre>
 <span id="cb20-5"><a href="#cb20-5"></a><span class="fu">get_eigenvalue</span>(abalone_cp)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        eigenvalue variance.percent cumulative.variance.percent
-Dim.1 1.034609e+01     97.641532209                    97.64153
-Dim.2 2.419785e-01      2.283678798                    99.92521
-Dim.3 3.082687e-03      0.029092940                    99.95430
-Dim.4 2.655909e-03      0.025065211                    99.97937
-Dim.5 1.073762e-03      0.010133660                    99.98950
-Dim.6 5.399308e-04      0.005095611                    99.99460
-Dim.7 4.215568e-04      0.003978454                    99.99858
-Dim.8 1.507935e-04      0.001423118                   100.00000</code></pre>
+Dim.1 1.049385e+01     97.760013754                    97.76001
+Dim.2 2.330740e-01      2.171301122                    99.93131
+Dim.3 2.999933e-03      0.027947165                    99.95926
+Dim.4 2.565655e-03      0.023901463                    99.98316
+Dim.5 1.027800e-03      0.009574912                    99.99274
+Dim.6 3.884343e-04      0.003618627                    99.99636
+Dim.7 2.425210e-04      0.002259309                    99.99862
+Dim.8 1.485250e-04      0.001383648                   100.00000</code></pre>
 </div>
 </div>
 <p>El resumen del modelo nos muestra que con las dos primeras componentes alcanzamos un 99.99% de variabilidad explicada, es decir, podemos reducir la información contenida en las 8 características originales con tan solo dos componentes. De hecho con la primera ya alcanzamos un 97.7% de variabilidad explicada.Podemos obtener el scree plot (o resumen gráfico del modelo) con la función <code>fviz_eig</code>:</p>
@@ -798,14 +798,14 @@ Dim.8 1.507935e-04      0.001423118                   100.00000</code></pre>
 <span id="cb23-3"><a href="#cb23-3"></a>var_pca<span class="sc">$</span>coord[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                    Dim.1       Dim.2
-Length         0.06888311  0.08964353
-Diameter       0.05867659  0.07273990
-Height         0.02361168  0.02599891
-Whole_weight   0.27472170  0.41058411
-Shucked_weight 0.09811647  0.19721625
-Viscera_weight 0.05728304  0.08974881
-Shell_weight   0.08979225  0.10014924
-Rings          3.20014154 -0.04916569</code></pre>
+Length         0.06919212  0.08901472
+Diameter       0.05897567  0.07220674
+Height         0.02399841  0.02561170
+Whole_weight   0.27435539  0.40196506
+Shucked_weight 0.09840409  0.19446139
+Viscera_weight 0.05702474  0.08853214
+Shell_weight   0.08987982  0.09878004
+Rings          3.22315498 -0.04789597</code></pre>
 </div>
 </div>
 <p>En este caso si nos resulta más sencillo escribir las ecuaciones de la componentes que viene dadas por las expresiones:</p>
@@ -816,14 +816,14 @@ Rings          3.20014154 -0.04916569</code></pre>
 <span id="cb25-2"><a href="#cb25-2"></a>var_pca<span class="sc">$</span>contrib[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                      Dim.1      Dim.2
-Length          0.045861586  3.3209398
-Diameter        0.033277705  2.1865957
-Height          0.005388615  0.2793402
-Whole_weight    0.729473460 69.6670491
-Shucked_weight  0.093048083 16.0734297
-Viscera_weight  0.031715798  3.3287448
-Shell_weight    0.077929387  4.1449422
-Rings          98.983305365  0.9989584</code></pre>
+Length          0.045622412  3.3996156
+Diameter        0.033144448  2.2369777
+Height          0.005488202  0.2814383
+Whole_weight    0.717285378 69.3238681
+Shucked_weight  0.092276536 16.2245615
+Viscera_weight  0.030987866  3.3628549
+Shell_weight    0.076982039  4.1864370
+Rings          98.998213120  0.9842470</code></pre>
 </div>
 </div>
 <p>En los valores de las contribuciones podemos ver claramente las características más relevantes en cada una de las componentes. A continuación representamos gráficamente las contribuciones.</p>
@@ -940,57 +940,54 @@ Rings          98.983305365  0.9989584</code></pre>
 <span id="cb37-5"><a href="#cb37-5"></a><span class="fu">get_eigenvalue</span>(leukemia_cp)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         eigenvalue variance.percent cumulative.variance.percent
-Dim.1  4.520739e+03     2.028784e+01                    20.28784
-Dim.2  3.501512e+03     1.571383e+01                    36.00166
-Dim.3  1.676743e+03     7.524765e+00                    43.52643
-Dim.4  1.425329e+03     6.396485e+00                    49.92291
-Dim.5  1.085828e+03     4.872897e+00                    54.79581
-Dim.6  8.110920e+02     3.639959e+00                    58.43577
-Dim.7  6.420111e+02     2.881170e+00                    61.31694
-Dim.8  6.188420e+02     2.777194e+00                    64.09413
-Dim.9  5.770235e+02     2.589523e+00                    66.68366
-Dim.10 4.940824e+02     2.217306e+00                    68.90096
-Dim.11 4.397460e+02     1.973460e+00                    70.87442
-Dim.12 4.358849e+02     1.956132e+00                    72.83055
-Dim.13 3.367410e+02     1.511202e+00                    74.34175
-Dim.14 3.086688e+02     1.385221e+00                    75.72698
-Dim.15 2.956141e+02     1.326635e+00                    77.05361
-Dim.16 2.848350e+02     1.278261e+00                    78.33187
-Dim.17 2.742650e+02     1.230826e+00                    79.56270
-Dim.18 2.738469e+02     1.228950e+00                    80.79165
-Dim.19 2.526948e+02     1.134025e+00                    81.92567
-Dim.20 2.447249e+02     1.098258e+00                    83.02393
-Dim.21 2.211324e+02     9.923815e-01                    84.01631
-Dim.22 2.132694e+02     9.570945e-01                    84.97341
-Dim.23 2.028438e+02     9.103075e-01                    85.88372
-Dim.24 1.888337e+02     8.474341e-01                    86.73115
-Dim.25 1.809886e+02     8.122274e-01                    87.54338
-Dim.26 1.747806e+02     7.843677e-01                    88.32774
-Dim.27 1.604691e+02     7.201416e-01                    89.04789
-Dim.28 1.544187e+02     6.929888e-01                    89.74087
-Dim.29 1.533225e+02     6.880693e-01                    90.42894
-Dim.30 1.481118e+02     6.646850e-01                    91.09363
-Dim.31 1.369662e+02     6.146666e-01                    91.70830
-Dim.32 1.346512e+02     6.042777e-01                    92.31257
-Dim.33 1.308830e+02     5.873668e-01                    92.89994
-Dim.34 1.260239e+02     5.655607e-01                    93.46550
-Dim.35 1.228773e+02     5.514395e-01                    94.01694
-Dim.36 1.159545e+02     5.203722e-01                    94.53731
-Dim.37 1.112905e+02     4.994415e-01                    95.03675
-Dim.38 1.082983e+02     4.860132e-01                    95.52277
-Dim.39 1.007091e+02     4.519548e-01                    95.97472
-Dim.40 9.781492e+01     4.389666e-01                    96.41369
-Dim.41 9.509857e+01     4.267763e-01                    96.84046
-Dim.42 9.322575e+01     4.183716e-01                    97.25884
-Dim.43 8.566623e+01     3.844466e-01                    97.64328
-Dim.44 8.525253e+01     3.825900e-01                    98.02587
-Dim.45 8.167464e+01     3.665334e-01                    98.39241
-Dim.46 7.888189e+01     3.540003e-01                    98.74641
-Dim.47 7.772464e+01     3.488069e-01                    99.09521
-Dim.48 7.421464e+01     3.330550e-01                    99.42827
-Dim.49 7.054615e+01     3.165918e-01                    99.74486
-Dim.50 5.685270e+01     2.551394e-01                   100.00000
-Dim.51 3.832475e-26     1.719910e-28                   100.00000</code></pre>
+Dim.1  4.239203e+03     1.902438e+01                    19.02438
+Dim.2  3.440525e+03     1.544013e+01                    34.46451
+Dim.3  1.768850e+03     7.938114e+00                    42.40263
+Dim.4  1.322729e+03     5.936048e+00                    48.33867
+Dim.5  1.131143e+03     5.076259e+00                    53.41493
+Dim.6  7.924119e+02     3.556127e+00                    56.97106
+Dim.7  6.784172e+02     3.044551e+00                    60.01561
+Dim.8  6.332105e+02     2.841675e+00                    62.85729
+Dim.9  5.799787e+02     2.602786e+00                    65.46007
+Dim.10 5.067850e+02     2.274312e+00                    67.73438
+Dim.11 4.734350e+02     2.124646e+00                    69.85903
+Dim.12 4.023828e+02     1.805784e+00                    71.66481
+Dim.13 3.752929e+02     1.684212e+00                    73.34903
+Dim.14 3.552856e+02     1.594424e+00                    74.94345
+Dim.15 3.295953e+02     1.479133e+00                    76.42258
+Dim.16 3.119000e+02     1.399722e+00                    77.82231
+Dim.17 2.950684e+02     1.324186e+00                    79.14649
+Dim.18 2.716525e+02     1.219102e+00                    80.36559
+Dim.19 2.554557e+02     1.146415e+00                    81.51201
+Dim.20 2.465020e+02     1.106233e+00                    82.61824
+Dim.21 2.303238e+02     1.033630e+00                    83.65187
+Dim.22 2.276762e+02     1.021748e+00                    84.67362
+Dim.23 2.136507e+02     9.588057e-01                    85.63243
+Dim.24 2.036735e+02     9.140308e-01                    86.54646
+Dim.25 1.965386e+02     8.820113e-01                    87.42847
+Dim.26 1.912633e+02     8.583372e-01                    88.28681
+Dim.27 1.778098e+02     7.979618e-01                    89.08477
+Dim.28 1.694683e+02     7.605273e-01                    89.84529
+Dim.29 1.663949e+02     7.467349e-01                    90.59203
+Dim.30 1.604962e+02     7.202628e-01                    91.31229
+Dim.31 1.553638e+02     6.972300e-01                    92.00952
+Dim.32 1.491043e+02     6.691394e-01                    92.67866
+Dim.33 1.439458e+02     6.459892e-01                    93.32465
+Dim.34 1.395238e+02     6.261446e-01                    93.95080
+Dim.35 1.370830e+02     6.151911e-01                    94.56599
+Dim.36 1.335811e+02     5.994753e-01                    95.16546
+Dim.37 1.314294e+02     5.898193e-01                    95.75528
+Dim.38 1.216788e+02     5.460613e-01                    96.30134
+Dim.39 1.123549e+02     5.042180e-01                    96.80556
+Dim.40 1.100665e+02     4.939481e-01                    97.29951
+Dim.41 1.008727e+02     4.526890e-01                    97.75220
+Dim.42 9.698657e+01     4.352492e-01                    98.18745
+Dim.43 9.370713e+01     4.205320e-01                    98.60798
+Dim.44 8.680861e+01     3.895733e-01                    98.99755
+Dim.45 8.289305e+01     3.720013e-01                    99.36955
+Dim.46 7.905425e+01     3.547738e-01                    99.72433
+Dim.47 6.142818e+01     2.756728e-01                   100.00000
+Dim.48 3.757622e-26     1.686318e-28                   100.00000</code></pre>
 </div>
 </div>
 <p>Podemos ver que para alcanzar un porcentaje de clasificación correcta superior al 70% deberíamos considerar al menos 12 componentes. Esto puede parecer mucho pero hay que tener en cuenta que partimos de 22284 y nos estamos quedando con 12. Si nos parece que el porcentaje es demasiado bajo podríamos llegar hasta las 20 componentes con un porcentaje superior al 80%. El problema en esta situación es que los gráficos unidimensionales con las dos primeras componentes ya no resultan tan informativos como en los ejemplos anteriores dado que solo explican el 32.9% de la variabilidad.</p>
